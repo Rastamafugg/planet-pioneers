@@ -110,11 +110,16 @@ After color selection, each player selects a character from 8 species. Only 3 ec
 | Normal | Mechtron, Gollumer, Bonzoid, Leggite, Packer, Spheroid | $1000 | Standard |
 | Beginner | Flapper | $1200 | Extended |
 
-All players start with $300 worth of Food and Energy in addition to their cash.
+All players start with Food and Energy in addition to their cash.
 
-**Starting goods conversion:**
-- $300 split evenly: 1 unit Food + 1 unit Energy at initial prices, remainder as cash.
-- Exact split: implementation may round to nearest unit.
+**Starting goods — two options (select one per implementation):**
+
+| Option | Source | Food | Energy | Notes |
+|--------|--------|------|--------|-------|
+| A (original) | M.U.L.E. manual | ~1–2 units | ~1–2 units | $300 total value split at initial prices; remainder as cash |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | 4 units | 2 units | Explicit unit counts; no cash conversion |
+
+Option A requires knowing initial commodity prices to resolve unit counts. Option B is deterministic.
 
 ### 3.4 Character Selection UI
 
@@ -199,12 +204,14 @@ Two independent bonuses apply and stack:
 **Adjacency bonus (Economies of Scale):**
 - If 2 or more of a player's plots producing the same commodity are orthogonally adjacent (horizontally or vertically), each of those adjacent plots receives +1 production.
 - Only +1 regardless of how many adjacent same-commodity plots exist.
+- **Both plots must be owned by the same player.** An opponent's adjacent same-commodity plot does not qualify.
 
 **Learning Curve bonus:**
 - If a player owns 3 or more total plots producing the same commodity (anywhere on the map), all of those plots receive +1 production.
 - This bonus stacks with the adjacency bonus.
+- Example: 3 Smithore mines, 2 adjacent — each mine gets +1 LCT; the 2 adjacent mines each get an additional +1 EOS, for 5 total bonus units across all three plots.
 
-**Example:** 3 adjacent Food plots → each gets +1 adjacency + +1 learning curve = +2 each.
+**Example (6 same-commodity plots):** LCT grants 2 extra units per plot (6 ÷ 3 = 2); adjacent plots also receive +1 EOS each.
 
 ### 5.3 Energy Requirement
 
@@ -212,26 +219,48 @@ Two independent bonuses apply and stack:
 - Energy MULEs use their own production as fuel; they have no external energy cost.
 - If a player has insufficient Energy for their non-Energy MULEs, those MULEs produce 0 units.
 
-**Energy deficit rule:** Insufficient Energy zeroes out production for affected MULEs. Allocation is implementation-defined (suggest: evenly distribute available energy, prioritize by plot index).
+**Energy deficit rule — two options (select one per implementation):**
+
+| Option | Source | Behavior |
+|--------|--------|----------|
+| A (original GDD) | M.U.L.E. manual | Allocation is implementation-defined; suggest prioritize by plot index |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | For each unit of Energy the player is short, one random non-Energy-producing plot produces 0 (marked with a dark lightning bolt symbol) |
+
+Option B is more faithful to the Planet M.U.L.E. implementation and produces fairer random outcomes.
 
 ### 5.4 Production Variance by Mode
 
 | Mode | Production |
 |------|-----------|
 | Beginner | Exact base + bonuses |
-| Standard | Random in [0, base×2], average ≈ base, then + bonuses |
+| Standard | Random variance applied to base, then + bonuses |
 | Tournament | Same as Standard |
 
-**Standard variance implementation:** For each producing plot, generate production as `rand(0, base) + rand(0, base)` (two uniform rolls summing to average base) then add bonuses. This gives a bell-curve centered on base.
+**Variance model — two options (select one per implementation):**
+
+| Option | Source | Formula | Range | Distribution |
+|--------|--------|---------|-------|--------------|
+| A (original GDD) | M.U.L.E. manual | `rand(0,base) + rand(0,base)` | [0, base×2] | Bell curve centered on base |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | `base + rand(-3, +3)` | [base−3, base+3] | Uniform ±3 around base |
+
+Option A: low-base plots (base=1) can zero out frequently. Option B: variance is fixed regardless of terrain; plots with base=0 can still produce up to 3 units. Choose based on desired difficulty curve.
 
 ### 5.5 Crystite Production (Tournament)
 
 Crystite deposit levels are fixed at game init, randomized per session (unlike terrain which is fixed).
 
-- 2 plots have deposit level 3 (High)
-- Plots adjacent (orthogonally) to High plots have level 2 (Medium)
-- Plots adjacent to Medium plots have level 1 (Low)
-- River plots have level 0 regardless
+**High-deposit count — three options (select one per implementation):**
+
+| Option | Source | High (level 3) plots | Spread |
+|--------|--------|---------------------|--------|
+| A (GDD original) | GDD v1.0 | 2 | Orthogonal adjacency: Med→Low |
+| B (M.U.L.E. manual) | Original M.U.L.E. manual | 3 | Same orthogonal spread |
+| C (Planet M.U.L.E.) | Planet M.U.L.E. rules | 4 | Circular/radial bloom pattern |
+
+All options: river plots have level 0 regardless of position.
+
+- Option A/B spread: orthogonal adjacency only (cardinal directions).
+- Option C spread: circular pattern — high plots radiate outward to medium, then low.
 
 Crystite base production = deposit level (1, 2, or 3 units/turn before bonuses).
 
@@ -241,7 +270,7 @@ Crystite base production = deposit level (1, 2, or 3 units/turn before bonuses).
 
 ### 6.1 Food
 
-- Determines colony management time: more Food = more time during the management phase.
+- Determines colony management time: more Food = more time during the management phase (see Section 11.1 for exact timing).
 - **Spoilage:** Players can hold at most `needed + 2` units. Excess is discarded after each production phase.
 - **Need:** 1 unit per installed MULE (all types). Minimum need = 1.
 - **Price range:** $15–$250.
@@ -256,24 +285,44 @@ Crystite base production = deposit level (1, 2, or 3 units/turn before bonuses).
 ### 6.3 Smithore
 
 - Used by the Store to manufacture MULEs (Standard/Tournament): 2 Smithore → 1 MULE, takes 1 full turn.
-- **No spoilage.**
-- **Price range:** Fixed $50 (Beginner); $25–$250 (Standard/Tournament).
+- **No spoilage** (see storage cap option below).
+- **Price range — two options:**
+
+| Option | Source | Beginner | Standard/Tournament |
+|--------|--------|----------|---------------------|
+| A (original GDD) | M.U.L.E. manual | Fixed $50 | $25–$250 |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | Fixed $50 | $35–$260 |
 
 ### 6.4 Crystite (Tournament Only)
 
 - Shipped off-planet; no internal colony use.
-- **No spoilage.**
-- **Price range:** $50–$150. Price fluctuates randomly each round, NOT driven by supply/demand.
+- **No spoilage** (see storage cap option below).
+- **Price range — two options:**
+
+| Option | Source | Range | Mechanism |
+|--------|--------|-------|-----------|
+| A (original GDD) | M.U.L.E. manual | $50–$150 | Random per round, not supply/demand |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | $48–$148 | Random per round, not supply/demand |
+
 - Only the Store buys Crystite; no player-to-player trading for Crystite.
 
 ### 6.5 Storage Limits
+
+**Smithore and Crystite storage — two options (select one per implementation):**
+
+| Option | Source | Smithore cap | Crystite cap |
+|--------|--------|-------------|-------------|
+| A (original GDD) | M.U.L.E. manual | Unlimited | Unlimited |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | 50 units/player/round | 50 units/player/round |
+
+Option B: excess above 50 units is treated as spoilage and shown in the auction status display.
 
 | Commodity | Max storable beyond need |
 |-----------|------------------------|
 | Food | +2 |
 | Energy | +1 |
-| Smithore | Unlimited |
-| Crystite | Unlimited |
+| Smithore | See option above |
+| Crystite | See option above |
 
 ### 6.6 MULE Outfitting Costs
 
@@ -286,18 +335,21 @@ Crystite base production = deposit level (1, 2, or 3 units/turn before bonuses).
 
 MULE purchase cost is separate from outfitting cost.
 
-**MULE Purchase Price:**
-- Beginner: fixed (implied ~$100)
-- Standard/Tournament: variable formula based on corral stock and undeveloped plots. At scarcity, may reach $2000.
+**MULE Purchase Price — two options (select one per implementation):**
 
-**MULE price formula (Standard/Tournament):**
-```
-mule_price = BASE_MULE_PRICE + ((MAX_MULES - corral_count) * SCARCITY_FACTOR)
-             + (undeveloped_player_plots * DEMAND_FACTOR)
-```
-Exact coefficients: `BASE_MULE_PRICE = 100`, `SCARCITY_FACTOR = 50`, `DEMAND_FACTOR = 25` (tunable).
+| Option | Source | Formula | Notes |
+|--------|--------|---------|-------|
+| A (original GDD) | M.U.L.E. manual | `BASE + ((MAX_MULES - corral_count) * SCARCITY_FACTOR) + (undeveloped_plots * DEMAND_FACTOR)` | BASE=100, SCARCITY_FACTOR=50, DEMAND_FACTOR=25; capped at $2000 |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | `2 × current Smithore price` | Price is dynamic; rises with Smithore scarcity naturally |
 
-Capped at $2000.
+Option B is simpler to implement and creates a direct economic link between Smithore supply and MULE availability. Option A gives more tuning control independent of commodity prices.
+
+**MULE Sell Refund — two options (select one per implementation):**
+
+| Option | Source | Refund |
+|--------|--------|--------|
+| A (original GDD) | M.U.L.E. manual | MULE purchase price only (outfitting cost is lost) |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | MULE purchase price + outfitting cost |
 
 ---
 
@@ -317,10 +369,23 @@ For each round:
   8. Post-auction wealth update
 ```
 
-**Turn order:**
-- Determined by net worth: poorest player moves first.
-- Ties: broken by player index (lower index first).
-- Exception (Standard/Tournament, corral): if fewer than 7 MULEs in corral, the last-place player moves FIRST in management; if more than 7 MULEs, last-place moves LAST.
+**Development turn order — two options (select one per implementation):**
+
+| Option | Source | Normal order | MULE-shortage reversal |
+|--------|--------|-------------|----------------------|
+| A (original GDD) | M.U.L.E. manual | Poorest player moves first | N/A (consistent) |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | Leader (richest) moves first | Last-place player moves first when corral is low |
+
+Option B is a significant strategic difference: in normal circumstances the richest player has first pick of development actions, which is a disadvantage to trailing players. The reversal compensates when MULEs are scarce.
+
+**MULE shortage threshold for turn reversal — two options:**
+
+| Option | Source | Threshold |
+|--------|--------|-----------|
+| A (original GDD) | M.U.L.E. manual | Fewer than 7 MULEs in corral → last-place moves first |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | Fewer than 8 MULEs in corral → last-place moves first |
+
+Ties in net worth: broken by player index (lower index first).
 
 ---
 
@@ -338,6 +403,8 @@ Displayed after each round (and before the game begins).
 net_worth = cash + (sum of goods[i] * last_auction_price[i]) + (owned_plots * 500)
 ```
 
+**Rank update timing:** Player rankings are updated only after the Summary phase. The leaderboard does not update mid-round. (Planet M.U.L.E. clarification.)
+
 **Duration:** Fixed display time (approximately 3 seconds) or any button to advance.
 
 ---
@@ -348,7 +415,7 @@ net_worth = cash + (sum of goods[i] * last_auction_price[i]) + (owned_plots * 50
 
 - One free plot is available per player per round.
 - Players take turns selecting from the unowned plots.
-- A moving cursor (flashing square) moves across the map.
+- A moving cursor (flashing square) moves across the map left-to-right, top-to-bottom.
 - Player presses button to claim the currently highlighted plot.
 
 ### 9.2 Turn Order for Grants
@@ -357,12 +424,11 @@ Poorest player (lowest net worth) gets first pick. Ties: lower player index firs
 
 ### 9.3 Simultaneous Pressing
 
-If two players press simultaneously on the same plot, the poorer player wins. If tied in wealth, the player with the lower index wins.
+If two players press within approximately 1/10 of a second on the same plot, the poorer player wins. If tied in wealth, the player with the lower index wins.
 
 ### 9.4 UI Behavior
 
-- The cursor moves automatically in a serpentine or user-directed pattern.
-- Joystick may steer the cursor to the desired plot.
+- The cursor moves automatically left-to-right, top-to-bottom across the map. Joystick may steer the cursor to the desired plot.
 - Current plot highlighted in a neutral color; owned plots shown in owner color.
 - Claimed plot flashes in winner's color.
 
@@ -403,7 +469,14 @@ $500 regardless of purchase price.
 
 ### 11.1 Time Allocation
 
-Each player has a time bar displayed on screen. Time is proportional to their Food supply:
+Each player has a time bar displayed on screen. Time is proportional to their Food supply.
+
+**Management time model (Planet M.U.L.E. clarification):**
+- Full food (enough for this round): **45 seconds** of management time.
+- Partial food: proportional reduction. A player with 3/4 of needed food receives 3/4 of full time.
+- No food: approximately **4.5 seconds** — enough to reach the Pub and end the turn.
+
+**Implementation formula:**
 ```
 management_ticks = BASE_TICKS + (food_owned * FOOD_TICKS_PER_UNIT)
 ```
@@ -428,7 +501,7 @@ Town buildings (accessible by walking into them):
 | Crystite Outfitting Shop | Upper right | Outfit MULE for Crystite production (Tournament) |
 | Pub | Lower left | End turn voluntarily for money |
 | Land Office | Lower right | Mark owned plot for sale (Standard/Tournament) |
-| Assay Office | Upper center | Pay to assay a plot for Crystite deposits (Tournament) |
+| Assay Office | Upper center | Assay a plot for Crystite deposits (Tournament) |
 
 ### 11.3 Getting a MULE
 
@@ -436,6 +509,27 @@ Town buildings (accessible by walking into them):
 2. A MULE follows the character out.
 3. Player is charged the MULE purchase price immediately.
 4. If corral is empty (Standard/Tournament), no MULEs available.
+
+**Initial MULEs in corral — two options:**
+
+| Option | Source | Initial count |
+|--------|--------|--------------|
+| A (original GDD) | M.U.L.E. manual | 16 MULEs |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | 14 MULEs |
+
+**Corral capacity — two options:**
+
+| Option | Source | Maximum |
+|--------|--------|---------|
+| A (original GDD) | GDD v1.0 | 25 (implementation-defined) |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | 14 MULEs |
+
+**Selling a MULE (refund policy) — two options (see also Section 6.6):**
+
+| Option | Refund |
+|--------|--------|
+| A (original GDD) | MULE purchase price only; outfitting cost is lost |
+| B (Planet M.U.L.E.) | MULE purchase price + outfitting cost both refunded |
 
 ### 11.4 Outfitting a MULE
 
@@ -456,7 +550,7 @@ Town buildings (accessible by walking into them):
 - Standard/Tournament: pressing button anywhere other than directly over the house also causes MULE to escape.
 - Escaped MULE: lost permanently, no refund.
 
-**Returning MULE to corral:** Walk back to town and enter corral with MULE. Receive MULE purchase price refund only (not outfitting cost).
+**Returning MULE to corral:** Walk back to town and enter corral with MULE. Refund per Section 6.6 option selected.
 
 ### 11.6 Transferring a MULE
 
@@ -465,6 +559,8 @@ Town buildings (accessible by walking into them):
 3. Previously installed MULE is removed and follows the player.
 4. If player had a MULE already: the carried MULE is installed, the old MULE follows.
 5. Player can now re-outfit the retrieved MULE or return it to the corral.
+
+**Refit cost (Planet M.U.L.E. clarification):** When re-outfitting a retrieved MULE for a different commodity, the player pays only the difference between the new outfitting cost and the original. If the new cost is lower, the player receives a refund for the difference. Example: MULE outfit for Food ($25) re-outfit for Smithore ($75) costs $50 additional; re-outfit for Energy ($50) costs $25 additional.
 
 ### 11.7 The Pub
 
@@ -488,6 +584,7 @@ Town buildings (accessible by walking into them):
 - Conditions preventing the Wampus from appearing:
   - Player is standing on the mountain cell the Wampus is in.
   - Player is pressing the joystick button (button press repels Wampus).
+  - **Planet M.U.L.E. clarification:** The Wampus will not appear near plots with installed MULEs. Once a player installs mining equipment in a mountain area, the Wampus relocates to a quieter area. This effectively reduces Wampus opportunities as more of the map is developed.
 - Wampus disappears after a short time or if not caught.
 
 ### 11.9 Land Office (Standard/Tournament)
@@ -502,12 +599,20 @@ Town buildings (accessible by walking into them):
 
 ### 11.10 Assay Office (Tournament)
 
+**Assay cost — two options:**
+
+| Option | Source | Cost |
+|--------|--------|------|
+| A (original GDD) | M.U.L.E. manual | $25 per assay |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | Free (sampling droid is provided at no charge) |
+
+Procedure:
 1. Enter assay office.
-2. Walk to any plot (owned or unowned).
+2. Walk to any plot (owned or unowned by any player).
 3. Press button over the plot center.
 4. Walk back to assay office.
-5. Display shows Crystite level: None, Low, Medium, or High.
-6. Cost: $25 per assay (deducted from player's cash).
+5. Display shows Crystite level: None (0), Low (1), Medium (2), or High (3).
+6. **Planet M.U.L.E. clarification:** All players briefly see the assay result when it is announced. Only the assaying player retains a persistent flag marker on that plot showing the Crystite BPV.
 7. Timer continues running during assay.
 
 ### 11.11 Computer Player Management
@@ -526,12 +631,19 @@ Town buildings (accessible by walking into them):
 1. For each plot with an installed MULE:
    a. Determine base production from terrain (Section 5.1).
    b. Apply production variance (Beginner: none; Standard/Tournament: see Section 5.4).
-   c. Apply adjacency bonus if applicable (+1 if adjacent same-commodity player plot).
+   c. Apply adjacency bonus if applicable (+1 if player owns an adjacent same-commodity plot).
    d. Apply learning curve bonus if applicable (+1 if player has ≥3 same-commodity plots).
-   e. Check energy requirement: if player has insufficient energy for this MULE, production = 0.
+   e. Check energy requirement: if player has insufficient energy, select affected MULEs per Section 5.3 option chosen; those MULEs produce 0.
    f. Add produced units to player's goods.
 
 2. Apply spoilage: discard excess Food and Energy.
+
+   **Spoilage timing — two options:**
+
+   | Option | Source | When spoilage is applied |
+   |--------|--------|------------------------|
+   | A (original GDD) | M.U.L.E. manual | After production phase, before auctions |
+   | B (Planet M.U.L.E.) | Planet M.U.L.E. rules | At the start of each commodity auction: usage and spoilage are subtracted first, then production is added |
 
 3. Store rebuilds MULEs from purchased Smithore (Standard/Tournament): one MULE added to corral for every 2 Smithore units the Store purchased in the previous round.
 
@@ -544,8 +656,8 @@ Town buildings (accessible by walking into them):
 ### 12.3 No-Production Conditions
 
 A MULE produces 0 units if:
-- Player lacks sufficient Energy (for non-Energy MULEs).
-- Random variance rolled 0 (Standard/Tournament).
+- Player lacks sufficient Energy (for non-Energy MULEs) — per Section 5.3 option selected.
+- Random variance rolled 0 (Standard/Tournament, Option A) or base−3 ≤ 0 (Option B).
 
 ---
 
@@ -558,11 +670,22 @@ A MULE produces 0 units if:
 
 ### 13.2 Lucky/Unlucky Rule
 
-- The player in last place NEVER receives a bad luck player event.
-- The player in first place NEVER receives a good luck player event.
-- This rule does not apply to planetary events.
+**Bad event protection — two options (select one per implementation):**
+
+| Option | Source | Protection from bad player events |
+|--------|--------|----------------------------------|
+| A (original GDD) | M.U.L.E. manual | Last place player only is never targeted |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | 3rd and 4th place players are never targeted by bad events |
+
+**Good event protection (both sources agree):** The player in first place never receives a good luck player event.
+
+**Targeted global event protection (Planet M.U.L.E. clarification):** When a bad planetary event targets a single player (rather than all players), it targets the 1st or 2nd place player.
+
+**Event uniqueness (Planet M.U.L.E. clarification):** Each personal/player event can occur at most once per game. Once an event has fired, it is removed from the pool for the remainder of that game.
 
 ### 13.3 Player Random Events
+
+Each event occurs at most once per game (Planet M.U.L.E. clarification).
 
 | Event | Effect |
 |-------|--------|
@@ -580,16 +703,27 @@ Implementation note: Maintain two weighted event tables (good/bad) for last-plac
 
 ### 13.4 Planetary Random Events
 
-| Event | Effect |
-|-------|--------|
-| Planet Quake | All Smithore/Mountain production halved this round; mountains may shift to adjacent plots |
-| Acid Rain Storm | Food production increased along storm path; Energy production decreased |
-| Sunspot Activity | All Energy production greatly increased |
-| Pest Attack | One random Food-producing plot: production = 0 |
-| MULE Goes Crazy | One random installed MULE is permanently destroyed; owning player loses it |
-| Meteor Crystite Deposit | One random non-river plot gains a Crystite deposit (level 3); if a MULE was there, it is destroyed |
-| Pirate Attack | All Smithore (Standard) or all Crystite (Tournament) is stolen after production phase |
-| Fire in Store | All Store commodity stock is lost; MULE prices may spike |
+Each event has a maximum number of occurrences per game. Events become less likely with each occurrence.
+
+| Event | Max occurrences | Effect |
+|-------|----------------|--------|
+| Planetary Pest | 3 | Bugs eat all food production at one plot owned by the 1st or 2nd place player (Planet M.U.L.E.); or one random Food-producing plot (original GDD). |
+| Space Pirates | 2 | See pirate target option below. |
+| Acid Rain Storm | 3 | All food production increased along storm path; all energy production decreased. |
+| Planetquake | 3 | All Smithore and Crystite production halved this round; mountains may shift to adjacent plots, destroying MULEs on affected plots. (Planet M.U.L.E. clarification: Crystite is also halved; MULEs on shifted-mountain plots are destroyed.) |
+| Sunspot Activity | 3 | All Energy production greatly increased. |
+| Meteorite Strike | 2 | One random non-river plot gains a Crystite deposit (level 3); if a MULE was there, it is destroyed. |
+| Radiation (MULE Goes Crazy) | 2 | One installed MULE belonging to the 1st or 2nd place player (Planet M.U.L.E. clarification) is permanently destroyed. |
+| Fire in Store | 2 | All Store commodity stock is lost; MULE prices may spike. |
+
+**Pirate attack target — two options:**
+
+| Option | Source | Standard game target | Tournament game target |
+|--------|--------|---------------------|----------------------|
+| A (original GDD) | M.U.L.E. manual | All Smithore stolen | All Crystite stolen |
+| B (Planet M.U.L.E.) | Planet M.U.L.E. rules | All Crystite stolen | All Crystite stolen |
+
+Option B eliminates the Smithore-specific piracy; pirates always target Crystite in all modes.
 
 ### 13.5 Display
 
@@ -608,6 +742,8 @@ Three auctions per round (four in Tournament):
 2. Food
 3. Energy
 4. Crystite (Tournament only)
+
+**Auction skip (Planet M.U.L.E. clarification):** An auction for a given commodity is automatically skipped if there are no units available for trade from either any player or the Store.
 
 ### 14.2 Status Display (Pre-Auction)
 
@@ -713,7 +849,7 @@ The Store has a position on the auction screen:
 ### 14.9 Crystite Auction (Tournament)
 
 - Crystite only trades with the Store (no player-to-player Crystite trading).
-- Store price for Crystite: random in [$50, $150], set at start of each round.
+- Store price for Crystite: random in range per Section 6.4 option, set at start of each round.
 - Players can hold Crystite across rounds and wait for a favorable price.
 - Crystite auction is a simple: "Sell how many units?" prompt with the current Store price shown.
 
@@ -745,18 +881,24 @@ Maximum store price: $265 for all commodities.
 
 ### 15.2 Initial Store Stock
 
-| Commodity | Initial Units |
-|-----------|-------------|
-| Food | 16 |
-| Energy | 16 |
-| Smithore | 0 |
-| Crystite | 0 |
+**Two options (select one per implementation):**
+
+| Commodity | Option A (M.U.L.E. manual) | Option B (Planet M.U.L.E.) |
+|-----------|--------------------------|--------------------------|
+| Food | 16 | 8 |
+| Energy | 16 | 8 |
+| Smithore | 0 | 8 |
+| Crystite | 0 | 0 |
+| MULEs in corral | 16 | 14 |
+
+Option A: players must generate all Smithore themselves; no MULEs can be built from store stock until players sell Smithore.
+Option B: Smithore is pre-stocked, allowing early MULE manufacturing from the start; fewer initial MULEs create earlier scarcity pressure.
 
 ### 15.3 MULE Manufacturing (Standard/Tournament)
 
 - Each round, if the Store purchased at least 2 Smithore units in the previous auction, it converts them to MULEs.
 - Rate: floor(purchased_smithore / 2) MULEs added to corral.
-- MULEs do not accumulate beyond corral capacity (max: implementation-defined, suggest 25).
+- MULEs do not accumulate beyond corral capacity (see Section 11.3 for capacity options).
 - Building MULEs takes the Store one full round.
 
 ### 15.4 Price Floor Enforcement
@@ -769,32 +911,32 @@ No auction price can go below the commodity minimum price. No player can set the
 
 ### 16.1 Crystite Deposits
 
-At game start, place Crystite deposits:
-1. Randomly choose 2 non-river plots as level-3 (High) deposits.
-2. All orthogonally adjacent non-river plots become level-2 (Medium).
-3. All orthogonally adjacent-to-Medium non-river plots become level-1 (Low).
-4. All other plots: level 0 (None).
+At game start, place Crystite deposits per Section 5.5 option selected:
 
-Deposits are hidden at game start. Players discover them via the Assay Office or by installing a Crystite MULE.
+**Common to all options:**
+- River plots have level 0 regardless of position.
+- Deposits are hidden at game start; players discover via Assay Office or by installing a Crystite MULE.
+- Spread pattern (Options A/B): orthogonal adjacency. High→Medium→Low.
+- Spread pattern (Option C): circular radial bloom from each high-deposit center.
 
 ### 16.2 Assay Office
 
 - Location: upper center of town (see Section 11.10).
 - Reveals the Crystite deposit level of a specific plot.
-- Cost: $25.
-- Results reported immediately upon returning to the assay office.
+- Cost: per Section 11.10 option selected ($25 or free).
+- Results: all players briefly see the result; only the assayer retains a persistent flag marker.
 
 ### 16.3 Crystite Price Randomization
 
-At the start of each round, Crystite price is set to `rand(50, 150)` before the auction.
+At the start of each round, Crystite price is set per Section 6.4 option range before the auction.
 
-Players who hoard Crystite speculate on price fluctuations. The Pirate event eliminates all Crystite, creating risk.
+Players who hoard Crystite speculate on price fluctuations. The Pirate event (per Section 13.4 option) eliminates Crystite, creating risk.
 
 ### 16.4 Starting Resource Reduction
 
 In Tournament mode, starting resources are reduced to the minimum necessary for one-turn survival:
 - Cash: Character-tier cash (same as Standard).
-- Goods: Exactly 1 Food + 1 Energy (instead of $300 worth).
+- Goods: Exactly 1 Food + 1 Energy (instead of standard starting goods).
 
 ---
 
@@ -817,6 +959,7 @@ If no auctions have occurred yet: use starting prices for goods valuation.
 
 - The player with the highest net worth after the final round wins.
 - Tie: both players are declared winners.
+- Player rankings are updated only after the Summary phase each round.
 
 ### 17.3 Colony Failure (Standard/Tournament)
 
@@ -985,7 +1128,7 @@ Replaces map during colony management. Same 320×200 canvas.
 #### 19.3.9 Land Grant Screen
 
 - Map displayed.
-- Flashing cursor moves across unowned plots.
+- Flashing cursor moves left-to-right, top-to-bottom across unowned plots.
 - "Press button to claim" prompt.
 - Player turn indicator.
 
@@ -1454,40 +1597,59 @@ Use `direct` storage class for all frequently accessed globals (game state, play
 
 ## 24. Constants Reference
 
+Items marked with * have competing values from different sources; see the relevant section for the option table.
+
 | Constant | Value | Notes |
 |----------|-------|-------|
 | MAX_ROUNDS_BEGINNER | 6 | |
 | MAX_ROUNDS_STANDARD | 12 | |
-| MAX_MULES_CORRAL | 25 | Implementation limit |
-| INITIAL_MULES | 16 | |
+| MAX_MULES_CORRAL | 25 or 14* | Option A=25, Option B=14 (Planet M.U.L.E.) — see Section 11.3 |
+| INITIAL_MULES | 16 or 14* | Option A=16 (original), Option B=14 (Planet M.U.L.E.) — see Section 15.2 |
+| INITIAL_STORE_FOOD | 16 or 8* | Option A=16, Option B=8 — see Section 15.2 |
+| INITIAL_STORE_ENERGY | 16 or 8* | Option A=16, Option B=8 — see Section 15.2 |
+| INITIAL_STORE_SMITHORE | 0 or 8* | Option A=0, Option B=8 — see Section 15.2 |
 | MULE_PRICE_BEGINNER | 100 | Fixed |
-| MULE_PRICE_BASE | 100 | Standard/Tournament base |
+| MULE_PRICE_BASE | 100 | Standard/Tournament Option A base |
 | MULE_PRICE_MAX | 2000 | |
 | SMITHORE_PER_MULE | 2 | |
 | LAND_VALUE | 500 | Net worth contribution per plot |
 | COLONY_SURVIVAL_THRESHOLD | 60000 | Standard/Tournament combined |
 | FOOD_SPOILAGE_BUFFER | 2 | Extra food beyond need before spoilage |
 | ENERGY_SPOILAGE_BUFFER | 1 | Extra energy beyond need before spoilage |
+| SMITHORE_STORAGE_CAP | unlimited or 50* | Option A=unlimited, Option B=50 — see Section 6.5 |
+| CRYSTITE_STORAGE_CAP | unlimited or 50* | Option A=unlimited, Option B=50 — see Section 6.5 |
 | OUTFIT_FOOD | 25 | |
 | OUTFIT_ENERGY | 50 | |
 | OUTFIT_SMITHORE | 75 | |
 | OUTFIT_CRYSTITE | 100 | Tournament |
 | PRICE_MIN_FOOD | 15 | |
 | PRICE_MIN_ENERGY | 10 | |
-| PRICE_MIN_SMITHORE | 14 | |
-| PRICE_MIN_CRYSTITE | 50 | |
-| PRICE_MAX | 265 | All commodities |
+| PRICE_MIN_SMITHORE_STD | 14 or 35* | Option A=14 (GDD), Option B=35 (Planet M.U.L.E.) |
+| PRICE_MAX_SMITHORE_STD | 250 or 260* | Option A=250, Option B=260 — see Section 6.3 |
+| PRICE_MAX | 265 | All commodities auction ceiling |
 | PRICE_SMITHORE_BEGINNER | 50 | Fixed |
-| PRICE_CRYSTITE_MIN | 50 | Tournament |
-| PRICE_CRYSTITE_MAX | 150 | Tournament |
-| MANAGEMENT_TICKS_BASE | 60 | At 60 ticks/sec = 1 second base |
+| PRICE_CRYSTITE_MIN | 50 or 48* | Option A=50, Option B=48 — see Section 6.4 |
+| PRICE_CRYSTITE_MAX | 150 or 148* | Option A=150, Option B=148 — see Section 6.4 |
+| CRYSTITE_HIGH_DEPOSITS | 2, 3, or 4* | Options A/B/C — see Section 5.5 |
+| MULE_TURN_THRESHOLD | 7 or 8* | Option A=7 (original), Option B=8 (Planet M.U.L.E.) — see Section 7 |
+| MANAGEMENT_TICKS_BASE | 60 | At 60 ticks/sec = 1 second base (full food = 45 sec) |
 | MANAGEMENT_TICKS_PER_FOOD | 10 | Additional ticks per food unit |
 | MANAGEMENT_TICKS_HUMANOID | 40 | Reduced base for expert species |
+| MANAGEMENT_TICKS_NO_FOOD | 27 | ~4.5 seconds at 60 ticks/sec (Planet M.U.L.E.) |
 | PUB_RATE | 2 | Dollars per remaining tick |
 | WAMPUS_REWARD_MIN | 50 | |
 | WAMPUS_REWARD_MAX | 150 | |
-| ASSAY_COST | 25 | Tournament |
+| ASSAY_COST | 25 or 0* | Option A=$25, Option B=free (Planet M.U.L.E.) — see Section 11.10 |
 | AUCTION_TIMER_TICKS | 3600 | 60 seconds at 60 ticks/sec |
 | LAND_GRANT_CURSOR_SPEED | 2 | Pixels per tick |
+| LAND_GRANT_TIE_WINDOW_MS | 100 | ~1/10 second simultaneous press window (Planet M.U.L.E.) |
 | AI_TOURNAMENT_BONUS | 200 | Extra starting cash for computer in Tournament |
 | PLAYER_EVENT_CHANCE | 25 | Percent chance per turn (Standard/Tournament) |
+| PIRATE_OCCURRENCES_MAX | 2 | Maximum pirate events per game |
+| PEST_OCCURRENCES_MAX | 3 | |
+| QUAKE_OCCURRENCES_MAX | 3 | |
+| SUNSPOT_OCCURRENCES_MAX | 3 | |
+| METEOR_OCCURRENCES_MAX | 2 | |
+| RADIATION_OCCURRENCES_MAX | 2 | |
+| FIRE_OCCURRENCES_MAX | 2 | |
+| ACID_RAIN_OCCURRENCES_MAX | 3 | |
