@@ -31,6 +31,9 @@
 #ifndef SS_SCINF
 #define SS_SCINF  0x8F
 #endif
+#ifndef SS_TONE
+#define SS_TONE   0x98
+#endif
 
 /*
  * Note frequency table — REQUIRES HARDWARE CALIBRATION.
@@ -63,7 +66,7 @@ static int g_snd;             /* path for SS.Tone                    */
  * SS.Tone X register: MSB = amp (0-63), LSB = dur (ticks).
  * SS.Tone Y register: frequency 0-4095.
  */
-void play_tone(freq, dur, amp)
+play_tone(freq, dur, amp)
 int freq, dur, amp;
 {
     struct registers r;
@@ -84,7 +87,7 @@ int freq, dur, amp;
  * Sequence format: flat int array of {freq, dur} pairs,
  * terminated by {-1, 0}.
  */
-void play_seq(seq, amp)
+play_seq(seq, amp)
 int *seq; int amp;
 {
     while (seq[0] != -1) {

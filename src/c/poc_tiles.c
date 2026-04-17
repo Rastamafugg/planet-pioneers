@@ -189,7 +189,7 @@ static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
  * Pixel / blit operations
  * ------------------------------------------------------------------ */
 
-void put_pixel(buf, x, y, c)
+put_pixel(buf, x, y, c)
 unsigned char *buf; int x, y, c;
 {
     unsigned char *p; int sh;
@@ -204,7 +204,7 @@ unsigned char *buf; int x, y, c;
  * Fast path active when px is 4-pixel-aligned (always true for
  * tile-column positions MAP_OX + col*16, since MAP_OX=88 and 88%4==0).
  */
-void tile_blit(td, px, py)
+tile_blit(td, px, py)
 unsigned char *td; int px, py;
 {
     int row;
@@ -240,7 +240,7 @@ unsigned char *td; int px, py;
  * Color 0 = transparent: those pixels are not written to the buffer.
  * Negative px/py: bounds check in put_pixel handles via unsigned wrap.
  */
-void sprite_blit(sd, px, py)
+sprite_blit(sd, px, py)
 unsigned char *sd; int px, py;
 {
     int row, col, sh, c;
@@ -260,7 +260,7 @@ unsigned char *sd; int px, py;
  * Rendering
  * ------------------------------------------------------------------ */
 
-void render_map()
+render_map()
 {
     int r, c;
     for (r = 0; r < MAP_ROWS; r++)
@@ -270,7 +270,7 @@ void render_map()
                       MAP_OY + r * TILE_H);
 }
 
-void flip()  { memcpy(g_scr, g_back, SCR_SIZE); }
+flip()  { memcpy(g_scr, g_back, SCR_SIZE); }
 
 /* ---- window management (same as poc_gfx.c) ---- */
 
@@ -288,7 +288,7 @@ int open_window()
     return 0;
 }
 
-void set_palette(prn, ctn)  int prn, ctn;
+set_palette(prn, ctn)  int prn, ctn;
 {
     unsigned char cmd[4];
     cmd[0]=0x1B; cmd[1]=0x31;
@@ -296,7 +296,7 @@ void set_palette(prn, ctn)  int prn, ctn;
     write(g_win, cmd, 4);
 }
 
-void init_palette()
+init_palette()
 {
     set_palette(0, 0x00); set_palette(1, 0x12);
     set_palette(2, 0x09); set_palette(3, 0x3F);
@@ -316,7 +316,7 @@ int map_screen()
     return 0;
 }
 
-void unmap_screen()
+unmap_screen()
 {
     struct registers r;
     r.rg_b=(char)g_nblks; r.rg_u=(unsigned)g_scr;

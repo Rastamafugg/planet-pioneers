@@ -56,7 +56,7 @@ static unsigned char  g_nblks;  /* MMU block count from SS.ScInf     */
  * Pixel operations
  * ------------------------------------------------------------------ */
 
-void put_pixel(buf, x, y, c)
+put_pixel(buf, x, y, c)
 unsigned char *buf; int x, y, c;
 {
     unsigned char *p; int sh;
@@ -67,7 +67,7 @@ unsigned char *buf; int x, y, c;
 }
 
 /* Fast fill: requires x and w both 4-pixel-aligned; falls back otherwise */
-void fill_hline(buf, x, y, w, c)
+fill_hline(buf, x, y, w, c)
 unsigned char *buf; int x, y, w, c;
 {
     unsigned char pk;
@@ -83,14 +83,14 @@ unsigned char *buf; int x, y, w, c;
     }
 }
 
-void fill_rect(buf, x, y, w, h, c)
+fill_rect(buf, x, y, w, h, c)
 unsigned char *buf; int x, y, w, h, c;
 {
     int r;
     for (r = 0; r < h; r++) fill_hline(buf, x, y + r, w, c);
 }
 
-void flip()
+flip()
 {
     memcpy(g_scr, g_back, SCR_SIZE);
 }
@@ -118,7 +118,7 @@ int open_window()
     return 0;
 }
 
-void set_palette(prn, ctn)  int prn, ctn;
+set_palette(prn, ctn)  int prn, ctn;
 {
     /* ESC 0x31 PRN CTN */
     /* CTN: 6-bit RGB, bits [5:4]=Rhi,Rlo [3:2]=Ghi,Glo [1:0]=Bhi,Blo */
@@ -129,7 +129,7 @@ void set_palette(prn, ctn)  int prn, ctn;
     write(g_win, cmd, 4);
 }
 
-void init_palette()
+init_palette()
 {
     set_palette(0, 0x00);   /* 0 = black                             */
     set_palette(1, 0x12);   /* 1 = green  (plains terrain)           */
@@ -160,7 +160,7 @@ int map_screen()
     return 0;
 }
 
-void unmap_screen()
+unmap_screen()
 {
     /* F$ClrBlk: B = num_blocks, U = mapped address */
     struct registers r;
@@ -173,7 +173,7 @@ void unmap_screen()
  * Animation
  * ------------------------------------------------------------------ */
 
-void draw_background()
+draw_background()
 {
     /* Four horizontal color bands */
     fill_rect(g_back,  0,   0, SCR_W,  50, 1);
@@ -182,7 +182,7 @@ void draw_background()
     fill_rect(g_back,  0, 150, SCR_W,  50, 2);
 }
 
-void animate()
+animate()
 {
     struct registers r;
     int frame, bx;
