@@ -28,11 +28,21 @@
 #define SCR_ROWS  25        /* character rows    for DWSet            */
 
 /* OS-9 system call codes */
+#ifndef F_SLEEP
 #define F_SLEEP   0x0A
+#endif
+#ifndef F_MAPBLK
 #define F_MAPBLK  0x4F
+#endif
+#ifndef F_CLRBLK
 #define F_CLRBLK  0x50
+#endif
+#ifndef I_GETSTT
 #define I_GETSTT  0x8D
-#define SS_SCINF  0x8F      /* SS.ScInf GetStat code                 */
+#endif
+#ifndef SS_SCINF
+#define SS_SCINF  0x8F
+#endif
 
 /* Forward declarations (implicit int in K&R; listed for clarity) */
 int open(), write(), close();

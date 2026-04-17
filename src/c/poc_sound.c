@@ -22,9 +22,15 @@
 #include <stdlib.h>
 #include <os9.h>
 
+#ifndef I_SETSTT
 #define I_SETSTT  0x8E
+#endif
+#ifndef F_SLEEP
 #define F_SLEEP   0x0A
-#define SS_TONE   0x98        /* SS.Tone SetStat code                 */
+#endif
+#ifndef SS_SCINF
+#define SS_SCINF  0x8F
+#endif
 
 /*
  * Note frequency table — REQUIRES HARDWARE CALIBRATION.

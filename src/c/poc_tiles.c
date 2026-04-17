@@ -55,11 +55,21 @@
 #define MAP_OY    ((SCR_H - MAP_ROWS * TILE_H) / 2)    /* = 60 px   */
 
 /* OS-9 codes */
+#ifndef F_SLEEP
 #define F_SLEEP   0x0A
+#endif
+#ifndef F_MAPBLK
 #define F_MAPBLK  0x4F
+#endif
+#ifndef F_CLRBLK
 #define F_CLRBLK  0x50
+#endif
+#ifndef I_GETSTT
 #define I_GETSTT  0x8D
+#endif
+#ifndef SS_SCINF
 #define SS_SCINF  0x8F
+#endif
 
 int open(), write(), close();
 
