@@ -8705,7 +8705,7 @@ None
 
 **Additional Information**
 
-* This call produces a programmed IO tone through the speaker of the monitor used by the terminal device. You can make the call on any valid path open to a VDG or a window device.
+* This call produces a programmed I/O tone through the speaker of the monitor used by the terminal device. You can make the call on any valid path open to a VDG or a window device.
 * The system does not mask interrupts during the time the tone is being produced; however the calling process is paused until the tone is complete.
 * The frequency of the tone is a relative number ranging from 0 for a low frequency to 4095 for a high frequency. The widest variation of tones occurs at the high range of the scale.
 * This call is handled by VTIO/SndDrv or TC9IO.

@@ -93,11 +93,8 @@ The Windowing System allows as many windows as your computer's memory can suppor
 Support for the windowing system comes from several modules:
 
 - CoGrf - Handles the parsing of display codes for window creation and manipulation.
-- CoWin - Performs the same functions as CoGrf, but also adds in enhanced window border and mouse control functionality (use only CoGrf or CoWin in your sys-
-tem, not both!)
-
-- GrfDrv - This module is located in the CMDS directory of your boot disk and is responsible for carrying out the actual drawing and bitmap manipulation functions.
-It is automatically loaded as needed by NitrOS-9.
+- CoWin - Performs the same functions as CoGrf, but also adds in enhanced window border and mouse control functionality (use only CoGrf or CoWin in your system, not both!)
+- GrfDrv - This module is located in the CMDS directory of your boot disk and is responsible for carrying out the actual drawing and bitmap manipulation functions. It is automatically loaded as needed by NitrOS-9.
 
 In NitrOS-9, there are two types of windows: device windows and overlay windows.
 
