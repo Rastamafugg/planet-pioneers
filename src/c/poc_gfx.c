@@ -1,25 +1,24 @@
 /***********************************************************************
- * poc_gfx.c  -  NitrOS-9 EOU / CoCo 3 CoWin Graphics Control PoC
+ * poc_gfx.c  -  NitrOS-9 EOU / CoCo 3 direct graphics PoC
  *
- * Verifies documented CoWin graphics commands without direct screen RAM:
- *   - DWSet creates a type 6 graphics window: 320x200, 4 colors
- *   - Palette assigns RGB values to palette registers
- *   - FColor selects the active drawing palette register
- *   - SetDPtr + Bar draw filled rectangles through CoWin
+ * Uses SS.ScInf + F$MapBlk after diagnostics to map a type 6
+ * 320x200 4-color screen. Renders each frame into an off-screen
+ * malloc buffer, then copies that complete frame to screen RAM.
  *
- * Expected output:
- *   - Four horizontal bands: green, blue, green, blue
- *   - A white rectangle with a black inset moving left to right
+ * Expected SS.ScInf for this full-screen type 6 test:
+ *   nb=2, off=0, cells x=0 w=40 y=0 h=25
  *
  * Compile: dcc poc_gfx.c -s -m=24k -f=/dd/cmds/pocgfx
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <os9.h>
 
-/* Screen geometry: type 6, 320x200, 4 colors */
 #define SCR_W     320
 #define SCR_H     200
+#define SCR_BPR   80
+#define SCR_SIZE  16000
 #define SCR_TYPE  6
 #define SCR_COLS  40
 #define SCR_ROWS  25
@@ -33,22 +32,26 @@
 #ifndef SS_SCINF
 #define SS_SCINF  0x8F
 #endif
+#ifndef F_MAPBLK
+#define F_MAPBLK  0x4F
+#endif
+#ifndef F_CLRBLK
+#define F_CLRBLK  0x50
+#endif
 
 int open(), write(), close();
 
 static int g_win;
+static unsigned char *g_scr;
+static unsigned char *g_back;
+static int g_nblks;
+static int g_sblk;
+static int g_off;
 
 wrwin(buf, len)
 unsigned char *buf; int len;
 {
     write(g_win, buf, len);
-}
-
-putwrd(buf, pos, value)
-unsigned char *buf; int pos, value;
-{
-    buf[pos] = (unsigned char)((value >> 8) & 0xff);
-    buf[pos + 1] = (unsigned char)(value & 0xff);
 }
 
 nap(ticks)
@@ -86,28 +89,23 @@ scale0()
     wrwin(cmd, 3);
 }
 
-scdiag()
+palset(prn, ctn)
+int prn, ctn;
 {
-    struct registers r;
-    int nb, sb, off, wx, ww, wy, wh;
+    unsigned char cmd[4];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x31;
+    cmd[2] = (unsigned char)prn;
+    cmd[3] = (unsigned char)ctn;
+    wrwin(cmd, 4);
+}
 
-    r.rg_a = (char)g_win;
-    r.rg_b = (char)SS_SCINF;
-    if (_os9(I_GETSTT, &r)) {
-        printf("poc_gfx: SS.ScInf error #%d\n", r.rg_b & 0xff);
-        return;
-    }
-
-    nb = r.rg_a & 0xff;
-    sb = r.rg_b & 0xff;
-    off = r.rg_x;
-    wx = (r.rg_y >> 8) & 0xff;
-    ww = r.rg_y & 0xff;
-    wy = (r.rg_u >> 8) & 0xff;
-    wh = r.rg_u & 0xff;
-
-    printf("poc_gfx: SS.ScInf nb=%d sb=%d off=%x\n", nb, sb, off);
-    printf("poc_gfx: cells x=%d w=%d y=%d h=%d\n", wx, ww, wy, wh);
+palinit()
+{
+    palset(0, 0x00);
+    palset(1, 0x12);
+    palset(2, 0x09);
+    palset(3, 0x3f);
 }
 
 int open_window()
@@ -117,7 +115,6 @@ int open_window()
     g_win = open("/w7", 3);
     if (g_win < 0) return -1;
 
-    /* DWSet: ESC $20 STY CPX CPY SZX SZY PRN_FG PRN_BG PRN_BORDER */
     cmd[0] = 0x1b;
     cmd[1] = 0x20;
     cmd[2] = SCR_TYPE;
@@ -130,7 +127,6 @@ int open_window()
     cmd[9] = 0;
     wrwin(cmd, 10);
     nap(2);
-    scdiag();
     selwin();
     nap(2);
     curhide();
@@ -138,64 +134,106 @@ int open_window()
     return 0;
 }
 
-palset(prn, ctn)
-int prn, ctn;
+int scinfo()
 {
-    unsigned char cmd[4];
-    cmd[0] = 0x1b;
-    cmd[1] = 0x31;
-    cmd[2] = (unsigned char)prn;
-    cmd[3] = (unsigned char)ctn;
-    wrwin(cmd, 4);
+    struct registers r;
+    int wx, ww, wy, wh;
+
+    r.rg_a = (char)g_win;
+    r.rg_b = (char)SS_SCINF;
+    if (_os9(I_GETSTT, &r)) {
+        printf("poc_gfx: SS.ScInf error #%d\n", r.rg_b & 0xff);
+        return -1;
+    }
+
+    g_nblks = r.rg_a & 0xff;
+    g_sblk = r.rg_b & 0xff;
+    g_off = r.rg_x;
+    wx = (r.rg_y >> 8) & 0xff;
+    ww = r.rg_y & 0xff;
+    wy = (r.rg_u >> 8) & 0xff;
+    wh = r.rg_u & 0xff;
+
+    printf("poc_gfx: SS.ScInf nb=%d sb=%d off=%x\n",
+           g_nblks, g_sblk, g_off);
+    printf("poc_gfx: cells x=%d w=%d y=%d h=%d\n",
+           wx, ww, wy, wh);
+
+    if (g_nblks != 2 || g_off != 0 || wx != 0 || ww != 40 ||
+        wy != 0 || wh != 25) {
+        printf("poc_gfx: unsupported screen mapping\n");
+        return -1;
+    }
+
+    return 0;
 }
 
-fgset(prn)
-int prn;
+int mapwin()
 {
-    unsigned char cmd[3];
-    cmd[0] = 0x1b;
-    cmd[1] = 0x32;
-    cmd[2] = (unsigned char)prn;
-    wrwin(cmd, 3);
+    struct registers r;
+
+    r.rg_b = (char)g_nblks;
+    r.rg_x = (unsigned)g_sblk;
+    if (_os9(F_MAPBLK, &r)) {
+        printf("poc_gfx: F$MapBlk error #%d\n", r.rg_b & 0xff);
+        return -1;
+    }
+
+    g_scr = (unsigned char *)(r.rg_u + g_off);
+    return 0;
 }
 
-dptr(x, y)
-int x, y;
+unmapwin()
 {
-    unsigned char cmd[6];
-    cmd[0] = 0x1b;
-    cmd[1] = 0x40;
-    putwrd(cmd, 2, x);
-    putwrd(cmd, 4, y);
-    wrwin(cmd, 6);
+    struct registers r;
+    r.rg_b = (char)g_nblks;
+    r.rg_u = (unsigned)(g_scr - g_off);
+    _os9(F_CLRBLK, &r);
 }
 
-barabs(x, y)
-int x, y;
+putpx(x, y, c)
+int x, y, c;
 {
-    unsigned char cmd[6];
-    cmd[0] = 0x1b;
-    cmd[1] = 0x4a;
-    putwrd(cmd, 2, x);
-    putwrd(cmd, 4, y);
-    wrwin(cmd, 6);
+    unsigned char *p;
+    int sh;
+
+    if ((unsigned)x >= SCR_W || (unsigned)y >= SCR_H) return;
+    p = g_back + y * SCR_BPR + (x >> 2);
+    sh = 6 - ((x & 3) << 1);
+    *p = (*p & ~(3 << sh)) | ((c & 3) << sh);
 }
 
-rect(x, y, w, h, color)
-int x, y, w, h, color;
+hline(x, y, w, c)
+int x, y, w, c;
 {
-    if (w <= 0 || h <= 0) return;
-    fgset(color);
-    dptr(x, y);
-    barabs(x + w - 1, y + h - 1);
+    unsigned char pk, *p;
+    int i, n;
+
+    if (w <= 0 || y < 0 || y >= SCR_H) return;
+    if (x < 0) {
+        w += x;
+        x = 0;
+    }
+    if (x + w > SCR_W) w = SCR_W - x;
+    if (w <= 0) return;
+
+    if (((x | w) & 3) == 0) {
+        pk = c & 3;
+        pk |= pk << 2;
+        pk |= pk << 4;
+        p = g_back + y * SCR_BPR + (x >> 2);
+        n = w >> 2;
+        while (n--) *p++ = pk;
+    } else {
+        for (i = 0; i < w; i++) putpx(x + i, y, c);
+    }
 }
 
-palinit()
+rect(x, y, w, h, c)
+int x, y, w, h, c;
 {
-    palset(0, 0x00);   /* black */
-    palset(1, 0x12);   /* green */
-    palset(2, 0x09);   /* blue */
-    palset(3, 0x3f);   /* white */
+    int r;
+    for (r = 0; r < h; r++) hline(x, y + r, w, c);
 }
 
 bgdraw()
@@ -206,26 +244,27 @@ bgdraw()
     rect(0, 150, SCR_W, 50, 2);
 }
 
-restore_bar(x)
-int x;
+render(bx)
+int bx;
 {
-    rect(x, 80, 32, 20, 2);
-    rect(x, 100, 32, 20, 1);
+    bgdraw();
+    rect(bx, 80, 32, 40, 3);
+    rect(bx + 4, 88, 24, 24, 0);
+}
+
+flip()
+{
+    memcpy(g_scr, g_back, SCR_SIZE);
 }
 
 animate()
 {
-    int frame, bx, oldx;
+    int frame, bx;
 
-    oldx = 0;
-    for (frame = 0; frame < 120; frame++) {
+    for (frame = 0; frame < 180; frame++) {
         bx = (frame * 2) % (SCR_W - 32);
-
-        restore_bar(oldx);
-        rect(bx, 80, 32, 40, 3);
-        rect(bx + 4, 88, 24, 24, 0);
-        oldx = bx;
-
+        render(bx);
+        flip();
         nap(1);
     }
 }
@@ -238,9 +277,30 @@ main()
     }
 
     palinit();
-    bgdraw();
+    if (scinfo()) {
+        close(g_win);
+        exit(1);
+    }
+
+    g_back = (unsigned char *)malloc(SCR_SIZE);
+    if (!g_back) {
+        fprintf(stderr, "poc_gfx: malloc failed\n");
+        close(g_win);
+        exit(1);
+    }
+
+    if (mapwin()) {
+        free(g_back);
+        close(g_win);
+        exit(1);
+    }
+
+    memset(g_back, 0, SCR_SIZE);
+    flip();
     animate();
 
+    unmapwin();
+    free(g_back);
     close(g_win);
     exit(0);
 }
