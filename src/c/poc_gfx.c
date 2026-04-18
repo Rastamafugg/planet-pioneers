@@ -61,6 +61,25 @@ selwin()
     wrwin(cmd, 2);
 }
 
+curhide()
+{
+    unsigned char cmd[4];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x39;
+    cmd[2] = 0;
+    cmd[3] = 0;
+    wrwin(cmd, 4);
+}
+
+scale0()
+{
+    unsigned char cmd[3];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x35;
+    cmd[2] = 0;
+    wrwin(cmd, 3);
+}
+
 int open_window()
 {
     unsigned char cmd[10];
@@ -83,6 +102,8 @@ int open_window()
     nap(2);
     selwin();
     nap(2);
+    curhide();
+    scale0();
     return 0;
 }
 
