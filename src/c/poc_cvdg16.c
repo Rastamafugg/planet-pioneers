@@ -74,6 +74,66 @@ static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
     { 0, 2, 0, 0, 1, 0, 0, 2, 0 }
 };
 
+static unsigned char g_pmsk[SPR_BW * SPR_H] = {
+    0x00,0xf0,0xf0,0x00,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0x00,0xf0,0xf0,0x00,0x00,
+    0x00,0xf0,0xf0,0x00,0x00,
+    0x00,0xf0,0xf0,0x00,0x00,
+    0xff,0xff,0xff,0xff,0x00,
+    0xff,0xff,0xff,0xff,0x00,
+    0xff,0xff,0xff,0xff,0x00,
+    0x0f,0xf0,0x00,0xff,0x00,
+    0x0f,0xf0,0x00,0xff,0x00
+};
+
+static unsigned char g_pdat[SPR_BW * SPR_H] = {
+    0x00,0xcc,0xc0,0x00,0x00,
+    0x0c,0xcc,0xcc,0x00,0x00,
+    0x0c,0xcc,0xcc,0x00,0x00,
+    0x0c,0x33,0x3c,0x00,0x00,
+    0x00,0xcc,0xc0,0x00,0x00,
+    0x00,0xcc,0xc0,0x00,0x00,
+    0x00,0xcc,0xc0,0x00,0x00,
+    0xcc,0xcc,0xcc,0xcc,0x00,
+    0xcc,0xcc,0xcc,0xcc,0x00,
+    0xcc,0xcc,0xcc,0xcc,0x00,
+    0x0c,0xc0,0x00,0xcc,0x00,
+    0x0c,0xc0,0x00,0xcc,0x00
+};
+
+static unsigned char g_mmsk[SPR_BW * SPR_H] = {
+    0x00,0x00,0x00,0xff,0x00,
+    0x00,0x00,0x00,0xff,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0x0f,0xff,0xff,0x00,0x00,
+    0xff,0xff,0xff,0xff,0xf0,
+    0xff,0xff,0xff,0xff,0xf0,
+    0xff,0xff,0xff,0xff,0xf0,
+    0xff,0x00,0x00,0x0f,0xf0,
+    0xff,0x00,0x00,0x0f,0xf0,
+    0xff,0x00,0x00,0x0f,0xf0
+};
+
+static unsigned char g_mdat[SPR_BW * SPR_H] = {
+    0x00,0x00,0x00,0xee,0x00,
+    0x00,0x00,0x00,0xe3,0x00,
+    0x0e,0xee,0xee,0x00,0x00,
+    0x0e,0xee,0xee,0x00,0x00,
+    0x0e,0xee,0xee,0x00,0x00,
+    0x0e,0xee,0xee,0x00,0x00,
+    0xee,0xee,0xee,0xee,0xe0,
+    0xee,0xee,0xee,0xee,0xe0,
+    0xee,0xee,0xee,0xee,0xe0,
+    0xee,0x00,0x00,0x0e,0xe0,
+    0xee,0x00,0x00,0x0e,0xe0,
+    0xee,0x00,0x00,0x0e,0xe0
+};
+
 wpath(buf, len)
 unsigned char *buf; int len;
 {
@@ -299,27 +359,23 @@ unsigned char *base;
                  MAP_OY + r * TILE_H);
 }
 
-player(base, x, y)
-unsigned char *base; int x, y;
+drawspr(base, x, y, msk, dat)
+unsigned char *base; int x, y; unsigned char *msk, *dat;
 {
-    rect(base, x + 3, y,     3, 2, COLOR_PLYR);
-    rect(base, x + 2, y + 2, 5, 3, COLOR_PLYR);
-    rect(base, x + 3, y + 5, 3, 2, COLOR_PLYR);
-    rect(base, x + 1, y + 7, 7, 3, COLOR_PLYR);
-    rect(base, x + 1, y + 10,2, 2, COLOR_PLYR);
-    rect(base, x + 6, y + 10,2, 2, COLOR_PLYR);
-    rect(base, x + 3, y + 3, 3, 1, COLOR_WHITE);
-}
+    int r, c, i;
+    unsigned char *p;
+    unsigned char m;
 
-mule(base, x, y)
-unsigned char *base; int x, y;
-{
-    rect(base, x + 1, y + 2, 6, 4, COLOR_MULE);
-    rect(base, x,     y + 6, 9, 3, COLOR_MULE);
-    rect(base, x,     y + 9, 2, 3, COLOR_MULE);
-    rect(base, x + 7, y + 9, 2, 3, COLOR_MULE);
-    rect(base, x + 6, y,     3, 2, COLOR_MULE);
-    rect(base, x + 7, y,     1, 1, COLOR_WHITE);
+    i = 0;
+    for (r = 0; r < SPR_H; r++) {
+        p = base + (y + r) * SCR_BPR + (x >> 1);
+        for (c = 0; c < SPR_BW; c++) {
+            m = msk[i];
+            *p = (*p & ~m) | (dat[i] & m);
+            p++;
+            i++;
+        }
+    }
 }
 
 render_step(base, frame, old1p, old2p, bgp, bgm)
@@ -336,8 +392,8 @@ unsigned char *bgp, *bgm;
     rest_bg(base, *old2p, MULE_Y, bgm);
     save_bg(base, sx1, PLYR_Y, bgp);
     save_bg(base, sx2, MULE_Y, bgm);
-    player(base, sx1, PLYR_Y);
-    mule(base, sx2, MULE_Y);
+    drawspr(base, sx1, PLYR_Y, g_pmsk, g_pdat);
+    drawspr(base, sx2, MULE_Y, g_mmsk, g_mdat);
 
     *old1p = sx1;
     *old2p = sx2;
@@ -358,37 +414,17 @@ animate()
     save_bg(g_scr1, old12, MULE_Y, g_bg1m);
     save_bg(g_scr2, old21, PLYR_Y, g_bg2p);
     save_bg(g_scr2, old22, MULE_Y, g_bg2m);
-    player(g_scr1, old11, PLYR_Y);
-    mule(g_scr1, old12, MULE_Y);
-    player(g_scr2, old21, PLYR_Y);
-    mule(g_scr2, old22, MULE_Y);
+    drawspr(g_scr1, old11, PLYR_Y, g_pmsk, g_pdat);
+    drawspr(g_scr1, old12, MULE_Y, g_mmsk, g_mdat);
+    drawspr(g_scr2, old21, PLYR_Y, g_pmsk, g_pdat);
+    drawspr(g_scr2, old22, MULE_Y, g_mmsk, g_mdat);
     show_screen(g_num1);
     printf("poc_cvdg16: displayed initial frame on %s screen %d\n",
            g_devname, g_num1);
     nap(2);
 
     start = nowsec();
-    printf("poc_cvdg16: flip-only speed test\n");
-    for (frame = 0; frame < NFRAMES; frame++) {
-        if (frame & 1)
-            show_screen(g_num2);
-        else
-            show_screen(g_num1);
-    }
-
-    end = nowsec();
-    if (start >= 0 && end >= 0) {
-        elapsed = end - start;
-        if (elapsed < 0) elapsed += 3600;
-        if (elapsed > 0)
-            printf("poc_cvdg16: flip frames=%d seconds=%d fps=%d\n",
-                   frame, elapsed, frame / elapsed);
-        else
-            printf("poc_cvdg16: flip frames=%d seconds=<1\n", frame);
-    }
-
-    start = nowsec();
-    printf("poc_cvdg16: cached sprite restore+flip speed test\n");
+    printf("poc_cvdg16: packed masked sprite+flip speed test\n");
     for (frame = 0; frame < NFRAMES; frame++) {
         if (frame & 1) {
             render_step(g_scr2, frame, &old21, &old22, g_bg2p, g_bg2m);
@@ -404,10 +440,10 @@ animate()
         elapsed = end - start;
         if (elapsed < 0) elapsed += 3600;
         if (elapsed > 0)
-            printf("poc_cvdg16: cached frames=%d seconds=%d fps=%d\n",
+            printf("poc_cvdg16: packed frames=%d seconds=%d fps=%d\n",
                    frame, elapsed, frame / elapsed);
         else
-            printf("poc_cvdg16: cached frames=%d seconds=<1\n", frame);
+            printf("poc_cvdg16: packed frames=%d seconds=<1\n", frame);
     }
 }
 
