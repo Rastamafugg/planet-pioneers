@@ -27,6 +27,12 @@
 #ifndef F_SLEEP
 #define F_SLEEP   0x0A
 #endif
+#ifndef I_GETSTT
+#define I_GETSTT  0x8D
+#endif
+#ifndef SS_SCINF
+#define SS_SCINF  0x8F
+#endif
 
 int open(), write(), close();
 
@@ -80,6 +86,30 @@ scale0()
     wrwin(cmd, 3);
 }
 
+scdiag()
+{
+    struct registers r;
+    int nb, sb, off, wx, ww, wy, wh;
+
+    r.rg_a = (char)g_win;
+    r.rg_b = (char)SS_SCINF;
+    if (_os9(I_GETSTT, &r)) {
+        printf("poc_gfx: SS.ScInf error #%d\n", r.rg_b & 0xff);
+        return;
+    }
+
+    nb = r.rg_a & 0xff;
+    sb = r.rg_b & 0xff;
+    off = r.rg_x;
+    wx = (r.rg_y >> 8) & 0xff;
+    ww = r.rg_y & 0xff;
+    wy = (r.rg_u >> 8) & 0xff;
+    wh = r.rg_u & 0xff;
+
+    printf("poc_gfx: SS.ScInf nb=%d sb=%d off=%x\n", nb, sb, off);
+    printf("poc_gfx: cells x=%d w=%d y=%d h=%d\n", wx, ww, wy, wh);
+}
+
 int open_window()
 {
     unsigned char cmd[10];
@@ -100,6 +130,7 @@ int open_window()
     cmd[9] = 0;
     wrwin(cmd, 10);
     nap(2);
+    scdiag();
     selwin();
     nap(2);
     curhide();
