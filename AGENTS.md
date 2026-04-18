@@ -60,7 +60,8 @@ The script folder contains build scripts to compile source code and create modul
 - `src/script/buildc` is the full C rebuild script. Keep it updated with one `dcc` command for every C source file in `src/c`.
 - `src/script/patchc` is the fast deployment/test script. After each source change, update it to contain only the `dcc` commands for C sources changed in that task.
 - Remove unchanged build calls from `src/script/patchc` whenever updating it. The intent is that `patchc` remains minimal and task-specific, while `buildc` remains complete.
-- When a build script changes, copy it to `disks/ppsrc.dsk` with the same text normalization and `os9 del` / `os9 copy -l -r` workflow used for C source changes.
+- Do not update `disks/ppsrc.dsk` during normal source or script edits. The deploy/build workflow owns copying changed files into the disk image.
+- Only modify `disks/ppsrc.dsk` when the user explicitly requests disk-image changes or the task is specifically about disk-image contents.
 
 ## NitrOS-9 / CoCo 3 Lessons Learned
 
@@ -69,10 +70,7 @@ The script folder contains build scripts to compile source code and create modul
   - avoid `void` prototypes
   - avoid modern C syntax
   - keep external symbol names short and distinct to reduce linker/name-collision risk
-- After changing source files used by the emulator workflow, update the OS-9 disk image as part of the task:
-  - normalize copied text files to CRLF UTF-8 without BOM
-  - use `os9 del` followed by `os9 copy -l -r` for changed source and build scripts
-  - verify disk readback when behavior depends on the copied source
+- After changing source files used by the emulator workflow, leave repository files as the source of truth and rely on the deploy/build workflow to update the OS-9 disk image.
 - Prefer reference-document-confirmed interfaces before changing PoC code. Use the NitrOS-9 EOU Technical Reference, Level 2 Windowing System Manual, and DCC references as primary sources.
 - CoWin `GET/PUT` findings:
   - `GetBlk` / `PutBlk` can be fast enough for small sprite tests when the buffer contains the union of restored background plus new sprite
