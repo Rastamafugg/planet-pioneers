@@ -19,10 +19,11 @@
 #define MAP_ROWS   5
 #define TILE_W     17
 #define TILE_H     38
-#define MAP_OX     3
+#define MAP_OX     2
 #define MAP_OY     1
 #define SPR_W      9
 #define SPR_H      12
+#define SPR_BW     5
 #define PLYR_Y     (MAP_OY + 8)
 #define MULE_Y     (MAP_OY + TILE_H * 3)
 
@@ -60,10 +61,10 @@ static unsigned char *g_scr2;
 static int g_num1;
 static int g_num2;
 static char *g_devname;
-static unsigned char g_bg1p[SPR_W * SPR_H];
-static unsigned char g_bg1m[SPR_W * SPR_H];
-static unsigned char g_bg2p[SPR_W * SPR_H];
-static unsigned char g_bg2m[SPR_W * SPR_H];
+static unsigned char g_bg1p[SPR_BW * SPR_H];
+static unsigned char g_bg1m[SPR_BW * SPR_H];
+static unsigned char g_bg2p[SPR_BW * SPR_H];
+static unsigned char g_bg2m[SPR_BW * SPR_H];
 
 static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
     { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
@@ -196,37 +197,30 @@ unsigned char *base; int x, y, c;
         *p = (*p & 0x0f) | ((c & 15) << 4);
 }
 
-int getpx(base, x, y)
-unsigned char *base; int x, y;
-{
-    unsigned char v;
-
-    if ((unsigned)x >= SCR_W || (unsigned)y >= SCR_H) return 0;
-    v = *(base + y * SCR_BPR + (x >> 1));
-    if (x & 1) return v & 15;
-    return (v >> 4) & 15;
-}
-
 save_bg(base, x, y, buf)
 unsigned char *base; int x, y; unsigned char *buf;
 {
     int r, c, i;
+    unsigned char *p;
 
     i = 0;
-    for (r = 0; r < SPR_H; r++)
-        for (c = 0; c < SPR_W; c++)
-            buf[i++] = getpx(base, x + c, y + r);
+    for (r = 0; r < SPR_H; r++) {
+        p = base + (y + r) * SCR_BPR + (x >> 1);
+        for (c = 0; c < SPR_BW; c++) buf[i++] = *p++;
+    }
 }
 
 rest_bg(base, x, y, buf)
 unsigned char *base; int x, y; unsigned char *buf;
 {
     int r, c, i;
+    unsigned char *p;
 
     i = 0;
-    for (r = 0; r < SPR_H; r++)
-        for (c = 0; c < SPR_W; c++)
-            putpx(base, x + c, y + r, buf[i++]);
+    for (r = 0; r < SPR_H; r++) {
+        p = base + (y + r) * SCR_BPR + (x >> 1);
+        for (c = 0; c < SPR_BW; c++) *p++ = buf[i++];
+    }
 }
 
 hline(base, x, y, w, c)
