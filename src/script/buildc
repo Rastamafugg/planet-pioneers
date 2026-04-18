@@ -1,3 +1,5 @@
 dcc /d1/poc_gfx.c -s -m=8k -f=/dd/cmds/pocgfx
 dcc /d1/poc_sound.c -s -f=/dd/cmds/pocsound
 dcc /d1/poc_tiles.c -s -m=8k -f=/dd/cmds/poctiles
+dcc /d1/poc_cvdg.c -s -m=4k -f=/dd/cmds/poccvdg
+dcc /d1/poc_cwext.c -s -m=8k -f=/dd/cmds/poccwext
