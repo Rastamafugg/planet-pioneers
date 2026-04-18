@@ -14,7 +14,7 @@
 #define SCR_H      192
 #define SCR_BPR    80
 #define SCR_TYPE   2
-#define NFRAMES    120
+#define NFRAMES    600
 
 #ifndef I_SETSTT
 #define I_SETSTT   0x8E
@@ -211,14 +211,34 @@ animate()
     int frame, start, end, elapsed;
 
     render(g_scr1, 0);
+    render(g_scr2, 1);
     show_screen(g_num1);
     printf("poc_cvdg16: displayed initial frame on %s screen %d\n",
            g_devname, g_num1);
-    nap(4);
+    nap(2);
 
     start = nowsec();
-    printf("poc_cvdg16: page flip, 160x192x16\n");
+    printf("poc_cvdg16: flip-only speed test\n");
+    for (frame = 0; frame < NFRAMES; frame++) {
+        if (frame & 1)
+            show_screen(g_num2);
+        else
+            show_screen(g_num1);
+    }
 
+    end = nowsec();
+    if (start >= 0 && end >= 0) {
+        elapsed = end - start;
+        if (elapsed < 0) elapsed += 3600;
+        if (elapsed > 0)
+            printf("poc_cvdg16: flip frames=%d seconds=%d fps=%d\n",
+                   frame, elapsed, frame / elapsed);
+        else
+            printf("poc_cvdg16: flip frames=%d seconds=<1\n", frame);
+    }
+
+    start = nowsec();
+    printf("poc_cvdg16: render+flip speed test\n");
     for (frame = 0; frame < NFRAMES; frame++) {
         if (frame & 1) {
             render(g_scr2, frame);
@@ -227,7 +247,6 @@ animate()
             render(g_scr1, frame);
             show_screen(g_num1);
         }
-        nap(2);
     }
 
     end = nowsec();
@@ -235,10 +254,10 @@ animate()
         elapsed = end - start;
         if (elapsed < 0) elapsed += 3600;
         if (elapsed > 0)
-            printf("poc_cvdg16: frames=%d seconds=%d fps=%d\n",
+            printf("poc_cvdg16: render frames=%d seconds=%d fps=%d\n",
                    frame, elapsed, frame / elapsed);
         else
-            printf("poc_cvdg16: frames=%d seconds=<1\n", frame);
+            printf("poc_cvdg16: render frames=%d seconds=<1\n", frame);
     }
 }
 
