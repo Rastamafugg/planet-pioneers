@@ -26,6 +26,9 @@
 #ifndef F_SLEEP
 #define F_SLEEP   0x0A
 #endif
+#ifndef F_TIME
+#define F_TIME    0x15
+#endif
 #ifndef I_GETSTT
 #define I_GETSTT  0x8D
 #endif
@@ -60,6 +63,16 @@ int ticks;
     struct registers r;
     r.rg_x = (unsigned)ticks;
     _os9(F_SLEEP, &r);
+}
+
+int nowsec()
+{
+    struct registers r;
+    unsigned char pkt[6];
+
+    r.rg_x = (unsigned)pkt;
+    if (_os9(F_TIME, &r)) return -1;
+    return ((int)pkt[4]) * 60 + (int)pkt[5];
 }
 
 selwin()
@@ -259,13 +272,29 @@ flip()
 
 animate()
 {
-    int frame, bx;
+    int frame, bx, start, end, elapsed;
 
-    for (frame = 0; frame < 180; frame++) {
-        bx = (frame * 2) % (SCR_W - 32);
+    start = nowsec();
+    printf("poc_gfx: full-frame copy, sleep=off, step=8\n");
+
+    for (frame = 0; frame < 240; frame++) {
+        bx = (frame * 8) % (SCR_W - 32);
         render(bx);
         flip();
-        nap(1);
+    }
+
+    end = nowsec();
+    if (start >= 0 && end >= 0) {
+        elapsed = end - start;
+        if (elapsed < 0) elapsed += 3600;
+        if (elapsed > 0) {
+            printf("poc_gfx: frames=%d seconds=%d fps=%d\n",
+                   frame, elapsed, frame / elapsed);
+        } else {
+            printf("poc_gfx: frames=%d seconds=<1\n", frame);
+        }
+    } else {
+        printf("poc_gfx: F$Time unavailable\n");
     }
 }
 
