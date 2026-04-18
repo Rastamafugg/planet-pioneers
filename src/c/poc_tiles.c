@@ -83,7 +83,7 @@ int open_window()
 {
     unsigned char cmd[10];
 
-    g_win = open("/w1", 3);
+    g_win = open("/w7", 3);
     if (g_win < 0) return -1;
 
     cmd[0] = 0x1b;
@@ -237,7 +237,7 @@ int x, y;
     rect(x + 5, y,     3, 1, COLOR_WHITE);
 }
 
-frame(player_x, mule_x)
+drawfrm(player_x, mule_x)
 int player_x, mule_x;
 {
     cls();
@@ -254,7 +254,7 @@ animate()
         sx1 = MAP_OX + (frame * 2) % (MAP_COLS * TILE_W);
         sx2 = MAP_OX + MAP_COLS * TILE_W - 8
               - (frame * 2) % (MAP_COLS * TILE_W);
-        frame(sx1, sx2);
+        drawfrm(sx1, sx2);
         nap(2);
     }
 }
@@ -262,12 +262,12 @@ animate()
 main()
 {
     if (open_window()) {
-        fprintf(stderr, "tiles: window failed\n");
+        fprintf(stderr, "tiles: /w7 open failed\n");
         exit(1);
     }
 
     palinit();
-    frame(MAP_OX, MAP_OX + MAP_COLS * TILE_W - 8);
+    drawfrm(MAP_OX, MAP_OX + MAP_COLS * TILE_W - 8);
     animate();
 
     close(g_win);

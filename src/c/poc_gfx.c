@@ -65,7 +65,7 @@ int open_window()
 {
     unsigned char cmd[10];
 
-    g_win = open("/w1", 3);
+    g_win = open("/w7", 3);
     if (g_win < 0) return -1;
 
     /* DWSet: ESC $20 STY CPX CPY SZX SZY PRN_FG PRN_BG PRN_BORDER */
@@ -172,7 +172,7 @@ animate()
 main()
 {
     if (open_window()) {
-        fprintf(stderr, "poc_gfx: /w1 open failed\n");
+        fprintf(stderr, "poc_gfx: /w7 open failed\n");
         exit(1);
     }
 
