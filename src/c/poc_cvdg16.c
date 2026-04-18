@@ -14,7 +14,8 @@
 #define SCR_H      192
 #define SCR_BPR    80
 #define SCR_TYPE   2
-#define NFRAMES    150
+#define NFRAMES    300
+#define PATHFRAMES 150
 #define MAP_COLS   9
 #define MAP_ROWS   5
 #define TILE_W     17
@@ -429,10 +430,10 @@ int frame, mule, *xp, *yp, *dirp;
 {
     int seg, st, en, span, t;
 
-    seg = (frame * 4) / NFRAMES;
+    seg = (frame * 4) / PATHFRAMES;
     if (seg > 3) seg = 3;
-    st = (seg * NFRAMES) / 4;
-    en = ((seg + 1) * NFRAMES) / 4 - 1;
+    st = (seg * PATHFRAMES) / 4;
+    en = ((seg + 1) * PATHFRAMES) / 4 - 1;
     span = en - st;
     t = frame - st;
 
@@ -508,15 +509,15 @@ unsigned char *bgp, *bgm;
 {
     int sx1, sy1, sx2, sy2, dir1, dir2;
 
-    pathpos(frame, 0, &sx1, &sy1, &dir1);
-    pathpos(frame, 1, &sx2, &sy2, &dir2);
+    pathpos(frame / 2, 0, &sx1, &sy1, &dir1);
+    pathpos(frame / 2, 1, &sx2, &sy2, &dir2);
 
     rest_bg(base, *ox1p, *oy1p, bgp);
     rest_bg(base, *ox2p, *oy2p, bgm);
     save_bg(base, sx1, sy1, bgp);
     save_bg(base, sx2, sy2, bgm);
-    sprdraw(base, sx1, sy1, frame, dir1, 0);
-    sprdraw(base, sx2, sy2, frame + 1, dir2, 1);
+    sprdraw(base, sx1, sy1, frame / 2, dir1, 0);
+    sprdraw(base, sx2, sy2, frame / 2 + 1, dir2, 1);
 
     *ox1p = sx1;
     *oy1p = sy1;
