@@ -29,6 +29,7 @@
 #define MAP_OX    2
 #define MAP_OY    0
 #define SPR_W     18
+#define SPR_H     24
 
 #define COLOR_BLACK 0
 #define COLOR_GREEN 1
@@ -301,24 +302,56 @@ int x, y;
     rect(x + 14,y + 1,  2, 2, COLOR_WHITE);
 }
 
-drawfrm(player_x, mule_x)
-int player_x, mule_x;
+redraw(x, y, w, h)
+int x, y, w, h;
 {
-    cls();
-    mapdraw();
-    player(player_x, MAP_OY + 8);
-    mule(mule_x, MAP_OY + TILE_H * 3);
+    int c1, c2, r1, r2, r, c;
+
+    c1 = (x - MAP_OX) / TILE_W;
+    c2 = (x + w - 1 - MAP_OX) / TILE_W;
+    r1 = (y - MAP_OY) / TILE_H;
+    r2 = (y + h - 1 - MAP_OY) / TILE_H;
+
+    if (c1 < 0) c1 = 0;
+    if (r1 < 0) r1 = 0;
+    if (c2 >= MAP_COLS) c2 = MAP_COLS - 1;
+    if (r2 >= MAP_ROWS) r2 = MAP_ROWS - 1;
+
+    for (r = r1; r <= r2; r++)
+        for (c = c1; c <= c2; c++)
+            tile(g_map[r][c],
+                 MAP_OX + c * TILE_W,
+                 MAP_OY + r * TILE_H);
 }
 
 animate()
 {
-    int frame, sx1, sx2;
+    int frame, sx1, sx2, old1, old2;
+    int py, my;
 
-    for (frame = 0; frame < 80; frame++) {
+    py = MAP_OY + 8;
+    my = MAP_OY + TILE_H * 3;
+    old1 = MAP_OX;
+    old2 = MAP_OX + MAP_COLS * TILE_W - SPR_W;
+
+    cls();
+    mapdraw();
+    player(old1, py);
+    mule(old2, my);
+    nap(20);
+
+    for (frame = 1; frame < 80; frame++) {
         sx1 = MAP_OX + (frame * 4) % (MAP_COLS * TILE_W - SPR_W);
         sx2 = MAP_OX + MAP_COLS * TILE_W - SPR_W
               - (frame * 4) % (MAP_COLS * TILE_W - SPR_W);
-        drawfrm(sx1, sx2);
+
+        redraw(old1, py, SPR_W, SPR_H);
+        redraw(old2, my, SPR_W, SPR_H);
+        player(sx1, py);
+        mule(sx2, my);
+
+        old1 = sx1;
+        old2 = sx2;
         nap(1);
     }
 }
@@ -331,7 +364,6 @@ main()
     }
 
     palinit();
-    drawfrm(MAP_OX, MAP_OX + MAP_COLS * TILE_W - SPR_W);
     animate();
 
     close(g_win);
