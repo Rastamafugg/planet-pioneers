@@ -54,3 +54,43 @@ The following reference documents are core for understanding the programming lan
 All C source is located in the src/c folder. Once PoC code is verified, it should be moved to src/poc for reference, allowing the c folder to host only program source or current PoC or test code, when proving target technical design patterns or testing new or buggy code
 
 The script folder contains build scripts to compile source code and create modules on the CoCo 3.
+
+## Build Scripts
+
+- `src/script/buildc` is the full C rebuild script. Keep it updated with one `dcc` command for every C source file in `src/c`.
+- `src/script/patchc` is the fast deployment/test script. After each source change, update it to contain only the `dcc` commands for C sources changed in that task.
+- Remove unchanged build calls from `src/script/patchc` whenever updating it. The intent is that `patchc` remains minimal and task-specific, while `buildc` remains complete.
+- When a build script changes, copy it to `disks/ppsrc.dsk` with the same text normalization and `os9 del` / `os9 copy -l -r` workflow used for C source changes.
+
+## NitrOS-9 / CoCo 3 Lessons Learned
+
+- Treat DCC as an old K&R-style C compiler:
+  - keep declarations at the start of blocks
+  - avoid `void` prototypes
+  - avoid modern C syntax
+  - keep external symbol names short and distinct to reduce linker/name-collision risk
+- After changing source files used by the emulator workflow, update the OS-9 disk image as part of the task:
+  - normalize copied text files to CRLF UTF-8 without BOM
+  - use `os9 del` followed by `os9 copy -l -r` for changed source and build scripts
+  - verify disk readback when behavior depends on the copied source
+- Prefer reference-document-confirmed interfaces before changing PoC code. Use the NitrOS-9 EOU Technical Reference, Level 2 Windowing System Manual, and DCC references as primary sources.
+- CoWin `GET/PUT` findings:
+  - `GetBlk` / `PutBlk` can be fast enough for small sprite tests when the buffer contains the union of restored background plus new sprite
+  - one 40x40 union buffer per movement direction reduced flicker better than separate background restore plus sprite put
+  - use byte-aligned X coordinates where possible; prior tests used 8-pixel steps successfully
+  - CoWin command buffering does not provide true page flipping or guaranteed VBlank synchronization
+- CoWin timing findings:
+  - user-level VRN `/nil` `SS.FSet` can provide a documented 1/60-second timing gate for measurement
+  - this is not direct GIME VBlank/HSync access and should not be described as guaranteed tear-free synchronization
+- CoVDG screen findings:
+  - call `SS.AScrn`, `SS.DScrn`, and `SS.FScrn` with `I$SetStt` on a VTIO/CoVDG VDG path, not a CoWin window
+  - `/verm` has been observed to accept `SS.AScrn` where `term_vdg` and `TERM_VDG` did not
+  - `SS.DScrn` only displays if that CoVDG path is the current interactive device
+  - send CoVDG `Select` (`ESC $21`) to the opened VDG path before expecting `SS.DScrn` output to become visible
+  - screen 0 should be displayed before freeing allocated high-resolution screens
+- External screen memory findings:
+  - 320x192x16 CoVDG screen type 4 requires 32K and a second 32K allocation failed with error #207 in testing
+  - 160x192x16 CoVDG screen type 2 requires 16K and is the better PoC for testing whether page flipping works when memory fits
+- Timing diagnostics:
+  - `F$Time` returns only whole seconds, so FPS/timing output is coarse
+  - if a test reports unexpectedly slow timing, treat that as an observed fact and avoid assuming the cause without a discriminating test

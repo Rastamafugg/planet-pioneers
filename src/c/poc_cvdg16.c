@@ -35,7 +35,7 @@
 #define SS_FSCRN   0x8D
 #endif
 
-int open(), close();
+int open(), write(), close();
 
 static int g_path;
 static unsigned char *g_scr1;
@@ -43,6 +43,12 @@ static unsigned char *g_scr2;
 static int g_num1;
 static int g_num2;
 static char *g_devname;
+
+wpath(buf, len)
+unsigned char *buf; int len;
+{
+    write(g_path, buf, len);
+}
 
 nap(ticks)
 int ticks;
@@ -96,6 +102,16 @@ int num;
         return -1;
     }
     return 0;
+}
+
+vsel()
+{
+    unsigned char cmd[2];
+
+    cmd[0] = 0x1b;
+    cmd[1] = 0x21;
+    wpath(cmd, 2);
+    nap(2);
 }
 
 free_screen(num)
@@ -194,6 +210,12 @@ animate()
 {
     int frame, start, end, elapsed;
 
+    render(g_scr1, 0);
+    show_screen(g_num1);
+    printf("poc_cvdg16: displayed initial frame on %s screen %d\n",
+           g_devname, g_num1);
+    nap(4);
+
     start = nowsec();
     printf("poc_cvdg16: page flip, 160x192x16\n");
 
@@ -239,6 +261,7 @@ main()
         exit(1);
     }
 
+    vsel();
     animate();
     show_screen(0);
     free_screen(g_num1);
