@@ -2,8 +2,8 @@
  * poc_tiles.c  -  NitrOS-9 EOU / CoCo 3 Tile & Sprite Control PoC
  *
  * Verifies tile-grid and sprite placement using documented CoWin output:
- *   - DWSet creates a type 6 graphics window: 320x200, 4 colors
- *   - Palette assigns black, green, blue, and white
+ *   - DWSet creates a type 8 graphics window: 320x200, 16 colors
+ *   - Palette assigns tile colors plus separate marker colors
  *   - FColor, SetDPtr, and Bar draw all tile and sprite rectangles
  *   - 9x5 map grid is centered on screen
  *   - Two animated marker sprites traverse the grid
@@ -18,21 +18,24 @@
 
 #define SCR_W     320
 #define SCR_H     200
-#define SCR_TYPE  6
+#define SCR_TYPE  8
 #define SCR_COLS  40
 #define SCR_ROWS  25
 
-#define TILE_W    16
-#define TILE_H    16
+#define TILE_W    35
+#define TILE_H    40
 #define MAP_COLS  9
 #define MAP_ROWS  5
-#define MAP_OX    88
-#define MAP_OY    60
+#define MAP_OX    2
+#define MAP_OY    0
+#define SPR_W     18
 
 #define COLOR_BLACK 0
 #define COLOR_GREEN 1
 #define COLOR_BLUE  2
 #define COLOR_WHITE 3
+#define COLOR_PLYR  4
+#define COLOR_MULE  5
 
 #ifndef F_SLEEP
 #define F_SLEEP   0x0A
@@ -161,6 +164,8 @@ palinit()
     palset(COLOR_GREEN, 0x12);
     palset(COLOR_BLUE,  0x09);
     palset(COLOR_WHITE, 0x3f);
+    palset(COLOR_PLYR,  0x2d);
+    palset(COLOR_MULE,  0x36);
 }
 
 cls()
@@ -172,25 +177,30 @@ plain(x, y)
 int x, y;
 {
     rect(x, y, TILE_W, TILE_H, COLOR_GREEN);
-    rect(x + 2, y + 7, 12, 2, COLOR_BLACK);
+    rect(x + 4, y + 18, TILE_W - 8, 4, COLOR_BLACK);
+    rect(x + 10, y + 8, 4, 4, COLOR_BLACK);
+    rect(x + 23, y + 28, 4, 4, COLOR_BLACK);
 }
 
 river(x, y)
 int x, y;
 {
     rect(x, y, TILE_W, TILE_H, COLOR_BLUE);
-    rect(x + 6, y, 4, TILE_H, COLOR_WHITE);
-    rect(x + 7, y, 2, TILE_H, COLOR_BLUE);
+    rect(x + 13, y, 9, TILE_H, COLOR_WHITE);
+    rect(x + 16, y, 3, TILE_H, COLOR_BLUE);
+    rect(x + 11, y + 12, 13, 4, COLOR_BLUE);
+    rect(x + 11, y + 28, 13, 4, COLOR_BLUE);
 }
 
 mountn(x, y)
 int x, y;
 {
     rect(x, y, TILE_W, TILE_H, COLOR_GREEN);
-    rect(x + 6, y + 2, 4, 3, COLOR_WHITE);
-    rect(x + 4, y + 5, 8, 3, COLOR_WHITE);
-    rect(x + 2, y + 8, 12, 4, COLOR_WHITE);
-    rect(x + 7, y + 2, 2, 3, COLOR_BLACK);
+    rect(x + 15, y + 4, 5, 7, COLOR_WHITE);
+    rect(x + 11, y + 11, 13, 7, COLOR_WHITE);
+    rect(x + 7, y + 18, 21, 9, COLOR_WHITE);
+    rect(x + 3, y + 27, 29, 8, COLOR_WHITE);
+    rect(x + 16, y + 5, 3, 9, COLOR_BLACK);
 }
 
 tile(kind, x, y)
@@ -219,22 +229,24 @@ mapdraw()
 player(x, y)
 int x, y;
 {
-    rect(x + 2, y,     4, 2, COLOR_WHITE);
-    rect(x + 1, y + 2, 6, 2, COLOR_WHITE);
-    rect(x + 3, y + 4, 2, 1, COLOR_WHITE);
-    rect(x,     y + 5, 8, 2, COLOR_WHITE);
-    rect(x + 1, y + 7, 2, 1, COLOR_WHITE);
-    rect(x + 5, y + 7, 2, 1, COLOR_WHITE);
+    rect(x + 6, y,      6, 4, COLOR_PLYR);
+    rect(x + 4, y + 4, 10, 5, COLOR_PLYR);
+    rect(x + 7, y + 9,  4, 3, COLOR_PLYR);
+    rect(x + 2, y + 12,14, 7, COLOR_PLYR);
+    rect(x + 3, y + 19, 4, 5, COLOR_PLYR);
+    rect(x + 11,y + 19, 4, 5, COLOR_PLYR);
+    rect(x + 7, y + 5,  4, 2, COLOR_WHITE);
 }
 
 mule(x, y)
 int x, y;
 {
-    rect(x + 1, y + 1, 6, 3, COLOR_GREEN);
-    rect(x,     y + 4, 8, 2, COLOR_GREEN);
-    rect(x,     y + 6, 2, 2, COLOR_GREEN);
-    rect(x + 6, y + 6, 2, 2, COLOR_GREEN);
-    rect(x + 5, y,     3, 1, COLOR_WHITE);
+    rect(x + 3, y + 3, 12, 8, COLOR_MULE);
+    rect(x,     y + 11,18, 6, COLOR_MULE);
+    rect(x + 1, y + 17, 4, 7, COLOR_MULE);
+    rect(x + 13,y + 17, 4, 7, COLOR_MULE);
+    rect(x + 12,y,      6, 4, COLOR_MULE);
+    rect(x + 14,y + 1,  2, 2, COLOR_WHITE);
 }
 
 drawfrm(player_x, mule_x)
@@ -242,20 +254,20 @@ int player_x, mule_x;
 {
     cls();
     mapdraw();
-    player(player_x, MAP_OY + 4);
-    mule(mule_x, MAP_OY + 56);
+    player(player_x, MAP_OY + 8);
+    mule(mule_x, MAP_OY + TILE_H * 3);
 }
 
 animate()
 {
     int frame, sx1, sx2;
 
-    for (frame = 0; frame < 144; frame++) {
-        sx1 = MAP_OX + (frame * 2) % (MAP_COLS * TILE_W);
-        sx2 = MAP_OX + MAP_COLS * TILE_W - 8
-              - (frame * 2) % (MAP_COLS * TILE_W);
+    for (frame = 0; frame < 80; frame++) {
+        sx1 = MAP_OX + (frame * 4) % (MAP_COLS * TILE_W - SPR_W);
+        sx2 = MAP_OX + MAP_COLS * TILE_W - SPR_W
+              - (frame * 4) % (MAP_COLS * TILE_W - SPR_W);
         drawfrm(sx1, sx2);
-        nap(2);
+        nap(1);
     }
 }
 
@@ -267,7 +279,7 @@ main()
     }
 
     palinit();
-    drawfrm(MAP_OX, MAP_OX + MAP_COLS * TILE_W - 8);
+    drawfrm(MAP_OX, MAP_OX + MAP_COLS * TILE_W - SPR_W);
     animate();
 
     close(g_win);

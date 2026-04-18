@@ -154,16 +154,25 @@ bgdraw()
     rect(0, 150, SCR_W, 50, 2);
 }
 
+restore_bar(x)
+int x;
+{
+    rect(x, 80, 32, 20, 2);
+    rect(x, 100, 32, 20, 1);
+}
+
 animate()
 {
-    int frame, bx;
+    int frame, bx, oldx;
 
-    for (frame = 0; frame < 180; frame++) {
+    oldx = 0;
+    for (frame = 0; frame < 120; frame++) {
         bx = (frame * 2) % (SCR_W - 32);
 
-        bgdraw();
+        restore_bar(oldx);
         rect(bx, 80, 32, 40, 3);
         rect(bx + 4, 88, 24, 24, 0);
+        oldx = bx;
 
         nap(1);
     }
