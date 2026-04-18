@@ -50,25 +50,33 @@ static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
     { 0, 2, 0, 0, 1, 0, 0, 2, 0 }
 };
 
-write_cmd(buf, len)
+wrwin(buf, len)
 unsigned char *buf; int len;
 {
     write(g_win, buf, len);
 }
 
-put_word(buf, pos, value)
+putwrd(buf, pos, value)
 unsigned char *buf; int pos, value;
 {
     buf[pos] = (unsigned char)((value >> 8) & 0xff);
     buf[pos + 1] = (unsigned char)(value & 0xff);
 }
 
-sleep_ticks(ticks)
+nap(ticks)
 int ticks;
 {
     struct registers r;
     r.rg_x = (unsigned)ticks;
     _os9(F_SLEEP, &r);
+}
+
+selwin()
+{
+    unsigned char cmd[2];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x21;
+    wrwin(cmd, 2);
 }
 
 int open_window()
@@ -88,12 +96,14 @@ int open_window()
     cmd[7] = COLOR_WHITE;
     cmd[8] = COLOR_BLACK;
     cmd[9] = COLOR_BLACK;
-    write_cmd(cmd, 10);
-    sleep_ticks(2);
+    wrwin(cmd, 10);
+    nap(2);
+    selwin();
+    nap(2);
     return 0;
 }
 
-set_palette(prn, ctn)
+palset(prn, ctn)
 int prn, ctn;
 {
     unsigned char cmd[4];
@@ -101,139 +111,139 @@ int prn, ctn;
     cmd[1] = 0x31;
     cmd[2] = (unsigned char)prn;
     cmd[3] = (unsigned char)ctn;
-    write_cmd(cmd, 4);
+    wrwin(cmd, 4);
 }
 
-set_fcolor(prn)
+fgset(prn)
 int prn;
 {
     unsigned char cmd[3];
     cmd[0] = 0x1b;
     cmd[1] = 0x32;
     cmd[2] = (unsigned char)prn;
-    write_cmd(cmd, 3);
+    wrwin(cmd, 3);
 }
 
-set_draw_ptr(x, y)
+dptr(x, y)
 int x, y;
 {
     unsigned char cmd[6];
     cmd[0] = 0x1b;
     cmd[1] = 0x40;
-    put_word(cmd, 2, x);
-    put_word(cmd, 4, y);
-    write_cmd(cmd, 6);
+    putwrd(cmd, 2, x);
+    putwrd(cmd, 4, y);
+    wrwin(cmd, 6);
 }
 
-bar_to(x, y)
+barabs(x, y)
 int x, y;
 {
     unsigned char cmd[6];
     cmd[0] = 0x1b;
     cmd[1] = 0x4a;
-    put_word(cmd, 2, x);
-    put_word(cmd, 4, y);
-    write_cmd(cmd, 6);
+    putwrd(cmd, 2, x);
+    putwrd(cmd, 4, y);
+    wrwin(cmd, 6);
 }
 
-fill_rect(x, y, w, h, color)
+rect(x, y, w, h, color)
 int x, y, w, h, color;
 {
     if (w <= 0 || h <= 0) return;
-    set_fcolor(color);
-    set_draw_ptr(x, y);
-    bar_to(x + w - 1, y + h - 1);
+    fgset(color);
+    dptr(x, y);
+    barabs(x + w - 1, y + h - 1);
 }
 
-init_palette()
+palinit()
 {
-    set_palette(COLOR_BLACK, 0x00);
-    set_palette(COLOR_GREEN, 0x12);
-    set_palette(COLOR_BLUE,  0x09);
-    set_palette(COLOR_WHITE, 0x3f);
+    palset(COLOR_BLACK, 0x00);
+    palset(COLOR_GREEN, 0x12);
+    palset(COLOR_BLUE,  0x09);
+    palset(COLOR_WHITE, 0x3f);
 }
 
-clear_screen()
+cls()
 {
-    fill_rect(0, 0, SCR_W, SCR_H, COLOR_BLACK);
+    rect(0, 0, SCR_W, SCR_H, COLOR_BLACK);
 }
 
-draw_plains_tile(x, y)
+plain(x, y)
 int x, y;
 {
-    fill_rect(x, y, TILE_W, TILE_H, COLOR_GREEN);
-    fill_rect(x + 2, y + 7, 12, 2, COLOR_BLACK);
+    rect(x, y, TILE_W, TILE_H, COLOR_GREEN);
+    rect(x + 2, y + 7, 12, 2, COLOR_BLACK);
 }
 
-draw_river_tile(x, y)
+river(x, y)
 int x, y;
 {
-    fill_rect(x, y, TILE_W, TILE_H, COLOR_BLUE);
-    fill_rect(x + 6, y, 4, TILE_H, COLOR_WHITE);
-    fill_rect(x + 7, y, 2, TILE_H, COLOR_BLUE);
+    rect(x, y, TILE_W, TILE_H, COLOR_BLUE);
+    rect(x + 6, y, 4, TILE_H, COLOR_WHITE);
+    rect(x + 7, y, 2, TILE_H, COLOR_BLUE);
 }
 
-draw_mountain_tile(x, y)
+mountn(x, y)
 int x, y;
 {
-    fill_rect(x, y, TILE_W, TILE_H, COLOR_GREEN);
-    fill_rect(x + 6, y + 2, 4, 3, COLOR_WHITE);
-    fill_rect(x + 4, y + 5, 8, 3, COLOR_WHITE);
-    fill_rect(x + 2, y + 8, 12, 4, COLOR_WHITE);
-    fill_rect(x + 7, y + 2, 2, 3, COLOR_BLACK);
+    rect(x, y, TILE_W, TILE_H, COLOR_GREEN);
+    rect(x + 6, y + 2, 4, 3, COLOR_WHITE);
+    rect(x + 4, y + 5, 8, 3, COLOR_WHITE);
+    rect(x + 2, y + 8, 12, 4, COLOR_WHITE);
+    rect(x + 7, y + 2, 2, 3, COLOR_BLACK);
 }
 
-draw_tile(kind, x, y)
+tile(kind, x, y)
 int kind, x, y;
 {
     if (kind == 1) {
-        draw_river_tile(x, y);
+        river(x, y);
     } else if (kind == 2) {
-        draw_mountain_tile(x, y);
+        mountn(x, y);
     } else {
-        draw_plains_tile(x, y);
+        plain(x, y);
     }
 }
 
-draw_map()
+mapdraw()
 {
     int r, c;
 
     for (r = 0; r < MAP_ROWS; r++)
         for (c = 0; c < MAP_COLS; c++)
-            draw_tile(g_map[r][c],
-                      MAP_OX + c * TILE_W,
-                      MAP_OY + r * TILE_H);
+            tile(g_map[r][c],
+                 MAP_OX + c * TILE_W,
+                 MAP_OY + r * TILE_H);
 }
 
-draw_player(x, y)
+player(x, y)
 int x, y;
 {
-    fill_rect(x + 2, y,     4, 2, COLOR_WHITE);
-    fill_rect(x + 1, y + 2, 6, 2, COLOR_WHITE);
-    fill_rect(x + 3, y + 4, 2, 1, COLOR_WHITE);
-    fill_rect(x,     y + 5, 8, 2, COLOR_WHITE);
-    fill_rect(x + 1, y + 7, 2, 1, COLOR_WHITE);
-    fill_rect(x + 5, y + 7, 2, 1, COLOR_WHITE);
+    rect(x + 2, y,     4, 2, COLOR_WHITE);
+    rect(x + 1, y + 2, 6, 2, COLOR_WHITE);
+    rect(x + 3, y + 4, 2, 1, COLOR_WHITE);
+    rect(x,     y + 5, 8, 2, COLOR_WHITE);
+    rect(x + 1, y + 7, 2, 1, COLOR_WHITE);
+    rect(x + 5, y + 7, 2, 1, COLOR_WHITE);
 }
 
-draw_mule(x, y)
+mule(x, y)
 int x, y;
 {
-    fill_rect(x + 1, y + 1, 6, 3, COLOR_GREEN);
-    fill_rect(x,     y + 4, 8, 2, COLOR_GREEN);
-    fill_rect(x,     y + 6, 2, 2, COLOR_GREEN);
-    fill_rect(x + 6, y + 6, 2, 2, COLOR_GREEN);
-    fill_rect(x + 5, y,     3, 1, COLOR_WHITE);
+    rect(x + 1, y + 1, 6, 3, COLOR_GREEN);
+    rect(x,     y + 4, 8, 2, COLOR_GREEN);
+    rect(x,     y + 6, 2, 2, COLOR_GREEN);
+    rect(x + 6, y + 6, 2, 2, COLOR_GREEN);
+    rect(x + 5, y,     3, 1, COLOR_WHITE);
 }
 
-render_frame(player_x, mule_x)
+frame(player_x, mule_x)
 int player_x, mule_x;
 {
-    clear_screen();
-    draw_map();
-    draw_player(player_x, MAP_OY + 4);
-    draw_mule(mule_x, MAP_OY + 56);
+    cls();
+    mapdraw();
+    player(player_x, MAP_OY + 4);
+    mule(mule_x, MAP_OY + 56);
 }
 
 animate()
@@ -244,8 +254,8 @@ animate()
         sx1 = MAP_OX + (frame * 2) % (MAP_COLS * TILE_W);
         sx2 = MAP_OX + MAP_COLS * TILE_W - 8
               - (frame * 2) % (MAP_COLS * TILE_W);
-        render_frame(sx1, sx2);
-        sleep_ticks(2);
+        frame(sx1, sx2);
+        nap(2);
     }
 }
 
@@ -256,8 +266,8 @@ main()
         exit(1);
     }
 
-    init_palette();
-    render_frame(MAP_OX, MAP_OX + MAP_COLS * TILE_W - 8);
+    palinit();
+    frame(MAP_OX, MAP_OX + MAP_COLS * TILE_W - 8);
     animate();
 
     close(g_win);

@@ -32,25 +32,33 @@ int open(), write(), close();
 
 static int g_win;
 
-write_cmd(buf, len)
+wrwin(buf, len)
 unsigned char *buf; int len;
 {
     write(g_win, buf, len);
 }
 
-put_word(buf, pos, value)
+putwrd(buf, pos, value)
 unsigned char *buf; int pos, value;
 {
     buf[pos] = (unsigned char)((value >> 8) & 0xff);
     buf[pos + 1] = (unsigned char)(value & 0xff);
 }
 
-sleep_ticks(ticks)
+nap(ticks)
 int ticks;
 {
     struct registers r;
     r.rg_x = (unsigned)ticks;
     _os9(F_SLEEP, &r);
+}
+
+selwin()
+{
+    unsigned char cmd[2];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x21;
+    wrwin(cmd, 2);
 }
 
 int open_window()
@@ -71,12 +79,14 @@ int open_window()
     cmd[7] = 3;
     cmd[8] = 0;
     cmd[9] = 0;
-    write_cmd(cmd, 10);
-    sleep_ticks(2);
+    wrwin(cmd, 10);
+    nap(2);
+    selwin();
+    nap(2);
     return 0;
 }
 
-set_palette(prn, ctn)
+palset(prn, ctn)
 int prn, ctn;
 {
     unsigned char cmd[4];
@@ -84,64 +94,64 @@ int prn, ctn;
     cmd[1] = 0x31;
     cmd[2] = (unsigned char)prn;
     cmd[3] = (unsigned char)ctn;
-    write_cmd(cmd, 4);
+    wrwin(cmd, 4);
 }
 
-set_fcolor(prn)
+fgset(prn)
 int prn;
 {
     unsigned char cmd[3];
     cmd[0] = 0x1b;
     cmd[1] = 0x32;
     cmd[2] = (unsigned char)prn;
-    write_cmd(cmd, 3);
+    wrwin(cmd, 3);
 }
 
-set_draw_ptr(x, y)
+dptr(x, y)
 int x, y;
 {
     unsigned char cmd[6];
     cmd[0] = 0x1b;
     cmd[1] = 0x40;
-    put_word(cmd, 2, x);
-    put_word(cmd, 4, y);
-    write_cmd(cmd, 6);
+    putwrd(cmd, 2, x);
+    putwrd(cmd, 4, y);
+    wrwin(cmd, 6);
 }
 
-bar_to(x, y)
+barabs(x, y)
 int x, y;
 {
     unsigned char cmd[6];
     cmd[0] = 0x1b;
     cmd[1] = 0x4a;
-    put_word(cmd, 2, x);
-    put_word(cmd, 4, y);
-    write_cmd(cmd, 6);
+    putwrd(cmd, 2, x);
+    putwrd(cmd, 4, y);
+    wrwin(cmd, 6);
 }
 
-fill_rect(x, y, w, h, color)
+rect(x, y, w, h, color)
 int x, y, w, h, color;
 {
     if (w <= 0 || h <= 0) return;
-    set_fcolor(color);
-    set_draw_ptr(x, y);
-    bar_to(x + w - 1, y + h - 1);
+    fgset(color);
+    dptr(x, y);
+    barabs(x + w - 1, y + h - 1);
 }
 
-init_palette()
+palinit()
 {
-    set_palette(0, 0x00);   /* black */
-    set_palette(1, 0x12);   /* green */
-    set_palette(2, 0x09);   /* blue */
-    set_palette(3, 0x3f);   /* white */
+    palset(0, 0x00);   /* black */
+    palset(1, 0x12);   /* green */
+    palset(2, 0x09);   /* blue */
+    palset(3, 0x3f);   /* white */
 }
 
-draw_background()
+bgdraw()
 {
-    fill_rect(0,   0, SCR_W, 50, 1);
-    fill_rect(0,  50, SCR_W, 50, 2);
-    fill_rect(0, 100, SCR_W, 50, 1);
-    fill_rect(0, 150, SCR_W, 50, 2);
+    rect(0,   0, SCR_W, 50, 1);
+    rect(0,  50, SCR_W, 50, 2);
+    rect(0, 100, SCR_W, 50, 1);
+    rect(0, 150, SCR_W, 50, 2);
 }
 
 animate()
@@ -151,11 +161,11 @@ animate()
     for (frame = 0; frame < 180; frame++) {
         bx = (frame * 2) % (SCR_W - 32);
 
-        draw_background();
-        fill_rect(bx, 80, 32, 40, 3);
-        fill_rect(bx + 4, 88, 24, 24, 0);
+        bgdraw();
+        rect(bx, 80, 32, 40, 3);
+        rect(bx + 4, 88, 24, 24, 0);
 
-        sleep_ticks(1);
+        nap(1);
     }
 }
 
@@ -166,8 +176,8 @@ main()
         exit(1);
     }
 
-    init_palette();
-    draw_background();
+    palinit();
+    bgdraw();
     animate();
 
     close(g_win);
