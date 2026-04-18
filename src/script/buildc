@@ -1,1 +1,2 @@
 dcc /d1/poc_gfx.c -s -m=8k -f=/dd/cmds/pocgfx
+dcc /d1/poc_vsync.c -s -m=4k -f=/dd/cmds/pocvsync

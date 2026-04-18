@@ -6,7 +6,8 @@
  *   - Palette sets visible test colors
  *   - FColor, SetDPtr, and Bar draw the initial background and sprite
  *   - GetBlk captures one 40x40 movement buffer per direction
- *   - PutBlk moves and restores the sprite in one command per frame
+ *   - /nil VRN VIRQ gives a documented 1/60 second timing gate
+ *   - PutBlk moves and restores the sprite in one command per step
  *
  * Compile: dcc poc_gfx.c -s -m=8k -f=/dd/cmds/pocgfx
  ***********************************************************************/
@@ -23,10 +24,12 @@
 #define SPR_H     40
 #define SPR_Y     80
 #define STEP      8
+#define TICKS     4
 #define MOVE_W    40
 #define GP_GRP    7
 #define GP_RIGHT  1
 #define GP_LEFT   2
+#define VS_SIG    0x7f
 
 #define COLOR_BLACK 0
 #define COLOR_GREEN 1
@@ -39,10 +42,29 @@
 #ifndef F_TIME
 #define F_TIME    0x15
 #endif
+#ifndef I_SETSTT
+#define I_SETSTT  0x8E
+#endif
+#ifndef SS_FSET
+#define SS_FSET   0xC7
+#endif
 
-int open(), write(), close();
+int open(), write(), close(), intercept();
 
 static int g_win;
+static int g_vpath;
+static int g_vok;
+static int g_vcnt;
+
+vtrap(sig)
+int sig;
+{
+    if (sig == VS_SIG) {
+        g_vcnt++;
+        return;
+    }
+    exit(sig);
+}
 
 wrwin(buf, len)
 unsigned char *buf; int len;
@@ -73,6 +95,67 @@ int nowsec()
     r.rg_x = (unsigned)pkt;
     if (_os9(F_TIME, &r)) return -1;
     return ((int)pkt[4]) * 60 + (int)pkt[5];
+}
+
+int vinit()
+{
+    struct registers r;
+
+    g_vok = 0;
+    g_vcnt = 0;
+    g_vpath = open("/nil", 3);
+    if (g_vpath < 0) {
+        printf("poc_gfx: /nil open failed, VIRQ disabled\n");
+        return -1;
+    }
+
+    intercept(vtrap);
+    r.rg_a = (char)g_vpath;
+    r.rg_b = (char)SS_FSET;
+    r.rg_x = 1;
+    r.rg_y = 1;
+    r.rg_u = VS_SIG;
+    if (_os9(I_SETSTT, &r)) {
+        printf("poc_gfx: SS.FSet VIRQ error #%d\n", r.rg_b & 0xff);
+        close(g_vpath);
+        g_vpath = -1;
+        return -1;
+    }
+
+    g_vok = 1;
+    printf("poc_gfx: /nil FS2+ VIRQ active, signal=%d\n", VS_SIG);
+    return 0;
+}
+
+vwait()
+{
+    int next;
+    struct registers r;
+
+    if (!g_vok) {
+        nap(2);
+        return;
+    }
+    next = g_vcnt + 1;
+    while (g_vcnt < next) {
+        r.rg_x = 0;
+        _os9(F_SLEEP, &r);
+    }
+}
+
+vwaitn(count)
+int count;
+{
+    int i;
+
+    for (i = 0; i < count; i++) vwait();
+}
+
+vdone()
+{
+    if (g_vpath >= 0) close(g_vpath);
+    g_vpath = -1;
+    g_vok = 0;
 }
 
 selwin()
@@ -263,22 +346,26 @@ buffers_make()
 
 animate()
 {
-    int frame, x, dir, start, end, elapsed;
+    int frame, x, dir, start, end, elapsed, ticks;
 
     x = 0;
     dir = 1;
     sprite_draw(x, SPR_Y);
-    nap(20);
+    vwaitn(TICKS);
 
     start = nowsec();
-    printf("poc_gfx: union GET/PUT bounce, step=%d\n", STEP);
+    ticks = g_vcnt;
+    printf("poc_gfx: union GET/PUT bounce, step=%d wait=%d ticks\n",
+           STEP, TICKS);
 
     for (frame = 1; frame < 240; frame++) {
         if (dir > 0) {
+            vwaitn(TICKS);
             putblk(GP_GRP, GP_RIGHT, x, SPR_Y);
             x += STEP;
             if (x >= SCR_W - SPR_W) dir = -1;
         } else {
+            vwaitn(TICKS);
             putblk(GP_GRP, GP_LEFT, x - STEP, SPR_Y);
             x -= STEP;
             if (x <= 0) dir = 1;
@@ -292,6 +379,8 @@ animate()
         if (elapsed > 0) {
             printf("poc_gfx: frames=%d seconds=%d fps=%d\n",
                    frame - 1, elapsed, (frame - 1) / elapsed);
+            printf("poc_gfx: virq_ticks=%d tickrate=%d\n",
+                   g_vcnt - ticks, (g_vcnt - ticks) / elapsed);
         } else {
             printf("poc_gfx: frames=%d seconds=<1\n", frame - 1);
         }
@@ -302,6 +391,7 @@ animate()
 
 main()
 {
+    g_vpath = -1;
     if (open_window()) {
         fprintf(stderr, "poc_gfx: /w7 open failed\n");
         exit(1);
@@ -310,7 +400,9 @@ main()
     palinit();
     kilbuf(GP_GRP, 0);
     buffers_make();
+    vinit();
     animate();
+    vdone();
     kilbuf(GP_GRP, 0);
     close(g_win);
     exit(0);
