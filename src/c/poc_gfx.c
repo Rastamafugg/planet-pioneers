@@ -5,8 +5,8 @@
  *   - DWSet creates a type 6 graphics window: 320x200, 4 colors
  *   - Palette sets visible test colors
  *   - FColor, SetDPtr, and Bar draw the initial background and sprite
- *   - GetBlk captures the sprite into a GET/PUT buffer
- *   - PutBlk moves the sprite across the screen
+ *   - GetBlk captures one 40x40 movement buffer per direction
+ *   - PutBlk moves and restores the sprite in one command per frame
  *
  * Compile: dcc poc_gfx.c -s -m=8k -f=/dd/cmds/pocgfx
  ***********************************************************************/
@@ -22,8 +22,11 @@
 #define SPR_W     32
 #define SPR_H     40
 #define SPR_Y     80
+#define STEP      8
+#define MOVE_W    40
 #define GP_GRP    7
-#define GP_SPR    1
+#define GP_RIGHT  1
+#define GP_LEFT   2
 
 #define COLOR_BLACK 0
 #define COLOR_GREEN 1
@@ -238,34 +241,6 @@ bgdraw()
     bg_band(150, 50);
 }
 
-restore_area(x, y, w, h)
-int x, y, w, h;
-{
-    int top, bot, band, btop, bbot;
-
-    top = y;
-    bot = y + h;
-    if (top < 0) top = 0;
-    if (bot > SCR_H) bot = SCR_H;
-    if (x < 0) {
-        w += x;
-        x = 0;
-    }
-    if (x + w > SCR_W) w = SCR_W - x;
-    if (w <= 0 || bot <= top) return;
-
-    for (band = 0; band < 4; band++) {
-        btop = band * 50;
-        bbot = btop + 50;
-        if (btop < bot && bbot > top) {
-            if (btop < top) btop = top;
-            if (bbot > bot) bbot = bot;
-            rect(x, btop, w, bbot - btop,
-                 (band & 1) ? COLOR_RED : COLOR_GREEN);
-        }
-    }
-}
-
 sprite_draw(x, y)
 int x, y;
 {
@@ -273,29 +248,41 @@ int x, y;
     rect(x + 4, y + 8, SPR_W - 8, SPR_H - 16, COLOR_BLACK);
 }
 
-sprite_make()
+buffers_make()
 {
+    bgdraw();
+    sprite_draw(STEP, SPR_Y);
+    getblk(GP_GRP, GP_RIGHT, 0, SPR_Y, MOVE_W, SPR_H);
+
+    bgdraw();
     sprite_draw(0, SPR_Y);
-    getblk(GP_GRP, GP_SPR, 0, SPR_Y, SPR_W, SPR_H);
-    restore_area(0, SPR_Y, SPR_W, SPR_H);
+    getblk(GP_GRP, GP_LEFT, 0, SPR_Y, MOVE_W, SPR_H);
+
+    bgdraw();
 }
 
 animate()
 {
-    int frame, x, oldx, start, end, elapsed;
+    int frame, x, dir, start, end, elapsed;
 
-    oldx = 0;
-    putblk(GP_GRP, GP_SPR, oldx, SPR_Y);
+    x = 0;
+    dir = 1;
+    sprite_draw(x, SPR_Y);
     nap(20);
 
     start = nowsec();
-    printf("poc_gfx: GET/PUT sprite move, step=8\n");
+    printf("poc_gfx: union GET/PUT bounce, step=%d\n", STEP);
 
     for (frame = 1; frame < 240; frame++) {
-        x = (frame * 8) % (SCR_W - SPR_W);
-        restore_area(oldx, SPR_Y, SPR_W, SPR_H);
-        putblk(GP_GRP, GP_SPR, x, SPR_Y);
-        oldx = x;
+        if (dir > 0) {
+            putblk(GP_GRP, GP_RIGHT, x, SPR_Y);
+            x += STEP;
+            if (x >= SCR_W - SPR_W) dir = -1;
+        } else {
+            putblk(GP_GRP, GP_LEFT, x - STEP, SPR_Y);
+            x -= STEP;
+            if (x <= 0) dir = 1;
+        }
     }
 
     end = nowsec();
@@ -322,8 +309,7 @@ main()
 
     palinit();
     kilbuf(GP_GRP, 0);
-    bgdraw();
-    sprite_make();
+    buffers_make();
     animate();
     kilbuf(GP_GRP, 0);
     close(g_win);
