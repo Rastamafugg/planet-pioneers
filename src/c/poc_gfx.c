@@ -1,27 +1,34 @@
 /***********************************************************************
- * poc_gfx.c  -  NitrOS-9 EOU / CoCo 3 direct graphics PoC
+ * poc_gfx.c  -  NitrOS-9 EOU / CoCo 3 GET/PUT graphics PoC
  *
- * Uses SS.ScInf + F$MapBlk after diagnostics to map a type 6
- * 320x200 4-color screen. Renders each frame into an off-screen
- * malloc buffer, then copies that complete frame to screen RAM.
- *
- * Expected SS.ScInf for this full-screen type 6 test:
- *   nb=2, off=0, cells x=0 w=40 y=0 h=25
+ * Uses documented CoWin commands only:
+ *   - DWSet creates a type 6 graphics window: 320x200, 4 colors
+ *   - Palette sets visible test colors
+ *   - FColor, SetDPtr, and Bar draw the initial background and sprite
+ *   - GetBlk captures the sprite into a GET/PUT buffer
+ *   - PutBlk moves the sprite across the screen
  *
  * Compile: dcc poc_gfx.c -s -m=8k -f=/dd/cmds/pocgfx
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <os9.h>
 
 #define SCR_W     320
 #define SCR_H     200
-#define SCR_BPR   80
-#define SCR_SIZE  16000
 #define SCR_TYPE  6
 #define SCR_COLS  40
 #define SCR_ROWS  25
+#define SPR_W     32
+#define SPR_H     40
+#define SPR_Y     80
+#define GP_GRP    7
+#define GP_SPR    1
+
+#define COLOR_BLACK 0
+#define COLOR_GREEN 1
+#define COLOR_RED   2
+#define COLOR_WHITE 3
 
 #ifndef F_SLEEP
 #define F_SLEEP   0x0A
@@ -29,32 +36,22 @@
 #ifndef F_TIME
 #define F_TIME    0x15
 #endif
-#ifndef I_GETSTT
-#define I_GETSTT  0x8D
-#endif
-#ifndef SS_SCINF
-#define SS_SCINF  0x8F
-#endif
-#ifndef F_MAPBLK
-#define F_MAPBLK  0x4F
-#endif
-#ifndef F_CLRBLK
-#define F_CLRBLK  0x50
-#endif
 
 int open(), write(), close();
 
 static int g_win;
-static unsigned char *g_scr;
-static unsigned char *g_back;
-static int g_nblks;
-static int g_sblk;
-static int g_off;
 
 wrwin(buf, len)
 unsigned char *buf; int len;
 {
     write(g_win, buf, len);
+}
+
+putwrd(buf, pos, value)
+unsigned char *buf; int pos, value;
+{
+    buf[pos] = (unsigned char)((value >> 8) & 0xff);
+    buf[pos + 1] = (unsigned char)(value & 0xff);
 }
 
 nap(ticks)
@@ -113,12 +110,92 @@ int prn, ctn;
     wrwin(cmd, 4);
 }
 
+fgset(prn)
+int prn;
+{
+    unsigned char cmd[3];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x32;
+    cmd[2] = (unsigned char)prn;
+    wrwin(cmd, 3);
+}
+
+dptr(x, y)
+int x, y;
+{
+    unsigned char cmd[6];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x40;
+    putwrd(cmd, 2, x);
+    putwrd(cmd, 4, y);
+    wrwin(cmd, 6);
+}
+
+barabs(x, y)
+int x, y;
+{
+    unsigned char cmd[6];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x4a;
+    putwrd(cmd, 2, x);
+    putwrd(cmd, 4, y);
+    wrwin(cmd, 6);
+}
+
+rect(x, y, w, h, color)
+int x, y, w, h, color;
+{
+    if (w <= 0 || h <= 0) return;
+    fgset(color);
+    dptr(x, y);
+    barabs(x + w - 1, y + h - 1);
+}
+
+getblk(grp, bfn, x, y, w, h)
+int grp, bfn, x, y, w, h;
+{
+    unsigned char cmd[12];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x2c;
+    cmd[2] = (unsigned char)grp;
+    cmd[3] = (unsigned char)bfn;
+    putwrd(cmd, 4, x);
+    putwrd(cmd, 6, y);
+    putwrd(cmd, 8, w);
+    putwrd(cmd, 10, h);
+    wrwin(cmd, 12);
+}
+
+putblk(grp, bfn, x, y)
+int grp, bfn, x, y;
+{
+    unsigned char cmd[8];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x2d;
+    cmd[2] = (unsigned char)grp;
+    cmd[3] = (unsigned char)bfn;
+    putwrd(cmd, 4, x);
+    putwrd(cmd, 6, y);
+    wrwin(cmd, 8);
+}
+
+kilbuf(grp, bfn)
+int grp, bfn;
+{
+    unsigned char cmd[4];
+    cmd[0] = 0x1b;
+    cmd[1] = 0x2a;
+    cmd[2] = (unsigned char)grp;
+    cmd[3] = (unsigned char)bfn;
+    wrwin(cmd, 4);
+}
+
 palinit()
 {
-    palset(0, 0x00);
-    palset(1, 0x12);
-    palset(2, 0x09);
-    palset(3, 0x3f);
+    palset(COLOR_BLACK, 0x00);
+    palset(COLOR_GREEN, 0x12);
+    palset(COLOR_RED,   0x24);
+    palset(COLOR_WHITE, 0x3f);
 }
 
 int open_window()
@@ -135,9 +212,9 @@ int open_window()
     cmd[4] = 0;
     cmd[5] = SCR_COLS;
     cmd[6] = SCR_ROWS;
-    cmd[7] = 3;
-    cmd[8] = 0;
-    cmd[9] = 0;
+    cmd[7] = COLOR_WHITE;
+    cmd[8] = COLOR_BLACK;
+    cmd[9] = COLOR_BLACK;
     wrwin(cmd, 10);
     nap(2);
     selwin();
@@ -147,140 +224,78 @@ int open_window()
     return 0;
 }
 
-int scinfo()
+bg_band(y, h)
+int y, h;
 {
-    struct registers r;
-    int wx, ww, wy, wh;
-
-    r.rg_a = (char)g_win;
-    r.rg_b = (char)SS_SCINF;
-    if (_os9(I_GETSTT, &r)) {
-        printf("poc_gfx: SS.ScInf error #%d\n", r.rg_b & 0xff);
-        return -1;
-    }
-
-    g_nblks = r.rg_a & 0xff;
-    g_sblk = r.rg_b & 0xff;
-    g_off = r.rg_x;
-    wx = (r.rg_y >> 8) & 0xff;
-    ww = r.rg_y & 0xff;
-    wy = (r.rg_u >> 8) & 0xff;
-    wh = r.rg_u & 0xff;
-
-    printf("poc_gfx: SS.ScInf nb=%d sb=%d off=%x\n",
-           g_nblks, g_sblk, g_off);
-    printf("poc_gfx: cells x=%d w=%d y=%d h=%d\n",
-           wx, ww, wy, wh);
-
-    if (g_nblks != 2 || g_off != 0 || wx != 0 || ww != 40 ||
-        wy != 0 || wh != 25) {
-        printf("poc_gfx: unsupported screen mapping\n");
-        return -1;
-    }
-
-    return 0;
+    rect(0, y, SCR_W, h, ((y / 50) & 1) ? COLOR_RED : COLOR_GREEN);
 }
 
-int mapwin()
+bgdraw()
 {
-    struct registers r;
-
-    r.rg_b = (char)g_nblks;
-    r.rg_x = (unsigned)g_sblk;
-    if (_os9(F_MAPBLK, &r)) {
-        printf("poc_gfx: F$MapBlk error #%d\n", r.rg_b & 0xff);
-        return -1;
-    }
-
-    g_scr = (unsigned char *)(r.rg_u + g_off);
-    return 0;
+    bg_band(0, 50);
+    bg_band(50, 50);
+    bg_band(100, 50);
+    bg_band(150, 50);
 }
 
-unmapwin()
+restore_area(x, y, w, h)
+int x, y, w, h;
 {
-    struct registers r;
-    r.rg_b = (char)g_nblks;
-    r.rg_u = (unsigned)(g_scr - g_off);
-    _os9(F_CLRBLK, &r);
-}
+    int top, bot, band, btop, bbot;
 
-putpx(x, y, c)
-int x, y, c;
-{
-    unsigned char *p;
-    int sh;
-
-    if ((unsigned)x >= SCR_W || (unsigned)y >= SCR_H) return;
-    p = g_back + y * SCR_BPR + (x >> 2);
-    sh = 6 - ((x & 3) << 1);
-    *p = (*p & ~(3 << sh)) | ((c & 3) << sh);
-}
-
-hline(x, y, w, c)
-int x, y, w, c;
-{
-    unsigned char pk, *p;
-    int i, n;
-
-    if (w <= 0 || y < 0 || y >= SCR_H) return;
+    top = y;
+    bot = y + h;
+    if (top < 0) top = 0;
+    if (bot > SCR_H) bot = SCR_H;
     if (x < 0) {
         w += x;
         x = 0;
     }
     if (x + w > SCR_W) w = SCR_W - x;
-    if (w <= 0) return;
+    if (w <= 0 || bot <= top) return;
 
-    if (((x | w) & 3) == 0) {
-        pk = c & 3;
-        pk |= pk << 2;
-        pk |= pk << 4;
-        p = g_back + y * SCR_BPR + (x >> 2);
-        n = w >> 2;
-        while (n--) *p++ = pk;
-    } else {
-        for (i = 0; i < w; i++) putpx(x + i, y, c);
+    for (band = 0; band < 4; band++) {
+        btop = band * 50;
+        bbot = btop + 50;
+        if (btop < bot && bbot > top) {
+            if (btop < top) btop = top;
+            if (bbot > bot) bbot = bot;
+            rect(x, btop, w, bbot - btop,
+                 (band & 1) ? COLOR_RED : COLOR_GREEN);
+        }
     }
 }
 
-rect(x, y, w, h, c)
-int x, y, w, h, c;
+sprite_draw(x, y)
+int x, y;
 {
-    int r;
-    for (r = 0; r < h; r++) hline(x, y + r, w, c);
+    rect(x, y, SPR_W, SPR_H, COLOR_WHITE);
+    rect(x + 4, y + 8, SPR_W - 8, SPR_H - 16, COLOR_BLACK);
 }
 
-bgdraw()
+sprite_make()
 {
-    rect(0,   0, SCR_W, 50, 1);
-    rect(0,  50, SCR_W, 50, 2);
-    rect(0, 100, SCR_W, 50, 1);
-    rect(0, 150, SCR_W, 50, 2);
-}
-
-render(bx)
-int bx;
-{
-    bgdraw();
-    rect(bx, 80, 32, 40, 3);
-    rect(bx + 4, 88, 24, 24, 0);
-}
-
-flip()
-{
-    memcpy(g_scr, g_back, SCR_SIZE);
+    sprite_draw(0, SPR_Y);
+    getblk(GP_GRP, GP_SPR, 0, SPR_Y, SPR_W, SPR_H);
+    restore_area(0, SPR_Y, SPR_W, SPR_H);
 }
 
 animate()
 {
-    int frame, bx, start, end, elapsed;
+    int frame, x, oldx, start, end, elapsed;
+
+    oldx = 0;
+    putblk(GP_GRP, GP_SPR, oldx, SPR_Y);
+    nap(20);
 
     start = nowsec();
-    printf("poc_gfx: full-frame copy, sleep=off, step=8\n");
+    printf("poc_gfx: GET/PUT sprite move, step=8\n");
 
-    for (frame = 0; frame < 240; frame++) {
-        bx = (frame * 8) % (SCR_W - 32);
-        render(bx);
-        flip();
+    for (frame = 1; frame < 240; frame++) {
+        x = (frame * 8) % (SCR_W - SPR_W);
+        restore_area(oldx, SPR_Y, SPR_W, SPR_H);
+        putblk(GP_GRP, GP_SPR, x, SPR_Y);
+        oldx = x;
     }
 
     end = nowsec();
@@ -289,9 +304,9 @@ animate()
         if (elapsed < 0) elapsed += 3600;
         if (elapsed > 0) {
             printf("poc_gfx: frames=%d seconds=%d fps=%d\n",
-                   frame, elapsed, frame / elapsed);
+                   frame - 1, elapsed, (frame - 1) / elapsed);
         } else {
-            printf("poc_gfx: frames=%d seconds=<1\n", frame);
+            printf("poc_gfx: frames=%d seconds=<1\n", frame - 1);
         }
     } else {
         printf("poc_gfx: F$Time unavailable\n");
@@ -306,30 +321,11 @@ main()
     }
 
     palinit();
-    if (scinfo()) {
-        close(g_win);
-        exit(1);
-    }
-
-    if (mapwin()) {
-        close(g_win);
-        exit(1);
-    }
-
-    g_back = (unsigned char *)malloc(SCR_SIZE);
-    if (!g_back) {
-        fprintf(stderr, "poc_gfx: malloc failed\n");
-        unmapwin();
-        close(g_win);
-        exit(1);
-    }
-
-    memset(g_back, 0, SCR_SIZE);
-    flip();
+    kilbuf(GP_GRP, 0);
+    bgdraw();
+    sprite_make();
     animate();
-
-    unmapwin();
-    free(g_back);
+    kilbuf(GP_GRP, 0);
     close(g_win);
     exit(0);
 }
