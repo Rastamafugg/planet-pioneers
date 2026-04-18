@@ -74,7 +74,7 @@ int freq, dur, amp;
     _os9(I_SETSTT, &r);
 }
 
-play_seq(seq, amp)
+seqplay(seq, amp)
 int *seq; int amp;
 {
     while (seq[0] != -1) {
@@ -83,7 +83,7 @@ int *seq; int amp;
     }
 }
 
-play_seq_amp(seq)
+ampplay(seq)
 int *seq;
 {
     while (seq[0] != -1) {
@@ -169,23 +169,23 @@ main()
     }
 
     printf("poc_sound: melody\n");
-    play_seq(melody, AMP_MUS);
+    seqplay(melody, AMP_MUS);
 
     r.rg_x = 30; _os9(F_SLEEP, &r);
 
     printf("poc_sound: fanfare\n");
-    play_seq_amp(fanfare);
+    ampplay(fanfare);
 
     r.rg_x = 15; _os9(F_SLEEP, &r);
 
     printf("poc_sound: collect SFX\n");
-    play_seq(sfx_collect, AMP_SFX);
+    seqplay(sfx_collect, AMP_SFX);
     pitch_sweep(2600, 4050, 180, 1, AMP_LOUD);
 
     r.rg_x = 15; _os9(F_SLEEP, &r);
 
     printf("poc_sound: escape SFX\n");
-    play_seq(sfx_escape, AMP_SFX);
+    seqplay(sfx_escape, AMP_SFX);
     pitch_sweep(4050, 1250, 260, 2, AMP_SFX);
 
     r.rg_x = 15; _os9(F_SLEEP, &r);
@@ -197,7 +197,7 @@ main()
 
     printf("poc_sound: produce SFX (5x)\n");
     for (i = 0; i < 5; i++) {
-        play_seq(sfx_produce, AMP_SFX);
+        seqplay(sfx_produce, AMP_SFX);
         pitch_sweep(2300 + i * 150, 3100 + i * 150, 200, 1, AMP_MUS);
         r.rg_x = 8; _os9(F_SLEEP, &r);
     }
