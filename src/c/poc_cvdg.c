@@ -43,6 +43,7 @@ static unsigned char *g_scr1;
 static unsigned char *g_scr2;
 static int g_num1;
 static int g_num2;
+static char *g_devname;
 
 nap(ticks)
 int ticks;
@@ -71,13 +72,15 @@ unsigned char **pp; int *np;
     r.rg_b = (char)SS_ASCRN;
     r.rg_x = (unsigned)SCR_TYPE;
     if (_os9(I_SETSTT, &r)) {
-        printf("poc_cvdg: SS.AScrn error #%d\n", r.rg_b & 0xff);
+        printf("poc_cvdg: %s SS.AScrn error #%d\n",
+               g_devname, r.rg_b & 0xff);
         return -1;
     }
 
     *pp = (unsigned char *)r.rg_x;
     *np = r.rg_y;
-    printf("poc_cvdg: screen %d at %x\n", *np, (unsigned)*pp);
+    printf("poc_cvdg: %s screen %d at %x\n",
+           g_devname, *np, (unsigned)*pp);
     return 0;
 }
 
@@ -106,6 +109,34 @@ int num;
     r.rg_b = (char)SS_FSCRN;
     r.rg_y = (unsigned)num;
     _os9(I_SETSTT, &r);
+}
+
+int open_vdg()
+{
+    char *names[6];
+    int i;
+
+    names[0] = "/term_vdg";
+    names[1] = "/TERM_VDG";
+    names[2] = "/verm";
+    names[3] = "/VERM";
+    names[4] = "/term";
+    names[5] = 0;
+
+    for (i = 0; names[i]; i++) {
+        g_devname = names[i];
+        g_path = open(g_devname, 3);
+        if (g_path < 0) {
+            printf("poc_cvdg: %s open failed\n", g_devname);
+        } else {
+            if (alloc_screen(&g_scr1, &g_num1) == 0) return 0;
+            close(g_path);
+        }
+    }
+
+    g_path = -1;
+    g_devname = "";
+    return -1;
 }
 
 putpx(base, x, y, c)
@@ -192,17 +223,17 @@ animate()
 
 main()
 {
-    g_path = open("/term", 3);
-    if (g_path < 0) {
-        fprintf(stderr, "poc_cvdg: /term open failed\n");
+    g_path = -1;
+    g_num1 = 0;
+    g_num2 = 0;
+
+    printf("poc_cvdg: probing CoVDG VDG descriptors\n");
+    if (open_vdg()) {
+        fprintf(stderr, "poc_cvdg: no CoVDG path accepted SS.AScrn\n");
         exit(1);
     }
 
-    printf("poc_cvdg: allocating two 32K screens\n");
-    if (alloc_screen(&g_scr1, &g_num1)) {
-        close(g_path);
-        exit(1);
-    }
+    printf("poc_cvdg: allocating second 32K screen\n");
     if (alloc_screen(&g_scr2, &g_num2)) {
         free_screen(g_num1);
         close(g_path);
