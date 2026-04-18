@@ -1,6 +1,3 @@
-dcc /d1/poc_gfx.c -rs -f=/d1/poc_gfx.r
-rlink /d1/poc_gfx.r -o=/dd/cmds/pocgfx -b=pocgfx -t -l=/dd/lib/clib.l
-dcc /d1/poc_sound.c -rs -f=/d1/poc_sound.r
-rlink /d1/poc_sound.r -o=/dd/cmds/pocsound -b=pocsound -t -l=/dd/lib/clib.l
-dcc /d1/poc_tiles.c -rs -f=/d1/poc_tiles.r
-rlink /d1/poc_tiles.r -o=/dd/cmds/poctiles -b=poctiles -t -l=/dd/lib/clib.l
+dcc /d1/poc_gfx.c -s -m=24k -f=/dd/cmds/pocgfx
+dcc /d1/poc_sound.c -s -f=/dd/cmds/pocsound
+dcc /d1/poc_tiles.c -s -m=24k -f=/dd/cmds/poctiles
