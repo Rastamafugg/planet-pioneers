@@ -8,7 +8,7 @@
  * Expected SS.ScInf for this full-screen type 6 test:
  *   nb=2, off=0, cells x=0 w=40 y=0 h=25
  *
- * Compile: dcc poc_gfx.c -s -m=24k -f=/dd/cmds/pocgfx
+ * Compile: dcc poc_gfx.c -s -m=8k -f=/dd/cmds/pocgfx
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -282,15 +282,15 @@ main()
         exit(1);
     }
 
-    g_back = (unsigned char *)malloc(SCR_SIZE);
-    if (!g_back) {
-        fprintf(stderr, "poc_gfx: malloc failed\n");
+    if (mapwin()) {
         close(g_win);
         exit(1);
     }
 
-    if (mapwin()) {
-        free(g_back);
+    g_back = (unsigned char *)malloc(SCR_SIZE);
+    if (!g_back) {
+        fprintf(stderr, "poc_gfx: malloc failed\n");
+        unmapwin();
         close(g_win);
         exit(1);
     }
