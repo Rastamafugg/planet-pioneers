@@ -15,6 +15,23 @@
 #define SCR_BPR    80
 #define SCR_TYPE   2
 #define NFRAMES    600
+#define MAP_COLS   9
+#define MAP_ROWS   5
+#define TILE_W     17
+#define TILE_H     38
+#define MAP_OX     3
+#define MAP_OY     1
+#define SPR_W      9
+#define SPR_H      12
+#define PLYR_Y     (MAP_OY + 8)
+#define MULE_Y     (MAP_OY + TILE_H * 3)
+
+#define COLOR_BLACK 0
+#define COLOR_GREEN 1
+#define COLOR_BLUE  2
+#define COLOR_WHITE 3
+#define COLOR_PLYR  12
+#define COLOR_MULE  14
 
 #ifndef I_SETSTT
 #define I_SETSTT   0x8E
@@ -43,6 +60,14 @@ static unsigned char *g_scr2;
 static int g_num1;
 static int g_num2;
 static char *g_devname;
+
+static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
+    { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
+    { 2, 0, 0, 0, 1, 0, 0, 0, 2 },
+    { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
+    { 2, 0, 0, 2, 1, 2, 0, 0, 2 },
+    { 0, 2, 0, 0, 1, 0, 0, 2, 0 }
+};
 
 wpath(buf, len)
 unsigned char *buf; int len;
@@ -189,29 +214,138 @@ unsigned char *base; int x, y, w, h, c;
     for (r = 0; r < h; r++) hline(base, x, y + r, w, c);
 }
 
-render(base, frame)
-unsigned char *base; int frame;
+plain(base, x, y)
+unsigned char *base; int x, y;
 {
-    int y, x, c, bx;
-    unsigned char *p;
+    rect(base, x, y, TILE_W, TILE_H, COLOR_GREEN);
+    rect(base, x + 2, y + 17, TILE_W - 4, 2, COLOR_BLACK);
+    rect(base, x + 5, y + 8, 2, 2, COLOR_BLACK);
+    rect(base, x + 11, y + 27, 2, 2, COLOR_BLACK);
+}
 
-    for (y = 0; y < SCR_H; y++) {
-        c = ((y / 24) + frame) & 15;
-        p = base + y * SCR_BPR;
-        for (x = 0; x < SCR_BPR; x++) *p++ = (c << 4) | c;
-    }
+river(base, x, y)
+unsigned char *base; int x, y;
+{
+    rect(base, x, y, TILE_W, TILE_H, COLOR_BLUE);
+    rect(base, x + 6, y, 5, TILE_H, COLOR_WHITE);
+    rect(base, x + 7, y, 3, TILE_H, COLOR_BLUE);
+    rect(base, x + 5, y + 11, 7, 3, COLOR_BLUE);
+    rect(base, x + 5, y + 27, 7, 3, COLOR_BLUE);
+}
 
-    bx = (frame * 4) % (SCR_W - 28);
-    rect(base, bx, 70, 28, 32, 14);
-    rect(base, bx + 5, 78, 18, 16, 1);
+mountn(base, x, y)
+unsigned char *base; int x, y;
+{
+    rect(base, x, y, TILE_W, TILE_H, COLOR_GREEN);
+    rect(base, x + 7, y + 4, 3, 7, COLOR_WHITE);
+    rect(base, x + 5, y + 11, 7, 7, COLOR_WHITE);
+    rect(base, x + 3, y + 18, 11, 9, COLOR_WHITE);
+    rect(base, x + 1, y + 27, 15, 8, COLOR_WHITE);
+    rect(base, x + 8, y + 5, 2, 9, COLOR_BLACK);
+}
+
+tile(base, kind, x, y)
+unsigned char *base; int kind, x, y;
+{
+    if (kind == 1)
+        river(base, x, y);
+    else if (kind == 2)
+        mountn(base, x, y);
+    else
+        plain(base, x, y);
+}
+
+mapdraw(base)
+unsigned char *base;
+{
+    int r, c;
+
+    rect(base, 0, 0, SCR_W, SCR_H, COLOR_BLACK);
+    for (r = 0; r < MAP_ROWS; r++)
+        for (c = 0; c < MAP_COLS; c++)
+            tile(base, g_map[r][c],
+                 MAP_OX + c * TILE_W,
+                 MAP_OY + r * TILE_H);
+}
+
+player(base, x, y)
+unsigned char *base; int x, y;
+{
+    rect(base, x + 3, y,     3, 2, COLOR_PLYR);
+    rect(base, x + 2, y + 2, 5, 3, COLOR_PLYR);
+    rect(base, x + 3, y + 5, 3, 2, COLOR_PLYR);
+    rect(base, x + 1, y + 7, 7, 3, COLOR_PLYR);
+    rect(base, x + 1, y + 10,2, 2, COLOR_PLYR);
+    rect(base, x + 6, y + 10,2, 2, COLOR_PLYR);
+    rect(base, x + 3, y + 3, 3, 1, COLOR_WHITE);
+}
+
+mule(base, x, y)
+unsigned char *base; int x, y;
+{
+    rect(base, x + 1, y + 2, 6, 4, COLOR_MULE);
+    rect(base, x,     y + 6, 9, 3, COLOR_MULE);
+    rect(base, x,     y + 9, 2, 3, COLOR_MULE);
+    rect(base, x + 7, y + 9, 2, 3, COLOR_MULE);
+    rect(base, x + 6, y,     3, 2, COLOR_MULE);
+    rect(base, x + 7, y,     1, 1, COLOR_WHITE);
+}
+
+redraw(base, x, y, w, h)
+unsigned char *base; int x, y, w, h;
+{
+    int c1, c2, r1, r2, r, c;
+
+    c1 = (x - MAP_OX) / TILE_W;
+    c2 = (x + w - 1 - MAP_OX) / TILE_W;
+    r1 = (y - MAP_OY) / TILE_H;
+    r2 = (y + h - 1 - MAP_OY) / TILE_H;
+
+    if (c1 < 0) c1 = 0;
+    if (r1 < 0) r1 = 0;
+    if (c2 >= MAP_COLS) c2 = MAP_COLS - 1;
+    if (r2 >= MAP_ROWS) r2 = MAP_ROWS - 1;
+
+    for (r = r1; r <= r2; r++)
+        for (c = c1; c <= c2; c++)
+            tile(base, g_map[r][c],
+                 MAP_OX + c * TILE_W,
+                 MAP_OY + r * TILE_H);
+}
+
+render_step(base, frame, old1p, old2p)
+unsigned char *base; int frame, *old1p, *old2p;
+{
+    int sx1, sx2;
+
+    sx1 = MAP_OX + (frame * 2) % (MAP_COLS * TILE_W - SPR_W);
+    sx2 = MAP_OX + MAP_COLS * TILE_W - SPR_W
+          - (frame * 2) % (MAP_COLS * TILE_W - SPR_W);
+
+    redraw(base, *old1p, PLYR_Y, SPR_W, SPR_H);
+    redraw(base, *old2p, MULE_Y, SPR_W, SPR_H);
+    player(base, sx1, PLYR_Y);
+    mule(base, sx2, MULE_Y);
+
+    *old1p = sx1;
+    *old2p = sx2;
 }
 
 animate()
 {
     int frame, start, end, elapsed;
+    int old11, old12, old21, old22;
 
-    render(g_scr1, 0);
-    render(g_scr2, 1);
+    old11 = MAP_OX;
+    old12 = MAP_OX + MAP_COLS * TILE_W - SPR_W;
+    old21 = old11;
+    old22 = old12;
+    mapdraw(g_scr1);
+    mapdraw(g_scr2);
+    player(g_scr1, old11, PLYR_Y);
+    mule(g_scr1, old12, MULE_Y);
+    player(g_scr2, old21, PLYR_Y);
+    mule(g_scr2, old22, MULE_Y);
     show_screen(g_num1);
     printf("poc_cvdg16: displayed initial frame on %s screen %d\n",
            g_devname, g_num1);
@@ -238,13 +372,13 @@ animate()
     }
 
     start = nowsec();
-    printf("poc_cvdg16: render+flip speed test\n");
+    printf("poc_cvdg16: dirty tile+sprite render+flip speed test\n");
     for (frame = 0; frame < NFRAMES; frame++) {
         if (frame & 1) {
-            render(g_scr2, frame);
+            render_step(g_scr2, frame, &old21, &old22);
             show_screen(g_num2);
         } else {
-            render(g_scr1, frame);
+            render_step(g_scr1, frame, &old11, &old12);
             show_screen(g_num1);
         }
     }
@@ -254,10 +388,10 @@ animate()
         elapsed = end - start;
         if (elapsed < 0) elapsed += 3600;
         if (elapsed > 0)
-            printf("poc_cvdg16: render frames=%d seconds=%d fps=%d\n",
+            printf("poc_cvdg16: dirty frames=%d seconds=%d fps=%d\n",
                    frame, elapsed, frame / elapsed);
         else
-            printf("poc_cvdg16: render frames=%d seconds=<1\n", frame);
+            printf("poc_cvdg16: dirty frames=%d seconds=<1\n", frame);
     }
 }
 
