@@ -39,6 +39,19 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] decision | Phase 2a done
+
+`pocipc` live-test passed on EOU. Parent successfully:
+1. `F$ID` for own PID
+2. installed signal intercept via `slpicpt`
+3. `F$Fork`-ed `pocipcc` with parent PID in argv
+4. polled and received `SIG_IPC_ACK` (130) from the child
+5. `F$Wait`-reaped the child cleanly
+
+Resolved [platform/ipc.md](platform/ipc.md) open question #3 (canonical fork path = direct `_os9(F$Fork)`, not libc `system()`). Resolved one new lesson during the live test: `#asm ldy 6,s` preamble in `slpicpt.c` (left over from its standalone-module Basic09 invocation in stocks-and-bonds) clobbers Y when linked into a C program — see [implementation/lessons-learned.md](implementation/lessons-learned.md).
+
+Phase 2a marked ✅ in [implementation/roadmap.md](implementation/roadmap.md). Next gating PoC: `poc_shmem` (phase 2b).
+
 ## [2026-04-25] decision | Phase 1 done
 
 `pioneer` (the phase-1 core skeleton, [src/c/main.c](../src/c/main.c)) runs cleanly: 1 init line + 42 phase lines (6 rounds × 7 phases) + final summary. Canonical shape: module name `pioneer`, seven `static ph_xxx()` helper functions dispatched from a `switch`, `unsigned char` GameState fields with `(int)` casts at every printf site (per data-structures.md and the size-not-type ABI rule).
