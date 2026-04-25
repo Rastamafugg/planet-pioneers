@@ -1,22 +1,17 @@
 /***********************************************************************
- * main.c  -  isolation bisect B.
+ * main.c  -  Planet Pioneers core skeleton (phase 1).
  *
- * Bisect A (unsigned char fields + (int) casts) ran clean. So the
- * field type was NOT load-bearing. Suspects remaining: (B) the seven
- * static ph_xxx() helper functions, and (C) the short module name
- * `pp`. This step restores the helpers while keeping the module name
- * `pioneer`.
+ * Turn-phase state machine. Stub phase functions print their name
+ * and return; main() advances g_state.phase / g_state.round until
+ * max_rounds is reached.
  *
- * If this crashes -> root cause is in how DCC compiles a static-fn
- * dispatch through a switch (likely codegen / linkage interaction).
- * If clean -> the only suspect left is the 2-char module name `pp`.
+ * GameState fields are unsigned char per data-structures.md. Pass
+ * with (int) casts at every printf site -- DCC's K&R varargs ABI
+ * requires the call-site widening (see lessons-learned.md).
  *
- * Bisect C (this commit): output module renamed back to `pp`, all
- * other code unchanged from B. If this crashes -> root cause is
- * the short module name. If clean -> the original crash was a
- * combined effect we will need to revisit later (or a phantom).
+ * Compile: dcc main.c -m=4k -f=/dd/cmds/pioneer
  *
- * Compile: dcc main.c -m=4k -f=/dd/cmds/pp
+ * See wiki/implementation/roadmap.md (phase 1).
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
