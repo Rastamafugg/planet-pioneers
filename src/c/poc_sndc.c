@@ -49,16 +49,7 @@ typedef struct {
     SoundCmd     entries[SOUND_QUEUE_SIZE];
 } SoundQueue;
 
-extern int intercept(), open(), close();
-
-static int g_lastsig;
-
-static sigtrap(sig)
-int sig;
-{
-    g_lastsig = sig;
-    return 0;
-}
+extern int open(), close();
 
 main(argc, argv)
 int argc;
@@ -70,9 +61,11 @@ char *argv[];
     int   term;
     int   idx;
     int   freq, dur, amp;
+    int   err;
 
     if (argc < 2) { printf("pocsndc: need block#\n"); exit(1); }
     block = atoi(argv[1]);
+    printf("pocsndc: started block=%d\n", block);
 
     /* map shared block */
     r.rg_b = 1;
@@ -89,36 +82,41 @@ char *argv[];
         exit(3);
     }
 
-    /* open /term for SS.Tone -- mode 3 (read/write) per poc_sound.c.
-     * Mode 1 (write-only) was the first attempt and produced no sound;
-     * the /term driver's I_SETSTT path appears to require an r/w path. */
+    /* open /term mode 3 (r/w) per poc_sound.c -- write-only fails silently */
     term = open("/term", 3);
     if (term < 0) { printf("pocsndc: open /term failed\n"); exit(4); }
+    printf("pocsndc: term=%d, draining\n", term);
 
-    intercept(sigtrap);
-
-    /* main drain loop: play queued tones, sleep on signal, exit on quit */
+    /* Poll-based drain loop. Short F$Sleep instead of signal-as-wakeup
+     * because SS.Tone is interruptible by signals -- the parent's
+     * signals (one per sound_play, plus shutdown) would otherwise abort
+     * each tone almost immediately. */
     for (;;) {
         while (q->tail != q->head) {
             idx  = q->tail;
             freq = (int)q->entries[idx].freq;
             dur  = (int)q->entries[idx].dur;
             amp  = (int)q->entries[idx].amp;
+            printf("pocsndc: tone f=%d d=%d a=%d\n", freq, dur, amp);
 
             r.rg_a = (char)term;
             r.rg_b = (char)SS_TONE;
             r.rg_x = ((amp & 0x3F) << 8) | (dur & 0xFF);
             r.rg_y = freq & 0x0FFF;
-            _os9(I_SETSTT, &r);
+            err = _os9(I_SETSTT, &r);
+            if (err) {
+                printf("pocsndc: SS.Tone err #%d\n", r.rg_b & 0xff);
+            }
 
             q->tail = (q->tail + 1) & SOUND_QUEUE_MASK;
         }
         if (q->quit) break;
 
-        /* sleep forever; signal will interrupt */
-        r.rg_x = 0;
+        /* short poll -- 2 ticks = ~33 ms */
+        r.rg_x = 2;
         _os9(F_SLEEP, &r);
     }
+    printf("pocsndc: exiting\n");
 
     close(term);
 

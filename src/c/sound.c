@@ -47,7 +47,6 @@
 #define SOUND_MAGIC      0x534E
 #define SOUND_QUEUE_SIZE 16
 #define SOUND_QUEUE_MASK (SOUND_QUEUE_SIZE - 1)
-#define SIG_SOUND_WAKE   132
 
 typedef struct {
     unsigned int freq;
@@ -127,7 +126,6 @@ int sound_init()
 int sound_play(freq, dur, amp)
 int freq, dur, amp;
 {
-    struct registers r;
     int next;
 
     if (g_queue == 0) return -2;
@@ -140,11 +138,8 @@ int freq, dur, amp;
     g_queue->entries[g_queue->head].amp  = (unsigned)amp;
     g_queue->head = next;
 
-    /* wake child */
-    r.rg_a = g_child_pid;
-    r.rg_b = SIG_SOUND_WAKE;
-    _os9(F_SEND, &r);
-
+    /* No F$Send: child polls on a short F$Sleep. Signals would
+     * interrupt the child's blocking SS.Tone and abort tones early. */
     return 0;
 }
 
@@ -154,11 +149,9 @@ int sound_shutdown()
 
     if (g_queue == 0) return 0;
 
-    /* tell child to drain remaining and exit */
+    /* Tell child to drain remaining and exit. Child polls; will see
+     * within ~33 ms. */
     g_queue->quit = 1;
-    r.rg_a = g_child_pid;
-    r.rg_b = SIG_SOUND_WAKE;
-    _os9(F_SEND, &r);
 
     /* reap */
     if (_os9(F_WAIT, &r)) {
