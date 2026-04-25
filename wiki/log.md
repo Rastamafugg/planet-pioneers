@@ -39,6 +39,20 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] implement | Phase 3 sound child (C-side; live-test pending)
+
+Composed phases 2a (signals) and 2b (shared memory) into the sound subsystem.
+
+- [src/c/sound.c](../src/c/sound.c) — parent-side API: `sound_init()` (alloc + map + fork `pocsndc`), `sound_play(freq,dur,amp)` (enqueue + signal), `sound_shutdown()` (`quit=1` + signal + F$Wait + F$ClrBlk + F$DelRAM).
+- [src/c/poc_sndc.c](../src/c/poc_sndc.c) — child: maps shared SoundQueue from `argv[1]`, opens `/term`, signal-driven drain loop calling SS.Tone per entry. Drains pending entries before honouring `quit`.
+- [src/c/poc_snd.c](../src/c/poc_snd.c) — smoke driver: bring up, queue 4 tones, shut down.
+
+Shared queue layout: 16-entry SPSC ring of `{freq,dur,amp}` 16-bit triples + `magic`/`head`/`tail`/`quit` header (104 B total of an 8 KB block). Producer writes entry then advances `head`; consumer reads entry then advances `tail`. Atomic 16-bit accesses on 6809 mean no locks needed for the single-producer-single-consumer case.
+
+Reserved `132 = SIG_SOUND_WAKE`.
+
+[implementation/poc-catalog.md](implementation/poc-catalog.md) updated; phase 3 in [implementation/roadmap.md](implementation/roadmap.md) marked ⏳ live-test pending.
+
 ## [2026-04-25] decision | Phase 2b done; 3-process architecture locked in
 
 `pocshm` live-test passed on EOU end-to-end:

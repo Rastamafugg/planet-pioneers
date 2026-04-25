@@ -11,3 +11,5 @@ dcc /d1/poc_ipc.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocipc
 dcc /d1/poc_ipcc.c -m=4k -f=/dd/cmds/pocipcc
 dcc /d1/poc_shmem.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocshm
 dcc /d1/poc_shmemc.c -m=4k -f=/dd/cmds/pocshmc
+dcc /d1/poc_snd.c /d1/sound.c -m=4k -f=/dd/cmds/pocsnd
+dcc /d1/poc_sndc.c -m=4k -f=/dd/cmds/pocsndc

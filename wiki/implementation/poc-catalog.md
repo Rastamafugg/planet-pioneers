@@ -108,6 +108,24 @@ This is the **most advanced PoC** and the direct precursor of the game's main re
 
 **Reserved signals:** `131 = SIG_SHMEM_ACK` (PoC-only).
 
+## sound.c / poc_snd.c / poc_sndc.c — sound child process (phase 3)
+
+**Target:** Reusable parent-side `sound.c` module + child executable `pocsndc` + smoke driver `pocsnd`. Builds: `dcc poc_snd.c sound.c -m=4k -f=/dd/cmds/pocsnd`, `dcc poc_sndc.c -m=4k -f=/dd/cmds/pocsndc`.
+
+**API surface (`sound.c`):**
+- `sound_init()` — alloc shared block, init SoundQueue, fork `pocsndc`
+- `sound_play(freq, dur, amp)` — enqueue tone, signal child; fire-and-forget; returns -1 if queue full
+- `sound_shutdown()` — set `quit`, signal, F$Wait, F$ClrBlk, F$DelRAM
+
+**Proves (target):**
+- The blocking [SS.Tone](../platform/sound.md) call can be hidden behind a non-blocking parent API by isolating it in a child process.
+- The composition pattern that production code will use: 2a (signals) + 2b (shared memory) → real subsystem.
+- Minimal SPSC ring-buffer (16 entries, power-of-2 mask wrap) is sufficient on 6809 — atomic 16-bit head/tail accesses.
+
+**Reserved signals:** `132 = SIG_SOUND_WAKE`.
+
+**Layout discipline:** `SoundQueue` typedef is duplicated in `sound.c` and `poc_sndc.c` with a "must match" comment. No shared header — DCC's quoted-include search rules ([dcc.md](../platform/dcc.md)) make a one-shot duplicate the simpler choice for now.
+
 ## main.c — phase 1 core skeleton
 
 **Target:** `dcc main.c -m=4k -f=/dd/cmds/pp` (no `-s` until stack profiled per [build-workflow.md](build-workflow.md)).
@@ -132,12 +150,11 @@ poc_cvdg16   ⭐ CoVDG type 2 page-flip + tiles + sprites (current frontier)
 poc_sound    →  SS.Tone confirmation; needs sound-process architecture
 poc_ipc      →  F$Fork + signal round-trip (phase 2a; gates phase 3 sound child)
 poc_shmem    →  F$AllRAM + F$MapBlk cross-process shared memory (phase 2b)
+sound        →  Parent-side fire-and-forget API + pocsndc child draining via SS.Tone (phase 3)
 main.c       →  phase 1 core skeleton (turn-phase state machine)
 ```
 
-Next PoC (after `poc_shmem` live-test):
-
-1. **Sound child process** (phase 3) — non-blocking `SS.Tone` driven by signals; payload via shared state. De-risked by `poc_ipc` + `poc_shmem`.
+Next: phase 4 — promote `poc_cvdg16` into a render child process using the same IPC composition.
 
 See [roadmap.md](roadmap.md) for the full phase plan.
 
