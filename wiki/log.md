@@ -39,6 +39,16 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] decision | Phase 3 done; signals abort SS.Tone
+
+`pocsnd` live-test passed: four queued tones played in sequence while the parent reached its shutdown print before the playback finished — fire-and-forget confirmed.
+
+Two findings recorded in [implementation/lessons-learned.md](implementation/lessons-learned.md) along the way:
+1. `/term` must be opened mode 3 (r/w) for `SS.Tone`; mode 1 fails silently.
+2. **`SS.Tone` is interruptible by signals** — a process that produces tones cannot use `F$Send` as its wake mechanism, because the producer's signals abort the consumer's tones inaudibly. Sound child now uses a short `F$Sleep(2 ticks ≈ 33 ms)` poll instead of signal-wake. This is a notable architectural constraint: signals + shared memory works fine for *most* IPC, but the sound subsystem specifically needs poll-based wake.
+
+[implementation/roadmap.md](implementation/roadmap.md): phase 3 ✅. Next: phase 4 — render module (promote `poc_cvdg16` into a render child).
+
 ## [2026-04-25] implement | Phase 3 sound child (C-side; live-test pending)
 
 Composed phases 2a (signals) and 2b (shared memory) into the sound subsystem.
