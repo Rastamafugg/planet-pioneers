@@ -19,7 +19,7 @@ NitrOS-9 EOU Level 2 gives each process a **single 64 KB logical address space**
 direct GameState g_state;   /* in direct page -- DO NOT USE YET, see below */
 ```
 
-⚠ **`direct` storage class is unverified and currently unsafe.** A first attempt in [main.c](../../src/c/main.c) (2026-04-25) crashed the system (bars down screen). Likely cause: DCC's `direct` allocator overlaps libc's own direct-page slots (`_flacc`, `errno`, ...) which user code cannot safely overwrite. A dedicated PoC must establish the right pattern (probably an explicit `#asm vsect ... endsect` reservation that does **not** conflict with the runtime) before any production code uses `direct`. See [implementation/lessons-learned.md](../implementation/lessons-learned.md).
+⚠ **`direct` storage class is unverified.** No PoC in `src/c/` exercises it. An early attempt to use it in [main.c](../../src/c/main.c) (2026-04-25) was rolled back after a different bug (DCC `char`→`int` printf promotion) was wrongly blamed on `direct`. The mechanism is therefore *untested* rather than known-broken. A dedicated PoC must establish the right pattern (likely an explicit `#asm vsect ... endsect` reservation that does **not** clobber libc's own direct-page slots `_flacc`/`errno`/...) before production code uses `direct`. See [implementation/lessons-learned.md](../implementation/lessons-learned.md).
 
 ## Memory budget (estimates from GDD §23.3)
 
