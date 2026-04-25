@@ -89,8 +89,10 @@ char *argv[];
         exit(3);
     }
 
-    /* open /term for SS.Tone */
-    term = open("/term", 1);
+    /* open /term for SS.Tone -- mode 3 (read/write) per poc_sound.c.
+     * Mode 1 (write-only) was the first attempt and produced no sound;
+     * the /term driver's I_SETSTT path appears to require an r/w path. */
+    term = open("/term", 3);
     if (term < 0) { printf("pocsndc: open /term failed\n"); exit(4); }
 
     intercept(sigtrap);

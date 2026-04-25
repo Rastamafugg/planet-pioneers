@@ -22,10 +22,10 @@ main()
     if (err) { printf("poc_snd: sound_init err %d\n", err); exit(1); }
 
     printf("poc_snd: queueing 4 tones\n");
-    sound_play(2900, 30, 16);  /* C5 */
-    sound_play(2440, 30, 16);  /* A4 */
-    sound_play(1825, 30, 16);  /* E4 */
-    sound_play(1450, 60, 16);  /* C4, longer */
+    sound_play(2900, 30, 52);  /* C5  AMP_LOUD */
+    sound_play(2440, 30, 52);  /* A4 */
+    sound_play(1825, 30, 52);  /* E4 */
+    sound_play(1450, 60, 52);  /* C4, longer */
 
     printf("poc_snd: queued; shutting down (blocks until drained)\n");
     sound_shutdown();
