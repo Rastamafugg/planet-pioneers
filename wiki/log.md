@@ -39,6 +39,12 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] finding | `direct` storage class crashes EOU
+
+Running `pp` on the CoCo 3 with `direct GameState g_state` produced a system crash (graphic bars down the screen) on the first `printf`. Hypothesis: DCC's `direct` allocator overlaps libc's own direct-page slots (`_flacc`, `errno`, ...; visible in stocks-and-bonds [SLPICPT.c](../../stocks-and-bonds/src/c/SLPICPT.c)). No PoC in `src/c/` actually uses `direct` — the GDD §23.3 recommendation was design intent, not observed practice.
+
+Reverted [main.c](../src/c/main.c) to plain `GameState g_state` in the data segment. Marked `direct` as ⚠ unverified in [platform/memory.md](platform/memory.md) and [platform/dcc.md](platform/dcc.md). Recorded as observed fact in [implementation/lessons-learned.md](implementation/lessons-learned.md). A dedicated direct-page PoC is now a prerequisite before any production code uses `direct`.
+
 ## [2026-04-25] lint | DCC build findings from phase 1/2a
 
 Two observed-fact findings recorded in [implementation/lessons-learned.md](implementation/lessons-learned.md) after first EOU build attempt:

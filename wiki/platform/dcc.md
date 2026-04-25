@@ -36,7 +36,7 @@ dcc poc_cvdg16.c -s -m=4k -f=/dd/cmds/poccvd16
 
 ## Storage classes
 
-- `direct` — place in direct-page (255 B pool); single-byte addressing. Used for `g_state` and hot-path variables. See [memory.md](memory.md).
+- `direct` — supposed to place a global in the direct-page (255 B pool) for single-byte addressing. ⚠ **Unsafe as written**: a bare `direct GameState g_state;` in [main.c](../../src/c/main.c) crashed EOU on first `printf` (2026-04-25), probably from collision with libc's own direct-page slots. Treat `direct` as an unverified PoC target until a working pattern is found. See [memory.md](memory.md) and [implementation/lessons-learned.md](../implementation/lessons-learned.md).
 - `static` — file-local scoping; also avoids symbol-table pressure.
 - `static const` — constant data in code segment; doesn't consume data RAM.
 
