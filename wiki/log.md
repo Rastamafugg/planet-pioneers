@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-25] phase | Phase 4 render child — code landed
+
+Wrote [src/c/render.c](../src/c/render.c) (parent API), [src/c/poc_rndc.c](../src/c/poc_rndc.c) (child), [src/c/poc_rnd.c](../src/c/poc_rnd.c) (smoke driver). Architecture mirrors phase-3 sound: SPSC ring (64 × 8-byte `RenderCmd`) in an 8K F$AllRAM block, poll-based wakeup with `F$Sleep(1)`, no signals. Render child owns the CoVDG path + both 16K screens + page-flip; logic enqueues clear/tile/sprite/present intents and calls `ren_flush()` to sync. Public symbols use `ren_` prefix to dodge the DCC 8-char external-name collision (`render_present` vs `render_palette`, `render_sprite` vs `render_shutdown`). `patchc` and `buildc` updated. `R_OP_PALETTE` accepted but child handler is a stub — `SS.PalSet` codepath deferred to first phase needing custom colors. Awaiting live-test on EOU.
+
+---
+
 ## [2026-04-24] seed | Initial wiki instantiation
 
 Created wiki scaffolding under `wiki/`:
