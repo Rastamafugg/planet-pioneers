@@ -39,11 +39,11 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
-## [2026-04-25] finding | `direct` storage class crashes EOU
+## [2026-04-25] finding | DCC does not auto-promote char→int at printf call sites
 
-Running `pp` on the CoCo 3 with `direct GameState g_state` produced a system crash (graphic bars down the screen) on the first `printf`. Hypothesis: DCC's `direct` allocator overlaps libc's own direct-page slots (`_flacc`, `errno`, ...; visible in stocks-and-bonds [SLPICPT.c](../../stocks-and-bonds/src/c/SLPICPT.c)). No PoC in `src/c/` actually uses `direct` — the GDD §23.3 recommendation was design intent, not observed practice.
+Running `pp` crashed EOU twice with the same symptom (graphic bars down the screen). Initially blamed `direct GameState g_state`; removing `direct` did not fix it. Real cause: every printf in `main.c` passed `unsigned char` fields (`g_state.mode`, `g_state.round`, ...) directly to `%d`. DCC's K&R varargs ABI does not appear to promote `char` to `int` reliably — printf reads 2 bytes per `%d`, gets stack garbage in the high byte, formats it, and the terminal interprets the resulting high-bit/control bytes as block-graphics glyphs that fill the screen.
 
-Reverted [main.c](../src/c/main.c) to plain `GameState g_state` in the data segment. Marked `direct` as ⚠ unverified in [platform/memory.md](platform/memory.md) and [platform/dcc.md](platform/dcc.md). Recorded as observed fact in [implementation/lessons-learned.md](implementation/lessons-learned.md). A dedicated direct-page PoC is now a prerequisite before any production code uses `direct`.
+Cross-checked: every working PoC's printf passes `int` (`vcnt`, `r.rg_b & 0xff`, ...). main.c was the first to violate that. Fixed by adding `(int)` casts at every printf site. Recorded in [implementation/lessons-learned.md](implementation/lessons-learned.md), updated [platform/dcc.md](platform/dcc.md) and [platform/memory.md](platform/memory.md). The `direct` keyword is now correctly classified as **unverified** rather than known-broken — needs its own PoC.
 
 ## [2026-04-25] lint | DCC build findings from phase 1/2a
 

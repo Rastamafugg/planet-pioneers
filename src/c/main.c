@@ -37,12 +37,8 @@ typedef struct {
     unsigned char phase;
 } GameState;
 
-/* NOTE: GDD §23.3 calls for `direct GameState g_state` in the direct
- * page. Tried that on EOU 2026-04-25 -- system crash (graphic bars
- * down screen) on first printf, presumably from collision with libc's
- * own direct-page slots (_flacc, errno, ...). Reverted to regular
- * data-segment storage. Direct-page placement is deferred to a
- * dedicated PoC. */
+/* GameState in regular data segment. GDD §23.3 calls for `direct`
+ * placement; deferred to a dedicated PoC -- see lessons-learned.md. */
 GameState g_state;
 
 static ginit()
@@ -54,16 +50,18 @@ static ginit()
     g_state.active_player = 0;
     g_state.phase         = PHASE_SUMMARY;
     printf("pp: init mode=%d players=%d max_rounds=%d\n",
-           g_state.mode, g_state.num_players, g_state.max_rounds);
+           (int)g_state.mode,
+           (int)g_state.num_players,
+           (int)g_state.max_rounds);
 }
 
-static ph_sum() { printf("pp: r%d summary\n",      g_state.round); }
-static ph_lgr() { printf("pp: r%d land-grant\n",   g_state.round); }
-static ph_lau() { printf("pp: r%d land-auction\n", g_state.round); }
-static ph_rev() { printf("pp: r%d random-event\n", g_state.round); }
-static ph_mgt() { printf("pp: r%d management\n",   g_state.round); }
-static ph_prd() { printf("pp: r%d production\n",   g_state.round); }
-static ph_auc() { printf("pp: r%d auction\n",      g_state.round); }
+static ph_sum() { printf("pp: r%d summary\n",      (int)g_state.round); }
+static ph_lgr() { printf("pp: r%d land-grant\n",   (int)g_state.round); }
+static ph_lau() { printf("pp: r%d land-auction\n", (int)g_state.round); }
+static ph_rev() { printf("pp: r%d random-event\n", (int)g_state.round); }
+static ph_mgt() { printf("pp: r%d management\n",   (int)g_state.round); }
+static ph_prd() { printf("pp: r%d production\n",   (int)g_state.round); }
+static ph_auc() { printf("pp: r%d auction\n",      (int)g_state.round); }
 
 static nxt_ph()
 {
@@ -96,6 +94,6 @@ main()
         nxt_ph();
     }
 
-    printf("pp: end after r%d\n", g_state.round - 1);
+    printf("pp: end after r%d\n", (int)(g_state.round - 1));
     exit(0);
 }

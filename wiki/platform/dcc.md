@@ -9,6 +9,7 @@ DCC is the C compiler targeting 6809/6309 under NitrOS-9. It is an **old K&R-sty
 - **Avoid modern C syntax** — no compound literals, no C99+ features.
 - **Keep external symbol names short and distinct** — linker / name-collision risk with long identifiers.
 - **16-bit int** — DCC's `int` is 16 bits. Use `unsigned int` for 0–65535 counts and addresses. Use `long` (if supported) for larger ranges.
+- **No automatic char→int promotion at varargs call sites.** Empirically, passing `unsigned char` directly to `printf("%d", ...)` reads stack garbage as the high byte and trashes the terminal (graphic bars). Cast `(int)` at the call site whenever the value is `char`/`unsigned char`. See [implementation/lessons-learned.md](../implementation/lessons-learned.md).
 
 Every PoC in `src/c/` follows these conventions; they are living examples.
 
@@ -36,7 +37,7 @@ dcc poc_cvdg16.c -s -m=4k -f=/dd/cmds/poccvd16
 
 ## Storage classes
 
-- `direct` — supposed to place a global in the direct-page (255 B pool) for single-byte addressing. ⚠ **Unsafe as written**: a bare `direct GameState g_state;` in [main.c](../../src/c/main.c) crashed EOU on first `printf` (2026-04-25), probably from collision with libc's own direct-page slots. Treat `direct` as an unverified PoC target until a working pattern is found. See [memory.md](memory.md) and [implementation/lessons-learned.md](../implementation/lessons-learned.md).
+- `direct` — supposed to place a global in the direct-page (255 B pool) for single-byte addressing. ⚠ **Unverified**: no PoC in `src/c/` uses it; needs a dedicated PoC to establish a pattern that coexists with libc's own direct-page slots. See [memory.md](memory.md).
 - `static` — file-local scoping; also avoids symbol-table pressure.
 - `static const` — constant data in code segment; doesn't consume data RAM.
 
