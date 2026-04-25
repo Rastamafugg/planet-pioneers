@@ -39,6 +39,14 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] implement | Phase 2b poc_shmem (C-side; live-test pending)
+
+Implemented [poc_shmem.c](../src/c/poc_shmem.c) (parent) and [poc_shmemc.c](../src/c/poc_shmemc.c) (child) using the design from [platform/ipc.md](platform/ipc.md). Parent allocates one 8 KB block via `F$AllRAM`, maps it into its DAT image via `F$MapBlk`, writes a `0x5AA5` magic + counter `1`, forks `pocshmc` with `"<block#> <pid>\r"` in argv, polls for `SIG_SHMEM_ACK` (131). Child maps the same physical block, verifies magic, increments counter to 2, sends signal, unmaps, exits. Parent verifies counter, reaps via `F$Wait`, unmaps with `F$ClrBlk`, frees physical block with `F$DelRAM`.
+
+While verifying register conventions against the kernel source, found a wiki conflation: `F$ClrBlk` only unmaps from the caller's DAT image; `F$DelRAM` is the call that actually deallocates the physical block (clears `RAMinUse` in `D.BlkMap`). Updated [platform/memory.md](platform/memory.md) and [platform/ipc.md](platform/ipc.md) with the corrected lifecycle.
+
+[implementation/poc-catalog.md](implementation/poc-catalog.md) updated; phase 2b in [implementation/roadmap.md](implementation/roadmap.md) marked ⏳ live-test pending. Phase 2b decides 3-process (logic + render + sound) vs 2-process architecture for the rest of the project — success here locks in the 3-process baseline.
+
 ## [2026-04-25] decision | Phase 2a done
 
 `pocipc` live-test passed on EOU. Parent successfully:

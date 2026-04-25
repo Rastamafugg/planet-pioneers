@@ -95,6 +95,19 @@ This is the **most advanced PoC** and the direct precursor of the game's main re
 
 **Reserved signals:** `130 = SIG_IPC_ACK` (PoC-only). Full signal table TBD per [ipc.md](../platform/ipc.md) open question #1.
 
+## poc_shmem.c / poc_shmemc.c — F$AllRAM + F$MapBlk shared memory (phase 2b)
+
+**Target:** Two cooperating C executables sharing one 8 KB physical block. Parent compile: `dcc poc_shmem.c slpicpt.c -m=4k -f=/dd/cmds/pocshm`. Child: `dcc poc_shmemc.c -m=4k -f=/dd/cmds/pocshmc`.
+
+**Proves (target):**
+- Cross-process shared memory via `F$AllRAM` + `F$MapBlk` with bearer-style block-number passing (block# transits through `argv` as decimal text).
+- Full lifecycle: parent allocates → maps → forks → child maps → both read/write the same physical bytes → child signals → child unmaps → parent unmaps → parent frees physical block.
+- Distinguishes `F$ClrBlk` (unmap from caller's DAT image) from `F$DelRAM` (deallocate physical block in `D.BlkMap`). Wiki previously conflated the two.
+
+**Decides:** 3-process (logic + render + sound) vs. 2-process (logic + sound) architecture. Success here makes the 3-process baseline the working choice for [phase 4 render](roadmap.md).
+
+**Reserved signals:** `131 = SIG_SHMEM_ACK` (PoC-only).
+
 ## main.c — phase 1 core skeleton
 
 **Target:** `dcc main.c -m=4k -f=/dd/cmds/pp` (no `-s` until stack profiled per [build-workflow.md](build-workflow.md)).
@@ -118,13 +131,13 @@ poc_cvdg16   ⭐ CoVDG type 2 page-flip + tiles + sprites (current frontier)
 
 poc_sound    →  SS.Tone confirmation; needs sound-process architecture
 poc_ipc      →  F$Fork + signal round-trip (phase 2a; gates phase 3 sound child)
+poc_shmem    →  F$AllRAM + F$MapBlk cross-process shared memory (phase 2b)
 main.c       →  phase 1 core skeleton (turn-phase state machine)
 ```
 
-Next PoCs (not yet written), in order:
+Next PoC (after `poc_shmem` live-test):
 
-1. **`poc_shmem`** (phase 2b) — cross-process shared memory via `F$AllRAM` + `F$MapBlk`. Decides 3-process (logic + render + sound) vs. 2-process (logic+sound) design. See [platform/ipc.md](../platform/ipc.md).
-2. **Sound child process** (phase 3) — non-blocking `SS.Tone` driven by signals; payload via shared state. De-risked by `poc_ipc` + `poc_shmem`.
+1. **Sound child process** (phase 3) — non-blocking `SS.Tone` driven by signals; payload via shared state. De-risked by `poc_ipc` + `poc_shmem`.
 
 See [roadmap.md](roadmap.md) for the full phase plan.
 
