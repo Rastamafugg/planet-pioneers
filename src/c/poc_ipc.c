@@ -15,11 +15,21 @@
 #include <string.h>
 #include <os9.h>
 
+#ifndef F_ID
 #define F_ID    0x0C
+#endif
+#ifndef F_FORK
 #define F_FORK  0x03
+#endif
+#ifndef F_WAIT
 #define F_WAIT  0x04
+#endif
+#ifndef F_SEND
 #define F_SEND  0x08
+#endif
+#ifndef F_SLEEP
 #define F_SLEEP 0x0A
+#endif
 
 #define SIG_IPC_ACK 130
 #define POLL_TICKS  180   /* ~3s @ 60Hz */
