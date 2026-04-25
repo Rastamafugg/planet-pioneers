@@ -39,6 +39,13 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] lint | DCC build findings from phase 1/2a
+
+Two observed-fact findings recorded in [implementation/lessons-learned.md](implementation/lessons-learned.md) after first EOU build attempt:
+
+1. **DCC linker collides on long shared name prefixes.** `phase_land_grant` vs `phase_land_auction` triggered `multiple definition` at [main.c](../src/c/main.c:56). Renamed all phase functions to short distinct `ph_xxx()` and marked them `static` (PR #5).
+2. **`<os9.h>` already defines `F_ID`, `F_FORK`, `F_WAIT`, `F_SEND`, `F_SLEEP`.** Bare `#define` produces `redefined macro` warnings. Wrapped the duplicates in [poc_ipc.c](../src/c/poc_ipc.c) and [poc_ipcc.c](../src/c/poc_ipcc.c) with `#ifndef` guards per [poc_vsync.c](../src/c/poc_vsync.c) pattern.
+
 ## [2026-04-24] implement | Phase 1 core skeleton + Phase 2a poc_ipc
 
 Implemented roadmap phases 1 and 2a per [implementation/roadmap.md](implementation/roadmap.md).

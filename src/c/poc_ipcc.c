@@ -10,7 +10,9 @@
 #include <stdlib.h>
 #include <os9.h>
 
+#ifndef F_SEND
 #define F_SEND      0x08
+#endif
 #define SIG_IPC_ACK 130
 
 main(argc, argv)

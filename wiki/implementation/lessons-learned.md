@@ -6,6 +6,8 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 
 - **K&R dialect only.** Declarations at start of block; no `void` prototypes; no modern C syntax. Keep external symbol names short and distinct to reduce linker/name-collision risk.
 - **16-bit `int`.** Plan data sizes accordingly.
+- **Linker collides on long shared name prefixes.** `phase_land_grant` and `phase_land_auction` produced `multiple definition` at link time — even with full names that differ in characters 11+. Mitigation: keep the distinct portion of an external name within the first ~6 chars, and mark file-local helpers `static`. Observed 2026-04-25 building [main.c](../../src/c/main.c).
+- **`<os9.h>` already defines the syscall numbers.** `F_ID`, `F_FORK`, `F_WAIT`, `F_SEND`, `F_SLEEP` (and likely the rest) ship in DCC's `os9.h`. Plain `#define` redeclaration produces `redefined macro` warnings — guard with `#ifndef` per the [poc_vsync.c](../../src/c/poc_vsync.c) pattern. Observed 2026-04-25 building [poc_ipc.c](../../src/c/poc_ipc.c).
 
 ## [CoWin](../platform/cowin.md) GET/PUT sprite movement
 
