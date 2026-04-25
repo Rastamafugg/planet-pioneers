@@ -2,6 +2,8 @@
 
 **Status:** STUBS — not yet deeply ingested. Very large (15K lines combined).
 
+> **Note on accuracy:** The Tech Ref is hobbyist-written and contains rare errors. Cross-check against the NitrOS-9 assembly source at `D:\retro\nitros9\` (mirror of the upstream GitHub repo) when a behavior is load-bearing.
+
 ## Documents
 
 | File | Lines | Covers |
@@ -21,6 +23,19 @@ Per AGENTS.md this is the authoritative source; reference-document-confirmed int
 - **CoWin graphics commands** — all drawing via escape sequences or documented calls (DWSet, OWSet, SetDPtr, Line, Bar, FColor, BColor, Palette, GetBlk, PutBlk).
 - **`SS.Tone`** — SetStat 0x98 on VTIO path; frequency 0–4095 relative, duration in ticks, amplitude 0–63. **Blocking** — see [platform/sound.md](../platform/sound.md).
 - **`SS.Joy`** — GetStat for joystick, returns x/y/button. **`SS.KySns`** for real-time key sensing.
+- **Memory & module-management syscalls** (ingested 2026-04-24 for IPC design — see [platform/ipc.md](../platform/ipc.md)):
+  - `F$AllRAM` ($39) — allocate physical 8 KB RAM blocks. Confirmed by `level2/modules/kernel/fallram.asm`: bearer-style block IDs, no per-process ownership tracking (just a "used" mark in `D.BlkMap`).
+  - `F$MapBlk` ($4F) — map block(s) by number into the *caller's* address space. No ownership check — anyone with a block number can map it.
+  - `F$ClrBlk` ($50) — unmap blocks; counterpart to F$MapBlk for cleanup.
+  - `F$Link` ($00) — find module in module directory by name + map into caller's space; refcount-managed.
+  - `F$Load` ($01), `F$UnLink` ($02), `F$UnLoad` ($1D) — module lifecycle.
+  - `F$VModul` ($2E) — validate a module header + CRC at a given DAT offset and **register it in the module directory**. Confirmed by `level1/modules/kernel/fvmodul.asm`: marks underlying physical blocks with `ModBlock` flag so they persist after the allocator exits. Enables runtime-built modules.
+  - `F$Mem` ($07) — grow/shrink the calling process's data area.
+  - `F$SRqMem` ($28) / `F$SRtMem` ($29) — system-pool memory; allocates from top of RAM. Pages-rounded.
+  - `F$Move` ($38) — cross-task data move. Often privileged; primary use is system→user.
+  - `F$CRC` — compute 24-bit module CRC. Useful when constructing a module header at runtime.
+- **Process / signal syscalls** (used in stocks-and-bonds reference, confirmed against Tech Ref):
+  - `F$Fork` ($03), `F$Wait` ($04), `F$Send` ($08), `F$Sleep` ($0A), `F$ID` ($0C). `F$Wait` returns `A=0` when interrupted by a signal received by the caller (vs. a child exit).
 
 ### Level 2 Windowing System Manual
 

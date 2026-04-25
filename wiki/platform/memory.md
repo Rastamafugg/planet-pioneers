@@ -56,6 +56,17 @@ To access screen bytes directly from the process:
 
 [poc_cwext.c](../sources/poc-sources.md) uses this pattern with a 32K back buffer copied 8K at a time.
 
+## Cross-process shared memory
+
+For the multi-process architecture (logic + render + sound), **`F$AllRAM` block IDs are bearer-style** — confirmed against the kernel assembly (`level2/modules/kernel/fallram.asm`):
+
+- `F$AllRAM(B=count)` — allocates `count` contiguous physical 8 KB blocks, returns starting block number in D. Just marks them "used" in the global `D.BlkMap`; no per-process owner is recorded.
+- `F$MapBlk(X=block_num, B=count)` — maps blocks into the *caller's* address space, no ownership check.
+- Any process that knows the block number can map the same physical bytes.
+- **Caveat:** blocks are not auto-freed on process exit. The allocator (or a reclaim path) must call `F$ClrBlk` or they leak until reboot.
+
+For named, refcount-managed sharing, `F$VModul` registers a runtime-built module so children find it via `F$Link`. See [ipc.md](ipc.md) for the full discussion and recommended baseline.
+
 ## Related
 
 - [stack.md](stack.md) — full platform overview

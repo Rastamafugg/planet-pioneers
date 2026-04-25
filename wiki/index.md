@@ -28,9 +28,11 @@ Content catalog. Read this first when answering a query to find the right page, 
 - [Input](platform/input.md) — joystick (SS.Joy), keyboard (SS.KySns)
 - [Memory layout](platform/memory.md) — process address space, direct page, GrfDrv
 - [DCC compiler notes](platform/dcc.md) — K&R dialect, constraints, flags
+- [Inter-process communication](platform/ipc.md) — signals, intercept, shared state, sound/render child pattern
 
 ## Implementation
 
+- [Roadmap](implementation/roadmap.md) — phase plan and timeline from PoCs to complete game
 - [PoC catalog](implementation/poc-catalog.md) — all seven `src/c/poc_*.c` files and what each proves
 - [Lessons learned](implementation/lessons-learned.md) — observed-fact findings from PoCs
 - [Data structures](implementation/data-structures.md) — Plot / Player / Store / GameState / Auction
@@ -45,6 +47,7 @@ Content catalog. Read this first when answering a query to find the right page, 
 - [M.U.L.E. strategy guide](sources/strategy-guide.md) — strategy tips (stub)
 - [Planet M.U.L.E. rules](sources/planet-mule-rules.md) — the "Option B" source (stub)
 - [PoC source files](sources/poc-sources.md) — index of `src/c/poc_*.c`
+- [stocks-and-bonds (reference repo)](sources/stocks-and-bonds.md) — Basic09 sibling project; IPC patterns we are porting
 - [DCC C Compiler docs](sources/dcc-docs.md) — library ref + user's guide (stubs)
 - [NitrOS-9 EOU docs](sources/nitros9-docs.md) — user's guide, technical ref, windowing manual (stubs)
 

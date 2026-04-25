@@ -96,7 +96,13 @@ poc_cvdg16   ⭐ CoVDG type 2 page-flip + tiles + sprites (current frontier)
 poc_sound    →  SS.Tone confirmation; needs sound-process architecture
 ```
 
-Next likely PoC (not yet written): a **sound process** reading from a pipe, so the main game loop can emit sound events non-blockingly.
+Next PoCs (not yet written), in order:
+
+1. **`poc_ipc`** — port `SLPICPT.c` from [stocks-and-bonds](../sources/stocks-and-bonds.md); fork a child and round-trip a signal in C. Direct port; low risk.
+2. **`poc_shmem`** — cross-process shared memory for the render path. Decides whether render runs in a child process (3-process design) or stays in main (2-process). See [platform/ipc.md](../platform/ipc.md) for transport candidates.
+3. **Sound child process** — non-blocking `SS.Tone` driven by signals; payload via shared state. Architecturally de-risked once 1 + 2 land.
+
+See [roadmap.md](roadmap.md) for the full phase plan.
 
 ## Sources
 
