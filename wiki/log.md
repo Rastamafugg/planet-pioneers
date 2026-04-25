@@ -39,6 +39,22 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] decision | Phase 2b done; 3-process architecture locked in
+
+`pocshm` live-test passed on EOU end-to-end:
+1. `F$AllRAM` allocated one 8 KB physical block
+2. `F$MapBlk` mapped it into the parent's DAT image; magic + counter init OK
+3. `F$Fork pocshmc` with `"<block#> <pid>\r"` in argv
+4. Child mapped the **same physical block** (different logical addr in its own DAT image), verified magic, incremented counter
+5. Child sent SIG_SHMEM_ACK, parent received it, **read counter == 2** confirming the bytes were shared
+6. `F$Wait` reaped child, `F$ClrBlk` unmapped, `F$DelRAM` freed physical block
+
+This was the gating PoC for the multi-process architecture. **3-process baseline (logic + render + sound) is now locked in.** 2P fallback no longer in play.
+
+[implementation/roadmap.md](implementation/roadmap.md) — phase 2b ✅; critical-path risk #1 (cross-process render shmem) struck through.
+
+Next gating PoC: phase 3 — sound child process.
+
 ## [2026-04-25] implement | Phase 2b poc_shmem (C-side; live-test pending)
 
 Implemented [poc_shmem.c](../src/c/poc_shmem.c) (parent) and [poc_shmemc.c](../src/c/poc_shmemc.c) (child) using the design from [platform/ipc.md](platform/ipc.md). Parent allocates one 8 KB block via `F$AllRAM`, maps it into its DAT image via `F$MapBlk`, writes a `0x5AA5` magic + counter `1`, forks `pocshmc` with `"<block#> <pid>\r"` in argv, polls for `SIG_SHMEM_ACK` (131). Child maps the same physical block, verifies magic, increments counter to 2, sends signal, unmaps, exits. Parent verifies counter, reaps via `F$Wait`, unmaps with `F$ClrBlk`, frees physical block with `F$DelRAM`.
