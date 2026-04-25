@@ -39,6 +39,19 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-24] implement | Phase 1 core skeleton + Phase 2a poc_ipc
+
+Implemented roadmap phases 1 and 2a per [implementation/roadmap.md](implementation/roadmap.md).
+
+- **Phase 1** — `src/c/main.c`: `direct GameState g_state` (6 B), phase enum (`SUMMARY → LAND_GRANT → LAND_AUCTION → RANDOM_EVENT → MANAGEMENT → PRODUCTION → AUCTION`), `next_phase()` round counter, stub phase functions printing their name. Builds as `/dd/cmds/pp` with `-m=4k` (no `-s`).
+- **Phase 2a** — `src/c/slpicpt.c` (verbatim port of stocks-and-bonds `SLPICPT.c` minus the standalone `_stkcheck`/`vsect` block), `src/c/poc_ipc.c` (parent: F$ID → install intercept → F$Fork "pocipcc" with parent PID as `argv[1]` → poll for sig 130 → F$Wait), `src/c/poc_ipcc.c` (child: `atoi(argv[1])` → F$Send 130 → exit). F$Fork uses A=0/B=namelen/X=name(last char OR `$80`)/Y=paramlen/U=param per `TSTBUS4.b09` convention.
+
+Resolved [platform/ipc.md](platform/ipc.md) open question #3 (canonical fork path = direct `_os9(F$Fork)`, not `system()`). Reserved signal 130 = `SIG_IPC_ACK` (PoC-only); full table still TBD.
+
+Build scripts: `src/script/buildc` extended with three new dcc lines; `src/script/patchc` rewritten to the same three for current iteration. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md).
+
+QA pending: live build + run on EOU. If F$Fork-from-DCC misbehaves, escalation per design is to fall back to `system()`.
+
 ## [2026-04-24] plan | Implementation roadmap committed
 
 Created [implementation/roadmap.md](implementation/roadmap.md) — phase plan from current state (post double-buffer verification on `poc_cvdg16`) through full game + QA. ~13–14 effort-weeks on the critical path. Architectural choices captured: multi-process baseline (logic + render + sound) with 2P fallback if `poc_shmem` fails; single-human keyboard scope first with joystick/multi-keyboard as polish; AI required from first playable phase. Two new gating PoCs added to the work list: `poc_ipc` (port SLPICPT) and `poc_shmem` (cross-process shared memory). Linked from index under both Platform and Implementation sections.

@@ -1,1 +1,3 @@
-dcc /d1/poc_cvdg16.c -s -m=4k -f=/dd/cmds/poccvd16
+dcc /d1/main.c -m=4k -f=/dd/cmds/pp
+dcc /d1/poc_ipc.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocipc
+dcc /d1/poc_ipcc.c -m=4k -f=/dd/cmds/pocipcc
