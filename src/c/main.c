@@ -37,7 +37,13 @@ typedef struct {
     unsigned char phase;
 } GameState;
 
-direct GameState g_state;
+/* NOTE: GDD §23.3 calls for `direct GameState g_state` in the direct
+ * page. Tried that on EOU 2026-04-25 -- system crash (graphic bars
+ * down screen) on first printf, presumably from collision with libc's
+ * own direct-page slots (_flacc, errno, ...). Reverted to regular
+ * data-segment storage. Direct-page placement is deferred to a
+ * dedicated PoC. */
+GameState g_state;
 
 static ginit()
 {
