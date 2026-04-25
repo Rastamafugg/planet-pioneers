@@ -1,1 +1,1 @@
-dcc /d1/main.c -m=4k -f=/dd/cmds/pp
+dcc /d1/main.c -m=4k -f=/dd/cmds/pioneer

@@ -39,6 +39,14 @@ Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall inde
 
 User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
 
+## [2026-04-25] decision | Phase 1 done
+
+`pioneer` (the phase-1 core skeleton, [src/c/main.c](../src/c/main.c)) runs cleanly: 1 init line + 42 phase lines (6 rounds × 7 phases) + final summary. Canonical shape: module name `pioneer`, seven `static ph_xxx()` helper functions dispatched from a `switch`, `unsigned char` GameState fields with `(int)` casts at every printf site (per data-structures.md and the size-not-type ABI rule).
+
+Phase 1 marked ✅ in [implementation/roadmap.md](implementation/roadmap.md). Phase 2a (`poc_ipc`) is built but live-test deferred.
+
+The original phase-1 crashes (graphic bars / vertical stripes / system reset) were **not isolated to a specific source-level cause** — bisects A/B/C reverting field type, helper functions, and module name individually all ran clean. New observation captured in [implementation/lessons-learned.md](implementation/lessons-learned.md): treat a NitrOS-9 module crash as something that may persist past its source fix, and rebuild from `buildc` (not `patchc`) before bisecting.
+
 ## [2026-04-25] finding | DCC does not auto-promote char→int at printf call sites
 
 Running `pp` crashed EOU twice with the same symptom (graphic bars down the screen). Initially blamed `direct GameState g_state`; removing `direct` did not fix it. Real cause: every printf in `main.c` passed `unsigned char` fields (`g_state.mode`, `g_state.round`, ...) directly to `%d`. DCC's K&R varargs ABI does not appear to promote `char` to `int` reliably — printf reads 2 bytes per `%d`, gets stack garbage in the high byte, formats it, and the terminal interprets the resulting high-bit/control bytes as block-graphics glyphs that fill the screen.
