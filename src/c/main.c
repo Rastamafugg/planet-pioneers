@@ -1,14 +1,20 @@
 /***********************************************************************
- * main.c  -  Planet Pioneers core skeleton (phase 1).
+ * main.c  -  isolation bisect A.
  *
- * Bisect step 3: restore switch dispatch + round/phase advance over
- * a 6-round x 7-phase game loop. Steps 1 and 2 (struct + init + one
- * printf, then 42-iteration loop with a single printf body) both
- * ran clean.
+ * Working baseline = int fields + inlined printfs + module name
+ * `pioneer`. This step reverts ONLY the field types to unsigned char
+ * (with explicit (int) casts at every printf site) -- the same
+ * pattern that crashed in PR #8. Everything else stays at the
+ * working baseline.
+ *
+ * If this crashes -> root cause is the unsigned-char-through-printf
+ * pattern, even with (int) casts; the cast does not actually save
+ * us under DCC's K&R varargs ABI.
+ *
+ * If this runs clean -> field type was NOT the load-bearing change;
+ * move on to bisect B (revert the helper functions).
  *
  * Compile: dcc main.c -m=4k -f=/dd/cmds/pioneer
- *
- * See wiki/implementation/roadmap.md (phase 1).
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,12 +33,12 @@
 #define PHASE_END           8
 
 typedef struct {
-    int mode;
-    int round;
-    int max_rounds;
-    int num_players;
-    int active_player;
-    int phase;
+    unsigned char mode;
+    unsigned char round;
+    unsigned char max_rounds;
+    unsigned char num_players;
+    unsigned char active_player;
+    unsigned char phase;
 } GameState;
 
 GameState g_state;
@@ -47,30 +53,32 @@ main()
     g_state.phase         = PHASE_SUMMARY;
 
     printf("pioneer: init mode=%d players=%d max_rounds=%d\n",
-           g_state.mode, g_state.num_players, g_state.max_rounds);
+           (int)g_state.mode,
+           (int)g_state.num_players,
+           (int)g_state.max_rounds);
 
     while (g_state.phase != PHASE_END) {
         switch (g_state.phase) {
         case PHASE_SUMMARY:
-            printf("pioneer: r%d summary\n", g_state.round);
+            printf("pioneer: r%d summary\n", (int)g_state.round);
             break;
         case PHASE_LAND_GRANT:
-            printf("pioneer: r%d land-grant\n", g_state.round);
+            printf("pioneer: r%d land-grant\n", (int)g_state.round);
             break;
         case PHASE_LAND_AUCTION:
-            printf("pioneer: r%d land-auction\n", g_state.round);
+            printf("pioneer: r%d land-auction\n", (int)g_state.round);
             break;
         case PHASE_RANDOM_EVENT:
-            printf("pioneer: r%d random-event\n", g_state.round);
+            printf("pioneer: r%d random-event\n", (int)g_state.round);
             break;
         case PHASE_MANAGEMENT:
-            printf("pioneer: r%d management\n", g_state.round);
+            printf("pioneer: r%d management\n", (int)g_state.round);
             break;
         case PHASE_PRODUCTION:
-            printf("pioneer: r%d production\n", g_state.round);
+            printf("pioneer: r%d production\n", (int)g_state.round);
             break;
         case PHASE_AUCTION:
-            printf("pioneer: r%d auction\n", g_state.round);
+            printf("pioneer: r%d auction\n", (int)g_state.round);
             break;
         }
 
@@ -86,6 +94,6 @@ main()
         }
     }
 
-    printf("pioneer: end after r%d\n", g_state.round - 1);
+    printf("pioneer: end after r%d\n", (int)(g_state.round - 1));
     exit(0);
 }
