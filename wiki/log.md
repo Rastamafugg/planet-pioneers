@@ -68,3 +68,39 @@ QA pending: live build + run on EOU. If F$Fork-from-DCC misbehaves, escalation p
 ## [2026-04-24] plan | Implementation roadmap committed
 
 Created [implementation/roadmap.md](implementation/roadmap.md) — phase plan from current state (post double-buffer verification on `poc_cvdg16`) through full game + QA. ~13–14 effort-weeks on the critical path. Architectural choices captured: multi-process baseline (logic + render + sound) with 2P fallback if `poc_shmem` fails; single-human keyboard scope first with joystick/multi-keyboard as polish; AI required from first playable phase. Two new gating PoCs added to the work list: `poc_ipc` (port SLPICPT) and `poc_shmem` (cross-process shared memory). Linked from index under both Platform and Implementation sections.
+
+## [2026-04-25] ingest | DCC C Compiler User's Guide — Tier 1 quirks pass
+
+Targeted ingest of `docs/reference/DCC C Compiler System Users Guide.md` (3685 lines) focused on **what trips up a modern C programmer**. Read in full: Ch 2 "DCC Characteristics" (lines 387–649), Appendix C §§ C.2 / C.6 / C.7 / C.8 / C.10–C.18 (lines 1989–3617), Appendix D "DCC vs Microware C" (lines 3618–3677). Skipped: Ch 1 tutorial, Ch 4 Basic09 examples, Ch 5 RMA reference, Appendix A error messages.
+
+Updated [sources/dcc-docs.md](sources/dcc-docs.md) from stub to full source-summary with section-to-line map, so future targeted reads can jump straight in. Substantially rewrote [platform/dcc.md](platform/dcc.md): added Type System (sizes, custom non-IEEE float/double layout, `pflinit`/`pffinit` referencing dance), Storage Classes (full `direct` documentation — 255-byte limit, libc-disjoint, no function args, K&R grammar omits it), ABI (spec vs implementation contradiction on call-site promotion), Preprocessor (Microware-C ANSI retrofits — stringizing/`__FILE__`/`#warning`/`#error`/`_OS9`/`__mc6809__`/`_BIG_END`), Run-time Arithmetic Errors (`EFPOVR`/`EDIVERR`/`EINTERR` via signal), and a complete compile-flag table with `-O`/`-P`/`-S`/`-M`/`-m=`/`-l=` semantics.
+
+Appended 12 non-obvious gotchas to [implementation/lessons-learned.md](implementation/lessons-learned.md). Two flagged contradictions:
+
+1. **Identifier significance is documented at exactly 8 characters** (UG line 2013), refining the prior empirical "first ~6 chars" rule. Confirms the `phase_land_grant` / `phase_land_auction` collision (shared `phase_la` first-8). Updated rule: distinct portion within first 8 characters of any external (non-`static`) name.
+2. **Call-site `char`→`int` promotion**: spec (UG § C.7.1 line 2216 and § C.10.1 line 3039) claims it happens; our printf-graphic-bars finding shows it doesn't for varargs. Tentative resolution recorded — promotion requires a formal parameter to drive it, so `…` varargs and unprototyped calls fall through to size-not-type ABI.
+
+Other gotchas surfaced: `\n` is CR not LF (use `\l` for actual LF); auto aggregates / unions cannot be initialized; one `register` per function silently downgraded; string literals not pooled; all float arithmetic widens to double; float/double layout is sign+magnitude+biased-exp, not IEEE 754; no `void` and no `enum` keywords; `direct` absent from Appendix C grammar (Ch 2 extension); `#asm` blocks in `vsect` need `endsect` before `#endasm`; `<…>` includes search DEFS only.
+
+No new pages created; [index.md](index.md) unchanged. Library Reference still stub — read on demand for syscall / libc specifics.
+
+## [2026-04-25] ingest | DCC User's Guide — Tier 2 ABI / module / toolchain
+
+Targeted ingest of `docs/reference/DCC C Compiler System Users Guide.md` Ch 2 § Compiler option flags + Examples (lines 616–649), Ch 3 §§ Object code module + Memory management (650–830), and Appendix B per-tool flag reference for `dcc`/`dcpp`/`dcc68`/`dco68`/`rma`/`rlink` (1863–1988).
+
+**Headline finding — correction of long-standing wiki claim:** `-s` is documented (Ch 2 line 631; Appendix B lines 1903 and 1935) as "suppress generation of stack-checking code," NOT "optimize for speed." Prior wiki, AGENTS.md, and the GDD's recommended flags treated `-s` as a speed flag. PoCs running with `-s` therefore have no `*** Stack Overflow ***` runtime detection — a stack-into-data collision becomes silent corruption. Correction applied in [platform/dcc.md](platform/dcc.md) and a strong-flag entry added to [implementation/lessons-learned.md](implementation/lessons-learned.md). **Recommendation:** drop `-s` from PoC build lines until each PoC's stack high-water has been measured.
+
+**Other notable findings:**
+
+- **`-2` (Level-2 optimization) is documented as actively dangerous** ("extremely likely to fail, may even crash the computer!" — App. B line 1883). Our target IS Level 2, but `dco68` already applies safe Level-2 patterns automatically (Appendix D line 3668, Level-2 zero-base absolute addressing). Don't enable `-2` manually.
+- **`-ls` links `sys.l`** — a library of OS-9 syscall constants, `I$GetStt`/`I$SetStt` codes, and SS_* constants (App. B line 1894). PoCs currently `#define` these manually with `#ifndef` guards; `-ls` is the documented alternative. Worth a small verification PoC.
+- **`-lg` links `cgfx.l`** — a Tandy CoCo 3 graphics library (App. B line 1892). Existence not previously known to the project. Scope unknown — may overlap CoVDG/CoWin work.
+- **String literals in DCC live in the TEXT section of the OS-9 module, not DATA** (UG line 713). Mutating `*p` after `char *p = "..."` corrupts the executable module image — which is reentrant and potentially shared. Use `char arr[] = "..."` for mutable strings.
+- **Per-function stack overhead** (UG lines 778 + 825): +64 bytes reserved for asm/syscall/arithmetic + 4 bytes for return address & caller's register-var save, on top of declared locals.
+- **stdio buffer cost** (UG line 827): 256 bytes per `fopen`'d file; `stderr` is unbuffered. Significant for `-m=` budgeting.
+- **`dcpp` derives psect names from filename + `_c`** (App. B line 1913) — two source files with the same basename in different directories produce a link-time clash distinct from the 8-char-identifier rule.
+- Module format documented end-to-end (Type/Lang $11, Attr/Rev $81 reentrant, mainline = `cstart.r`, data-text/data-data reference tables drive runtime pointer relocation), including Level-2 specifics (Y=0, DP=0, data area starts at zero).
+
+Distinguished `-O` (capital — stop after optimizer) from `-o` (lowercase — inhibit optimizer); distinguished `-m=` (dcc-level additional memory) from `-M=` (rlink-level total data area) from `-M` (no `=` — request linkage map). Full flag table now in [platform/dcc.md](platform/dcc.md).
+
+No new pages created; [index.md](index.md) unchanged. Source-summary [sources/dcc-docs.md](sources/dcc-docs.md) updated with Tier 2 ingest entry. Tier 3 (Ch 4 Basic09 ABI, Ch 2 perf section, App. C expressions skim) remains optional — flag if a specific question motivates it.
