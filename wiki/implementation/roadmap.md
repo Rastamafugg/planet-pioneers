@@ -11,7 +11,7 @@ Phase plan and timeline for building Planet Pioneers from the existing PoCs to a
 
 ## Critical-path risks (front-loaded)
 
-1. **Cross-process shared memory for render** — mechanism (`F$AllRAM` + `F$MapBlk` with bearer block-IDs) confirmed against kernel source on 2026-04-24. `poc_shmem` (phase 2b) now validates the C-side implementation, not the kernel feasibility. 3P architecture is the working baseline; 2P fallback only if `poc_shmem` reveals an unexpected DCC/libc obstacle.
+1. ~~**Cross-process shared memory for render**~~ ✅ resolved 2026-04-25 — `poc_shmem` C-side passed live-test on EOU. **3-process architecture (logic + render + sound) is the locked-in baseline.** 2P fallback no longer in play.
 2. **64 KB process budget** — measure code size after every milestone, not at the end.
 3. **Commodity auction phase** — 4 simultaneous price lines + input is the hardest interactive code in the game; gets its own PoC inside phase 7.
 4. **AI must land alongside phases**, not after — single human means 3 AI opponents are required from the first playable phase.
