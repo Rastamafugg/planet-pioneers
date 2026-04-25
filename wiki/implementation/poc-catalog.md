@@ -126,6 +126,29 @@ This is the **most advanced PoC** and the direct precursor of the game's main re
 
 **Layout discipline:** `SoundQueue` typedef is duplicated in `sound.c` and `poc_sndc.c` with a "must match" comment. No shared header — DCC's quoted-include search rules ([dcc.md](../platform/dcc.md)) make a one-shot duplicate the simpler choice for now.
 
+## render.c / poc_rnd.c / poc_rndc.c — render child process (phase 4)
+
+**Target:** Reusable parent-side `render.c` module + child executable `pocrndc` + smoke driver `pocrnd`. Builds: `dcc poc_rnd.c render.c -m=4k -f=/dd/cmds/pocrnd`, `dcc poc_rndc.c -m=4k -f=/dd/cmds/pocrndc`.
+
+**API surface (`render.c`):**
+- `ren_init()` — alloc 8K shared block, init RenderQueue, fork `pocrndc`, wait for `q->ready`
+- `ren_clr(color)` / `ren_tile(kind,col,row)` / `ren_spr(x,y,frame,dir,mule)` / `ren_pal(idx,rgb)` — enqueue draw intents on the back buffer
+- `ren_pres()` — enqueue page-flip; child calls `SS.DScrn` and swaps back/front
+- `ren_flush()` — block (poll `F$Sleep 1`) until queue drained — the frame-sync primitive
+- `ren_shut()` — flush, set `quit`, `F$Wait`, `F$ClrBlk`, `F$DelRAM`
+
+**Proves (target):**
+- The CoVDG path + screen pair can be owned entirely by a render child; logic process never touches screen RAM.
+- 8-byte SPSC `RenderCmd` ring (64 entries) is enough headroom for clear + 9×5 tiles + sprites + present without mid-frame stalls.
+- Page-flip ownership lives with the child; `R_OP_PRESENT` is the only synchronization point.
+- Same poll-based wakeup pattern as phase-3 sound child — no signals (intentional, mirrors phase 3's discipline; signals reserved 130/132 unused).
+
+**8-char rule:** Public symbols use `ren_` prefix. `render_present`/`render_palette` would have collided on `render_p`, and `render_sprite`/`render_shutdown` on `render_s`, per the documented DCC external-name significance limit.
+
+**Layout discipline:** `RenderQueue` / `RenderCmd` typedefs duplicated in `render.c` and `poc_rndc.c` with "must match" comment, same convention as sound.
+
+**Deferred:** `R_OP_PALETTE` accepted by API but child handler is a no-op — `SS.PalSet` codepath against EOU windowing manual not yet pinned. Lands when a phase-7 screen needs custom colors.
+
 ## main.c — phase 1 core skeleton
 
 **Target:** `dcc main.c -m=4k -f=/dd/cmds/pp` (no `-s` until stack profiled per [build-workflow.md](build-workflow.md)).
@@ -151,10 +174,11 @@ poc_sound    →  SS.Tone confirmation; needs sound-process architecture
 poc_ipc      →  F$Fork + signal round-trip (phase 2a; gates phase 3 sound child)
 poc_shmem    →  F$AllRAM + F$MapBlk cross-process shared memory (phase 2b)
 sound        →  Parent-side fire-and-forget API + pocsndc child draining via SS.Tone (phase 3)
+render       →  Parent-side ren_* API + pocrndc child owning CoVDG path + page flip (phase 4)
 main.c       →  phase 1 core skeleton (turn-phase state machine)
 ```
 
-Next: phase 4 — promote `poc_cvdg16` into a render child process using the same IPC composition.
+Next: phase 5 — input (single-keyboard `SS.KySns` polling), then phase 6 minimal AI before any playable phase lands.
 
 See [roadmap.md](roadmap.md) for the full phase plan.
 
