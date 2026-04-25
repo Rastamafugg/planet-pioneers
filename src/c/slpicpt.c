@@ -7,12 +7,26 @@
  *   2 = read lastsig + hitcount
  *   3 = clear counters (handler stays installed)
  *
- * Non-reentrant: one active intercept per process. The trailing
- * _stkcheck / vsect block from the source repo's standalone-module
- * version is omitted here; this file is linked into a host program
- * that supplies its own runtime.
+ * Non-reentrant: one active intercept per process.
  *
- * See wiki/platform/ipc.md.
+ * Two pieces of the source repo's version are intentionally omitted:
+ *
+ * 1. The trailing `_stkcheck` / `vsect` block (file-private libc
+ *    runtime). The host program (poc_ipc.c) supplies its own runtime
+ *    when linked together; including the standalone block would
+ *    duplicate symbols.
+ *
+ * 2. The `#asm ldy 6,s #endasm` preamble at the top of slpicpt(). In
+ *    stocks-and-bonds, slpicpt was invoked as a standalone module
+ *    from Basic09 (`RUN`); the b09 calling convention does not set
+ *    up Y the way DCC's C ABI expects, so the asm preamble re-syncs
+ *    it from the stacked third argument. When linked into a normal
+ *    C program (our case), Y already holds the data-segment pointer
+ *    for global access; reloading it from `cmemsiz` clobbers Y and
+ *    corrupts every subsequent global-variable access, hanging the
+ *    caller. Observed 2026-04-25.
+ *
+ * See wiki/platform/ipc.md and wiki/implementation/lessons-learned.md.
  ***********************************************************************/
 #include <signal.h>
 
@@ -42,10 +56,6 @@ int cntoutsz;
 int *okout;
 int okoutsz;
 {
-#asm
-    ldy 6,s
-#endasm
-
     *okout  = 0;
     *sigout = 0;
     *cntout = 0;
