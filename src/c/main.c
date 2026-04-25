@@ -11,7 +11,12 @@
  * dispatch through a switch (likely codegen / linkage interaction).
  * If clean -> the only suspect left is the 2-char module name `pp`.
  *
- * Compile: dcc main.c -m=4k -f=/dd/cmds/pioneer
+ * Bisect C (this commit): output module renamed back to `pp`, all
+ * other code unchanged from B. If this crashes -> root cause is
+ * the short module name. If clean -> the original crash was a
+ * combined effect we will need to revisit later (or a phantom).
+ *
+ * Compile: dcc main.c -m=4k -f=/dd/cmds/pp
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
