@@ -21,3 +21,24 @@ Created wiki scaffolding under `wiki/`:
 - GDD sections 8–10, 12–18 (summary/land-grant/auction detail, production phase, random events, commodity auctions, economy, tournament features, AI)
 
 Suggested next ingest: GDD §13 (Random Events) and §14 (Commodity Auctions) — these are required before implementation can begin on those phases, and current pages are stubs.
+
+## [2026-04-24] ingest | stocks-and-bonds IPC reference
+
+Ingested `D:\retro\stocks-and-bonds\src\c\SLPICPT.c`, `src\basic\TSTBUS4.b09`, `src\basic\TSTBUSW.b09` — a Basic09 sibling project on the same NitrOS-9 EOU platform that demonstrates multi-process architecture with C signal intercepts. Created [sources/stocks-and-bonds.md](sources/stocks-and-bonds.md) and new platform page [platform/ipc.md](platform/ipc.md) capturing: the `intercept()`-based signal handler pattern, the F$Fork/F$Wait/F$Send/F$Sleep/F$ID syscall set, and the "signal=wakeup, payload=shared state" discipline. Identified open question — cross-process shared memory (`F$AllRam`+`F$MapBlk`) — that gates whether Planet Pioneers can run render in a child process or must remain monoprocess for rendering.
+
+## [2026-04-24] ingest | NitrOS-9 Tech Ref — memory & module-management syscalls
+
+Targeted ingest of `docs/reference/NitrOS-9 EOU Technical Reference.md` for IPC design: F$AllRAM, F$MapBlk, F$ClrBlk, F$Link, F$Load, F$VModul, F$UnLink, F$UnLoad, F$Mem, F$SRqMem/F$SRtMem, F$Move, F$Wait, F$CRC. Cross-checked behavioral details against the kernel assembly source at `D:\retro\nitros9\` — specifically `level2/modules/kernel/fallram.asm`, `fmapblk.asm`, and `level1/modules/kernel/fvmodul.asm`. Resolved the two open questions blocking `poc_shmem`:
+
+1. **`F$AllRAM` block IDs are bearer-style** — fallram.asm just sets a "used" mark in `D.BlkMap` with no per-process ownership table. Any process with the block number can `F$MapBlk` it. Caveat: blocks are not auto-freed on process exit; allocator (or reclaim path) must `F$ClrBlk`.
+2. **Runtime module creation IS supported** — fvmodul.asm validates a module at a DAT-image offset, marks underlying blocks with `ModBlock` so they persist past the allocator, and adds an entry in the module directory for `F$Link` lookup.
+
+Updated [sources/nitros9-docs.md](sources/nitros9-docs.md) with the syscall index, [platform/ipc.md](platform/ipc.md) (replaced hypothesis section with confirmed-fact section, added concrete `poc_shmem` design using F$AllRAM + F$MapBlk + block-number passing as baseline; F$VModul as upgrade path), and [platform/memory.md](platform/memory.md) (new "Cross-process shared memory" section). Updated [implementation/roadmap.md](implementation/roadmap.md): 3P architecture is now the working baseline (2P fallback contingent only on DCC/libc obstacles), and `poc_shmem` shifts from "decide kernel feasibility" to "validate C-side implementation."
+
+## [2026-04-24] decision | Shared-memory mechanism — confirmed vs hypothesized
+
+User confirmed file-based IPC with full-file and section locking works on EOU — recorded as the guaranteed fallback transport in [platform/ipc.md](platform/ipc.md). User raised the hypothesis that a parent process might construct a data module at runtime so children can `F$Link` to it; recorded as the preferred in-memory candidate pending Tech Ref confirmation. Updated ipc.md with an explicit confirmed-vs-hypothesized split. Updated [implementation/poc-catalog.md](implementation/poc-catalog.md) "next PoC" line to reflect new ordering: poc_ipc → poc_shmem → sound child. **Next concrete step:** targeted ingest of NitrOS-9 EOU Technical Reference sections F$AllRam, F$MapBlk, F$Link, F$LdMod, F$Move, F$Mem before `poc_shmem` is designed.
+
+## [2026-04-24] plan | Implementation roadmap committed
+
+Created [implementation/roadmap.md](implementation/roadmap.md) — phase plan from current state (post double-buffer verification on `poc_cvdg16`) through full game + QA. ~13–14 effort-weeks on the critical path. Architectural choices captured: multi-process baseline (logic + render + sound) with 2P fallback if `poc_shmem` fails; single-human keyboard scope first with joystick/multi-keyboard as polish; AI required from first playable phase. Two new gating PoCs added to the work list: `poc_ipc` (port SLPICPT) and `poc_shmem` (cross-process shared memory). Linked from index under both Platform and Implementation sections.
