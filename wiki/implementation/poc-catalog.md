@@ -1,6 +1,6 @@
 # PoC Catalog
 
-Seven PoC files in `src/c/`. Each proves one platform capability before real game code is written. See [sources/poc-sources.md](../sources/poc-sources.md) for the raw index.
+Nine PoC files plus `main.c` (phase-1 skeleton) in `src/c/`. Each PoC proves one platform capability before real game code is written. See [sources/poc-sources.md](../sources/poc-sources.md) for the raw index.
 
 ## poc_vsync.c — VRN timing gate (113 lines)
 
@@ -80,6 +80,29 @@ This is the **most advanced PoC** and the direct precursor of the game's main re
 
 **Finding:** High-level CoWin drawing path is viable for static-ish tile grids with a few moving markers. Constants: `TILE_W=35, TILE_H=40, MAP_OX=2, MAP_OY=0`.
 
+## poc_ipc.c / poc_ipcc.c — F$Fork + signal round-trip (phase 2a)
+
+**Target:** Two cooperating C executables. Parent compile: `dcc poc_ipc.c slpicpt.c -m=4k -f=/dd/cmds/pocipc`. Child: `dcc poc_ipcc.c -m=4k -f=/dd/cmds/pocipcc`.
+
+**Proves:**
+- Direct `_os9(F$Fork)` from DCC C with `A=0, B=namelen, X=name, Y=paramlen, U=param`. Last char of name has bit 7 set (per `TSTBUS4.b09:439` convention).
+- Parameter delivery: parent writes `"<pid>\r"`, child reads via `argv[1]`.
+- `slpicpt.c` C signal-intercept wrapper (verbatim port of stocks-and-bonds `SLPICPT.c`, minus the standalone-module `_stkcheck`/`vsect` block — that runtime is supplied by the linked host program).
+- `F$Send` parent ← child signal `130` delivered while parent is in `F$Sleep`.
+- `F$Wait` reaps child cleanly.
+
+**Resolves:** [ipc.md](../platform/ipc.md) open question #3 — the canonical fork path for spawning sibling C executables is the raw `F$Fork` syscall, not libc `system()`.
+
+**Reserved signals:** `130 = SIG_IPC_ACK` (PoC-only). Full signal table TBD per [ipc.md](../platform/ipc.md) open question #1.
+
+## main.c — phase 1 core skeleton
+
+**Target:** `dcc main.c -m=4k -f=/dd/cmds/pp` (no `-s` until stack profiled per [build-workflow.md](build-workflow.md)).
+
+**Proves:** Phase state machine layout — `direct GameState g_state` (6 B), linear phase enum (`SUMMARY → LAND_GRANT → LAND_AUCTION → RANDOM_EVENT → MANAGEMENT → PRODUCTION → AUCTION`), round-counter halt at `max_rounds`. All phase functions are `printf` stubs.
+
+**Not yet:** real phase logic, AI, render/sound/input, `Plot`/`Player`/`Store` storage. Each lands in its own roadmap phase.
+
 ## Progression summary
 
 ```
@@ -94,13 +117,14 @@ poc_cvdg     →  CoVDG type 4 — blocked by memory
 poc_cvdg16   ⭐ CoVDG type 2 page-flip + tiles + sprites (current frontier)
 
 poc_sound    →  SS.Tone confirmation; needs sound-process architecture
+poc_ipc      →  F$Fork + signal round-trip (phase 2a; gates phase 3 sound child)
+main.c       →  phase 1 core skeleton (turn-phase state machine)
 ```
 
 Next PoCs (not yet written), in order:
 
-1. **`poc_ipc`** — port `SLPICPT.c` from [stocks-and-bonds](../sources/stocks-and-bonds.md); fork a child and round-trip a signal in C. Direct port; low risk.
-2. **`poc_shmem`** — cross-process shared memory for the render path. Decides whether render runs in a child process (3-process design) or stays in main (2-process). See [platform/ipc.md](../platform/ipc.md) for transport candidates.
-3. **Sound child process** — non-blocking `SS.Tone` driven by signals; payload via shared state. Architecturally de-risked once 1 + 2 land.
+1. **`poc_shmem`** (phase 2b) — cross-process shared memory via `F$AllRAM` + `F$MapBlk`. Decides 3-process (logic + render + sound) vs. 2-process (logic+sound) design. See [platform/ipc.md](../platform/ipc.md).
+2. **Sound child process** (phase 3) — non-blocking `SS.Tone` driven by signals; payload via shared state. De-risked by `poc_ipc` + `poc_shmem`.
 
 See [roadmap.md](roadmap.md) for the full phase plan.
 

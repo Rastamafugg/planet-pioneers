@@ -13,14 +13,13 @@ NitrOS-9 EOU Level 2 gives each process a **single 64 KB logical address space**
 
 ## Direct page discipline
 
-255 bytes total. Reserve for hot-path state. Per GDD §23.3:
-
-- `GameState g_state` (~12 bytes) — mode, round, turn order, active player, auction commodity, crystite price
-- Hot-path variables — whatever's in tight rendering/animation loops
+255 bytes total. Per GDD §23.3 the design intent is to place `GameState g_state` and hot-path variables here:
 
 ```c
-direct GameState g_state;   /* in direct page */
+direct GameState g_state;   /* in direct page -- DO NOT USE YET, see below */
 ```
+
+⚠ **`direct` storage class is unverified.** No PoC in `src/c/` exercises it. An early attempt to use it in [main.c](../../src/c/main.c) (2026-04-25) was rolled back after a different bug (DCC `char`→`int` printf promotion) was wrongly blamed on `direct`. The mechanism is therefore *untested* rather than known-broken. A dedicated PoC must establish the right pattern (likely an explicit `#asm vsect ... endsect` reservation that does **not** clobber libc's own direct-page slots `_flacc`/`errno`/...) before production code uses `direct`. See [implementation/lessons-learned.md](../implementation/lessons-learned.md).
 
 ## Memory budget (estimates from GDD §23.3)
 
