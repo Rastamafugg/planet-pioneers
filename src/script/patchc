@@ -1,1 +1,2 @@
-dcc /d1/poc_ipc.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocipc
+dcc /d1/poc_shmem.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocshm
+dcc /d1/poc_shmemc.c -m=4k -f=/dd/cmds/pocshmc

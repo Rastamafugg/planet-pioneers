@@ -9,3 +9,5 @@ dcc /d1/poc_hello.c -m=4k -f=/dd/cmds/pochello
 dcc /d1/main.c -m=4k -f=/dd/cmds/pioneer
 dcc /d1/poc_ipc.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocipc
 dcc /d1/poc_ipcc.c -m=4k -f=/dd/cmds/pocipcc
+dcc /d1/poc_shmem.c /d1/slpicpt.c -m=4k -f=/dd/cmds/pocshm
+dcc /d1/poc_shmemc.c -m=4k -f=/dd/cmds/pocshmc

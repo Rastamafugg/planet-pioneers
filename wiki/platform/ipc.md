@@ -65,17 +65,17 @@ Use **`F$AllRAM` + `F$MapBlk` with block-number passing** as the baseline; add `
 
 ```
 Parent (logic process):
-  1. F$AllRAM(B=N)              -> physical block_num
-  2. F$MapBlk(X=block_num,B=N)  -> local addr; init shared-state header
+  1. F$AllRAM(B=N)              -> physical block_num in D
+  2. F$MapBlk(B=N, X=block_num) -> local addr in U; init shared-state header
   3. F$Fork(child)              -> child_pid, passing block_num in the param area
   4. main loop: write state, F$Send(child_pid, sig_render), F$Sleep
-  5. on shutdown: F$Send quit; F$Wait; F$ClrBlk; F$AllRAM blocks back to free pool
+  5. on shutdown: F$Send quit; F$Wait; F$ClrBlk (unmap); F$DelRAM (free physical)
 
 Child (render process):
-  1. read block_num from arg/param area
-  2. F$MapBlk(X=block_num,B=N) -> local addr (same physical bytes as parent)
+  1. read block_num from argv
+  2. F$MapBlk(B=N, X=block_num) -> local addr in U (same physical bytes; different logical addr)
   3. install_intercept(); main loop: F$Sleep, on signal read shared state, render
-  4. on quit signal: F$ClrBlk (optional — parent will); exit
+  4. on quit signal: F$ClrBlk (unmap own copy); exit. Parent calls F$DelRAM.
 ```
 
 Atomicity for multi-byte fields uses one of:

@@ -59,10 +59,12 @@ To access screen bytes directly from the process:
 
 For the multi-process architecture (logic + render + sound), **`F$AllRAM` block IDs are bearer-style** — confirmed against the kernel assembly (`level2/modules/kernel/fallram.asm`):
 
-- `F$AllRAM(B=count)` — allocates `count` contiguous physical 8 KB blocks, returns starting block number in D. Just marks them "used" in the global `D.BlkMap`; no per-process owner is recorded.
-- `F$MapBlk(X=block_num, B=count)` — maps blocks into the *caller's* address space, no ownership check.
+- `F$AllRAM(B=count)` — allocates `count` contiguous physical 8 KB blocks. **Out:** `D` = starting block number. Marks the blocks "used" in the global `D.BlkMap`; no per-process owner is recorded.
+- `F$MapBlk(B=count, X=block_num)` — maps blocks into the *caller's* DAT image, no ownership check. **Out:** `U` = mapped logical address.
 - Any process that knows the block number can map the same physical bytes.
-- **Caveat:** blocks are not auto-freed on process exit. The allocator (or a reclaim path) must call `F$ClrBlk` or they leak until reboot.
+- `F$ClrBlk(B=count, U=address)` — **unmaps** from the calling process's DAT image. Does NOT free the physical block. (Confirmed against [`fclrblk.asm`](D:\retro\nitros9\level2\modules\kernel\fclrblk.asm) — only modifies `P$DATImg`.)
+- `F$DelRAM(B=count, X=block_num)` — actually deallocates the physical block by clearing the `RAMinUse` bit in `D.BlkMap`. Confirmed against [`fdelram.asm`](D:\retro\nitros9\level2\modules\kernel\fdelram.asm).
+- **Caveat:** physical blocks are not auto-freed on process exit. Whoever allocated the block must call `F$DelRAM` (typically after `F$ClrBlk`-ing their own mapping), or the block leaks until reboot.
 
 For named, refcount-managed sharing, `F$VModul` registers a runtime-built module so children find it via `F$Link`. See [ipc.md](ipc.md) for the full discussion and recommended baseline.
 
