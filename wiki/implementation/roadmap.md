@@ -21,7 +21,7 @@ Phase plan and timeline for building Planet Pioneers from the existing PoCs to a
 | #   | Phase                                   | Deliverable                                                                | Effort  | Notes |
 |-----|------------------------------------------|----------------------------------------------------------------------------|---------|-------|
 | 1   | Core skeleton ✅                          | `main.c`, [`GameState`](data-structures.md), turn-phase state machine. Done 2026-04-25 — `pioneer` runs cleanly; `direct` placement deferred to its own PoC | 0.5 wk  | |
-| 2a  | **`poc_ipc`** ⚠ gating                  | Port `SLPICPT.c`; fork child; round-trip a signal in C. Built; live-test deferred | 0.5 wk  | Direct port from stocks-and-bonds |
+| 2a  | **`poc_ipc`** ✅                          | Port `SLPICPT.c`; fork child; round-trip a signal in C. Live-test passed 2026-04-25 — F$Fork + F$Send + F$Wait round-trip confirmed | 0.5 wk  | Direct port from stocks-and-bonds; resolved [ipc.md](../platform/ipc.md) open question #3 |
 | 2b  | **`poc_shmem`**                          | Two processes share a memory region via `F$AllRAM` + `F$MapBlk` (block-number passing); see [platform/ipc.md](../platform/ipc.md) | 1 wk    | Mechanism confirmed in Tech Ref + kernel source 2026-04-24; PoC validates the pattern in C |
 | 3   | Sound child process                       | `sound/` module; `{freq,dur,amp}` queue; non-blocking from logic POV       | 0.5 wk  | De-risked by 2a |
 | 4   | Render module / process                   | Promote `poc_cvdg16` → `render/` (page flip + tile + sprite + palette)     | 1–1.5 wk | Path depends on 2b outcome |
