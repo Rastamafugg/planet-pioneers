@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] phase | Phase 5 input module landed
+
+`input.c` ships polled `SS.KySns` API: `inp_init` / `inp_poll` / `inp_held` / `inp_pres` / `inp_rele`. Polled from logic process — `SS.KySns` is non-blocking, so an input child would have been wasted IPC. Wired into `pioneer` as a SPACE-to-advance gate (CTRL+SPACE → skip-to-end) between phases; throws away when phase 7c Management lands. Roadmap row 5 marked ✅.
+
+---
+
 ## [2026-04-26] plan | Phase 4 closed, Phase 5 (input) starting
 
 Marked Phase 4 (render module) ✅ on [roadmap.md](implementation/roadmap.md) — perf pass complete (11 s startup, 27 fps). Phase 5 (single-keyboard input via `SS.KySns` polling + dispatch) entering coding-architect for module-boundary design before implementation.
