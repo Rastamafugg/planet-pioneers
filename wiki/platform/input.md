@@ -26,7 +26,10 @@ void read_joystick(unsigned char port, unsigned char *xval,
 ## Keyboard
 
 - `I$ReadLn` for blocking line reads (config, text prompts).
-- `SS.KySns` GetStat for **real-time key sensing** — shift, arrow keys, etc. Needed for responsive in-game keyboard controls.
+- `SS.KySns` GetStat (function $27) for **real-time key sensing**. A returns 8-bit pattern: `bit0 SHIFT  bit1 CTRL  bit2 ALT  bit3 UP  bit4 DOWN  bit5 LEFT  bit6 RIGHT  bit7 SPACE`. Confirmed live on EOU 2026-04-26 via `poc_input`.
+- `SS.KySns` SetStat (also $27, X≠0 enables key-sense-only mode, X=0 restores) **must** be issued at startup so VTIO stops forwarding printable keystrokes to the SCF buffer; otherwise arrow/space presses spill to the shell command line after exit. Restore on every exit path. Implementation: [`input.c`](../../src/c/input.c) `inp_init` / `inp_shut`.
+
+In key-sense-only mode the only way to detect any key press is `SS.KySns` GetStat — `I$Read` becomes inert. That is fine for the in-game phases (management, auctions); text prompts must restore normal mode first.
 
 ## Input mapping (GDD §20)
 

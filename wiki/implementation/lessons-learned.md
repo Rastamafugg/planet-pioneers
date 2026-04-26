@@ -76,6 +76,10 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - Production architecture **requires a dedicated sound process** reading `{freq, dur, amp}` tuples from a pipe.
 - Frequency is a **relative counter 0–4095**, not Hz. Widest pitch variation at the high range; PoC intentionally uses high values.
 
+## [Input](../platform/input.md)
+
+- **`SS.KySns` GetStat alone leaks keystrokes to the terminal.** In normal keyboard mode, the GetStat call ($27) reads the key bit pattern but VTIO still forwards the printable keypresses (arrows, space) into the SCF buffer. After the program exits, those buffered keys spill onto the shell command line. **Mitigation:** call `SS.KySns` SetStat ($27, X≠0) at startup to put VTIO into key-sense-only mode, and restore (X=0) before exit. Confirmed 2026-04-26 running `pioneer` — without the SetStat, ~one line of `[ ][ ][ ]` arrow-glyphs followed program exit; with it, the buffer stays empty.
+
 ## drawspr byte-pair fast path
 
 - **`drawspr`'s per-pixel `putpx` was the largest remaining cost after byte-copy `save_bg`.** Sprites are placed at even x (enforced upstream by `evenx()`), so each row is exactly 4 byte-aligned output bytes. Looking at *two* source pixels at a time and dispatching on their opacity collapses the common cases (both opaque → single store; both transparent → skip) into one byte op instead of two read-modify-write cycles. Mixed cases still need a mask-and-or but only one per byte. ~3× faster than the per-pixel form. Generalizable rule: any pixel-level loop with byte-aligned start can be rewritten as a byte loop with at most 4 cases (opaque/opaque, opaque/skip, skip/opaque, skip/skip).
