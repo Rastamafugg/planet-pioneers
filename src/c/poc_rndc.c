@@ -115,10 +115,15 @@ static int             g_have[2][SPR_SLOTS];
 /* Pending sprite state for the current frame. R_OP_SPRITE just records
  * here; R_OP_PRESENT applies them in two passes (all clears, then all
  * draws) so a slot's bg-clear can never erase another slot's just-
- * drawn pixels under overlap. */
+ * drawn pixels under overlap.
+ *
+ * Field names use a `pp_` prefix because DCC K&R treats struct member
+ * names as a single global namespace — `x` and `y` are already
+ * declared `unsigned int` in RenderCmd, and re-declaring them as `int`
+ * here was a "struct member mismatch" compile error. */
 typedef struct {
-    int x, y, frame, dir, mule;
-    int active;
+    int pp_x, pp_y, pp_frame, pp_dir, pp_mule;
+    int pp_active;
 } PendingSpr;
 static PendingSpr      g_pending[SPR_SLOTS];
 
@@ -556,12 +561,12 @@ record_sprite(slot, x, y, frame, dir, mule)
 int slot, x, y, frame, dir, mule;
 {
     if ((unsigned)slot >= SPR_SLOTS) return;
-    g_pending[slot].x      = x;
-    g_pending[slot].y      = y;
-    g_pending[slot].frame  = frame;
-    g_pending[slot].dir    = dir;
-    g_pending[slot].mule   = mule;
-    g_pending[slot].active = 1;
+    g_pending[slot].pp_x      = x;
+    g_pending[slot].pp_y      = y;
+    g_pending[slot].pp_frame  = frame;
+    g_pending[slot].pp_dir    = dir;
+    g_pending[slot].pp_mule   = mule;
+    g_pending[slot].pp_active = 1;
 }
 
 draw_one_sprite(base, slot)
@@ -572,24 +577,24 @@ unsigned char *base; int slot;
     unsigned char *dat;
 
     s = &g_pending[slot];
-    walk = s->frame & 1;
+    walk = s->pp_frame & 1;
     flip = 0;
-    if (!s->mule) {
-        if (s->dir == 0 || s->dir == 2) {
+    if (!s->pp_mule) {
+        if (s->pp_dir == 0 || s->pp_dir == 2) {
             dat = &g_plrdat[walk][0];
-            if (s->dir == 0) flip = 1;
+            if (s->pp_dir == 0) flip = 1;
         } else {
             dat = &g_puddat[walk][0];
         }
-        drawspr(base, s->x, s->y, dat, COLOR_PLYR, flip);
+        drawspr(base, s->pp_x, s->pp_y, dat, COLOR_PLYR, flip);
     } else {
-        if (s->dir == 0 || s->dir == 2) {
+        if (s->pp_dir == 0 || s->pp_dir == 2) {
             dat = &g_mlrdat[walk][0];
-            if (s->dir == 0) flip = 1;
+            if (s->pp_dir == 0) flip = 1;
         } else {
             dat = &g_muddat[walk][0];
         }
-        drawspr(base, s->x, s->y, dat, COLOR_MULE, flip);
+        drawspr(base, s->pp_x, s->pp_y, dat, COLOR_MULE, flip);
     }
 }
 
@@ -612,12 +617,12 @@ apply_pending_and_present()
 
     /* Pass 2: draw all active pending sprites at their new positions. */
     for (s = 0; s < SPR_SLOTS; s++) {
-        if (g_pending[s].active) {
+        if (g_pending[s].pp_active) {
             draw_one_sprite(base, s);
-            g_prevx[g_back][s] = g_pending[s].x;
-            g_prevy[g_back][s] = g_pending[s].y;
+            g_prevx[g_back][s] = g_pending[s].pp_x;
+            g_prevy[g_back][s] = g_pending[s].pp_y;
             g_have[g_back][s]  = 1;
-            g_pending[s].active = 0;
+            g_pending[s].pp_active = 0;
         }
     }
 
