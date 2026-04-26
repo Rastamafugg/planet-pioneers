@@ -14,8 +14,15 @@
  * Public symbol names use an `inp_` prefix; DCC's external-name
  * significance is 8 characters (lessons-learned).
  *
+ * inp_init flips the keyboard into key-sense-only mode via SS.KySns
+ * SetStat (X != 0): VTIO stops forwarding keypresses to the SCF
+ * buffer, so arrow/space keystrokes don't show up on the terminal
+ * after the program exits. inp_shut restores normal mode (X = 0).
+ * Hosts MUST call inp_shut before exit on every path.
+ *
  * API (host declares with `extern`):
- *   inp_init()         -> 0 ok, non-zero err
+ *   inp_init()         -> 0 ok, non-zero err  (enables key-sense mode)
+ *   inp_shut()         -> 0 ok                (restores normal kbd mode)
  *   inp_poll()         -> 0 ok, non-zero err  (call once per frame)
  *   inp_held(mask)     -> nonzero if any of mask is currently down
  *   inp_pres(mask)     -> nonzero if any of mask edge-pressed since last poll
@@ -37,14 +44,34 @@
 #ifndef I_GETSTT
 #define I_GETSTT 0x8D
 #endif
+#ifndef I_SETSTT
+#define I_SETSTT 0x8E
+#endif
 
 static unsigned char cur;
 static unsigned char prev;
 
 int inp_init()
 {
+    struct registers r;
+
     cur = 0;
     prev = 0;
+    r.rg_a = 0;
+    r.rg_b = SS_KYSNS;
+    r.rg_x = 1;  /* nonzero = key-sense-only mode */
+    if (_os9(I_SETSTT, &r)) return -1;
+    return 0;
+}
+
+int inp_shut()
+{
+    struct registers r;
+
+    r.rg_a = 0;
+    r.rg_b = SS_KYSNS;
+    r.rg_x = 0;  /* zero = normal kbd mode */
+    _os9(I_SETSTT, &r);
     return 0;
 }
 

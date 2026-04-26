@@ -25,6 +25,7 @@
 #define K_CTRL  0x02
 
 extern int inp_init();
+extern int inp_shut();
 extern int inp_poll();
 extern int inp_pres();
 extern int inp_held();
@@ -122,5 +123,6 @@ main()
     }
 
     printf("pioneer: end after r%d\n", (int)(g_state.round - 1));
+    inp_shut();
     exit(0);
 }
