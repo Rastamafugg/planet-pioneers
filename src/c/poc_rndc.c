@@ -6,10 +6,14 @@
  * ready=1, then polls the queue and executes draw commands on the
  * back screen. R_OP_PRESENT calls SS.DScrn on the back and swaps.
  *
- * Sprites are cleared on move via paint_bg_at(), which repaints the
- * 8x8 footprint from map data + tile_color() rather than sampling the
- * live screen. Screen-sampled save_bg captured overlapping-sprite
- * pixels and resurrected them as ghosts (lessons-learned 2026-04-26).
+ * Sprites use byte-copy save_bg / rest_bg for their 32-byte footprint.
+ * The earlier ghosting bug (save_bg capturing another sprite's pixels
+ * under overlap) is prevented at a higher level: apply_pending_and_
+ * present runs three passes (clears -> saves -> draws), so every
+ * save_bg sees clean post-clear screen. paint_bg_at + tile_color (an
+ * earlier per-pixel re-paint approach) was correct but ~5x more
+ * expensive per pixel, capping framerate near 11 fps; reverted to
+ * byte-copies after benchmarking (lessons-learned 2026-04-26).
  *
  * R_OP_DRAWMAP draws the map to the back buffer, then memcpys to the
  * other screen so both buffers carry the same map after one call —
@@ -63,6 +67,7 @@
 
 #define SPR_W      8
 #define SPR_H      8
+#define SPR_BW     4
 #define SPR_SIZE   (SPR_W * SPR_H)
 #define WALK_FR    2
 
@@ -125,6 +130,7 @@ static unsigned char  *g_scr[2];
  * under the sprite — that approach captured overlapping-sprite pixels
  * and resurrected them as ghosts on restore. Instead we re-derive the
  * bg from the map via tile_color() / paint_bg_at(). */
+static unsigned char   g_bg[2][SPR_SLOTS][SPR_BW * SPR_H];
 static int             g_prevx[2][SPR_SLOTS];
 static int             g_prevy[2][SPR_SLOTS];
 static int             g_have[2][SPR_SLOTS];
@@ -464,31 +470,37 @@ draw_map_back()
     g_have[1][0] = 0; g_have[1][1] = 0;
 }
 
-/* Pixel-level query of the procedural tile drawing. Mirrors plain()
- * / river() / mountn() but as a function of (kind, tx, ty), where
- * tx/ty are tile-relative coords. Last-applied rect wins, so the
- * checks are ordered top-most overlay first. */
-int tile_color(kind, tx, ty)
-int kind, tx, ty;
+/* save_bg / rest_bg: byte-copy the SPR_BW x SPR_H rectangle of screen
+ * bytes covering the sprite footprint into / out of a slot's bg
+ * buffer. Sprites are always positioned at even x, so (x >> 1) is
+ * byte-aligned and a row is exactly SPR_BW = 4 bytes.
+ *
+ * The three-pass apply_pending_and_present pipeline (clears -> saves
+ * -> draws) guarantees save_bg only runs on clean post-restore screen
+ * state, so what gets captured is never another sprite's pixels. */
+save_bg(base, x, y, buf)
+unsigned char *base; int x, y; unsigned char *buf;
 {
-    if (kind == 1) {                                    /* river  */
-        if (tx >= 5 && tx <= 11 && ty >= 11 && ty <= 13) return COLOR_BLUE;
-        if (tx >= 5 && tx <= 11 && ty >= 27 && ty <= 29) return COLOR_BLUE;
-        if (tx >= 7 && tx <= 9)                          return COLOR_BLUE;
-        if (tx >= 6 && tx <= 10)                         return COLOR_WHITE;
-        return COLOR_BLUE;
-    } else if (kind == 2) {                             /* mountn */
-        if (tx >= 8 && tx <= 9 && ty >= 5 && ty <= 13)   return COLOR_BLACK;
-        if (tx >= 1 && tx <= 15 && ty >= 27 && ty <= 34) return COLOR_WHITE;
-        if (tx >= 3 && tx <= 13 && ty >= 18 && ty <= 26) return COLOR_WHITE;
-        if (tx >= 5 && tx <= 11 && ty >= 11 && ty <= 17) return COLOR_WHITE;
-        if (tx >= 7 && tx <= 9 && ty >= 4 && ty <= 10)   return COLOR_WHITE;
-        return COLOR_GREEN;
-    } else {                                            /* plain  */
-        if (tx >= 11 && tx <= 12 && ty >= 27 && ty <= 28) return COLOR_BLACK;
-        if (tx >= 5 && tx <= 6 && ty >= 8 && ty <= 9)     return COLOR_BLACK;
-        if (tx >= 2 && tx <= 14 && ty >= 17 && ty <= 18)  return COLOR_BLACK;
-        return COLOR_GREEN;
+    int row, col, idx;
+    unsigned char *p;
+
+    idx = 0;
+    for (row = 0; row < SPR_H; row++) {
+        p = base + (y + row) * SCR_BPR + (x >> 1);
+        for (col = 0; col < SPR_BW; col++) buf[idx++] = *p++;
+    }
+}
+
+rest_bg(base, x, y, buf)
+unsigned char *base; int x, y; unsigned char *buf;
+{
+    int row, col, idx;
+    unsigned char *p;
+
+    idx = 0;
+    for (row = 0; row < SPR_H; row++) {
+        p = base + (y + row) * SCR_BPR + (x >> 1);
+        for (col = 0; col < SPR_BW; col++) *p++ = buf[idx++];
     }
 }
 
@@ -622,17 +634,30 @@ apply_pending_and_present()
 
     base = g_scr[g_back];
 
-    /* Pass 1: clear all slots' prev footprints on this screen. Doing
-     * this for every slot before any draw guarantees a slot's clear
-     * cannot overwrite another slot's freshly-drawn sprite under
-     * overlap. */
+    /* Pass 1 (clears): rest_bg every slot whose prev position on this
+     * screen has a saved bg. Cheap byte-copy. After this pass the
+     * screen is clean (just the map) at every prev sprite footprint. */
     for (s = 0; s < SPR_SLOTS; s++) {
         if (g_have[g_back][s]) {
-            paint_bg_at(base, g_prevx[g_back][s], g_prevy[g_back][s]);
+            rest_bg(base, g_prevx[g_back][s], g_prevy[g_back][s],
+                    &g_bg[g_back][s][0]);
         }
     }
 
-    /* Pass 2: draw all active pending sprites at their new positions. */
+    /* Pass 2 (saves): for each pending sprite, save the bg at its NEW
+     * position before any drawspr runs. Pass 1 cleared the screen at
+     * old footprints; no draw has touched the new footprint yet — so
+     * save_bg captures clean map bytes, never another sprite's
+     * pixels. This is the invariant that lets byte-copy save_bg work
+     * correctly under arbitrary sprite overlap. */
+    for (s = 0; s < SPR_SLOTS; s++) {
+        if (g_pending[s].pp_active) {
+            save_bg(base, g_pending[s].pp_x, g_pending[s].pp_y,
+                    &g_bg[g_back][s][0]);
+        }
+    }
+
+    /* Pass 3 (draws + bookkeeping). */
     for (s = 0; s < SPR_SLOTS; s++) {
         if (g_pending[s].pp_active) {
             draw_one_sprite(base, s);
@@ -643,7 +668,7 @@ apply_pending_and_present()
         }
     }
 
-    /* Pass 3: flip. */
+    /* Pass 4: flip. */
     show_screen(g_num[g_back]);
     g_back ^= 1;
 }
