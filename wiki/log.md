@@ -234,3 +234,7 @@ No new pages created; [index.md](index.md) unchanged. Source-summary [sources/dc
 User hit `Unresolved references: tile_col   poc_rndc_c   in ctmp.4.r` after testing the latest phase 4 changes. Diagnosis: PR #36 reverted to byte-copy save_bg/rest_bg and removed the `tile_color` definition, but left `paint_bg_at` (its only caller) in place. With no callers of its own and only a now-missing dependency, `paint_bg_at` was dead code dragging an unresolved reference. Deleted the function and updated the stale comment over `g_bg`. patchc trimmed to just `pocrndc`.
 
 Lesson: post-revert dead-code sweeps need to follow the call graph one hop further than the immediate change set. (Not added to lessons-learned — single occurrence, generic dead-code hygiene rather than a NitrOS-9 quirk.)
+
+## [2026-04-26] milestone | phase 4 complete
+
+User confirmed: test run in 11 s startup, 27 fps sustained. Phase 4 (multi-process render child with shared queue, byte-copy save_bg/rest_bg, drawspr byte-pair fast path, signal-based wakeup, dead-code cleanup) is closed.
