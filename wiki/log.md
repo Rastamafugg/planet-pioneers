@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] plan | Phase 4 closed, Phase 5 (input) starting
+
+Marked Phase 4 (render module) ✅ on [roadmap.md](implementation/roadmap.md) — perf pass complete (11 s startup, 27 fps). Phase 5 (single-keyboard input via `SS.KySns` polling + dispatch) entering coding-architect for module-boundary design before implementation.
+
+---
+
 ## [2026-04-26] perf | drawspr byte-pair fast path
 
 After PR #36's byte-copy save_bg landed, `drawspr` was the largest remaining hot spot — 64 per-pixel `putpx` (mask+or+store) per sprite × 2 sprites per frame. Rewrote drawspr to process two source pixels at a time, dispatching on their joint opacity: both opaque collapses to a single byte store, both transparent to a skip, mixed to one read-modify-write. ~3× faster than the per-pixel form. New lesson: any pixel-level loop with byte-aligned start can be rewritten as a byte loop with at most 4 cases.

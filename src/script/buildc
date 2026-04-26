@@ -15,3 +15,4 @@ dcc /d1/poc_snd.c /d1/sound.c -m=4k -f=/dd/cmds/pocsnd
 dcc /d1/poc_sndc.c -m=4k -f=/dd/cmds/pocsndc
 dcc /d1/poc_rnd.c /d1/render.c -m=4k -f=/dd/cmds/pocrnd
 dcc /d1/poc_rndc.c -m=8k -f=/dd/cmds/pocrndc
+dcc /d1/poc_input.c -m=4k -f=/dd/cmds/pocinput
