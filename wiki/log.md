@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] perf | Phase 4 byte-copy save_bg/rest_bg
+
+Signal wakeup (PR #35) did not improve the 11 fps; sleep latency wasn't the bottleneck. The real cost was `paint_bg_at` + `tile_color` doing 64 putpx + 64 range-check chains per slot per frame, ~5x more expensive than poc_cvdg16's byte-copy save_bg. Reverted to byte-copy save_bg/rest_bg, keeping correctness under overlap by relying on the three-pass-at-present pipeline introduced in PR #33: all clears (rest_bg) run first, then all saves (save_bg) capture clean post-clear screen, then all draws — no save can ever capture another sprite's pixels. New lessons in [lessons-learned.md](../wiki/implementation/lessons-learned.md): measure before optimizing the wait; per-pixel `putpx` is the dominant cost on this platform.
+
+---
+
 ## [2026-04-26] perf | Phase 4 signal-based wakeup
 
 After PR #34: animation correct, FPS at 11. Bottleneck was the 1-tick (~16ms) `F$Sleep(1)` floor on both ends of the IPC. Replaced with signal-based wakeup: parent sends `SIG_RENDER_WAKE` (133) after enqueueing, child sends `SIG_RENDER_DONE` (130) after draining. Both ends sleep with `F$Sleep(0)` + `intercept()` handler. Render-specific syscalls (`SS.DScrn`, byte writes) aren't signal-interruptible like `SS.Tone`, so the sound-child's "must use poll" rule doesn't apply here. New field `parent_pid` in RenderQueue header lets the child know where to send DONE. `ren_shut`'s `F$Wait` now loops past spurious A=0 returns from signal interruption. New lessons recorded in [lessons-learned.md](../wiki/implementation/lessons-learned.md). Signal numbers documented as a table in [ipc.md](../wiki/platform/ipc.md).

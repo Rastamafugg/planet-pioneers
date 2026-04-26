@@ -76,6 +76,12 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - Production architecture **requires a dedicated sound process** reading `{freq, dur, amp}` tuples from a pipe.
 - Frequency is a **relative counter 0–4095**, not Hz. Widest pitch variation at the high range; PoC intentionally uses high values.
 
+## Byte-copy bg vs per-pixel paint
+
+- **Per-pixel `paint_bg_at` is ~5x more expensive than byte-copy `save_bg`/`rest_bg`.** Phase-4 went paint→save→paint→save through the design space: started with sample-screen save_bg, hit overlap ghosting, switched to map-derived per-pixel paint_bg_at, hit a 5–11 fps wall, then realized the three-pass pipeline (all clears → all saves → all draws) makes byte-copy save_bg correct under overlap. Final form: byte-copy save_bg/rest_bg with the three-pass invariant. Overlap correctness comes from the pipeline, not from the bg primitive.
+- **`putpx` (read-modify-write 4 ops per pixel) is the dominant cost on this platform.** Anywhere we can replace per-pixel ops with byte writes is a measurable win — already paid off in `hline`'s byte-fill fast path (PR #32) and in `save_bg`/`rest_bg` replacing `paint_bg_at` (this PR).
+- **Signal wakeup didn't help because sleep wasn't the bottleneck.** I diagnosed F$Sleep(1) as ~50% of frame time at 11 fps but signal-based wakeup (PR #35) didn't move the needle. Actual bottleneck was `paint_bg_at` + `tile_color`. Lesson: **measure before optimizing the wait, not the work.** Sleep latency only matters when work fits inside one tick; ours didn't. (The signal infrastructure stays; it's still right for short frames and for any low-latency child later.)
+
 ## Signal-based wakeup vs polling
 
 - **`F$Sleep(1)` polling has a 1-tick (~16 ms) floor that becomes the dominant frame cost when work is small.** Phase-4 render at 11 fps was bottlenecked not by drawing but by the parent's `F$Sleep(1)` per ren_flush iteration plus the child's `F$Sleep(1)` between batches. Switched both to `F$Sleep(0)` (indefinite sleep until any signal) plus an `intercept()` handler so signals don't kill the process — parent sends `SIG_RENDER_WAKE` (133) after enqueueing, child sends `SIG_RENDER_DONE` (130) after draining. Removes the 16 ms × 2 ends per frame.
