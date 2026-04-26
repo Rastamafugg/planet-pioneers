@@ -113,9 +113,18 @@ Child (per role):
 
 Quit (`cmdCode=9`) → child acks with status=40 → exits → parent reaps via `F$Wait`.
 
+## Signal numbers (allocated)
+
+| Sig | Name              | Direction         | Used by | Notes |
+|-----|-------------------|-------------------|---------|-------|
+| 130 | `SIG_RENDER_DONE` | render → logic    | render  | Sent by render child after it drains the queue. Wakes `ren_flush`. |
+| 131 | `SIG_SHMEM_ACK`   | (PoC-only)        | poc_shmem | Reserved historical |
+| 132 | `SIG_SOUND_ACK`   | (reserved)        | —       | Not in use; sound is poll-only because SS.Tone is signal-interruptible |
+| 133 | `SIG_RENDER_WAKE` | logic → render    | render  | Sent by parent after enqueueing work. Wakes child's `F$Sleep(0)`. |
+
 ## Open questions
 
-- **Signal-number allocation.** Reference uses 130–142 ad-hoc. Planet Pioneers should reserve a small numbered range with documented meanings (e.g. 130=tick, 131=play-sound, 132=render-now, 140-142=quit-by-role). Pin before phase 2a.
+- (Signal-number allocation resolved 2026-04-26 — see table above.)
 - **Block-leak safety.** `F$AllRAM` blocks survive process exit. Need a tear-down convention so a crashed parent doesn't permanently leak blocks. Candidates: child detects parent death (signal-on-orphan?) and frees; or a small "reclaim" boot script. Defer to `poc_ipc` work.
 - **Child fork mechanism in C.** DCC's libc `system()` / `os9fork()` vs. raw `F$Fork` syscall — which is the canonical path for spawning a sibling C executable? Confirm during phase 2a port of `SLPICPT.c`.
 

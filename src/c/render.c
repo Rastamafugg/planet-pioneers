@@ -39,8 +39,14 @@
 #ifndef F_WAIT
 #define F_WAIT   0x04
 #endif
+#ifndef F_SEND
+#define F_SEND   0x08
+#endif
 #ifndef F_SLEEP
 #define F_SLEEP  0x0A
+#endif
+#ifndef F_ID
+#define F_ID     0x0C
 #endif
 #ifndef F_ALLRAM
 #define F_ALLRAM 0x39
@@ -58,6 +64,13 @@
 #define RENDER_MAGIC      0x5244
 #define RENDER_QUEUE_SIZE 64
 #define RENDER_QUEUE_MASK (RENDER_QUEUE_SIZE - 1)
+
+/* Signal numbers reserved per [wiki/platform/ipc.md].
+ * 130 used to be SIG_RENDER_ACK (reserved) — promoted to actual use
+ * here as the child→parent "frame done" wake. 133 added for the
+ * parent→child "drain queue" wake. */
+#define SIG_RENDER_DONE 130
+#define SIG_RENDER_WAKE 133
 
 #define R_OP_CLEAR    1
 #define R_OP_TILE     2
@@ -81,12 +94,26 @@ typedef struct {
     unsigned int tail;
     unsigned int quit;
     unsigned int ready;
+    unsigned int parent_pid;     /* set by parent before fork; child reads */
     RenderCmd    entries[RENDER_QUEUE_SIZE];
 } RenderQueue;
 
 static RenderQueue *g_rq;
 static int          g_rblock;
 static int          g_rpid;
+
+/* Signal intercept — single-buffer, shared with any other future
+ * subsystem that wants parent-side intercept. Currently only render
+ * uses it. */
+extern int intercept();
+static int g_lastsig;
+
+static int rd_sigtrap(sig)
+int sig;
+{
+    g_lastsig = sig;
+    return 0;
+}
 
 static int rd_enq(op, a, b, c, x, y)
 int op, a, b, c, x, y;
@@ -139,6 +166,19 @@ int ren_init()
     g_rq->tail  = 0;
     g_rq->quit  = 0;
     g_rq->ready = 0;
+
+    /* Install signal intercept BEFORE the fork so any DONE the child
+     * sends (even racing) lands in our trap, not as a default-action
+     * process kill. */
+    g_lastsig = 0;
+    intercept(rd_sigtrap);
+
+    /* Record our PID so the child knows where to F$Send DONE. */
+    if (_os9(F_ID, &r) == 0) {
+        g_rq->parent_pid = r.rg_a & 0xff;
+    } else {
+        g_rq->parent_pid = 0;
+    }
 
     sprintf(param, "%d", g_rblock);
     plen = strlen(param);
@@ -214,8 +254,16 @@ int ren_flush()
     struct registers r;
 
     if (g_rq == 0) return -2;
+
+    /* If there's pending work, kick the child so it doesn't sleep
+     * past it. Then F$Sleep(0) until the child sends DONE. */
+    if (g_rq->tail != g_rq->head) {
+        r.rg_a = (char)g_rpid;
+        r.rg_b = (char)SIG_RENDER_WAKE;
+        _os9(F_SEND, &r);
+    }
     while (g_rq->tail != g_rq->head) {
-        r.rg_x = 1;
+        r.rg_x = 0;                  /* sleep until any signal */
         _os9(F_SLEEP, &r);
     }
     return 0;
@@ -231,8 +279,21 @@ int ren_shut()
     ren_flush();
     g_rq->quit = 1;
 
-    if (_os9(F_WAIT, &r)) {
-        printf("render: F$Wait err #%d\n", r.rg_b & 0xff);
+    /* Wake child so it observes quit promptly (it's likely sleeping
+     * with no work pending). */
+    r.rg_a = (char)g_rpid;
+    r.rg_b = (char)SIG_RENDER_WAKE;
+    _os9(F_SEND, &r);
+
+    /* F$Wait can return A=0 when interrupted by a signal (e.g., the
+     * child's final DONE arriving mid-wait). Loop past that until we
+     * actually reap a child. */
+    for (;;) {
+        if (_os9(F_WAIT, &r)) {
+            printf("render: F$Wait err #%d\n", r.rg_b & 0xff);
+            break;
+        }
+        if ((r.rg_a & 0xff) != 0) break;     /* reaped child PID */
     }
 
     r.rg_b = 1;

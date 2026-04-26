@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] perf | Phase 4 signal-based wakeup
+
+After PR #34: animation correct, FPS at 11. Bottleneck was the 1-tick (~16ms) `F$Sleep(1)` floor on both ends of the IPC. Replaced with signal-based wakeup: parent sends `SIG_RENDER_WAKE` (133) after enqueueing, child sends `SIG_RENDER_DONE` (130) after draining. Both ends sleep with `F$Sleep(0)` + `intercept()` handler. Render-specific syscalls (`SS.DScrn`, byte writes) aren't signal-interruptible like `SS.Tone`, so the sound-child's "must use poll" rule doesn't apply here. New field `parent_pid` in RenderQueue header lets the child know where to send DONE. `ren_shut`'s `F$Wait` now loops past spurious A=0 returns from signal interruption. New lessons recorded in [lessons-learned.md](../wiki/implementation/lessons-learned.md). Signal numbers documented as a table in [ipc.md](../wiki/platform/ipc.md).
+
+---
+
 ## [2026-04-26] fix | Phase 4 sprite overlap residue + frame-rate
 
 Live-test feedback after #32: (a) animation correct but a few frames during sprite overlap showed pixels from the first-drawn sprite replaced with map background; (b) steady-state animation only ~5 fps vs poc_cvdg16's ~30 fps. Fixes:
