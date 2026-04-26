@@ -4,6 +4,14 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] fix | Phase 4 sprite overlap residue + frame-rate
+
+Live-test feedback after #32: (a) animation correct but a few frames during sprite overlap showed pixels from the first-drawn sprite replaced with map background; (b) steady-state animation only ~5 fps vs poc_cvdg16's ~30 fps. Fixes:
+1. `R_OP_SPRITE` no longer draws inline — records into a per-slot pending struct. `R_OP_PRESENT` runs two passes (all bg-clears, then all draws) before SS.DScrn. Sprite ordering can no longer cause cross-erasure under overlap.
+2. `paint_bg_at` divisions hoisted out of the inner loop — `(col, tx, row, ty)` computed once per sprite footprint with a tiny while-loop instead of 64 expensive `int` divides. K&R DCC int division is hundreds of cycles each; the naive form dominated the per-frame budget. Two new lessons recorded in [lessons-learned.md](../wiki/implementation/lessons-learned.md).
+
+---
+
 ## [2026-04-26] fix | Phase 4 startup, dmap visibility, sprite overlap
 
 Live-test feedback after #31: (1) ~30 sec startup; (2) tiles painted in line-by-line on the visible screen during dmap; (3) sprite overlap left "black gap" residual. Fixes:
