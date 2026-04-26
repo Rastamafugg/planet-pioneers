@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] perf | Phase 4 render save_bg/rest_bg port
+
+Second live test of `pocrnd` ran the animation but at ~1 frame every few seconds. Diagnosis: smoke driver enqueued full redraw per frame (clear + 45 tiles + 2 sprites = ~24K putpx). Fix: ported `poc_cvdg16`'s save_bg/rest_bg pattern into the render child with per-(screen, slot) bg buffers. New ops `R_OP_DRAWMAP` (called twice at startup to seed both screens) and `R_OP_SPRITE` reworked to take a slot index and do bg restore-save-draw internally. `ren_spr` API gained a `slot` parameter; `dir`+`mule` packed into one byte to keep RenderCmd at 8 bytes. New public symbol `ren_dmap`. Per-frame command count dropped from 49 to 3 (2 sprite + present). New lesson recorded: logic enqueues deltas, child owns persistence; page-flip + save_bg requires per-screen bg buffers.
+
+---
+
 ## [2026-04-25] fix | Phase 4 render init timing
 
 First live test failed: `pocrnd` reported `render: child not ready after 5s` and exited with err 4. Diagnosis: child performed two software full-screen rect-clears + `vsel` + `show_screen` BEFORE setting `q->ready = 1`; on emulators paced below real CoCo speed this exceeded the parent's 5-sec init budget. Fix: move `q->ready = 1` to immediately after both screens are allocated; defer cosmetic prep (vsel/clear/show) to after the handshake — the first drained command is `ren_clr()` which redraws anyway. Bumped parent timeout 5s→30s defense in depth. Bumped child `-m=4k`→`-m=8k` for stack headroom in deep `draw_tile` call chains. New lesson recorded in [lessons-learned.md](../wiki/implementation/lessons-learned.md): child `ready` flag gates only the minimum the parent needs.

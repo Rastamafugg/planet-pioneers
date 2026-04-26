@@ -1,9 +1,12 @@
 /***********************************************************************
  * poc_rnd.c  -  Render API smoke driver (phase 4 PoC parent).
  *
- * Brings up the render child, then ports poc_cvdg16's animate() loop
- * onto the new API: each frame the parent enqueues clear + 9x5 tiles
- * + 2 sprites + present, then flushes (waits for child to drain).
+ * Brings up the render child, draws the embedded map onto BOTH screens
+ * once (one ren_dmap + ren_pres pair per screen — the page flip swaps
+ * which screen is back), then drives sprite movement frame-by-frame.
+ * Each frame enqueues only sprite moves + present, mirroring
+ * poc_cvdg16.c's render_step. The child does save_bg/rest_bg per
+ * (screen, slot) so only sprite footprints are touched per frame.
  *
  * Compile: dcc poc_rnd.c render.c -m=4k -f=/dd/cmds/pocrnd
  ***********************************************************************/
@@ -15,12 +18,10 @@
 #define F_TIME 0x15
 #endif
 
-#define MAP_COLS   9
-#define MAP_ROWS   5
-#define TILE_W     17
-#define TILE_H     38
 #define MAP_OX     2
 #define MAP_OY     1
+#define TILE_W     17
+#define TILE_H     38
 
 #define NFRAMES    300
 #define PATHFRAMES 150
@@ -31,20 +32,11 @@
 #define MOVE_Y1    (MAP_OY + TILE_H * 3)
 
 extern int ren_init();
-extern int ren_clr();
-extern int ren_tile();
+extern int ren_dmap();
 extern int ren_spr();
 extern int ren_pres();
 extern int ren_flush();
 extern int ren_shut();
-
-static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
-    { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
-    { 2, 0, 0, 0, 1, 0, 0, 0, 2 },
-    { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
-    { 2, 0, 0, 2, 1, 2, 0, 0, 2 },
-    { 0, 2, 0, 0, 1, 0, 0, 2, 0 }
-};
 
 int nowsec()
 {
@@ -93,14 +85,6 @@ int frame, mule, *xp, *yp, *dirp;
     }
 }
 
-draw_map()
-{
-    int r, c;
-    for (r = 0; r < MAP_ROWS; r++)
-        for (c = 0; c < MAP_COLS; c++)
-            ren_tile((int)g_map[r][c], c, r);
-}
-
 main()
 {
     int err, frame, start, end, elapsed;
@@ -110,15 +94,22 @@ main()
     if (err) { printf("poc_rnd: ren_init err %d\n", err); exit(1); }
     printf("poc_rnd: render up; %d frames\n", NFRAMES);
 
+    /* Seed both screens with the map. ren_dmap draws to back; ren_pres
+     * flips so the next dmap targets the other screen. After two
+     * pairs both screens have a clean map. */
+    ren_dmap();
+    ren_pres();
+    ren_dmap();
+    ren_pres();
+    ren_flush();
+
     start = nowsec();
     for (frame = 0; frame < NFRAMES; frame++) {
         pathpos(frame / 2, 0, &px, &py, &pd);
         pathpos(frame / 2, 1, &mx, &my, &md);
 
-        ren_clr(0);
-        draw_map();
-        ren_spr(px, py, frame / 2, pd, 0);
-        ren_spr(mx, my, frame / 2 + 1, md, 1);
+        ren_spr(0, px, py, frame / 2,     pd, 0);
+        ren_spr(1, mx, my, frame / 2 + 1, md, 1);
         ren_pres();
         ren_flush();
     }

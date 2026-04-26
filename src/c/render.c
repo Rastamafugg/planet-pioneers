@@ -19,7 +19,8 @@
  *   ren_init()                                         -> 0 ok, !=0 err
  *   ren_clr(color)                                     -> 0 / -1 (full)
  *   ren_tile(kind, col, row)                           -> 0 / -1
- *   ren_spr(x, y, frame, dir, mule)                    -> 0 / -1
+ *   ren_dmap()                                         -> 0 / -1
+ *   ren_spr(slot, x, y, frame, dir, mule)              -> 0 / -1
  *   ren_pal(idx, rgb)                                  -> 0 / -1
  *   ren_pres()                                         -> 0 / -1
  *   ren_flush()                                        -> 0 (blocks)
@@ -63,6 +64,7 @@
 #define R_OP_SPRITE   3
 #define R_OP_PRESENT  4
 #define R_OP_PALETTE  5
+#define R_OP_DRAWMAP  6
 
 typedef struct {
     unsigned char op;
@@ -182,10 +184,18 @@ int kind, col, row;
     return rd_enq(R_OP_TILE, kind, col, row, 0, 0);
 }
 
-int ren_spr(x, y, frame, dir, mule)
-int x, y, frame, dir, mule;
+int ren_spr(slot, x, y, frame, dir, mule)
+int slot, x, y, frame, dir, mule;
 {
-    return rd_enq(R_OP_SPRITE, frame, dir, mule, x, y);
+    int packed;
+    /* c byte: dir in low 4 bits, mule flag in bit 4. */
+    packed = (dir & 0x0f) | ((mule & 1) << 4);
+    return rd_enq(R_OP_SPRITE, slot, frame, packed, x, y);
+}
+
+int ren_dmap()
+{
+    return rd_enq(R_OP_DRAWMAP, 0, 0, 0, 0, 0);
 }
 
 int ren_pal(idx, rgb)

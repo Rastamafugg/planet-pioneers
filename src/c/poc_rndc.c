@@ -6,9 +6,14 @@
  * ready=1, then polls the queue and executes draw commands on the
  * back screen. R_OP_PRESENT calls SS.DScrn on the back and swaps.
  *
+ * Sprites use save_bg / rest_bg per-(screen,slot) so that only the
+ * sprite footprint is touched per frame — same trick as poc_cvdg16.
+ * Full-redraw of 45 tiles + clear was ~100x too slow in software at
+ * 160x192x16 (lessons-learned 2026-04-26).
+ *
  * RenderQueue layout MUST match render.c.
  *
- * Compile: dcc poc_rndc.c -m=4k -f=/dd/cmds/pocrndc
+ * Compile: dcc poc_rndc.c -m=8k -f=/dd/cmds/pocrndc
  ***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,6 +46,8 @@
 #define SCR_BPR    80
 #define SCR_TYPE   2
 
+#define MAP_COLS   9
+#define MAP_ROWS   5
 #define MAP_OX     2
 #define MAP_OY     1
 #define TILE_W     17
@@ -48,8 +55,11 @@
 
 #define SPR_W      8
 #define SPR_H      8
+#define SPR_BW     4
 #define SPR_SIZE   (SPR_W * SPR_H)
 #define WALK_FR    2
+
+#define SPR_SLOTS  2
 
 #define COLOR_BLACK 0
 #define COLOR_GREEN 1
@@ -67,6 +77,7 @@
 #define R_OP_SPRITE   3
 #define R_OP_PRESENT  4
 #define R_OP_PALETTE  5
+#define R_OP_DRAWMAP  6
 
 typedef struct {
     unsigned char op;
@@ -88,6 +99,24 @@ extern int open(), close(), write();
 static int             g_path;
 static char           *g_devname;
 static unsigned char  *g_scr[2];
+
+/* Per-(screen, slot) sprite state for save_bg/rest_bg.
+ * 2 screens x 2 slots x 32 bytes = 128 B of bg buffer. */
+static unsigned char   g_bg[2][SPR_SLOTS][SPR_BW * SPR_H];
+static int             g_prevx[2][SPR_SLOTS];
+static int             g_prevy[2][SPR_SLOTS];
+static int             g_have[2][SPR_SLOTS];
+
+/* Embedded map — same as poc_cvdg16. R_OP_DRAWMAP draws this to the
+ * current back buffer. Future phase will replace this with shared
+ * tilemap state for in-game map mutations. */
+static unsigned char g_map[MAP_ROWS][MAP_COLS] = {
+    { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
+    { 2, 0, 0, 0, 1, 0, 0, 0, 2 },
+    { 0, 0, 2, 0, 1, 0, 2, 0, 0 },
+    { 2, 0, 0, 2, 1, 2, 0, 0, 2 },
+    { 0, 2, 0, 0, 1, 0, 0, 2, 0 }
+};
 static int             g_num[2];
 static int             g_back;
 
@@ -344,6 +373,54 @@ int kind, col, row;
     else                plain(base, x, y);
 }
 
+draw_map_back()
+{
+    int row, col;
+
+    rect(g_scr[g_back], 0, 0, SCR_W, SCR_H, COLOR_BLACK);
+    for (row = 0; row < MAP_ROWS; row++)
+        for (col = 0; col < MAP_COLS; col++) {
+            unsigned char *base;
+            int x, y;
+            base = g_scr[g_back];
+            x = MAP_OX + col * TILE_W;
+            y = MAP_OY + row * TILE_H;
+            if (g_map[row][col] == 1)      river(base, x, y);
+            else if (g_map[row][col] == 2) mountn(base, x, y);
+            else                           plain(base, x, y);
+        }
+    /* New map drawn on this screen — invalidate any saved bg under
+     * the previous sprite positions on this screen. */
+    g_have[g_back][0] = 0;
+    g_have[g_back][1] = 0;
+}
+
+save_bg(base, x, y, buf)
+unsigned char *base; int x, y; unsigned char *buf;
+{
+    int r, c, i;
+    unsigned char *p;
+
+    i = 0;
+    for (r = 0; r < SPR_H; r++) {
+        p = base + (y + r) * SCR_BPR + (x >> 1);
+        for (c = 0; c < SPR_BW; c++) buf[i++] = *p++;
+    }
+}
+
+rest_bg(base, x, y, buf)
+unsigned char *base; int x, y; unsigned char *buf;
+{
+    int r, c, i;
+    unsigned char *p;
+
+    i = 0;
+    for (r = 0; r < SPR_H; r++) {
+        p = base + (y + r) * SCR_BPR + (x >> 1);
+        for (c = 0; c < SPR_BW; c++) *p++ = buf[i++];
+    }
+}
+
 drawspr(base, x, y, dat, color, flip)
 unsigned char *base; int x, y; unsigned char *dat; int color, flip;
 {
@@ -357,14 +434,28 @@ unsigned char *base; int x, y; unsigned char *dat; int color, flip;
     }
 }
 
-draw_sprite(x, y, frame, dir, mule)
-int x, y, frame, dir, mule;
+draw_sprite(slot, x, y, frame, dir, mule)
+int slot, x, y, frame, dir, mule;
 {
     int walk, flip;
     unsigned char *dat;
     unsigned char *base;
+    unsigned char *bgbuf;
 
-    base = g_scr[g_back];
+    if ((unsigned)slot >= SPR_SLOTS) return;
+
+    base  = g_scr[g_back];
+    bgbuf = &g_bg[g_back][slot][0];
+
+    /* Restore the background from THIS screen's last sprite position
+     * for this slot (if any). Each screen tracks its own trail because
+     * page-flip means we see screen N+2's stale state when we come
+     * back to screen N. */
+    if (g_have[g_back][slot]) {
+        rest_bg(base, g_prevx[g_back][slot], g_prevy[g_back][slot], bgbuf);
+    }
+    save_bg(base, x, y, bgbuf);
+
     walk = frame & 1;
     flip = 0;
     if (!mule) {
@@ -384,6 +475,10 @@ int x, y, frame, dir, mule;
         }
         drawspr(base, x, y, dat, COLOR_MULE, flip);
     }
+
+    g_prevx[g_back][slot] = x;
+    g_prevy[g_back][slot] = y;
+    g_have[g_back][slot]  = 1;
 }
 
 present_back()
@@ -460,11 +555,17 @@ char *argv[];
                 draw_tile((int)e->a, (int)e->b, (int)e->c);
                 break;
             case R_OP_SPRITE:
-                draw_sprite((int)e->x, (int)e->y,
-                            (int)e->a, (int)e->b, (int)e->c);
+                /* a=slot  b=frame  c=(dir | mule<<4)  x=px  y=py */
+                draw_sprite((int)e->a, (int)e->x, (int)e->y,
+                            (int)e->b,
+                            (int)(e->c & 0x0f),
+                            (int)((e->c >> 4) & 1));
                 break;
             case R_OP_PRESENT:
                 present_back();
+                break;
+            case R_OP_DRAWMAP:
+                draw_map_back();
                 break;
             case R_OP_PALETTE:
                 /* deferred to a later phase; SS.PalSet codepath
