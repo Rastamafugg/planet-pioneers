@@ -126,10 +126,11 @@ static int             g_path;
 static char           *g_devname;
 static unsigned char  *g_scr[2];
 
-/* Per-(screen, slot) sprite state. We do NOT save the screen bytes
- * under the sprite — that approach captured overlapping-sprite pixels
- * and resurrected them as ghosts on restore. Instead we re-derive the
- * bg from the map via tile_color() / paint_bg_at(). */
+/* Per-(screen, slot) sprite state. Byte-copy save_bg captures the
+ * SPR_BW x SPR_H rectangle under the sprite before drawing; rest_bg
+ * restores it on the next clear pass. The three-pass apply pipeline
+ * (clears -> saves -> draws) ensures save_bg only runs on clean post-
+ * restore screen state, so it cannot capture another sprite's pixels. */
 static unsigned char   g_bg[2][SPR_SLOTS][SPR_BW * SPR_H];
 static int             g_prevx[2][SPR_SLOTS];
 static int             g_prevy[2][SPR_SLOTS];
@@ -501,71 +502,6 @@ unsigned char *base; int x, y; unsigned char *buf;
     for (row = 0; row < SPR_H; row++) {
         p = base + (y + row) * SCR_BPR + (x >> 1);
         for (col = 0; col < SPR_BW; col++) *p++ = buf[idx++];
-    }
-}
-
-/* Repaint the SPR_W x SPR_H footprint at (x, y) from map data only.
- * Used to clear a sprite before its next position is drawn — never
- * samples the live screen, so overlapping sprites cannot contaminate
- * each other's bg.
- *
- * Optimization: K&R DCC `int` division is hundreds of cycles. The
- * naive form did 2 div + 2 mod per pixel = 256 expensive ops per
- * call, dominating the per-frame budget. Since the sprite is only
- * SPR_W=8 wide and SPR_H=8 tall, `col` and `row` change at most once
- * across the whole footprint. Compute starting (col,row,tx,ty) once
- * per sprite and bump indices in the inner loop with cheap compare-
- * and-reset. ~5-10x speedup on this function in practice. */
-paint_bg_at(base, x, y)
-unsigned char *base; int x, y;
-{
-    int sx, sy;
-    int row, col0, ty, tx0;
-    int row_x, col_x, ty_x, tx_x;        /* working copies */
-    int kind, c;
-    int my, mx;
-
-    /* row / ty for the top scanline of the sprite. */
-    my = y - MAP_OY;
-    if (my < 0 || my >= MAP_ROWS * TILE_H) {
-        row = -1;
-        ty  = 0;
-    } else {
-        row = 0;
-        while ((row + 1) * TILE_H <= my) row++;
-        ty = my - row * TILE_H;
-    }
-
-    /* col / tx for the leftmost pixel of the sprite. */
-    mx = x - MAP_OX;
-    if (mx < 0 || mx >= MAP_COLS * TILE_W) {
-        col0 = -1;
-        tx0  = 0;
-    } else {
-        col0 = 0;
-        while ((col0 + 1) * TILE_W <= mx) col0++;
-        tx0 = mx - col0 * TILE_W;
-    }
-
-    row_x = row;
-    ty_x  = ty;
-    for (sy = 0; sy < SPR_H; sy++) {
-        col_x = col0;
-        tx_x  = tx0;
-        for (sx = 0; sx < SPR_W; sx++) {
-            if (row_x < 0 || row_x >= MAP_ROWS ||
-                col_x < 0 || col_x >= MAP_COLS) {
-                c = COLOR_BLACK;
-            } else {
-                kind = (int)g_map[row_x][col_x];
-                c = tile_color(kind, tx_x, ty_x);
-            }
-            putpx(base, x + sx, y + sy, c);
-            tx_x++;
-            if (tx_x == TILE_W) { tx_x = 0; col_x++; }
-        }
-        ty_x++;
-        if (ty_x == TILE_H) { ty_x = 0; row_x++; }
     }
 }
 
