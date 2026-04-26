@@ -16,9 +16,15 @@
 #include <stdlib.h>
 #include <os9.h>
 
+#ifndef SS_KYSNS
 #define SS_KYSNS  0x27
+#endif
+#ifndef I_GETSTT
 #define I_GETSTT  0x8D
+#endif
+#ifndef F_SLEEP
 #define F_SLEEP   0x0A
+#endif
 
 #define K_SHIFT  0x01
 #define K_CTRL   0x02
