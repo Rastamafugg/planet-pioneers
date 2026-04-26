@@ -76,6 +76,10 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - Production architecture **requires a dedicated sound process** reading `{freq, dur, amp}` tuples from a pipe.
 - Frequency is a **relative counter 0–4095**, not Hz. Widest pitch variation at the high range; PoC intentionally uses high values.
 
+## DCC struct member name namespace
+
+- **DCC K&R treats struct member names as a single global namespace.** Declaring `int x, y` in one struct and `unsigned int x, y` in another in the same translation unit produces `struct member mismatch` at compile time. Discovered 2026-04-26 when adding a `PendingSpr { int x, y, frame, dir, mule; }` alongside the existing `RenderCmd { unsigned int x, y; }`. **Mitigation:** prefix struct members so each name is globally unique (e.g. `pp_x`, `pp_y` for `PendingSpr`). This is unlike modern C where members are scoped to their struct. Applies even when the structs are unrelated and the names happen to collide.
+
 ## Render frame-time
 
 - **`paint_bg_at`'s per-pixel `int` divide was the hot path.** K&R DCC `int` division on 6809 is hundreds of cycles via libc — probably the single most expensive primitive in any pixel-touching function. The naive form (`col = mx / TILE_W; tx = mx - col * TILE_W` per pixel × 64) dominated the per-frame budget and held the smoke driver to ~5 fps vs poc_cvdg16's 30 fps. Mitigation: hoist the division entirely. A sprite is 8×8 and a tile is 17×38, so `col` and `row` change at most once across the whole sprite. Compute starting `(col, tx, row, ty)` once per sprite (with a small while-loop instead of `/`), then bump `tx` per pixel and reset on `tx == TILE_W`. Same shape for `ty`. ~5–10× speedup. Recorded 2026-04-26.
