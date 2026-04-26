@@ -4,6 +4,17 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] fix | Phase 4 startup, dmap visibility, sprite overlap
+
+Live-test feedback after #31: (1) ~30 sec startup; (2) tiles painted in line-by-line on the visible screen during dmap; (3) sprite overlap left "black gap" residual. Fixes:
+1. `hline` rewritten with a byte-fill fast path (whole-byte `*p++ = fill` loop) — full-screen clear and tile fills run roughly an order of magnitude faster.
+2. `R_OP_DRAWMAP` now memcopies the back buffer to the other screen after drawing, so one call seeds both screens (one 16K copy ≪ second procedural pass).
+3. `g_back` initialized to 1 (not 0) so the first dmap draws to the offscreen buffer; user no longer sees piecemeal tile painting on the visible screen.
+4. `save_bg` / `rest_bg` removed entirely. New `tile_color(kind, tx, ty)` query (mirrors plain/river/mountn rect calls) + `paint_bg_at(base, x, y)` derive the 8×8 sprite-footprint clear directly from `g_map`. Sprites can overlap in any order without ghosting.
+Public API change: smoke driver now calls `ren_dmap()` once instead of twice. Lessons recorded in [lessons-learned.md](../wiki/implementation/lessons-learned.md): screen-sampled save_bg is unsafe; first-frame `g_back` must point offscreen; dmap should clone, not redraw.
+
+---
+
 ## [2026-04-26] perf | Phase 4 render save_bg/rest_bg port
 
 Second live test of `pocrnd` ran the animation but at ~1 frame every few seconds. Diagnosis: smoke driver enqueued full redraw per frame (clear + 45 tiles + 2 sprites = ~24K putpx). Fix: ported `poc_cvdg16`'s save_bg/rest_bg pattern into the render child with per-(screen, slot) bg buffers. New ops `R_OP_DRAWMAP` (called twice at startup to seed both screens) and `R_OP_SPRITE` reworked to take a slot index and do bg restore-save-draw internally. `ren_spr` API gained a `slot` parameter; `dir`+`mule` packed into one byte to keep RenderCmd at 8 bytes. New public symbol `ren_dmap`. Per-frame command count dropped from 49 to 3 (2 sprite + present). New lesson recorded: logic enqueues deltas, child owns persistence; page-flip + save_bg requires per-screen bg buffers.
