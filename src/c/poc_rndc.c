@@ -27,6 +27,9 @@
 #ifndef I_SETSTT
 #define I_SETSTT  0x8E
 #endif
+#ifndef F_SEND
+#define F_SEND    0x08
+#endif
 #ifndef F_SLEEP
 #define F_SLEEP   0x0A
 #endif
@@ -76,6 +79,9 @@
 #define RENDER_QUEUE_SIZE 64
 #define RENDER_QUEUE_MASK (RENDER_QUEUE_SIZE - 1)
 
+#define SIG_RENDER_DONE 130
+#define SIG_RENDER_WAKE 133
+
 #define R_OP_CLEAR    1
 #define R_OP_TILE     2
 #define R_OP_SPRITE   3
@@ -95,8 +101,19 @@ typedef struct {
     unsigned int tail;
     unsigned int quit;
     unsigned int ready;
+    unsigned int parent_pid;
     RenderCmd    entries[RENDER_QUEUE_SIZE];
 } RenderQueue;
+
+extern int intercept();
+static int g_lastsig;
+
+static int rd_sigtrap(sig)
+int sig;
+{
+    g_lastsig = sig;
+    return 0;
+}
 
 extern int open(), close(), write();
 
@@ -684,6 +701,11 @@ char *argv[];
      * because two software rects are ~30K putpx calls. Move it after
      * `ready` instead — the first drained command will be ren_clr()
      * which redraws the back buffer anyway. */
+    /* Install signal trap so SIG_RENDER_WAKE doesn't kill us; it just
+     * sets g_lastsig and aborts whatever F$Sleep is in flight. */
+    g_lastsig = 0;
+    intercept(rd_sigtrap);
+
     q->ready = 1;
 
     vsel();
@@ -724,7 +746,15 @@ char *argv[];
             q->tail = (q->tail + 1) & RENDER_QUEUE_MASK;
         }
         if (q->quit) break;
-        r.rg_x = 1;
+
+        /* Notify parent that we've drained, so its ren_flush can wake.
+         * Then sleep indefinitely until parent F$Sends WAKE. */
+        if (q->parent_pid) {
+            r.rg_a = (char)q->parent_pid;
+            r.rg_b = (char)SIG_RENDER_DONE;
+            _os9(F_SEND, &r);
+        }
+        r.rg_x = 0;                  /* sleep until any signal */
         _os9(F_SLEEP, &r);
     }
 

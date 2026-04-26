@@ -76,6 +76,13 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - Production architecture **requires a dedicated sound process** reading `{freq, dur, amp}` tuples from a pipe.
 - Frequency is a **relative counter 0–4095**, not Hz. Widest pitch variation at the high range; PoC intentionally uses high values.
 
+## Signal-based wakeup vs polling
+
+- **`F$Sleep(1)` polling has a 1-tick (~16 ms) floor that becomes the dominant frame cost when work is small.** Phase-4 render at 11 fps was bottlenecked not by drawing but by the parent's `F$Sleep(1)` per ren_flush iteration plus the child's `F$Sleep(1)` between batches. Switched both to `F$Sleep(0)` (indefinite sleep until any signal) plus an `intercept()` handler so signals don't kill the process — parent sends `SIG_RENDER_WAKE` (133) after enqueueing, child sends `SIG_RENDER_DONE` (130) after draining. Removes the 16 ms × 2 ends per frame.
+- **Render-child signals don't interfere with the sound child.** `F$Send` is targeted by PID; signals routed between logic and render never reach sound's PID. The sound child stays poll-only because `SS.Tone` itself is signal-interruptible — not because signals as a wakeup mechanism are inherently dangerous.
+- **Single intercept slot per process is a real constraint.** `intercept(handler)` is whole-process; only one handler at a time. The render parent claims it for `SIG_RENDER_DONE`. If sound ever needs parent-side intercept later (it currently doesn't), the two have to share via a tiny dispatcher that routes by signal number.
+- **`F$Wait` returning A=0 on signal interruption needs a retry loop in shutdown.** When `ren_shut` calls `F$Wait` to reap the child, the child's final DONE signal can land mid-wait and cause `F$Wait` to return with `A=0` instead of the child's PID. Loop until A != 0 (real reap) or B=err.
+
 ## DCC struct member name namespace
 
 - **DCC K&R treats struct member names as a single global namespace.** Declaring `int x, y` in one struct and `unsigned int x, y` in another in the same translation unit produces `struct member mismatch` at compile time. Discovered 2026-04-26 when adding a `PendingSpr { int x, y, frame, dir, mule; }` alongside the existing `RenderCmd { unsigned int x, y; }`. **Mitigation:** prefix struct members so each name is globally unique (e.g. `pp_x`, `pp_y` for `PendingSpr`). This is unlike modern C where members are scoped to their struct. Applies even when the structs are unrelated and the names happen to collide.
