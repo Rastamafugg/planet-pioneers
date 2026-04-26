@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] perf | drawspr byte-pair fast path
+
+After PR #36's byte-copy save_bg landed, `drawspr` was the largest remaining hot spot — 64 per-pixel `putpx` (mask+or+store) per sprite × 2 sprites per frame. Rewrote drawspr to process two source pixels at a time, dispatching on their joint opacity: both opaque collapses to a single byte store, both transparent to a skip, mixed to one read-modify-write. ~3× faster than the per-pixel form. New lesson: any pixel-level loop with byte-aligned start can be rewritten as a byte loop with at most 4 cases.
+
+---
+
 ## [2026-04-26] perf | Phase 4 byte-copy save_bg/rest_bg
 
 Signal wakeup (PR #35) did not improve the 11 fps; sleep latency wasn't the bottleneck. The real cost was `paint_bg_at` + `tile_color` doing 64 putpx + 64 range-check chains per slot per frame, ~5x more expensive than poc_cvdg16's byte-copy save_bg. Reverted to byte-copy save_bg/rest_bg, keeping correctness under overlap by relying on the three-pass-at-present pipeline introduced in PR #33: all clears (rest_bg) run first, then all saves (save_bg) capture clean post-clear screen, then all draws — no save can ever capture another sprite's pixels. New lessons in [lessons-learned.md](../wiki/implementation/lessons-learned.md): measure before optimizing the wait; per-pixel `putpx` is the dominant cost on this platform.

@@ -76,6 +76,10 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - Production architecture **requires a dedicated sound process** reading `{freq, dur, amp}` tuples from a pipe.
 - Frequency is a **relative counter 0–4095**, not Hz. Widest pitch variation at the high range; PoC intentionally uses high values.
 
+## drawspr byte-pair fast path
+
+- **`drawspr`'s per-pixel `putpx` was the largest remaining cost after byte-copy `save_bg`.** Sprites are placed at even x (enforced upstream by `evenx()`), so each row is exactly 4 byte-aligned output bytes. Looking at *two* source pixels at a time and dispatching on their opacity collapses the common cases (both opaque → single store; both transparent → skip) into one byte op instead of two read-modify-write cycles. Mixed cases still need a mask-and-or but only one per byte. ~3× faster than the per-pixel form. Generalizable rule: any pixel-level loop with byte-aligned start can be rewritten as a byte loop with at most 4 cases (opaque/opaque, opaque/skip, skip/opaque, skip/skip).
+
 ## Byte-copy bg vs per-pixel paint
 
 - **Per-pixel `paint_bg_at` is ~5x more expensive than byte-copy `save_bg`/`rest_bg`.** Phase-4 went paint→save→paint→save through the design space: started with sample-screen save_bg, hit overlap ghosting, switched to map-derived per-pixel paint_bg_at, hit a 5–11 fps wall, then realized the three-pass pipeline (all clears → all saves → all draws) makes byte-copy save_bg correct under overlap. Final form: byte-copy save_bg/rest_bg with the three-pass invariant. Overlap correctness comes from the pipeline, not from the bg primitive.
