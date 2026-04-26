@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-25] fix | Phase 4 render init timing
+
+First live test failed: `pocrnd` reported `render: child not ready after 5s` and exited with err 4. Diagnosis: child performed two software full-screen rect-clears + `vsel` + `show_screen` BEFORE setting `q->ready = 1`; on emulators paced below real CoCo speed this exceeded the parent's 5-sec init budget. Fix: move `q->ready = 1` to immediately after both screens are allocated; defer cosmetic prep (vsel/clear/show) to after the handshake — the first drained command is `ren_clr()` which redraws anyway. Bumped parent timeout 5s→30s defense in depth. Bumped child `-m=4k`→`-m=8k` for stack headroom in deep `draw_tile` call chains. New lesson recorded in [lessons-learned.md](../wiki/implementation/lessons-learned.md): child `ready` flag gates only the minimum the parent needs.
+
+---
+
 ## [2026-04-25] phase | Phase 4 render child — code landed
 
 Wrote [src/c/render.c](../src/c/render.c) (parent API), [src/c/poc_rndc.c](../src/c/poc_rndc.c) (child), [src/c/poc_rnd.c](../src/c/poc_rnd.c) (smoke driver). Architecture mirrors phase-3 sound: SPSC ring (64 × 8-byte `RenderCmd`) in an 8K F$AllRAM block, poll-based wakeup with `F$Sleep(1)`, no signals. Render child owns the CoVDG path + both 16K screens + page-flip; logic enqueues clear/tile/sprite/present intents and calls `ren_flush()` to sync. Public symbols use `ren_` prefix to dodge the DCC 8-char external-name collision (`render_present` vs `render_palette`, `render_sprite` vs `render_shutdown`). `patchc` and `buildc` updated. `R_OP_PALETTE` accepted but child handler is a stub — `SS.PalSet` codepath deferred to first phase needing custom colors. Awaiting live-test on EOU.

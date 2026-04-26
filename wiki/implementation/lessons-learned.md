@@ -76,6 +76,11 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - Production architecture **requires a dedicated sound process** reading `{freq, dur, amp}` tuples from a pipe.
 - Frequency is a **relative counter 0–4095**, not Hz. Widest pitch variation at the high range; PoC intentionally uses high values.
 
+## Multi-process readiness handshake
+
+- **A child process's `ready` flag must be set BEFORE any cosmetic init work, not after.** First phase-4 live test failed with `child not ready after 5s` because the render child performed two full-screen software `rect` clears (~30,000 `putpx` calls each) plus `vsel` + `show_screen` *before* writing `q->ready = 1`. On emulators paced below real CoCo speed this exceeded the 5-second parent timeout. Mitigation: gate `ready` purely on the minimum the parent needs to know (queue is mapped, screens/devices are bound), and defer cosmetic prep to after the handshake — the first drained command from the parent is typically a `clear`/`reset` which does the same work anyway. Generalizable: any future child process that runs work between F$MapBlk and `q->ready = 1` should treat that work as a startup-time-budget liability and minimize it. Recorded 2026-04-25.
+- **Parent init timeouts should be generous.** 5 sec is too tight on emulators; 30 sec is the new default for `ren_init`. Cheap insurance — only used during init, never during steady-state.
+
 ## Workflow
 
 - Leave repository files as source of truth; the deploy/build workflow owns `disks/ppsrc.dsk`.

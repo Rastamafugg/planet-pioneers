@@ -433,14 +433,21 @@ char *argv[];
         close(g_path);
         exit(5);
     }
-    vsel();
 
+    /* Signal ready as soon as both screens are bound. The parent only
+     * needs to know the queue is mapped + the child can accept work;
+     * the cosmetic prep below (vsel/clear/show) used to run before
+     * `ready` and could exceed the 5s init budget on slower emulators
+     * because two software rects are ~30K putpx calls. Move it after
+     * `ready` instead — the first drained command will be ren_clr()
+     * which redraws the back buffer anyway. */
+    q->ready = 1;
+
+    vsel();
     rect(g_scr[0], 0, 0, SCR_W, SCR_H, COLOR_BLACK);
     rect(g_scr[1], 0, 0, SCR_W, SCR_H, COLOR_BLACK);
     show_screen(g_num[0]);
     nap(2);
-
-    q->ready = 1;
 
     for (;;) {
         while (q->tail != q->head) {

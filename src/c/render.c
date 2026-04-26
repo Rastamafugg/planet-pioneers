@@ -158,13 +158,15 @@ int ren_init()
     g_rpid = r.rg_a & 0xff;
 
     /* Wait for child to allocate its screens and signal ready. Poll
-     * F$Sleep 5 ticks; bail after ~5 sec. */
-    for (waited = 0; waited < 60; waited++) {
+     * F$Sleep 5 ticks; bail after ~30 sec. (Was 5 sec — too tight on
+     * emulators paced below real CoCo speed; child does software rects
+     * during init which can plausibly run >1 sec.) */
+    for (waited = 0; waited < 360; waited++) {
         if (g_rq->ready) return 0;
         r.rg_x = 5;
         _os9(F_SLEEP, &r);
     }
-    printf("render: child not ready after 5s\n");
+    printf("render: child not ready after 30s\n");
     return 4;
 }
 
