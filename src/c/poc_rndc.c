@@ -6,10 +6,15 @@
  * ready=1, then polls the queue and executes draw commands on the
  * back screen. R_OP_PRESENT calls SS.DScrn on the back and swaps.
  *
- * Sprites use save_bg / rest_bg per-(screen,slot) so that only the
- * sprite footprint is touched per frame — same trick as poc_cvdg16.
- * Full-redraw of 45 tiles + clear was ~100x too slow in software at
- * 160x192x16 (lessons-learned 2026-04-26).
+ * Sprites are cleared on move via paint_bg_at(), which repaints the
+ * 8x8 footprint from map data + tile_color() rather than sampling the
+ * live screen. Screen-sampled save_bg captured overlapping-sprite
+ * pixels and resurrected them as ghosts (lessons-learned 2026-04-26).
+ *
+ * R_OP_DRAWMAP draws the map to the back buffer, then memcpys to the
+ * other screen so both buffers carry the same map after one call —
+ * one 16K block copy is ~100x faster than running the procedural
+ * draw twice.
  *
  * RenderQueue layout MUST match render.c.
  *
@@ -55,7 +60,6 @@
 
 #define SPR_W      8
 #define SPR_H      8
-#define SPR_BW     4
 #define SPR_SIZE   (SPR_W * SPR_H)
 #define WALK_FR    2
 
@@ -100,9 +104,10 @@ static int             g_path;
 static char           *g_devname;
 static unsigned char  *g_scr[2];
 
-/* Per-(screen, slot) sprite state for save_bg/rest_bg.
- * 2 screens x 2 slots x 32 bytes = 128 B of bg buffer. */
-static unsigned char   g_bg[2][SPR_SLOTS][SPR_BW * SPR_H];
+/* Per-(screen, slot) sprite state. We do NOT save the screen bytes
+ * under the sprite — that approach captured overlapping-sprite pixels
+ * and resurrected them as ghosts on restore. Instead we re-derive the
+ * bg from the map via tile_color() / paint_bg_at(). */
 static int             g_prevx[2][SPR_SLOTS];
 static int             g_prevy[2][SPR_SLOTS];
 static int             g_have[2][SPR_SLOTS];
@@ -309,11 +314,33 @@ unsigned char *base; int x, y, c;
 hline(base, x, y, w, c)
 unsigned char *base; int x, y, w, c;
 {
-    int i;
+    int nb;
+    unsigned char *p, *q;
+    unsigned char fill, nib;
+
     if (w <= 0 || y < 0 || y >= SCR_H) return;
     if (x < 0) { w += x; x = 0; }
     if (x + w > SCR_W) w = SCR_W - x;
-    for (i = 0; i < w; i++) putpx(base, x + i, y, c);
+    if (w <= 0) return;
+
+    nib  = (unsigned char)(c & 15);
+    fill = (nib << 4) | nib;
+    p    = base + y * SCR_BPR + (x >> 1);
+
+    /* Leading half-byte if x is odd. */
+    if (x & 1) {
+        *p = (*p & 0xf0) | nib;
+        p++;
+        w--;
+    }
+    /* Whole bytes — tight inner loop, no per-pixel mask. */
+    nb = w >> 1;
+    q  = p + nb;
+    while (p < q) *p++ = fill;
+    /* Trailing half-byte if w is odd. */
+    if (w & 1) {
+        *p = (*p & 0x0f) | (nib << 4);
+    }
 }
 
 rect(base, x, y, w, h, c)
@@ -376,6 +403,7 @@ int kind, col, row;
 draw_map_back()
 {
     int row, col;
+    unsigned char *src, *dst, *end;
 
     rect(g_scr[g_back], 0, 0, SCR_W, SCR_H, COLOR_BLACK);
     for (row = 0; row < MAP_ROWS; row++)
@@ -389,35 +417,80 @@ draw_map_back()
             else if (g_map[row][col] == 2) mountn(base, x, y);
             else                           plain(base, x, y);
         }
-    /* New map drawn on this screen — invalidate any saved bg under
-     * the previous sprite positions on this screen. */
-    g_have[g_back][0] = 0;
-    g_have[g_back][1] = 0;
+
+    /* Clone to the OTHER screen so both buffers carry the same map.
+     * One 16K memcpy is ~100x faster than re-running the full
+     * procedural draw pass on the second screen. */
+    src = g_scr[g_back];
+    dst = g_scr[g_back ^ 1];
+    end = src + SCR_BPR * SCR_H;
+    while (src < end) *dst++ = *src++;
+
+    /* Map redrawn on both screens — any saved sprite-prev state is
+     * stale (the prev location now shows clean map). */
+    g_have[0][0] = 0; g_have[0][1] = 0;
+    g_have[1][0] = 0; g_have[1][1] = 0;
 }
 
-save_bg(base, x, y, buf)
-unsigned char *base; int x, y; unsigned char *buf;
+/* Pixel-level query of the procedural tile drawing. Mirrors plain()
+ * / river() / mountn() but as a function of (kind, tx, ty), where
+ * tx/ty are tile-relative coords. Last-applied rect wins, so the
+ * checks are ordered top-most overlay first. */
+int tile_color(kind, tx, ty)
+int kind, tx, ty;
 {
-    int r, c, i;
-    unsigned char *p;
-
-    i = 0;
-    for (r = 0; r < SPR_H; r++) {
-        p = base + (y + r) * SCR_BPR + (x >> 1);
-        for (c = 0; c < SPR_BW; c++) buf[i++] = *p++;
+    if (kind == 1) {                                    /* river  */
+        if (tx >= 5 && tx <= 11 && ty >= 11 && ty <= 13) return COLOR_BLUE;
+        if (tx >= 5 && tx <= 11 && ty >= 27 && ty <= 29) return COLOR_BLUE;
+        if (tx >= 7 && tx <= 9)                          return COLOR_BLUE;
+        if (tx >= 6 && tx <= 10)                         return COLOR_WHITE;
+        return COLOR_BLUE;
+    } else if (kind == 2) {                             /* mountn */
+        if (tx >= 8 && tx <= 9 && ty >= 5 && ty <= 13)   return COLOR_BLACK;
+        if (tx >= 1 && tx <= 15 && ty >= 27 && ty <= 34) return COLOR_WHITE;
+        if (tx >= 3 && tx <= 13 && ty >= 18 && ty <= 26) return COLOR_WHITE;
+        if (tx >= 5 && tx <= 11 && ty >= 11 && ty <= 17) return COLOR_WHITE;
+        if (tx >= 7 && tx <= 9 && ty >= 4 && ty <= 10)   return COLOR_WHITE;
+        return COLOR_GREEN;
+    } else {                                            /* plain  */
+        if (tx >= 11 && tx <= 12 && ty >= 27 && ty <= 28) return COLOR_BLACK;
+        if (tx >= 5 && tx <= 6 && ty >= 8 && ty <= 9)     return COLOR_BLACK;
+        if (tx >= 2 && tx <= 14 && ty >= 17 && ty <= 18)  return COLOR_BLACK;
+        return COLOR_GREEN;
     }
 }
 
-rest_bg(base, x, y, buf)
-unsigned char *base; int x, y; unsigned char *buf;
+/* Repaint the SPR_W x SPR_H footprint at (x, y) from map data only.
+ * Used to clear a sprite before its next position is drawn — never
+ * samples the live screen, so overlapping sprites cannot contaminate
+ * each other's bg. */
+paint_bg_at(base, x, y)
+unsigned char *base; int x, y;
 {
-    int r, c, i;
-    unsigned char *p;
+    int sx, sy, px, py, mx, my, col, row, tx, ty, c;
 
-    i = 0;
-    for (r = 0; r < SPR_H; r++) {
-        p = base + (y + r) * SCR_BPR + (x >> 1);
-        for (c = 0; c < SPR_BW; c++) *p++ = buf[i++];
+    for (sy = 0; sy < SPR_H; sy++) {
+        py = y + sy;
+        my = py - MAP_OY;
+        row = (my < 0) ? -1 : my / TILE_H;
+        ty  = (row >= 0 && row < MAP_ROWS) ? (my - row * TILE_H) : 0;
+
+        for (sx = 0; sx < SPR_W; sx++) {
+            px = x + sx;
+            mx = px - MAP_OX;
+            if (mx < 0 || row < 0 || row >= MAP_ROWS) {
+                c = COLOR_BLACK;
+            } else {
+                col = mx / TILE_W;
+                if (col >= MAP_COLS) {
+                    c = COLOR_BLACK;
+                } else {
+                    tx = mx - col * TILE_W;
+                    c = tile_color((int)g_map[row][col], tx, ty);
+                }
+            }
+            putpx(base, px, py, c);
+        }
     }
 }
 
@@ -440,21 +513,19 @@ int slot, x, y, frame, dir, mule;
     int walk, flip;
     unsigned char *dat;
     unsigned char *base;
-    unsigned char *bgbuf;
 
     if ((unsigned)slot >= SPR_SLOTS) return;
 
-    base  = g_scr[g_back];
-    bgbuf = &g_bg[g_back][slot][0];
+    base = g_scr[g_back];
 
-    /* Restore the background from THIS screen's last sprite position
-     * for this slot (if any). Each screen tracks its own trail because
-     * page-flip means we see screen N+2's stale state when we come
-     * back to screen N. */
+    /* Clear the prev sprite footprint on THIS screen by repainting it
+     * from map data. No screen-sampled save_bg — that captured the
+     * other sprite's pixels on overlap and resurrected them as
+     * ghosts. Each screen still tracks its own prev because page-flip
+     * means we last touched THIS screen two frames ago. */
     if (g_have[g_back][slot]) {
-        rest_bg(base, g_prevx[g_back][slot], g_prevy[g_back][slot], bgbuf);
+        paint_bg_at(base, g_prevx[g_back][slot], g_prevy[g_back][slot]);
     }
-    save_bg(base, x, y, bgbuf);
 
     walk = frame & 1;
     flip = 0;
@@ -516,7 +587,11 @@ char *argv[];
     g_path = -1;
     g_num[0] = 0;
     g_num[1] = 0;
-    g_back = 0;
+    /* Start with scr[0] showing and scr[1] as the back buffer, so the
+     * very first R_OP_DRAWMAP draws into the OFFSCREEN buffer. With
+     * g_back=0 the first map redraw was happening on the visible
+     * screen and the user could see tiles paint in line-by-line. */
+    g_back = 1;
 
     if (open_vdg()) {
         printf("pocrndc: no CoVDG path\n");

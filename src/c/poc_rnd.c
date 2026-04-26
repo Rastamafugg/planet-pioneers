@@ -94,11 +94,10 @@ main()
     if (err) { printf("poc_rnd: ren_init err %d\n", err); exit(1); }
     printf("poc_rnd: render up; %d frames\n", NFRAMES);
 
-    /* Seed both screens with the map. ren_dmap draws to back; ren_pres
-     * flips so the next dmap targets the other screen. After two
-     * pairs both screens have a clean map. */
-    ren_dmap();
-    ren_pres();
+    /* Seed both screens with the map. The child's R_OP_DRAWMAP draws
+     * to the (offscreen) back buffer and then clones it to the front
+     * via 16K memcpy — much faster than re-running the procedural
+     * draw twice. ren_pres then flips, surfacing the seeded buffer. */
     ren_dmap();
     ren_pres();
     ren_flush();
