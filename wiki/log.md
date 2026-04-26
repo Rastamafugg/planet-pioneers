@@ -228,3 +228,9 @@ Targeted ingest of `docs/reference/DCC C Compiler System Users Guide.md` Ch 2 §
 Distinguished `-O` (capital — stop after optimizer) from `-o` (lowercase — inhibit optimizer); distinguished `-m=` (dcc-level additional memory) from `-M=` (rlink-level total data area) from `-M` (no `=` — request linkage map). Full flag table now in [platform/dcc.md](platform/dcc.md).
 
 No new pages created; [index.md](index.md) unchanged. Source-summary [sources/dcc-docs.md](sources/dcc-docs.md) updated with Tier 2 ingest entry. Tier 3 (Ch 4 Basic09 ABI, Ch 2 perf section, App. C expressions skim) remains optional — flag if a specific question motivates it.
+
+## [2026-04-26] fix | dead paint_bg_at causes pocrndc link error
+
+User hit `Unresolved references: tile_col   poc_rndc_c   in ctmp.4.r` after testing the latest phase 4 changes. Diagnosis: PR #36 reverted to byte-copy save_bg/rest_bg and removed the `tile_color` definition, but left `paint_bg_at` (its only caller) in place. With no callers of its own and only a now-missing dependency, `paint_bg_at` was dead code dragging an unresolved reference. Deleted the function and updated the stale comment over `g_bg`. patchc trimmed to just `pocrndc`.
+
+Lesson: post-revert dead-code sweeps need to follow the call graph one hop further than the immediate change set. (Not added to lessons-learned — single occurrence, generic dead-code hygiene rather than a NitrOS-9 quirk.)
