@@ -79,6 +79,7 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 ## [Input](../platform/input.md)
 
 - **`SS.KySns` GetStat alone leaks keystrokes to the terminal.** In normal keyboard mode, the GetStat call ($27) reads the key bit pattern but VTIO still forwards the printable keypresses (arrows, space) into the SCF buffer. After the program exits, those buffered keys spill onto the shell command line. **Mitigation:** call `SS.KySns` SetStat ($27, X≠0) at startup to put VTIO into key-sense-only mode, and restore (X=0) before exit. Confirmed 2026-04-26 running `pioneer` — without the SetStat, ~one line of `[ ][ ][ ]` arrow-glyphs followed program exit; with it, the buffer stays empty.
+- **Key-sense-only mode only suppresses the 8 special keys, not letters/digits.** Despite Tech Ref §SS.KySns wording ("no keypresses go through SCF, thus speeding up keyboard scans for these specific keys"), live test 2026-04-26 confirmed printable keys typed during `pioneer` still landed in the SCF buffer and spilled onto the shell after exit; only SHIFT/CTRL/ALT/UP/DOWN/LEFT/RIGHT/SPACE were swallowed. **Mitigation:** drain stdin via `SS.Ready` ($01) GetStat + `read` until carry-set (E$NotRdy), called from `inp_poll` (each frame, so letters typed mid-game don't accumulate) and `inp_shut` (final flush). Implemented in [`input.c`](../../src/c/input.c) `drain()`.
 
 ## drawspr byte-pair fast path
 
