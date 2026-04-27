@@ -1,1 +1,1 @@
-dcc /d1/main.c /d1/input.c -m=4k -f=/dd/cmds/pioneer
+dcc /d1/poc_owtxt.c -m=4k -f=/dd/cmds/pocowtxt
