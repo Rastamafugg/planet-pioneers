@@ -14,7 +14,7 @@ Phase plan and timeline for building Planet Pioneers from the existing PoCs to a
 1. ~~**Cross-process shared memory for render**~~ ✅ resolved 2026-04-25 — `poc_shmem` C-side passed live-test on EOU. **3-process architecture (logic + render + sound) is the locked-in baseline.** 2P fallback no longer in play.
 2. **64 KB process budget** — measure code size after every milestone, not at the end.
 3. **Commodity auction phase** — 4 simultaneous price lines + input is the hardest interactive code in the game; gets its own PoC inside phase 7.
-4. **AI must land alongside phases**, not after — single human means 3 AI opponents are required from the first playable phase.
+4. **AI lands inside each 7x phase** — 3 CPU opponents are required from the first playable phase that needs decisions, but the original phase-6 "AI module up front" plan was dissolved 2026-04-26 (see [ai.md](../game/ai.md) decision note). Each AI policy now ships with its consumer.
 
 ## Phases
 
@@ -26,7 +26,7 @@ Phase plan and timeline for building Planet Pioneers from the existing PoCs to a
 | 3   | Sound child process ✅                    | [`sound.c`](../../src/c/sound.c) parent API + [`poc_sndc`](../../src/c/poc_sndc.c) child; SPSC `{freq,dur,amp}` ring buffer in shared memory; non-blocking from logic POV. Live-test passed 2026-04-25 | 0.5 wk  | Poll-based drain — signals interrupt SS.Tone |
 | 4   | Render module / process ✅                | [`render.c`](../../src/c/render.c) parent API + [`poc_rndc`](../../src/c/poc_rndc.c) child; 64-entry SPSC RenderCmd ring; child owns CoVDG path + both 16K screens + page-flip. Live-test passed 2026-04-25; perf pass landed 2026-04-26 (signal-wakeup, byte-pair drawspr, byte-copy save_bg/rest_bg → 11 s startup, 27 fps) | 1–1.5 wk | `R_OP_PALETTE` deferred (SS.PalSet codepath unconfirmed) |
 | 5   | Input — single keyboard ✅                | [`input.c`](../../src/c/input.c) module (poll + held/press/release edges) on `SS.KySns`, wired into `pioneer` as a SPACE-to-advance gate between phases (CTRL+SPACE skips to end). PoC `poc_input` confirmed bit pattern live on EOU 2026-04-26 (PR #39, #40). | 0.5 wk  | Polled from logic process — SS.KySns is non-blocking, no input child needed |
-| 6   | Minimal AI                                | Stub policies for management, auction, land grant (good enough to play against) | 1.5 wk  | Refined per-phase in 7 |
+| ~~6~~ | ~~Minimal AI~~ — **dissolved 2026-04-26** | AI policies now ship inside their consuming 7x phase per [ai.md](../game/ai.md): land-grant in 7b, management in 7c/7d, auction in 7e/7f. 7a needs no AI. | — | GDD §18 ingested as the spec; no standalone AI module |
 | 6.5 | **`poc_owtxt`** (gates 7a)                | Resolve the three open questions from the Windowing Manual Tier 1 ingest before any HUD/score code is written: (1) does `OWSet` accept the render child's CoVDG path, or do we need a parallel CoWin device window on the same screen? (2) does the `Palette`/`DefColr` escape sequence work on a CoVDG-displayed screen (potential simpler replacement for the deferred `R_OP_PALETTE` / `SS.PalSet` codepath)? (3) is the standard font preloaded under `pioneer`, or do we need explicit `GPLoad` + `Font` at startup? | 0.5 wk | See [cowin-text.md](../platform/cowin-text.md) "Open questions". Findings update [cowin-text.md](../platform/cowin-text.md), [cowin.md](../platform/cowin.md), and [lessons-learned.md](lessons-learned.md). |
 | 7a  | Phase: Summary / Scoring                  | Net-worth calc + render — integration smoke test                           | 0.5 wk  | Easiest phase first |
 | 7b  | Phase: Land Grant                         | Cursor, selection, simultaneous-press tie-break                            | 0.5 wk  | |
@@ -39,7 +39,7 @@ Phase plan and timeline for building Planet Pioneers from the existing PoCs to a
 | 9   | Tournament rules + balance + memory audit  | Collusion, crystite, mode gates; `buildc` map review                       | 1 wk    | |
 | 10  | QA pass                                   | Golden-path playtests, regression vs. manual & strategy-guide behavior     | 1 wk    | Mandatory closing role |
 
-**Critical path (1 → 2a → 2b → 3 → 4 → 5 → 6 → 7a..g → 8 → 9 → 10): ~13–14 effort-weeks.**
+**Critical path (1 → 2a → 2b → 3 → 4 → 5 → 6.5 → 7a..g → 8 → 9 → 10): ~12–13 effort-weeks** (phase 6 dissolved 2026-04-26; AI work absorbed into 7b/7c/7d/7e/7f).
 
 ## Dependency graph
 
@@ -48,12 +48,10 @@ Phase plan and timeline for building Planet Pioneers from the existing PoCs to a
               │         │
               └──► 3 ───┤
                         │
-                  5 ────┤
-                        │
-                  6 ────┴──► 7a → 7b → 7c → 7d → 7e → 7f → 7g → 8 → 9 → 10
+                  5 ────┴──► 6.5 ──► 7a → 7b → 7c → 7d → 7e → 7f → 7g → 8 → 9 → 10
 ```
 
-`poc_shmem` (2b) gates render path. Sound (3) and render (4) can run in parallel after 2b lands. AI (6) must precede first playable phase (7a).
+`poc_shmem` (2b) gates render path. Sound (3) and render (4) can run in parallel after 2b lands. `poc_owtxt` (6.5) gates 7a. AI policies land inside the 7x phase that consumes them — see [game/ai.md](../game/ai.md) for the per-phase split.
 
 ## Ingest dependencies
 

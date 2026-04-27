@@ -178,7 +178,7 @@ render       →  Parent-side ren_* API + pocrndc child owning CoVDG path + page
 main.c       →  phase 1 core skeleton (turn-phase state machine)
 ```
 
-Next: phase 5 — input (single-keyboard `SS.KySns` polling), then phase 6 minimal AI before any playable phase lands.
+Next: phase 6.5 — `poc_owtxt` to resolve the three CoWin-text open questions (OWSet on a CoVDG path, Palette escape on a CoVDG screen, font preload state) before 7a Summary/Scoring. Phase 6 (minimal AI) was dissolved 2026-04-26 — AI policies now ship inside the 7x phase that consumes them; see [`../game/ai.md`](../game/ai.md).
 
 See [roadmap.md](roadmap.md) for the full phase plan.
 
