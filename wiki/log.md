@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-04-26] ingest | NitrOS-9 EOU Tech Ref — Tier 1
+
+Targeted ingest after a strategic-assessment query carved the 9670-line Tech Ref into Tier 1 (now), Tier 2 (just-in-time before phase 7), Tier 3 (skip). Sections ingested: Ch.2 Signals + VIRQ (375–506); Ch.8 VRN driver (2302–2396); Ch.9 SS.KySns Get+Set (6452, 7575); Ch.9 SS.Tone (8681); Ch.9 SS.CDSig/SS.CDRel (8763, 8795); Ch.9 SS.KSet/SS.KClr (8918, 8950). Propagated to `platform/ipc.md` (signal-semantics: reserved codes, pending-cap=1, intercept=RTI, kill-non-interceptable), `platform/timing.md` (VRN architecture, FS2/KQ3 VIRQ flavors, 4-entry system cap), `platform/input.md` (SS.KySns side benefits, SS.KSet naming-pitfall note), `platform/sound.md` (SS.Tone interrupts-not-masked confirmation, SS.CDSig recorded as NOT a non-blocking tone mechanism). Two Tier-1 hypotheses falsified during ingest and recorded inline so future sessions don't re-litigate: SS.KSet/SS.KClr are VRN VIRQ (King's Quest III legacy), not keyboard; SS.CDSig is serial-port DSR/CD, not sound. `sources/nitros9-docs.md` updated with both an ingested-sections table and an explicit out-of-scope list.
+
+---
+
 ## [2026-04-26] phase | Phase 5 input module landed
 
 `input.c` ships polled `SS.KySns` API: `inp_init` / `inp_poll` / `inp_held` / `inp_pres` / `inp_rele`. Polled from logic process — `SS.KySns` is non-blocking, so an input child would have been wasted IPC. Wired into `pioneer` as a SPACE-to-advance gate (CTRL+SPACE → skip-to-end) between phases; throws away when phase 7c Management lands. Roadmap row 5 marked ✅.

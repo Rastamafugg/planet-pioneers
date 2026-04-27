@@ -50,3 +50,26 @@ Lowest ingest priority; relevant only for command-line / shell interactions in d
 ## Ingest strategy
 
 Do **not** try to ingest all 15K lines. On demand, jump to the referenced section and expand the relevant platform page. For example: when PoC work needs a particular GetStat/SetStat, look up that one call and update [platform/](../platform/) rather than reading the whole driver chapter.
+
+## Ingested sections (Tech Ref)
+
+| Section | Lines | Propagated to |
+|---------|-------|---------------|
+| Ch.2 Signals + Virtual Interrupts | 375–506 | [ipc.md](../platform/ipc.md#signal-semantics-tech-ref-ch2) |
+| Ch.8 VRN driver | 2302–2396 | [timing.md](../platform/timing.md#vrn-architecture-tech-ref-ch8) |
+| Ch.9 GetStat SS.KySns | 6452–6508 | [input.md](../platform/input.md) |
+| Ch.9 SetStat SS.KySns | 7575–7604 | [input.md](../platform/input.md) |
+| Ch.9 SetStat SS.Tone | 8681–8712 | [sound.md](../platform/sound.md#tech-ref-ch9-confirmations-2026-04-26-ingest) |
+| Ch.9 SS.CDSig / SS.CDRel | 8763–8821 | [sound.md](../platform/sound.md) — recorded as NOT applicable |
+| Ch.9 SS.KSet / SS.KClr | 8918–8975 | [timing.md](../platform/timing.md#vrn-architecture-tech-ref-ch8), [input.md](../platform/input.md) — disambiguation note |
+
+## Out-of-scope sections (decided 2026-04-26 — do NOT ingest unless need surfaces)
+
+- Ch.3 Module format / CRC / F$VModul (we ship a single executable; runtime modules not on path)
+- Ch.4 Unified I/O internals (we are an I/O client, not a driver author)
+- Ch.5 RBF (no save games yet; libc when needed)
+- Ch.6 SCF internals (DCC libc handles it)
+- Ch.7 PIPEMAN (chose signals + shmem over pipes)
+- Privileged System-Mode Calls (4656–5916; not callable from user processes)
+- Appendix B (floppy formats)
+- GetStat: SS.ComSt, SS.DRead/SDRD, SS.DrvCh, SS.VarSe, SS.FBRgs, SS.ECC (comms / disk / floppy — not on path)

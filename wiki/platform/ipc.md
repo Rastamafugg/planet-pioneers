@@ -39,6 +39,26 @@ Limits:
 
 Signals carry **only the sig number** (one byte). Always store the actual command/data in a separately readable region (file, data module, or mapped block) and use the signal purely as the "go check the mailbox" knock.
 
+### Signal semantics (Tech Ref Ch.2)
+
+Reserved codes — **do not reuse** for app traffic. Planet Pioneers app codes live in 128–255.
+
+| Code | Meaning | Notes |
+|------|---------|-------|
+| 0   | Kill | **Non-interceptable.** Always terminates the target. Use only on shutdown. |
+| 1   | Wakeup | Activates a sleeping process. **Sets the wake flag but skips the intercept routine** — useful for "just unblock my F$Sleep" without running handler logic. |
+| 2   | Keyboard terminate | Sent by VTIO on terminate keystroke. |
+| 3   | Keyboard interrupt | Sent by VTIO on interrupt keystroke. |
+| 4   | Window change / hangup | Sent on window resize or modem disconnect. |
+| 128–255 | User defined | Our `SIG_RENDER_*` etc. live here. |
+
+Critical rules:
+
+- **Pending-signal cap is 1.** If a process has a signal pending (delivered but not yet processed), a second `F$Send` to it returns an error. The sender must `F$Sleep` a few ticks before retrying. This is the reason our parent loops yield between `ren_flush` calls.
+- **No intercept = die.** A process that receives any signal (other than wakeup) without an installed `F$Icpt` handler is terminated immediately. Always install `intercept()` before forking children that may signal back.
+- **Intercept handlers terminate with RTI**, not RTS. The DCC C wrapper handles this; our handler stays a tiny `static int sigtrap(sig)`.
+- **Signal in system mode defers termination** until return to user state — so a kill received while the kernel is mid-syscall on the target's behalf doesn't corrupt kernel state.
+
 ## Shared-state transports
 
 Three confirmed candidates, each appropriate for different rates:
