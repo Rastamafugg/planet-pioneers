@@ -47,9 +47,29 @@
 #ifndef I_SETSTT
 #define I_SETSTT 0x8E
 #endif
+#ifndef SS_READY
+#define SS_READY 0x01
+#endif
 
 static unsigned char cur;
 static unsigned char prev;
+
+/* Discard any letters/digits sitting in stdin's SCF buffer. SS.KySns
+ * key-sense-only mode suppresses the 8 special keys but printable
+ * keys still flow through SCF; without draining they spill onto the
+ * shell command line after pioneer exits. */
+static drain()
+{
+    struct registers r;
+    char ch;
+
+    for (;;) {
+        r.rg_a = 0;
+        r.rg_b = SS_READY;
+        if (_os9(I_GETSTT, &r)) return;  /* not ready -> empty */
+        if (read(0, &ch, 1) <= 0) return;
+    }
+}
 
 int inp_init()
 {
@@ -68,6 +88,7 @@ int inp_shut()
 {
     struct registers r;
 
+    drain();
     r.rg_a = 0;
     r.rg_b = SS_KYSNS;
     r.rg_x = 0;  /* zero = normal kbd mode */
@@ -84,6 +105,7 @@ int inp_poll()
     r.rg_b = SS_KYSNS;
     if (_os9(I_GETSTT, &r)) return -1;
     cur = r.rg_a & 0xff;
+    drain();  /* discard any printable keys typed since last poll */
     return 0;
 }
 
