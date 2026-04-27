@@ -3,3 +3,4 @@ wiki/.obsidian/core-plugins.json
 wiki/.obsidian/appearance.json
 wiki/.obsidian/app.json
 /.claude/worktrees
+.claude/settings.local.json
