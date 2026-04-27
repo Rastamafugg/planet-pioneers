@@ -43,6 +43,8 @@ Per AGENTS.md this is the authoritative source; reference-document-confirmed int
 - CoWin "Select" escape `ESC $21` — required before CoVDG `SS.DScrn` output becomes visible on an opened VDG path.
 - OWSet overlay windows for text-on-graphics.
 
+**Tier 1 ingest 2026-04-26** — DWSet, OWSet/OWEnd, Palette/DefColr, Ch.5 text commands → [platform/cowin-text.md](../platform/cowin-text.md). Ch.4 drawing primitives (Arc3P, Ellipse, FFill, FCircle, Font scaling) deliberately skipped; M.U.L.E. art is tiles + bars + text.
+
 ### User's Guide
 
 Lowest ingest priority; relevant only for command-line / shell interactions in dev workflow.

@@ -48,8 +48,13 @@ This trades memory and copy cost for a clean back-buffer model — no true page 
 
 **CoWin command buffering does NOT provide true page flipping or guaranteed VBlank synchronization.** For page flipping, use [CoVDG](covdg.md) instead. For frame pacing, use the VRN `/nil` 1/60s gate described in [timing.md](timing.md).
 
+## Text & overlays
+
+CoVDG has no text primitives. For HUDs, score panels, prompts, and the auction ticker, see [cowin-text.md](cowin-text.md) — covers DWSet/OWSet/OWEnd, the Ch.5 text command bytes, font caveats, and the `Palette`/`DefColr` escape sequences (the documented alternative to the deferred `SS.PalSet` codepath).
+
 ## Related
 
+- [cowin-text.md](cowin-text.md) — overlay text windows + text commands + palette
 - [covdg.md](covdg.md) — lower-level alternative with page flip support
 - [memory.md](memory.md) — GrfDrv + process mapping
 - [timing.md](timing.md) — pacing to 60 Hz

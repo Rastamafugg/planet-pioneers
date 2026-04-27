@@ -23,6 +23,7 @@ Content catalog. Read this first when answering a query to find the right page, 
 - [Platform stack](platform/stack.md) — CoCo 3 + NitrOS-9 EOU + DCC overview
 - [CoVDG graphics](platform/covdg.md) — VDG screen types, page flipping, SS.AScrn/DScrn/FScrn
 - [CoWin graphics](platform/cowin.md) — windowing system, DWSet, drawing commands, GET/PUT
+- [CoWin text & overlays](platform/cowin-text.md) — DWSet/OWSet/OWEnd, Ch.5 text commands, Palette/DefColr, font caveats
 - [Timing and VSync](platform/timing.md) — 60Hz ticks, F$Time, VRN /nil VIRQ gate
 - [Sound](platform/sound.md) — SS.Tone, blocking behavior, dedicated-process pattern
 - [Input](platform/input.md) — joystick (SS.Joy), keyboard (SS.KySns)
