@@ -16,7 +16,7 @@ Content catalog. Read this first when answering a query to find the right page, 
 - [Random events](game/random-events.md) — player events, planetary events (stub)
 - [Economic model](game/economy.md) — store prices, supply/demand (stub)
 - [Scoring and victory](game/scoring.md) — net worth formula, colony survival threshold
-- [Computer player AI](game/ai.md) — AI behavior targets (stub)
+- [Computer player AI](game/ai.md) — GDD §18 policies for the 3 CPU opponents (lands per-phase in 7b–7f)
 
 ## Platform / technology
 

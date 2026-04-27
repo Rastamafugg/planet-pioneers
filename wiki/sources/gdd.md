@@ -1,7 +1,7 @@
 # Source: M.U.L.E. Game Design Document
 
 **Path:** `docs/design/MULE_GDD.md` (1654 lines, v1.0)
-**Status:** Primary source of truth for game design (per AGENTS.md). Sections 1–7, 11, 19–24 substantively ingested; 8–10 and 12–18 still stub-level in the wiki.
+**Status:** Primary source of truth for game design (per AGENTS.md). Sections 1–7, 11, 18, 19–24 substantively ingested; 8–10 and 12–17 still stub-level in the wiki.
 
 ## What it is
 
@@ -28,7 +28,7 @@ A 24-section GDD targeting DCC C on NitrOS-9 EOU / CoCo 3. Synthesizes the origi
 | 15 | Economic Model | [game/economy.md](../game/economy.md) (stub) |
 | 16 | Tournament-Only Features | (stub) |
 | 17 | Scoring and Victory | [game/scoring.md](../game/scoring.md) |
-| 18 | Computer Player AI | [game/ai.md](../game/ai.md) (stub) |
+| 18 | Computer Player AI | [game/ai.md](../game/ai.md) |
 | 19 | UI Screen Specifications | (not ingested) |
 | 20 | Input System | [platform/input.md](../platform/input.md) |
 | 21 | Audio | [platform/sound.md](../platform/sound.md) |
