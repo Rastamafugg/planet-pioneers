@@ -28,6 +28,7 @@ void read_joystick(unsigned char port, unsigned char *xval,
 - `I$ReadLn` for blocking line reads (config, text prompts).
 - `SS.KySns` GetStat (function $27) for **real-time key sensing**. A returns 8-bit pattern: `bit0 SHIFT  bit1 CTRL  bit2 ALT  bit3 UP  bit4 DOWN  bit5 LEFT  bit6 RIGHT  bit7 SPACE`. Confirmed live on EOU 2026-04-26 via `poc_input`.
 - `SS.KySns` SetStat (also $27, X≠0 enables key-sense-only mode, X=0 restores) suppresses the 8 special keys (arrows, space, modifiers) from SCF. **Letters/digits still flow through SCF** even in key-sense mode (confirmed live 2026-04-26), so [`input.c`](../../src/c/input.c) also drains stdin each `inp_poll` and at `inp_shut` via `SS.Ready` ($01) + `read` until E$NotRdy. Without the drain, anything typed during a phase spills to the shell command line on exit.
+- Drain alone is not enough — VTIO echoes keystrokes to the screen *as they are typed*. `inp_init` therefore also snapshots `PD.OPT` via `SS.Opt` GetStat ($00), clears the `PD.EKO` byte (buffer offset $04 = PD offset $24 minus PD.OPT base $20), writes it back with `SS.Opt` SetStat, and restores the original packet at `inp_shut`. The keyboard is then fully silent: no echo during the run, no buffer spill afterward.
 
 In key-sense-only mode the only way to detect any key press is `SS.KySns` GetStat — `I$Read` becomes inert. That is fine for the in-game phases (management, auctions); text prompts must restore normal mode first.
 
