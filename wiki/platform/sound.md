@@ -33,6 +33,12 @@ A single blocking call during the management phase would freeze player movement.
 
 This pattern is not yet implemented — [poc_sound.c](../sources/poc-sources.md) only confirms the tone API and verifies melody / amplitude-accented sequences / sweeps / warbles work.
 
+### Tech Ref Ch.9 confirmations (2026-04-26 ingest)
+
+- `SS.Tone` blocks the caller until the tone completes, but **interrupts are NOT masked** during playback. That is why our sound-child design works: the parent can `F$Send` a wakeup/quit signal mid-tone and the child's `F$Icpt` handler runs immediately. Recorded as a positive confirmation, not a new finding.
+- **Bit 15 of frequency = "8-bit volume" flag** for TC-9 hardware (lets MSB of X use full 0–255 amplitude). Irrelevant for our CoCo 3 target (use 0–63), but worth noting if anyone copies the call shape from a TC-9 source.
+- **`SS.CDSig` / `SS.CDRel` are NOT a non-blocking SS.Tone mechanism.** They are serial-port-only — they signal on Carrier Detect / DSR change, handled by `sc6551`/`sc6850`/`s16550` drivers. (Initial Tier-1 ingest hypothesis was wrong — leaving this note so future readers don't re-litigate.) The current poll-based sound child remains the right design.
+
 ## Sound events (GDD §21.2)
 
 | Event | Frequency | Duration | Notes |

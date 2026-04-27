@@ -32,6 +32,14 @@ void read_joystick(unsigned char port, unsigned char *xval,
 
 In key-sense-only mode the only way to detect any key press is `SS.KySns` GetStat — `I$Read` becomes inert. That is fine for the in-game phases (management, auctions); text prompts must restore normal mode first.
 
+Tech Ref Ch.9 also documents two side benefits worth knowing:
+
+- `SS.KySns` is the **only** way to read SHIFT, CTRL, or ALT independently (without an accompanying alphanumeric).
+- In *normal* (non key-sense) mode, `SS.KySns` acts INKEY-style — peeking the bits does **not** consume them. Printable keys still flow into the SCF buffer for `I$Read`.
+- Arrow keys vs CTRL-H/I/J/K can be disambiguated by reading the ASCII via `I$Read` and then checking `SS.KySns` for CTRL.
+
+**Naming pitfall:** `SS.KSet` / `SS.KClr` (codes $C8/$C9) are unrelated to keyboards despite the name — they configure VRN VIRQ timers (King's Quest III legacy, see [timing.md](timing.md#vrn-architecture-tech-ref-ch8)). Don't confuse with `SS.KySns` SetStat (also code $27, like its GetStat counterpart).
+
 ## Input mapping (GDD §20)
 
 - Four joysticks for four players when available.

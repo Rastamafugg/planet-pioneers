@@ -34,6 +34,23 @@ Gives a **documented 1/60-second timing gate for measurement.** This is NOT dire
 
 Used in [poc_gfx.c](../sources/poc-sources.md) as the VRN VIRQ timing gate driving sprite movement.
 
+### VRN architecture (Tech Ref Ch.8)
+
+`/nil` is an SCF-backed null device. All VRN VIRQ + RAM functionality runs through GetStat/SetStat on a path opened to `/nil`. Three primitives sit behind it:
+
+| SetStat | Code | Behavior | Notes |
+|---------|------|----------|-------|
+| `SS.FSet` | $C7 | "FS2+" VIRQ — programmable interval, repeating or one-shot, with VIRQ + signal counters | What we use today |
+| `SS.FClr` | $A8 | Clears FS2/FS2+ VIRQ for caller's path | |
+| `SS.KSet` | $C8 | "KQ3-style" VIRQ — fixed signal `$80`, fixed 1/60s interval, no metrics | Lighter to service in IRQ but inflexible |
+| `SS.KClr` | $C9 | Clears KQ3-style VIRQ | |
+
+**Naming gotcha:** `SS.KSet` / `SS.KClr` are **NOT** keyboard-related despite the K prefix — the K stands for *King's Quest III*, the original consumer of the VIRQ pattern. Real keyboard control is `SS.KySns` (see [input.md](input.md)). Easy to misread when grepping the Tech Ref.
+
+**System-wide cap: 4 simultaneous VIRQ entries**, keyed on (process ID, path number). A single process can hold multiple by opening multiple paths to `/nil`. Plenty of headroom for our logic+render+sound architecture.
+
+VIRQ delivery rides the standard signal path, so all the [signal semantics in ipc.md](ipc.md#signal-semantics-tech-ref-ch2) apply — pending-signal cap of 1, intercept required, etc.
+
 ## Page flipping and vsync
 
 - **[CoWin](cowin.md) does NOT provide true page flipping or guaranteed VBlank sync** — command-buffering only.
