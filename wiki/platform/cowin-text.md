@@ -45,7 +45,7 @@ Parameters: `SVS CPX CPY SZX SZY PRN1 PRN2`.
 
 For the auction ticker / status bar pattern: pick `SVS=0` if redraw is cheap, `SVS=1` if the underlying tiles are expensive to recompute.
 
-**Caveat for the render child:** OWSet on a CoVDG-allocated screen is unverified. The path that ran `SS.AScrn`/`SS.DScrn` is a VTIO/CoVDG path, not a CoWin device-window path. Whether `OWSet` accepts that path or whether we need a parallel CoWin device window on the same screen is an open question for a small PoC before 7a.
+**Resolved 2026-04-30 ([poc_owtxt](../implementation/poc-catalog.md), [poc_owtxt2](../implementation/poc-catalog.md)):** OWSet on the CoVDG VDG path is silently swallowed — produces nothing on screen. A parallel CoWin device window via `iniz /wN` + DWSet `STY=$FF` (currently displayed screen) is *also* silently swallowed: `/w1`, `/w2`, `/w7`, `/w8` all open cleanly but no window lands on the CoVDG-allocated screen. **There is no escape-driven CoWin text path onto a CoVDG-allocated screen.** Phase 7a HUD/score therefore renders **bitmap glyphs directly via the render child's putpx** — see [poc-catalog.md](../implementation/poc-catalog.md) (render.c entry) `R_OP_TEXT`.
 
 ## Palette (`ESC $31 PRN CTN`) and DefColr (`ESC $30`)
 
@@ -54,7 +54,7 @@ For the auction ticker / status bar pattern: pick `SVS=0` if redraw is cheap, `S
 - Changing a register repaints **every pixel using that register, system-wide on that screen**, including the border if it's pointed at the same register.
 - Palette registers are **per-screen, not per-window**; FG/BG register *selection* is per-window.
 - `DefColr` resets to monitor-defaults (RGB or composite, picked by `montype`). Default values can be globally overridden via `SS.DFPal` SetStat.
-- This is the simpler route for `R_OP_PALETTE` than the SS.PalSet codepath that was deferred during Phase 4 — uses a documented escape sequence on the existing window path.
+- **Resolved 2026-04-30 ([poc_owtxt2](../implementation/poc-catalog.md) P2):** `ESC $31 PRN CTN` written **directly to the CoVDG VDG path** (the same path that accepts `ESC $21` Select) successfully repaints palette registers system-wide on the displayed screen. No CoWin window or DWSet is needed. Tech Ref shows there is no SetStat function code for setting an individual palette register — only `SS.Palet` ($91) GET and `SS.DFPal` ($97) SET-default exist — so this escape is the only documented per-register set, and it works through the path the render child already owns. **`R_OP_PALETTE` resolution:** the deferred Phase 4 op becomes "write 4-byte `ESC $31 PRN CTN` to `g_path`" in the render child — no `SS.PalSet`, no `SS.DFPal`.
 
 ## Text commands (Ch. 5)
 
@@ -97,11 +97,14 @@ From the Ch.4/5 optimization notes:
 
 Implication: align HUD overlay X/width to 16-pixel boundaries on type-8 screens.
 
-## Open questions
+## Resolved 2026-04-30 (Phase 6.5, [poc_owtxt](../implementation/poc-catalog.md) + [poc_owtxt2](../implementation/poc-catalog.md))
 
-1. Can `OWSet` be issued on the path the render child uses for CoVDG? If not, what's the layering — separate CoWin device window on the same screen? A small PoC (`poc_owtxt`?) before 7a should resolve this.
-2. Does `DefColr`/`Palette` on a CoVDG-displayed screen fight with `SS.PalSet`? Test alongside #1.
-3. Font preload: is the standard font already in memory under `pioneer`, or do we need an explicit `GPLoad` + `Font` at startup?
+1. **OWSet on the CoVDG path: no.** The escape `ESC $22 …` is silently swallowed when written to the VDG path that owns a CoVDG-allocated screen.
+2. **Parallel CoWin device window on the same screen: no.** `iniz /wN` (tested `/w1`, `/w2`, `/w7`, `/w8`) + DWSet `STY=$FF` opens the path cleanly but produces no visible window over the CoVDG-displayed screen. CoWin's window mechanism does not see CoVDG-allocated screens as targets it can attach to.
+3. **`Palette` (`ESC $31 PRN CTN`) escape on the VDG path: yes.** Repaints palette registers system-wide on the displayed screen. This is the route for `R_OP_PALETTE`.
+4. **Font preload: moot.** With (1) and (2) negative, no CoWin text path lands on the screen, so the system font's preload state is irrelevant. **HUD/score uses render-child-owned bitmap glyphs**, demonstrated by [poc_owtxt2](../implementation/poc-catalog.md) P3.
+
+The architectural consequence for Phase 7a: HUD/score/prompts are not text-driver output. They are **bitmap glyphs compiled into the render child** and drawn via the existing `putpx` primitive, behind a new `R_OP_TEXT(x, y, str, color)` command in [poc-catalog.md](../implementation/poc-catalog.md) (render.c entry).
 
 ## Related
 

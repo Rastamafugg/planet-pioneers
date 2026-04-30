@@ -147,7 +147,27 @@ This is the **most advanced PoC** and the direct precursor of the game's main re
 
 **Layout discipline:** `RenderQueue` / `RenderCmd` typedefs duplicated in `render.c` and `poc_rndc.c` with "must match" comment, same convention as sound.
 
-**Deferred:** `R_OP_PALETTE` accepted by API but child handler is a no-op — `SS.PalSet` codepath against EOU windowing manual not yet pinned. Lands when a phase-7 screen needs custom colors.
+**Deferred → resolved 2026-04-30 (Phase 6.5, [poc_owtxt2](#poc_owtxt2c--cowin-text-on-covdg-isnt-possible--escape-palette-glyphs-are)):** `R_OP_PALETTE` resolution is "write 4-byte `ESC $31 PRN CTN` to the child's `g_path`." No `SS.PalSet` (Tech Ref shows there is no per-register SetStat function code). Lands when Phase 7a needs palette control.
+
+## poc_owtxt.c — first text-path probe (negative across the board)
+
+**Target:** `dcc poc_owtxt.c -m=4k -f=/dd/cmds/pocowtxt`. Standalone, no shmem.
+
+**Asked:** can OWSet (`ESC $22`) attach a text overlay to a CoVDG-allocated screen? Does the Palette/DefColr escape work? Is the standard font preloaded?
+
+**Found (EOU 2026-04-30):** all six on-screen prompts negative — OWSet swallowed silently; the parallel-CoWin probe was malformed (opened parent `/w` instead of a numbered `/wN`); palette and font probes routed through the broken paths so produced no signal. Vertical stripes on screen were uninitialized SS.AScrn buffer contents, not a finding. Superseded by [poc_owtxt2](#poc_owtxt2c--cowin-text-on-covdg-isnt-possible--escape-palette-glyphs-are).
+
+## poc_owtxt2.c — CoWin text on CoVDG isn't possible; escape palette + glyphs are
+
+**Target:** `dcc poc_owtxt2.c -m=4k -f=/dd/cmds/pocowtx2`. Standalone, no shmem.
+
+**Three tighter probes after [poc_owtxt](#poc_owtxtc--first-text-path-probe-negative-across-the-board)'s negative:**
+
+- **P1 — fixed parallel CoWin window:** `iniz`+open `/w1` (also tried `/w2 /w7 /w8`), DWSet `STY=$FF`. **Result on EOU 2026-04-30: no.** All paths open cleanly; DWSet is silently swallowed; no window appears. CoWin's window mechanism does not see CoVDG-allocated screens as attachable targets.
+- **P2 — palette escape on the VDG path:** `ESC $31 PRN CTN` written directly to the path that owns the CoVDG screen (same path that takes `ESC $21` Select). **Result: yes.** Pre-painted bars in palette regs 4 (red) and 5 (yellow) repaint to blue and white when the registers are re-pointed. Resolves the deferred Phase 4 `R_OP_PALETTE`.
+- **P3 — bitmap-glyph demo:** bit-packed 8×8 "HELLO" font drawn directly via `putpx`. **Result: yes.** Demonstrates the option-2 fallback for HUD/score text — the render child compiles a small bitmap font (~750 B for 96 printable ASCII) and draws glyphs through its existing primitives.
+
+**Architectural consequence for Phase 7a:** HUD/score/prompts are not text-driver output. A new `R_OP_TEXT(x, y, str, color)` command in render.c walks a glyph table and calls `putpx` for each set bit. `R_OP_PALETTE` is a 4-byte escape write to `g_path`. No CoWin involvement on the render child's screens.
 
 ## main.c — phase 1 core skeleton
 

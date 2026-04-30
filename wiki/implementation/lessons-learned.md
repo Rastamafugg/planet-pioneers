@@ -125,6 +125,18 @@ Observed-fact findings from PoC work. Mirrors AGENTS.md §66+ with links to the 
 - **A child process's `ready` flag must be set BEFORE any cosmetic init work, not after.** First phase-4 live test failed with `child not ready after 5s` because the render child performed two full-screen software `rect` clears (~30,000 `putpx` calls each) plus `vsel` + `show_screen` *before* writing `q->ready = 1`. On emulators paced below real CoCo speed this exceeded the 5-second parent timeout. Mitigation: gate `ready` purely on the minimum the parent needs to know (queue is mapped, screens/devices are bound), and defer cosmetic prep to after the handshake — the first drained command from the parent is typically a `clear`/`reset` which does the same work anyway. Generalizable: any future child process that runs work between F$MapBlk and `q->ready = 1` should treat that work as a startup-time-budget liability and minimize it. Recorded 2026-04-25.
 - **Parent init timeouts should be generous.** 5 sec is too tight on emulators; 30 sec is the new default for `ren_init`. Cheap insurance — only used during init, never during steady-state.
 
+## CoWin text on CoVDG screens — not possible
+
+- **OWSet (`ESC $22`) on a CoVDG VDG path is silently swallowed.** Writing the escape to the path that owns an `SS.AScrn`-allocated screen produces nothing on screen — no overlay window appears, no error is returned. Confirmed [poc_owtxt](../../src/c/poc_owtxt.c) on EOU 2026-04-30.
+- **Parallel CoWin device window via `/wN` + DWSet `STY=$FF` does not attach either.** Tested `/w1`, `/w2`, `/w7`, `/w8` — all open cleanly, all swallow DWSet, no window appears on the CoVDG-displayed screen. CoWin's window mechanism does not see CoVDG-allocated screens as valid targets. Confirmed [poc_owtxt2](../../src/c/poc_owtxt2.c) on EOU 2026-04-30.
+- **Practical consequence:** there is no escape-driven text path onto a screen the render child owns. HUD/score/prompts in Phase 7a render as **bitmap glyphs drawn via `putpx`** through a new `R_OP_TEXT(x, y, str, color)` command in render.c. Bit-packed 8×8 font, ~750 B for 96 printable ASCII compiled into the render-child binary. Glyph-render demo confirmed working on EOU 2026-04-30 ([poc_owtxt2.c:draw_hello](../../src/c/poc_owtxt2.c)).
+
+## Palette change on a CoVDG screen — use the escape, not a SetStat
+
+- **`ESC $31 PRN CTN` written directly to the CoVDG VDG path repaints palette register PRN system-wide on the displayed screen.** Same path that accepts `ESC $21` Select. Confirmed [poc_owtxt2](../../src/c/poc_owtxt2.c) on EOU 2026-04-30 — pre-painted red and yellow horizontal bars repainted to blue and white when registers 4 and 5 were re-pointed.
+- **There is no per-register-set `I$SetStt` function code.** Tech Ref §SS.Palet ($91) is GET only; SetStat $97 is "set default palette" not "set one register." The escape sequence is the only documented per-register set, and it works through the render child's existing path.
+- **Resolution for the deferred Phase 4 `R_OP_PALETTE`:** the child handler writes the 4-byte sequence `1B 31 PRN CTN` to its `g_path`. No new syscall, no CoWin involvement. Land this when Phase 7a's first screen actually needs palette control.
+
 ## Workflow
 
 - Leave repository files as source of truth; the deploy/build workflow owns `disks/ppsrc.dsk`.
