@@ -34,7 +34,7 @@ Content catalog. Read this first when answering a query to find the right page, 
 ## Implementation
 
 - [Roadmap](implementation/roadmap.md) — phase plan and timeline from PoCs to complete game
-- [PoC catalog](implementation/poc-catalog.md) — all seven `src/c/poc_*.c` files and what each proves
+- [PoC catalog](implementation/poc-catalog.md) — every `src/c/poc_*.c` file and what each proves
 - [Lessons learned](implementation/lessons-learned.md) — observed-fact findings from PoCs
 - [Data structures](implementation/data-structures.md) — Plot / Player / Store / GameState / Auction
 - [Build workflow](implementation/build-workflow.md) — `buildc` / `patchc` / disk image discipline
