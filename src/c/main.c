@@ -71,7 +71,7 @@ static ph_sum()
     printf("pioneer: r%d summary\n", (int)g_state.round);
     summshow();
     if (g_state.mode != MODE_BEGINNER &&
-        nw_combd() < 60000U) {
+        nw_combd() < (unsigned int)60000) {
         failshow();
         gate();
         ren_shut();

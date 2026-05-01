@@ -39,7 +39,7 @@
 #define MODE_TOURNAMENT 2
 
 #define LAND_VALUE 500
-#define COLONY_SURVIVAL_THRESHOLD 60000U
+#define COLONY_SURVIVAL_THRESHOLD ((unsigned int)60000)
 
 /* Screen geometry (matches poc_rndc.c SCR_W=160, SCR_H=192; 20x24 cells) */
 #define COL_MAX 20

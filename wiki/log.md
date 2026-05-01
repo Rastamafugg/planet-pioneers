@@ -4,6 +4,12 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-05-01] lesson | DCC rejects integer-literal suffixes (U/L)
+
+Build of phase-7a `main.c` failed at the colony-failure check `nw_combd() < 60000U` with four errors at line 74 (") expected", "undeclared variable", "; expected", "syntax error"). DCC K&R doesn't accept the `U`/`L` suffix on integer literals. Replaced with `(unsigned int)60000` in `main.c` and the same change in `score.c`'s `COLONY_SURVIVAL_THRESHOLD` macro. Recorded in [lessons-learned.md](implementation/lessons-learned.md) under the DCC dialect section.
+
+---
+
 ## [2026-05-01] impl | Phase 7a — Summary/Scoring code landed (pre-QA)
 
 Implemented the design from earlier today. New file [`src/c/font8x8.h`](../src/c/font8x8.h) — 96-entry 8×8 bitmap font (uppercase + digits + `$ . / - :` populated; lowercase blank for now), `static const` so it lands in the child's code segment. New file [`src/c/score.c`](../src/c/score.c) — `nw_calc`/`nw_combd`/`score_rk` pure scoring, `pl_seed` placeholder demo data (replace when 7b lands real player init), `summshow`/`failshow`/`vicshow` screen drivers issuing `ren_clr → ren_text* → ren_pres → ren_flush`. Edited [`src/c/render.c`](../src/c/render.c): bumped `RENDER_MAGIC` `0x5244 → 0x5245`, added `RENDER_STRBUF_SIZE=256` + `stroff` + `strbuf[]` to `RenderQueue`, added `R_OP_TEXT=7`, added `ren_text(col,row,color,str)` parent API that copies bytes into the shared pool and wraps via `ren_flush()` on overflow. Mirrored the struct + magic + opcode in [`src/c/poc_rndc.c`](../src/c/poc_rndc.c); added `draw_glyph` + `draw_string` (foreground-only blit reusing `putpx`) and the `R_OP_TEXT` dispatch case. Rewired [`src/c/main.c`](../src/c/main.c): mode-driven `max_rounds = (mode == BEGINNER) ? 6 : 12`, `ren_init`/`ren_shut` lifecycle, `pl_seed` at startup, `ph_sum` now calls `summshow` and branches into `failshow → exit` when Std/Tournament `combined < $60000`, post-loop `vicshow → gate → ren_shut → exit`. Updated [`src/script/buildc`](../src/script/buildc) (pioneer build now links `render.c` + `score.c`, `-m=4k → -m=8k`) and [`src/script/patchc`](../src/script/patchc) (rebuilds `pioneer` and `pocrndc` for the magic-bump). No live test yet — handing to qa-reviewer.
