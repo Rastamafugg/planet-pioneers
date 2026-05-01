@@ -678,7 +678,7 @@ The truth tested by each function is as follows:
 
 ### malloc, calloc, realloc, free
 
-**Allocate and freememory**
+**Allocate and free memory**
 
 #### Synopsis
 
@@ -703,7 +703,7 @@ size_t size;
 
 The malloc family of functions dynamically allocate memory for the program’s use, by requesting new blocks of memory no smaller than 1 page (256 bytes) from OS-9 and subdividing those blocks into memory regions returned. There is a small amount of overhead involved in that the allocator must maintain some accounting information used to mark “allocated” vs. “free” sections.
 
-The malloc function allocates size bytes and returns a pointer to the allocatedmemory. No attempt is made to initialize the memory allocated to any value or pattern.
+The **malloc** function allocates size bytes and returns a pointer to the allocated memory. No attempt is made to initialize the memory allocated to any value or pattern.
 
 **calloc** allocates space for an array of nmembmembers, each of which is size bytes wide, and returns a pointer to thememory allocated. calloc initializes the allocated space to zero.
 
@@ -713,7 +713,7 @@ The malloc function allocates size bytes and returns a pointer to the allocatedm
 
 #### Return Value
 
-malloc and calloc return NULL if no free memory can be added, or if there was an error. NULLmay also be returned by malloc with a size of zero, or by calloc with nmemb or size equal to zero. 
+malloc and calloc return NULL if no free memory can be added, or if there was an error. NULL may also be returned by malloc with a size of zero, or by calloc with nmemb or size equal to zero. 
 
 free returns no value. 
 
@@ -2047,7 +2047,7 @@ On error, both functions return (char *)-1 and errno is set.
 
 Calling sbrk with an increment of zero returns the current location of the program break; however, the global variable memend (though not specified in Unix) contains this same value.
 
-On Level One systems, these calls may fail even when the system has free memory. Another programmay have requestedmemory in a location adjacent to the program, or that prevents the program’s data area from expanding enough to satisfy the request. Level Two systems do not have this restriction, since each process is granted its own independent address space.
+On Level One systems, these calls may fail even when the system has free memory. Another programmay have requested memory in a location adjacent to the program, or that prevents the program’s data area from expanding enough to satisfy the request. Level Two systems do not have this restriction, since each process is granted its own independent address space.
 
 See the Memory Management section of the C compiler manual for a more complete explanation of how memory is laid out in OS-9 C programs.
 

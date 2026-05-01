@@ -30,6 +30,15 @@ extern int inp_poll();
 extern int inp_pres();
 extern int inp_held();
 
+extern int ren_init();
+extern int ren_shut();
+
+extern int pl_seed();
+extern int summshow();
+extern int failshow();
+extern int vicshow();
+extern unsigned int nw_combd();
+
 #define MODE_BEGINNER   0
 #define MODE_STANDARD   1
 #define MODE_TOURNAMENT 2
@@ -54,7 +63,22 @@ typedef struct {
 
 GameState g_state;
 
-static ph_sum() { printf("pioneer: r%d summary\n",      (int)g_state.round); }
+/* Phase-7a Summary: render score, then check Std/Tournament colony
+ * survival. On failure, paint the failure screen, gate, and exit —
+ * the rest of the round never runs. */
+static ph_sum()
+{
+    printf("pioneer: r%d summary\n", (int)g_state.round);
+    summshow();
+    if (g_state.mode != MODE_BEGINNER &&
+        nw_combd() < 60000U) {
+        failshow();
+        gate();
+        ren_shut();
+        inp_shut();
+        exit(0);
+    }
+}
 static ph_lgr() { printf("pioneer: r%d land-grant\n",   (int)g_state.round); }
 static ph_lau() { printf("pioneer: r%d land-auction\n", (int)g_state.round); }
 static ph_rev() { printf("pioneer: r%d random-event\n", (int)g_state.round); }
@@ -83,13 +107,18 @@ static gate()
 main()
 {
     if (inp_init()) { printf("pioneer: inp_init failed\n"); exit(1); }
+    if (ren_init()) { printf("pioneer: ren_init failed\n"); inp_shut(); exit(2); }
 
     g_state.mode          = MODE_STANDARD;
     g_state.round         = 1;
-    g_state.max_rounds    = 6;
+    /* Mode-driven round count: Beginner = 6, Standard/Tournament = 12
+     * (GDD §2). Replaces the prior hardcoded 6. */
+    g_state.max_rounds    = (g_state.mode == MODE_BEGINNER) ? 6 : 12;
     g_state.num_players   = 4;
     g_state.active_player = 0;
     g_state.phase         = PHASE_SUMMARY;
+
+    pl_seed();    /* placeholder demo data — replace when 7b lands */
 
     printf("pioneer: init mode=%d players=%d max_rounds=%d\n",
            (int)g_state.mode,
@@ -123,6 +152,13 @@ main()
     }
 
     printf("pioneer: end after r%d\n", (int)(g_state.round - 1));
+
+    /* Final-round Victory screen — the loop has already run all phases
+     * of the last round; show the winner and wait for SPACE. */
+    vicshow();
+    gate();
+
+    ren_shut();
     inp_shut();
     exit(0);
 }

@@ -775,7 +775,7 @@ current stack reservation ↗ |   currently unused    |
 **Figure 3.2: OS-9 Level 1 C Memory Layout**
 
 
-The stack area is the currently reserved memory for exclusive use of the stack. As each C function is entered, a routine in the system interface is called to reserve enough stack space for the use of the function and additional 64 bytes. These 64 bytes are for the use of userwritten assembly code functions and/or the system interface and/or arithmetic routines. A record is kept of the lowest address so far granted for the stack. If the area requested would not bring this lower, then the C function is allowed to proceed. If the new lower limit would mean that the stack area would overlap the data area, the program stops with the message:
+The stack area is the currently reserved memory for exclusive use of the stack. As each C function is entered, a routine in the system interface is called to reserve enough stack space for the use of the function and additional 64 bytes. These 64 bytes are for the use of user-written assembly code functions and/or the system interface and/or arithmetic routines. A record is kept of the lowest address so far granted for the stack. If the area requested would not bring this lower, then the C function is allowed to proceed. If the new lower limit would mean that the stack area would overlap the data area, the program stops with the message:
 
 ```
 *** Stack Overflow ***
@@ -800,7 +800,7 @@ or from assembler:
 
 The Y register points to the base of the data area, and variables are addressed using Y-offset indexed instructions.
 
-When the program starts running, the remaining memory is assigned to the “free” area. A program may call ibrk() to request additional working memory (initialized to zeros) from the free memory area. Alternately, more memory can be dynamically obtained using sbrk(), which requests additional memory from the operating system and returns the new lower bound. If this fails becauseOS-9 refuses to grantmorememory for any reason, sbrk() will return −1 as an int.
+When the program starts running, the remaining memory is assigned to the “free” area. A program may call ibrk() to request additional working memory (initialized to zeros) from the free memory area. Alternately, more memory can be dynamically obtained using sbrk(), which requests additional memory from the operating system and returns the new lower bound. If this fails because OS-9 refuses to grant more memory for any reason, sbrk() will return −1 as an int.
 
 #### Compile-time memory allocation
 

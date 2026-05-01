@@ -1,1 +1,2 @@
-dcc /d1/main.c /d1/input.c -m=4k -f=/dd/cmds/pioneer
+dcc /d1/main.c /d1/input.c /d1/render.c /d1/score.c -m=8k -f=/dd/cmds/pioneer
+dcc /d1/poc_rndc.c -m=8k -f=/dd/cmds/pocrndc

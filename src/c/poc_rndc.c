@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <os9.h>
+#include "font8x8.h"
 
 #ifndef I_SETSTT
 #define I_SETSTT  0x8E
@@ -80,9 +81,10 @@
 #define COLOR_PLYR  12
 #define COLOR_MULE  14
 
-#define RENDER_MAGIC      0x5244
+#define RENDER_MAGIC      0x5245
 #define RENDER_QUEUE_SIZE 64
 #define RENDER_QUEUE_MASK (RENDER_QUEUE_SIZE - 1)
+#define RENDER_STRBUF_SIZE 256
 
 #define SIG_RENDER_DONE 130
 #define SIG_RENDER_WAKE 133
@@ -93,6 +95,7 @@
 #define R_OP_PRESENT  4
 #define R_OP_PALETTE  5
 #define R_OP_DRAWMAP  6
+#define R_OP_TEXT     7
 
 typedef struct {
     unsigned char op;
@@ -107,7 +110,9 @@ typedef struct {
     unsigned int quit;
     unsigned int ready;
     unsigned int parent_pid;
+    unsigned int stroff;
     RenderCmd    entries[RENDER_QUEUE_SIZE];
+    unsigned char strbuf[RENDER_STRBUF_SIZE];
 } RenderQueue;
 
 extern int intercept();
@@ -387,6 +392,39 @@ unsigned char *base; int x, y, w, h, c;
 {
     int r;
     for (r = 0; r < h; r++) hline(base, x, y + r, w, c);
+}
+
+/* draw_glyph: blit one 8x8 character at pixel (px, py). Foreground-only
+ * (transparent background) to match the poc_owtxt2 P3 pattern — the
+ * caller is responsible for any background fill. */
+draw_glyph(base, px, py, ch, color)
+unsigned char *base; int px, py, ch, color;
+{
+    int row, col;
+    unsigned char b;
+    unsigned char *g;
+
+    if (ch < 0x20 || ch > 0x7f) ch = 0x20;
+    g = (unsigned char *)&g_font[ch - 0x20][0];
+    for (row = 0; row < 8; row++) {
+        b = g[row];
+        if (!b) continue;
+        for (col = 0; col < 8; col++) {
+            if (b & (0x80 >> col))
+                putpx(base, px + col, py + row, color);
+        }
+    }
+}
+
+draw_string(base, px, py, str, len, color)
+unsigned char *base; int px, py; unsigned char *str; int len, color;
+{
+    int i;
+    for (i = 0; i < len; i++) {
+        if (px + 8 > SCR_W) break;       /* clip right edge */
+        draw_glyph(base, px, py, (int)str[i], color);
+        px += 8;
+    }
 }
 
 clear_back(color)
@@ -753,6 +791,15 @@ char *argv[];
             case R_OP_PALETTE:
                 /* deferred to a later phase; SS.PalSet codepath
                  * unconfirmed against EOU windowing manual */
+                break;
+            case R_OP_TEXT:
+                /* a=color, b=col, c=row, x=stroff, y=len.
+                 * Pixel coords: col*8, row*8 against 160x192 screen
+                 * (20x24 char-cell grid). Reads from shared strbuf. */
+                draw_string(g_scr[g_back],
+                            (int)e->b * 8, (int)e->c * 8,
+                            &q->strbuf[e->x], (int)e->y,
+                            (int)e->a);
                 break;
             }
             q->tail = (q->tail + 1) & RENDER_QUEUE_MASK;

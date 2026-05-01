@@ -23,8 +23,17 @@
  *   ren_spr(slot, x, y, frame, dir, mule)              -> 0 / -1
  *   ren_pal(idx, rgb)                                  -> 0 / -1
  *   ren_pres()                                         -> 0 / -1
+ *   ren_text(col, row, color, str)                     -> 0 / -1
  *   ren_flush()                                        -> 0 (blocks)
  *   ren_shut()                                         -> 0
+ *
+ * ren_text copies the source bytes into a 256-byte string pool inside
+ * the shared RenderQueue (strbuf[] + stroff). The R_OP_TEXT command
+ * carries the offset/length into that pool — the caller's source
+ * buffer can go out of scope immediately. On overflow the pool wraps
+ * after a ren_flush() so the child never reads bytes that have been
+ * overwritten. RENDER_MAGIC bumped 0x5244 -> 0x5245 so old `pocrndc`
+ * binaries fail-fast against the new struct layout (phase 7a).
  *
  * Compile (linked into hosts): listed in `dcc <host>.c render.c ...`
  ***********************************************************************/
@@ -61,9 +70,10 @@
 #define F_DELRAM 0x37
 #endif
 
-#define RENDER_MAGIC      0x5244
+#define RENDER_MAGIC      0x5245
 #define RENDER_QUEUE_SIZE 64
 #define RENDER_QUEUE_MASK (RENDER_QUEUE_SIZE - 1)
+#define RENDER_STRBUF_SIZE 256
 
 /* Signal numbers reserved per [wiki/platform/ipc.md].
  * 130 used to be SIG_RENDER_ACK (reserved) — promoted to actual use
@@ -78,6 +88,7 @@
 #define R_OP_PRESENT  4
 #define R_OP_PALETTE  5
 #define R_OP_DRAWMAP  6
+#define R_OP_TEXT     7
 
 typedef struct {
     unsigned char op;
@@ -95,7 +106,9 @@ typedef struct {
     unsigned int quit;
     unsigned int ready;
     unsigned int parent_pid;     /* set by parent before fork; child reads */
+    unsigned int stroff;         /* parent: next free byte in strbuf */
     RenderCmd    entries[RENDER_QUEUE_SIZE];
+    unsigned char strbuf[RENDER_STRBUF_SIZE];
 } RenderQueue;
 
 static RenderQueue *g_rq;
@@ -161,11 +174,12 @@ int ren_init()
     }
     g_rq = (RenderQueue *)r.rg_u;
 
-    g_rq->magic = RENDER_MAGIC;
-    g_rq->head  = 0;
-    g_rq->tail  = 0;
-    g_rq->quit  = 0;
-    g_rq->ready = 0;
+    g_rq->magic  = RENDER_MAGIC;
+    g_rq->head   = 0;
+    g_rq->tail   = 0;
+    g_rq->quit   = 0;
+    g_rq->ready  = 0;
+    g_rq->stroff = 0;
 
     /* Install signal intercept BEFORE the fork so any DONE the child
      * sends (even racing) lands in our trap, not as a default-action
@@ -247,6 +261,40 @@ int idx, rgb;
 int ren_pres()
 {
     return rd_enq(R_OP_PRESENT, 0, 0, 0, 0, 0);
+}
+
+/* ren_text: copy str (len = strlen) into the shared strbuf, then enqueue
+ * R_OP_TEXT with the byte offset and length. Source buffer need not
+ * outlive the call. On overflow we ren_flush() first so the child has
+ * read every prior byte, then reset stroff = 0 and reuse from the top.
+ *
+ * Returns 0 ok, -1 string too long, -2 enqueue full, -3 not initialized. */
+int ren_text(col, row, color, str)
+int col, row, color; char *str;
+{
+    int len, off, i;
+    unsigned char *dst;
+
+    if (g_rq == 0) return -3;
+    if (str == 0)  return -1;
+
+    for (len = 0; str[len]; len++) ;
+    if (len == 0) return 0;
+    if (len > RENDER_STRBUF_SIZE) return -1;
+
+    if ((int)g_rq->stroff + len > RENDER_STRBUF_SIZE) {
+        /* Wrap: drain in-flight cmds (they may still reference the
+         * tail of strbuf), then reset to 0. */
+        ren_flush();
+        g_rq->stroff = 0;
+    }
+
+    off = (int)g_rq->stroff;
+    dst = &g_rq->strbuf[off];
+    for (i = 0; i < len; i++) dst[i] = (unsigned char)str[i];
+    g_rq->stroff = (unsigned)(off + len);
+
+    return rd_enq(R_OP_TEXT, color, col, row, off, len);
 }
 
 int ren_flush()
