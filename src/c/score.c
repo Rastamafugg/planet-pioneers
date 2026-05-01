@@ -149,13 +149,13 @@ unsigned char *order;
 {
     int n, i, j;
     unsigned char tmp;
+    unsigned int a, b;
 
     n = (int)g_state.num_players;
     for (i = 0; i < n; i++) order[i] = (unsigned char)i;
 
     for (i = 1; i < n; i++) {
         for (j = i; j > 0; j--) {
-            unsigned int a, b;
             a = g_players[order[j - 1]].net_worth;
             b = g_players[order[j]].net_worth;
             if (b > a ||
