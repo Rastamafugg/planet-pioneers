@@ -147,7 +147,7 @@ unsigned int nw_combd()
 score_rk(order)
 unsigned char *order;
 {
-    int n, i, j;
+    int n, i, j, p0, p1;
     unsigned char tmp;
     unsigned int a, b;
 
@@ -156,10 +156,11 @@ unsigned char *order;
 
     for (i = 1; i < n; i++) {
         for (j = i; j > 0; j--) {
-            a = g_players[order[j - 1]].net_worth;
-            b = g_players[order[j]].net_worth;
-            if (b > a ||
-                (b == a && order[j] < order[j - 1])) {
+            p0 = (int)order[j - 1];
+            p1 = (int)order[j];
+            a = g_players[p0].net_worth;
+            b = g_players[p1].net_worth;
+            if (b > a || (b == a && p1 < p0)) {
                 tmp = order[j - 1];
                 order[j - 1] = order[j];
                 order[j] = tmp;
