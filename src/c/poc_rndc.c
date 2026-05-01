@@ -372,11 +372,16 @@ int alloc_screen(pp, np)
 unsigned char **pp; int *np;
 {
     struct registers r;
+    int err;
 
     r.rg_a = (char)g_path;
     r.rg_b = (char)SS_ASCRN;
     r.rg_x = (unsigned)SCR_TYPE;
-    if (_os9(I_SETSTT, &r)) return -1;
+    if (_os9(I_SETSTT, &r)) {
+        err = r.rg_b & 0xff;
+        printf("pocrndc: SS.AScrn err #%d\n", err);
+        return -1;
+    }
     *pp = (unsigned char *)r.rg_x;
     *np = r.rg_y;
     return 0;
