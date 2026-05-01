@@ -150,20 +150,23 @@ unsigned char *order;
     int n, i, j, p0, p1;
     unsigned char tmp;
     unsigned int a, b;
+    unsigned char *q0, *q1;
 
     n = (int)g_state.num_players;
-    for (i = 0; i < n; i++) order[i] = (unsigned char)i;
+    for (i = 0; i < n; i++) *(order + i) = (unsigned char)i;
 
     for (i = 1; i < n; i++) {
         for (j = i; j > 0; j--) {
-            p0 = (int)order[j - 1];
-            p1 = (int)order[j];
+            q0 = order + (j - 1);
+            q1 = order + j;
+            p0 = (int)*q0;
+            p1 = (int)*q1;
             a = g_players[p0].net_worth;
             b = g_players[p1].net_worth;
             if (b > a || (b == a && p1 < p0)) {
-                tmp = order[j - 1];
-                order[j - 1] = order[j];
-                order[j] = tmp;
+                tmp = *q0;
+                *q0 = *q1;
+                *q1 = tmp;
             } else {
                 break;
             }
