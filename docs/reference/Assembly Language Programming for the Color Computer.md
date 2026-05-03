@@ -73,9 +73,9 @@ Appendix D - ASCII Character and Control Codes
 
 Appendix E - Dedicated Memory Addresses
 
-CHAPTER 1
+## CHAPTER 1
 
-The Binary Number System
+### The Binary Number System
 
 Electronic digital computers are composed of tens of thousands of
 electronic circuits each of which must be economical to produce and also
@@ -106,16 +106,12 @@ hundreds position. Therefore, the value is calculated as:
 
 23549 = (2x100)+(3x10)+(5x1) -
 
----
-
-## Page 13
-
 In the following example there is a decimal point, also known as a radix
 point.
 
 12.75,4 = (1x10)+(2x1)+(7x.1)+(5x.01)
 
-Determining Position Weight
+#### Determining Position Weight
 
 Digit positions are counted in decimal, using the radix point as the
 starting point. The digit positions to the left of the radix point are
@@ -157,10 +153,6 @@ procedure follow:
 23 = 2x2x2 = 8
 10°? = 1/107 = 1/100 = .01
 
----
-
-## Page 14
-
 Two situations require further explanation. When a number (N) is raised
 to the power of one, the result is that number (N). For example:
 
@@ -171,7 +163,7 @@ For example:
 
 N° = 1,59 = 1, 2%=1
 
-BINARY NUMBERS
+### BINARY NUMBERS
 
 Since decimal and binary numbers will be presented concurrently, a
 convention must be established to differentiate one from the other. Each
@@ -191,10 +183,6 @@ Woy nnhwndr ©
 Table 1-1 Decimal Weights of Binary Digit Positions.
 
 This may also be represented as:
-
----
-
-## Page 15
 
 w 8 4 2 1.1/2 1/4 1/8 1/16...
 
@@ -240,10 +228,6 @@ the number. An example is:
 
 M L
 10011010
-
----
-
-## Page 16
 
 where the M and L respectively indicate the most and least significant
 bits.
@@ -294,10 +278,6 @@ The * marks the rightmost 1 bit, the \ indicates a direct copying down, and
 the > indicates copying of the opposite state. Notice that negative numbers
 always have the MSB set.
 
----
-
-## Page 17
-
 The range of negative numbers that can be represented with eight bits
 is 11111111 (-1,,) to 10000000 (-128,,). Only 256 numbers can be
 represented in eight bits; this is the same for straight binary (0 - 255)
@@ -343,10 +323,6 @@ therefore: 11100100 = -2815
 
 In preceding examples, eight bits were used to represent signed binary
 
----
-
-## Page 18
-
 numbers; this can be increased to 16 or 32 or however many bits are needed
 to represent the range of numbers one will be working with. An eight-bit
 signed binary number can be represented with more bits by adding bit
@@ -375,7 +351,7 @@ number to 16 bits:
 where * indicates the sign bit. This process of repeating the sign bit in
 the added bit positions is called sign extension.
 
-ARITHMETIC OPERATIONS
+### ARITHMETIC OPERATIONS
 
 The arithmetic operations of addition, subtraction, multiplication,
 and division can be performed with binary numbers. These binary operations
@@ -398,10 +374,6 @@ cc
 where 6+6 = 12 and 12-10 = 2 and a carry of one;
 where a carry of 1+7+7 = 15 and 15-10 = 5 and a carry of one;
 and where a carry of 143 = 4.
-
----
-
-## Page 19
 
 An example of binary addition, (base = 2), using this technique is:
 
@@ -454,10 +426,6 @@ uses eight bit positions, the correct result will not be generated. This
 condition is called overflow. An example of an eight-bit overflow as a
 result of addition is shown below. The values in parentheses are the
 
----
-
-## Page 20
-
 decimal equivalents.
 
 cc
@@ -497,10 +465,6 @@ Another Two’s Complement Technique
 We now have the ability to calculate the two’s complement with a second
 technique. First write down a positive binary number. Then copy each bit,
 but in its opposite state, and add one to the result. For example:
-
----
-
-## Page 21
 
 8-bit positive 00000101 (+540)
 
@@ -554,10 +518,6 @@ shown in four cases:
 =0 xl =O xl
 0 1 1 0
 
----
-
-## Page 22
-
 The b indicates a borrow from the next most significant position. One could
 use the four rules to perform binary subtraction. Some examples of binary
 subtraction follow. The values in parentheses are decimal.
@@ -607,10 +567,6 @@ ccc
 
 00011110 (+30) 11111110 (-2)
 
----
-
-## Page 23
-
 Two positive signed binary numbers can also be added to give the total
 in signed binary. If the result of signed binary addition is too large
 (either positive or negative) to fit within the number of working bits, an
@@ -657,10 +613,6 @@ x i (3) x 101 (5)
 
 When multiplying, be careful that the result fits within the number of
 
----
-
-## Page 24
-
 bits a computer uses. The largest result (in straight binary) that can be
 represented is 11111111 (255,,) in eight bits and 1111111111111111
 (65535,,) in 16 bits. If the result is larger than the limit, the most
@@ -702,15 +654,11 @@ to the binary point (.N is the bit position of the bit set in the divisor).
 
 13
 
----
-
-## Page 25
-
 Put another way, division can be accomplished by shifting the binary point
 of the dividend to the left if the divisor is binary 10, 100, 1000, etc.,
 or decimal 2, 4, 8, 18, etc.
 
-LOGICAL OPERATIONS
+### LOGICAL OPERATIONS
 
 We have seen how bits can represent numbers; as you remember, bits
 were Originally used to represent the state of electronic switches. Just as
@@ -752,10 +700,6 @@ X= not X
 it is raining = it is not raining
 
 true = false
-
----
-
-## Page 26
 
 X is a condition represented by a bit. The complement of an event may also
 be called not an event.
@@ -806,10 +750,6 @@ The AND operation between a number of bits results in a 1 only if all
 the bits being ANDed are 1. The four possible cases of ANDing two bits
 are:
 
----
-
-## Page 27
-
 The truth table for the AND operation of bits A and B is shown in Fig. 1-2
 where you can see that A AND B is true only if A and B are both true.
 
@@ -851,10 +791,6 @@ bits in the same bit position, as seen below:
 
 Boolean Algebra
 The set of rules governing the use of logical operations is called
-
----
-
-## Page 28
 
 Boolean algebra. The logical operators AND, OR, and NOT and the numbers 0
 and 1 are used in Boolean algebra. The operators AND and OR are represented
@@ -908,10 +844,6 @@ AAB=BAA
 
 The associative law states that the result of a series of identical
 
----
-
-## Page 29
-
 operations is independent of the order in which it is performed:
 
 AV(BVC)=(AVB) VC
@@ -958,10 +890,6 @@ C = (AA B)V(A AB) V(AAB)
 
 The expression can be simplified by using the laws of Boolean algebra.
 
----
-
-## Page 30
-
 Using the associative law we arrive at:
 C = A(BVB)VAB
 Using rules 10 and 3 the above equation reduces to:
@@ -975,7 +903,7 @@ you, it would have been much more difficult for you to direct it to solve
 the original equation, and the computer would have taken longer to find the
 solution.
 
-HEXADECIMAL NUMBERS
+### HEXADECIMAL NUMBERS
 
 Most digital computers work with groups of eight bits, or multiples of
 eight, ie., 16, 24, 32, bits. A group of bits, inside the computer, is
@@ -1002,10 +930,6 @@ The nibble composed of bits 7 - 4 is the upper or most significant, and the
 nibble composed of bits 3 -0 is the lower or least significant. A nibble
 may also be considered to be a four-bit word. A 16-bit word is divided into
 four nibbles, where the least significant is nibble 0 and the most
-
----
-
-## Page 31
 
 significant is nibble 3. Figure 1-5 illustrates how bytes and double bytes
 are divided into nibbles.
@@ -1049,10 +973,6 @@ represented by its hexadecimal equivalent digit. Some examples are:
 0011 1111011031100 binary double byte
 3 F 6 C = 3F6C,, hexadecimal
 
----
-
-## Page 32
-
 Notice that the hexadecimal representation is much more compact.
 
 WOomwayaAU kWNr ©
@@ -1082,10 +1002,6 @@ weight of each digit position is 16 raised to the power of the digit
 position. The digit positions are: ...3 2 1 0. The decimal weight of
 each digit position is: ... 16° 16? 16+ 16°, or: ... 4096
 256° 16 1. Examples of converting from hexadecimal to decimal are:
-
----
-
-## Page 33
 
 7€ =(7x16)+(12x1)= 124,,
 F2 = (15x 16)+(2x1) = 242,,
@@ -1142,10 +1058,6 @@ Niro w
 
 30
 
----
-
-## Page 34
-
 The subtraction process is performed like that described for decimal ~
 and binary numbers. When a borrow is generated, remember to add 16 to the
 digit being subtracted from in the column that generated the borrow. Also,
@@ -1159,18 +1071,14 @@ b b
 You can check the results of hexadecimal arithmetic by converting the
 examples to binary and performing the operations again.
 
----
+## CHAPTER 2
 
-## Page 35
-
-CHAPTER 2
-
-Memory and Data Representation
+### Memory and Data Representation
 
 We have learned how to manipulate bytes of data; but where do the
 bytes come from, and where are the results of manipulation stored?
 
-MEMORY
+### MEMORY
 
 Bytes of data for immediate or near term use are stored in the random
 access memory, or RAM. The memory is called random access because any
@@ -1188,10 +1096,6 @@ operations on the bytes of data.
 Fig. 2-1 A Simplified Microcomputer Block Diagram.
 
 MEMORY
-
----
-
-## Page 36
 
 The two operations the memory is capable of are storing and
 reading. The store, or write, operation is the process of putting a
@@ -1232,10 +1136,6 @@ Let’s turn on the Color Computer and experiment with writing to and
 reading from memory. The BASIC command for writing into memory is
 POKE X,Y where X is the decimal number or expression of the address and Y
 is the decimal value or-expression of the byte to be stored. Type the
-
----
-
-## Page 37
 
 following command:
 POKE 3000,185 (ENTER)
@@ -1279,10 +1179,6 @@ This prints C2, the hexadecimal value of the byte we stored at address
 $1000. The PRINT HEX$ command has a fault, demonstrated as follows:
 
 POKE &H1000,&HOF
-
----
-
-## Page 38
 
 This stores a byte of $0F at $1000. Now print the content by typing:
 PRINT HEX$(PEEK(&H1000))
@@ -1335,10 +1231,6 @@ PRINT PEEK(&H9000)
 
 Addresses above $BFFF are reserved for use by plug-in ROM packs such as
 
----
-
-## Page 39
-
 games, EDTASM4, or a disk controller.
 
 A diagram depicting the memory addresses, their use, and memory type
@@ -1364,7 +1256,7 @@ ROM
 
 Fig. 2-3 A Memory Map of the Color Computer.
 
-DATA REPRESENTATION
+### DATA REPRESENTATION
 
 We can represent a number with a byte or a double byte using straight
 binary or signed binary. A computer memory is capable of storing thousands
@@ -1372,10 +1264,6 @@ of bytes representing different types of data. Many conventions exist
 concerning how data should be represented and stored in memory. Each
 convention has strong points and weak points, making it useful or not for a
 particular situation.
-
----
-
-## Page 40
 
 Straight Binary
 Straight binary lets us represent only positive integers. As you know,
@@ -1426,10 +1314,6 @@ the least number of ‘memory addresses have to:be read.
 
 Signed Binary
 Signed binary has an advantage over straight binary because it can
-
----
-
-## Page 41
 
 represent negative integers. One byte can represent any decimal integer
 
@@ -1484,10 +1368,6 @@ Byte => BCD Value
 
 The bytes are stored in memory as before, the most significant byte at
 address N and the next most significant bytes at addresses N+1, N+2, etc:
-
----
-
-## Page 42
 
 1020 02 19
 1030 .00 92 01
@@ -1550,10 +1430,6 @@ Often the number of digits making up a BCD number may not be known.
 Thus, it is not known how many bytes to read from memory to assemble the
 complete number. It would also be helpful to be able to assign a sign to a
 
----
-
-## Page 43
-
 number, and to have a decimal point. These items can be included in a BCD
 number at the expense of using more memory cells. This can be done as seen
 below:
@@ -1607,10 +1483,6 @@ the count of bacteria in a quart of water. This count could range from zero
 to several million. To store this variable in memory using BCD, one would
 have to designate a field of four bytes to hold eight decimal digits. Some
 
----
-
-## Page 44
-
 typical bacteria counts stored in memory might look like this:
 
 2000 00 01 79 20
@@ -1661,10 +1533,6 @@ determines the accuracy, dependent on the number of decimal places in it.
 The sign of decimal floating point is simply indicated with a plus or minus
 sign to the left of the mantissa.
 
----
-
-## Page 45
-
 Binary floating point is written in the form:
 +/- .NNN... * 2*/-E
 
@@ -1710,10 +1578,6 @@ far left. For example, this could be stored in memory at addresses 1000,
 1000 EE NN NN
 
 A specific number could be stored in memory as:
-
----
-
-## Page 46
 
 The floating point number = .11011 x 27
 
@@ -1765,10 +1629,6 @@ digit at the top of that column. This gives the ASCII code for M as $4D.
 The two leftmost columns of characters in Appendix D are control codes.
 The control codes are not printable but are used to control an external
 
----
-
-## Page 47
-
 device that data is being sent to. For example, the control codes FF (form
 feed) and CR (carriage return) would be used when sending data to a
 printer. (All the control codes are listed in more detail in Appendix D.)
@@ -1782,7 +1642,7 @@ follows. This example can be decoded by using Appendix D.
 2008 41 53 43 49 49 20 65 6E
 2010 63 6F 64 65 64
 
-DATA STRUCTURES
+### DATA STRUCTURES
 
 When storing large amounts of data in memory, it must be organized in
 some way. Organization methods have been developed to help keep track of
@@ -1815,10 +1675,6 @@ represented as:
 
 The table starts at address $5000 and each element is denoted by EX, (X
 indicates the element number).
-
----
-
-## Page 48
 
 The starting address of, or pointer to, the table must be known. The
 programmer knows the pointer value when the table is first being built, but
@@ -1865,10 +1721,6 @@ You should be able to use this equation to find the address of any element
 in the table and then double check it against Fig. 2-4. You should also be
 able to determine the last address used by this table. Remember when doing
 the arithmetic that the numbers are hexadecimal.
-
----
-
-## Page 49
 
 ele #0 ele #1
 4300 NN LL : moomoon
@@ -1919,10 +1771,6 @@ the next table. The pointer of the very last table would have to contain a
 unique code, such as $FFFF, to indicate there are no more tables. That
 pointer could also point back to the first table, resulting in a set of
 
----
-
-## Page 50
-
 circularly linked tables. The linkage in Fig. 2-5 can be made circular by
 drawing an arrow from the pointer of the last table to the top of the first
 table. Circularly linked tables would be used when repetitively searching
@@ -1972,10 +1820,6 @@ wind
 table
 
 Fig. 2-7 A Single Level Directory.
-
----
-
-## Page 51
 
 Were weather tables available for many cities, Fig. 2-7 would be expanded
 to include a directory of cities to point to each city’s directory. Two
@@ -2028,10 +1872,6 @@ the bottom and the most recent block put on the stack is at the top of the
 stack. In fact, a LIFO queue is also known as a stack. When removing
 blocks from the stack, the first lifted off is the top and most recently
 
----
-
-## Page 52
-
 added block. A LIFO queue is organized as elements stored in sequential
 memory locations. A pointer contains the address of the most recently added
 element. After that element is read, or taken off the stack, the pointer is
@@ -2040,7 +1880,7 @@ to a stack is to push it onto the stack, and to retrieve an element from
 
 a stack is to pull or pop it off the stack.
 
-EXTENDED COLOR BASIC DATA FORMATS
+### EXTENDED COLOR BASIC DATA FORMATS
 
 Extended Color BASIC can work with numeric and string, or text,
 variables. The computer has an internal format for these variables and an
@@ -2080,10 +1920,6 @@ where each B represents a nibble. The two quantities that completely
 
 describe the floating point number are the mantissa and the exponent. The
 quantities are stored in five bytes in sequential memory locations:
-
----
-
-## Page 53
 
 EE BB BB BB BB
 
@@ -2133,10 +1969,6 @@ binary code = 0000 0011 0100 0001 0000 0001 0000 0000
 
 \
 mantissa = + .1000 0011 0100 0001 0000 0001 0000 0000
-
----
-
-## Page 54
 
 where the underlined .1 is always assumed to be there and the bits from the
 binary code, after the sign bit, are copied behind it. Now a whole floating
@@ -2188,10 +2020,6 @@ memory that describe a particular string. The first byte contains the
 number of characters in the string in straight binary. The third and fourth
 bytes contain the address of the first byte of the string. The second and
 
----
-
-## Page 55
-
 fifth bytes are used by BASIC and should not be changed. A diagram of the
 string descriptor is:
 
@@ -2241,10 +2069,6 @@ follows: =
 30 P2 = VARPTR(A(2,0))
 
 In the two dimension array, A(2,2) for example, elements are arranged in
-
----
-
-## Page 56
 
 memory as follows:
 
@@ -2297,10 +2121,6 @@ array. However, the pointer to the string descriptor of array element 0 is
 the value given by VARPTR plus seven. Again, the first byte of the string
 descriptor is the length of that string, and the third and fourth bytes
 
----
-
-## Page 57
-
 contain the address of the first byte of that string. The pointer to the
 string descriptor can be found as follows:
 
@@ -2323,13 +2143,9 @@ hexadecimal, by adding the following
 Statements 15 - 25 use, and thus establish, each string element of the
 array.
 
----
+## CHAPTER 3
 
-## Page 58
-
-CHAPTER 3
-
-Introduction To The MC6809E Microprocessor
+### Introduction To The MC6809E Microprocessor
 
 The heart of the Color Computer is the MC6809E microprocessor,
 manufactured by Motorola, Inc. This microprocessing unit, or MPU, exists as
@@ -2360,10 +2176,6 @@ XX is the op code and YYYY occupy the operand field.
 
 An example of an MC6809E instruction is the Increment instruction, with
 an op code of $7C. This op code will direct the MPU to increment (add one
-
----
-
-## Page 59
 
 to) the binary value stored at the two-byte address immediately following
 the op code. This instruction would appear in memory as seen below.
@@ -2403,7 +2215,7 @@ of the operations that can be performed, what limitations exist, and how to
 direct the operations to most efficiently (time wise and/or memory usage
 wise) arrive at a desired result.
 
-MC6809E INTERNAL ARCHITECTURE
+### MC6809E INTERNAL ARCHITECTURE
 
 Before investigating the internal structure of the MC6809E we will look
 in more detail at the interconnections between the MPU and the memory. In
@@ -2411,10 +2223,6 @@ Fig. 3-1 the MPU is connected to the memory by three data paths,
 collectively known as the system bus. Each path or bus is no more than a
 group of wires that conduct or transmit the state of a bit, one bit per
 wire, along its length.
-
----
-
-## Page 60
 
 Address Bus (16 bits)
 
@@ -2462,10 +2270,6 @@ the other components to perform an instruction. The instruction (or I)
 register within the controller is where the op code of the current
 instruction is stored. The controller decodes the op code to determine the
 
----
-
-## Page 61
-
 actions to be taken to perform one instruction. Other results of decoding
 the op code are the length of the instruction and whether the bytes
 immediately following the op code are data or the address of the data to be
@@ -2495,10 +2299,6 @@ content of the program counter register out on the address bus and telling
 the memory it wants to read a byte from that address. Shortly thereafter
 the first byte of the instruction, the op code, would be transferred from
 memory to the MPU on the data bus and directed into the instruction
-
----
-
-## Page 62
 
 register in the controller. Then the controller would direct the program
 counter register to be incremented by one. This process is repeated until
@@ -2548,10 +2348,6 @@ operation is initiated to store the byte on the data bus at address $2F02.
 
 The instruction is now complete and address $2F02 contains $05, the
 complement of $FA. Also, the PC register has been incremented to point to
-
----
-
-## Page 63
 
 the next instruction and the instruction fetch operation is beginning
 again.
@@ -2635,10 +2431,6 @@ C=0 C=1
 In the lefthand example, a borrow was not generated from the ALU, so the C
 bit is cleared. In the righthand example, 1 a borrow was generated from the
 ALU, so the C bit is set.
-
----
-
-## Page 64
 
 The V bit, bit 1, is set if an overflow or underflow condition is
 generated when adding or subtracting signed binary numbers. In particular,
@@ -2728,10 +2520,6 @@ Not all of the MC6809E instructions have an effect on all the condition
 code bits described so far. The conditions that the bits of the condition
 code register represent are just not possible or applicable to some
 
----
-
-## Page 65
-
 instructions. A detailed description of the instructions in Chapter Five
 will indicate which condition code bits are modified by each instruction.
 The condition code register is probably the most important register in
@@ -2779,10 +2567,6 @@ instruction could be used. This instruction will read a byte from memory,
 perform the exclusive or operation between that byte and the byte in the A
 register, and then route the resulting byte into the A register, destroying
 the register’s previous contents. This instruction will appear as: EORA
-
----
-
-## Page 66
 
 $3104 .We now have the answer we want, but it is in the A register. It can
 be stored in memory with the Store A (STA) instruction as: STA $3108. The
@@ -2832,10 +2616,6 @@ contents of an index register to generate an effective address. The
 effective address is the actual address sent on the address bus to the
 memory to specify a particular byte to be accessed. These operations will
 not alter the contents of the index register; they only generate the
-
----
-
-## Page 67
 
 effective address. One operation is to add to the value in an index
 
@@ -2893,10 +2673,6 @@ of the stack. The stack pointer in use, U or S, will contain that address.
 The byte at the bottom, the oldest byte, is at the highest memory address
 of the stack. Fig. 3-4 shows the U stack as five bytes in memory; the top
 
----
-
-## Page 68
-
 of the stack is at address $3FFC and the U register contains $3FFC. The S
 stack uses the S register as its pointer.
 
@@ -2947,10 +2723,6 @@ holds a byte representing the upper eight bits of the operand address. This
 capability is used when direct addressing is specified. First the page
 register must be loaded with an appropriate value. Then instructions using
 
----
-
-## Page 69
-
 direct addressing may be used. Assume the DP register has been loaded with
 $23. An instruction using direct addressing will appear as STA <$7C. This
 instruction will store the contents of the A register in address $237C. You
@@ -2994,11 +2766,7 @@ tEFHINZVC Code Register
 Fig. 3-5 A Programming Model of the MC6809E
 Courtesy of Motorola,Inc.
 
----
-
-## Page 70
-
-MC6809E EXTERNAL CONNECTIONS
+### MC6809E EXTERNAL CONNECTIONS
 
 Data, addresses, and control signals are electrically transmitted to or
 from the MPU via conductive pins that protrude out of the package the MPU
@@ -3024,10 +2792,6 @@ high. If $82 were on the data bus, pins 24 and 30 would be high and pins
 The R/W (read/write) output, pin 32, is the control signal that
 initiates a memory read or write operation. A write operation is started by
 the MPU setting pin 32 low. The byte the MPU put on the data bus is then
-
----
-
-## Page 71
 
 written in the address the MPU put on the address bus. A read operation is
 initiated by the MPU setting pin 32 high. A byte is then read from the
@@ -3073,7 +2837,7 @@ A hardware interrupt is initiated by IRQ, NMI, or
 
 FIRQ being set active.
 
-INTERRUPTS
+### INTERRUPTS
 
 The operation of the MPU can be viewed as a continual fetching and
 executing of instructions. A program in memory may contain branch
@@ -3081,10 +2845,6 @@ instructions causing the MPU to jump from one section of the program to
 another or cause the MPU to repeatedly execute a certain program section,
 as in a loop. All operations take place internally with no regard for the
 outside world. Eventually the MPU must be notified of some external event
-
----
-
-## Page 72
 
 so it can directed to perform another task. An external event can notify
 the MPU of its existence by an interrupt. As the name implies, an interrupt
@@ -3140,10 +2900,6 @@ $FFFF can be found with the following BASIC program.
 
 100 END
 
----
-
-## Page 73
-
 The program the MPU is vectored to by an interrupt is known as an
 interrupt handler or interrupt service routine. After the interrupt
 handler has completed its task, it may return control, or jump back, to the
@@ -3186,10 +2942,6 @@ Start executing instruction
 at vector address
 
 Fig. 3-7 Color Computer IRQ Sequence.
-
----
-
-## Page 74
 
 Fig. 3-8 shows the registers in the S stack as the IRQ sequence has
 stacked them. The subscripted L indicates the lower byte (bits 7-0) of a
@@ -3237,10 +2989,6 @@ The FIRQ interrupt sequence is very similar to the IRQ sequence. The
 FIRQ interrupt sequence is faster because only the PC and CC registers are
 pushed onto the S stack, in that order. During the FIRQ sequence the F and
 I bits of the CC register are set to prevent another FIRQ or IRQ interrupt
-
----
-
-## Page 75
 
 before the MPU is ready for one. Also, the E bit of the CC register is
 cleared to indicate to the RTI instruction that the entire set of registers
@@ -3292,10 +3040,6 @@ software interrupt instructions initiate a sequence very similar to the IRQ
 sequence. The main difference is that they can not be inhibited. Other
 differences are: the SWI sequence sets both the F and I bits of the CC
 
----
-
-## Page 76
-
 register and gets its vector from addresses $FFFA and $FFFB; the SWI2
 sequence does not set the I bit of the CC register and gets its vector from
 addresses $FFF4 and $FFF5; the SWI3 sequence does not set the I bit of the
@@ -3317,13 +3061,9 @@ at vector address
 
 Fig. 3-10 Color Computer NMI Interrupt Sequence
 
----
+## CHAPTER 4
 
-## Page 77
-
-CHAPTER 4
-
-Addressing Modes of the MC6809E
+### Addressing Modes of the MC6809E
 
 The MC6809E has an instruction set of 59 instructions, of which 40 are
 manipulative, or perform tests, and 19 are branch instructions. The power
@@ -3354,10 +3094,6 @@ statement can appear as:
 
 LDA $2302
 
----
-
-## Page 78
-
 A space separates the command field (LDA) from the operand field ($2302).
 The different addressing modes and instruction types will be illustrated by
 using statements like this one, the way a programmer will specify them. For
@@ -3384,7 +3120,7 @@ how the operand is to be treated. An instruction, in memory at address
 op post operand
 2000 code byte byte
 
-INHERENT ADDRESSING
+### INHERENT ADDRESSING
 
 Inherent, or implied, addressing is the simplest addressing mode; the
 operand is implied within the op code. A programmer doesn’t have to
@@ -3404,12 +3140,8 @@ except SWI2 and SWI3, which have two-byte op codes. The inherent addressing
 instructions also execute very quickly, as they use few bytes of memory and
 work with the internal registers of the MPU.
 
-IMMEDIATE ADDRESSING
+### IMMEDIATE ADDRESSING
 When immediate addressing addressing is specified, the data to be
-
----
-
-## Page 79
 
 worked with will immediately follow the op code in memory. Immediate
 addressing is specified in an assembly language statement with the # sign
@@ -3447,7 +3179,7 @@ register is two bytes long, the operand is two bytes long. A point to
 
 remember is that the data to be used is part of the instruction.
 
-EXTENDED ADDRESSING
+### EXTENDED ADDRESSING
 
 Extended addressing is specified in a statement by prefixing the
 operand with a > sign. This does not always have to be done, because the
@@ -3466,10 +3198,6 @@ $0445. This machine instruction would be organized in memory at address
 
 $F7 is the op code of STB with extended addressing. This is followed by two
 
----
-
-## Page 80
-
 bytes that contain the effective address where the upper, or most
 significant, byte of the addresss immediately follows the op code, and the
 lower, or least significant, byte of the address is last. An instruction
@@ -3487,7 +3215,7 @@ from address $2123 and load the lower half (bits 7-0) of the U register
 with the byte read from address $2124. The DEC instruction will decrement
 the value stored at COUNT.
 
-EXTENDED INDIRECT ADDRESSING
+### EXTENDED INDIRECT ADDRESSING
 
 This addressing mode adds another level of capability to the MC6809E
 instructions. The effective address when using extended indirect addressing
@@ -3519,11 +3247,7 @@ memory at address 1000 as:
 $A7 is the STA with indexed addressing op code. The effective address would
 be in memory at address $1022.
 
----
-
-## Page 81
-
-REGISTER ADDRESSING
+### REGISTER ADDRESSING
 
 The Exchange, Transfer, and the stack push and pull instructions use
 register addressing to specify which registers will be acted upon. The
@@ -3571,10 +3295,6 @@ memory starting at address 3000 as:
 3002 1E 01
 
 Each instruction is two bytes long. At address 3000 is $1F, the op code of
-
----
-
-## Page 82
 
 the TFR instruction, followed by $89, its postbyte. At address 3002 is $1E,
 the EXG op code, followed by $01, its postbyte.
@@ -3625,10 +3345,6 @@ If this bit is set the U register will be pushed on (PSHS) or pulled from
 from (PULU) the U stack. Essentially, the stack pointer can not be pushed
 on or pulled from its own stack.
 
----
-
-## Page 83
-
 The PSHU A,X,Y instruction in machine language would appear in memory
 at address 1000 as:
 1000 36 32
@@ -3653,7 +3369,7 @@ eae
 co old top of stack
 Fig. 4-3 The Y, X, and A Registers Stored in the U Stack
 
-INDEXED ADDRESSING
+### INDEXED ADDRESSING
 
 The indexed addressing mode of the MC6809E is the most powerful and
 flexible means of accessing memory locations. In fact, the indexed
@@ -3680,10 +3396,6 @@ the Y register plus zero. Another example is:
 
 LDU #$2200
 LDX ,U
-
----
-
-## Page 84
 
 The U register points to the data at address $2200. The Load X (LDX)
 instruction will load the upper half of the X register with the byte read
@@ -3731,10 +3443,6 @@ The op codes were obtained from Appendix B. At address 2000 is the STA with
 indexed addressing op code, followed by the zero offset postbyte specifying
 index register Y. At 2002 is the LDX with indexed addressing op code,
 followed by the zero offset postbyte specifying index register U.
-
----
-
-## Page 85
 
 Constant Offset Indexed Addressing
 
@@ -3788,10 +3496,6 @@ the range of decimal -16 - +15. Two examples are:
 INC $3E,U
 STD -53,xX
 
----
-
-## Page 86
-
 The U and X registers were previously loaded with appropriate addresses.
 In the first example the INC instruction will increment the contents of the
 effective address. by one. The address is calculated as the contents of the
@@ -3843,10 +3547,6 @@ example is:
 ADDB #$04
 LDA B,Y
 
----
-
-## Page 87
-
 The Y register was previously loaded with an appropriate value. The ADDB
 instruction will add the immediate value of 4 to the contents of the B
 register, or increment the B register by 4. Then the LDA instruction loads
@@ -3896,10 +3596,6 @@ us of having to increment a pointer or offset to point to the next item in
 
 a table.
 
----
-
-## Page 88
-
 An instruction with auto-decrementing specified will first decrement
 the contents of the index register by one or two and then proceed with the
 instruction’s execution using the new effective address contained in the
@@ -3936,7 +3632,7 @@ memory at address 1000 as:
 $A6 is the op code of the LDA with indexed addressing. The $E0 postbyte
 specifies auto-incrementing by one of the S index register.
 
-INDEXED INDIRECT ADDRESSING
+### INDEXED INDIRECT ADDRESSING
 
 In indexed indirect addressing the operand field indirectly specifies
 the effective address. This is similar to extended indirect addressing, in
@@ -3948,10 +3644,6 @@ indirect addressing, the assembler will interpret it as an 8-bit offset and
 assemble the machine instruction accordingly. Indexed indirect addressing
 is specified in a statement by enclosing the operand in brackets, [ ].
 Examples of all legal addressing modes are:
-
----
-
-## Page 89
 
 LDB [,Y]
 STA [12,X]
@@ -4002,11 +3694,7 @@ The indexed addressing mode is 8-bit offset. $A7 is the STA with indexed
 addressing op code obtained from Appendix B. The $98 is the indirect 8-bit
 offset postbyte obtained from Table 4-2. The $10 is the offset byte.
 
----
-
-## Page 90
-
-RELATIVE ADDRESSING
+### RELATIVE ADDRESSING
 
 Relative addressing is used only with branch instructions, where the
 address to branch to is relative to the PC register’s contents. A branch
@@ -4055,11 +3743,7 @@ its speed and memory savings. A branch beyond the limits of 127 forward or
 128 backward will display a byte overflow error message. You can then
 change just the required branches to the long form.
 
----
-
-## Page 91
-
-DIRECT ADDRESSING
+### DIRECT ADDRESSING
 In direct addressing the op code is followed by one byte, the lower
 
 byte of the effective address. The upper byte is in the direct page (DP)
@@ -4112,10 +3796,6 @@ PROGRAM COUNTER RELATIVE ADDRESSING
 Program counter, or PC, relative addressing is a type of indexed
 addressing wherein the PC register is used as an index register. It allows
 
----
-
-## Page 92
-
 one to easily write a program that is position independent if the
 instructions accessing memory locations within that program use this
 addressing mode. A program that is position independent can be located at
@@ -4128,7 +3808,7 @@ Symbol, label, and name are equivalent terms and represent the address of
 the item in the command and operand fields of that statement. The label
 relieves us of having to work with absolute addresses within a program.
 
-PC Relative Addressing
+### PC Relative Addressing
 The PC relative addressing mode is specified in a statement by
 appending ,PCR to the operand. This can be seen as:
 
@@ -4162,10 +3842,6 @@ binary representation. EDTASM4, will use the 16-bit offset field whenever a
 labeled operand is detected. The op code will be an op code specifying
 indexed addressing, as this is a type of indexed addressing. The postbyte
 can be found in Table 4-3.
-
----
-
-## Page 93
 
 TYPE FORM | ASSEMBLER POST
 FORM BYTE
@@ -4202,7 +3878,7 @@ byte(s). If we later moved those instructions to another address, they
 would not access the desired memory locations because their offsets would
 not have changed, but the contents of the PC register would have.
 
-Indirect PC Relative Addressing
+### Indirect PC Relative Addressing
 
 PC relative addressing can also be used to indirectly specify the
 effective address. This is called indirect PC relative addressing. In this
@@ -4214,10 +3890,6 @@ STB [TABLE,PCR]
 
 In this case the effective address is located in the first two bytes,
 starting at TABLE. The MPU will read the effective address from memory and
-
----
-
-## Page 94
 
 use it to direct where the contents of the B register will be stored.
 
@@ -4244,13 +3916,9 @@ This completes the descriptions of the various addressing modes. If you
 are already familiar with assembly language and have an assembler, try
 writing some programs.
 
----
+## CHAPTER 5
 
-## Page 95
-
-CHAPTER 5
-
-MC6809E Instruction Set
+### MC6809E Instruction Set
 
 The 59 instructions of the MC6809E are its instruction set. This
 chapter describes the operation of the instructions; some very similar
@@ -4281,10 +3949,6 @@ minus, or positive value in a memory location or the A or B register.
 Branch instructions let the MPU make decisions based on the conditions of
 certain bits in the CC register. These instructions should be used
 immediately after an instruction that modifies the CC register, if a
-
----
-
-## Page 96
 
 The A register.
 The B register.
@@ -4329,10 +3993,6 @@ Indicates the quantities are concatenated.
 Arithmetic addition, subtraction, or multiplication.
 
 Table 5-1 Abbreviations and Meanings.
-
----
-
-## Page 97
 
 decision based on the results of that instruction is desired. The
 miscellaneous instructions are those that do not fit in any of the other
@@ -4386,10 +4046,6 @@ N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
 will indicate a negative result if using signed binary.
 Z - Set if the resulting byte is zero; cleared otherwise.
 
----
-
-## Page 98
-
 V - Set if an overflow or underflow occurred; cleared otherwise. This
 applies only to signed binary numbers.
 
@@ -4436,10 +4092,6 @@ otherwise.
 Description: A byte is read from memory as specified by the operand field.
 That byte is added to the contents of the A or B (ADDA or ADDB) register
 and the resulting byte is routed back into the respective A or B register.
-
----
-
-## Page 99
 
 If, for example, the A register contains $A3, then the ADDA with immediate
 addressing: ADDA #$22 will result in the A register containing $C5, the sum
@@ -4495,10 +4147,6 @@ H - Not affected.
 N - Set if bit 7 of the resulting byte is set; cleared otherwise. The N
 bit set indicates a negative result if using signed binary.
 
----
-
-## Page 100
-
 Z - Set if the resulting byte is zero; cleared otherwise.
 V - Always cleared by this instruction.
 C - Not affected.
@@ -4550,10 +4198,6 @@ Source Forms: ASL Q; ASLA; ASLB
 Operation: C <- <- 0 Type: Arithmetic
 
 Addressing Modes: Inherent; Extended; Direct; Indexed.
-
----
-
-## Page 101
 
 Condition Codes:
 
@@ -4610,10 +4254,6 @@ depicted in the above operation; the byte may have been read from memory
 (ASR Q) or come from the A or B (ASRA or ASRB) register. In the right shift
 process bit 7 is unchanged and bit 0 is shifted out of the byte into the C
 
----
-
-## Page 102
-
 bit. The resulting byte is returned to its source - memory or the A or B
 register. For example, suppose the B register contains $85. The ASR with
 inherent addressing: ASRB will perform the arithmetic shift right operation
@@ -4663,10 +4303,6 @@ processing continues with the instruction following the BEQ. The BEQ is
 typically used after a compare instruction and will cause a branch if the
 two compared quantities were exactly the same. Used after a subtract
 instruction, it will branch if the result-is zero.
-
----
-
-## Page 103
 
 BGE Branch on Greater than or Equal to Zero
 Source Forms: BGE DD; LBGE DDDD
@@ -4721,10 +4357,6 @@ Operation: TEMP <- MI Type: Branch
 
 If C=0, then PC’ <- PC+TEMP
 Addressing Modes: Relative. Condition Codes: Not affected.
-
----
-
-## Page 104
 
 Description: The BHS will perform a branch if the C bit is clear; otherwise
 processing will continue with the instruction following the BHS. The BHS is
@@ -4786,10 +4418,6 @@ CO} Oo
 The x means we do not care what state that bit is in. The Z bit would be
 cleared indicating a non-zero value and bit 1 of the operand byte is set.
 
----
-
-## Page 105
-
 If bit 1 of the operand was not set, the Z bit would be set, since the
 result of ANDing would be zero.
 
@@ -4845,10 +4473,6 @@ Source Forms: BLT DD; LBLT DDDD
 Operation: TEMP <- MI Type: Branch
 
 If (N¥YV)=1, then PC’ <- PC+TEMP
-
----
-
-## Page 106
 
 Addressing Modes: Relative. Condition Codes: Not affected.
 
@@ -4907,10 +4531,6 @@ result is less than $80. If the quantities are signed binary, itis best to
 
 use the BGE instruction.
 
----
-
-## Page 107
-
 BRA Branch Always
 Source Forms: BRA DD; LBRA DDDD
 
@@ -4967,10 +4587,6 @@ Addressing Modes: Relative. Condition Codes: Not affected.
 Description: The BVC will perform a branch if the V bit is clear; otherwise
 processing will continue with the instruction following the BVC. The BYVC,
 
----
-
-## Page 108
-
 used after an operation on signed binary quantities, will branch if no
 overflow occurred.
 
@@ -5022,10 +4638,6 @@ Z - Set if the byte resulting from the subtraction process is zero;
 cleared otherwise. Z set indicates that the a contents of the
 memory location exactly equal the contents of the accumulator in
 use.
-
----
-
-## Page 109
 
 V - Set if an overflow condition was generated by the subtraction
 process; cleared otherwise. This bit is applicable only to signed
@@ -5085,10 +4697,6 @@ than the memory operand.
 Description: The CMP compares the contents of a 16-bit register with the
 contents of two consecutive memory addresses; the operand field specifies
 
----
-
-## Page 110
-
 the first address. The compare is performed by subtracting the 16-bit word,
 read from two memory locations, from the contents of the selected 16-bit
 register. As a result, the memory locations and the 16-bit register are
@@ -5133,10 +4741,6 @@ then stored where the original was taken. For example, the A register
 contains $E6. The instruction: COMA results in the A register containing
 $19, In the CC register, the C bit is set and the N, V, and Z bits are
 cleared.
-
----
-
-## Page 111
 
 CWAI Clear CC bits and Wait for Interrupt
 Source Forms: CWAI #$xx
@@ -5184,10 +4788,6 @@ address of an interrupt handler which, when finished, executes an RTI
 instruction. The RTI pulls all the MPU registers from the S stack and
 causes the MPU to resume processing at the instruction following the CWAL
 
----
-
-## Page 112
-
 DAA Decimal Addition Adjust
 Source Forms: DAA
 Operation: A’ <- A+CF(MSN):CF(LSN) Type: Arithmetic
@@ -5233,10 +4833,6 @@ register, that in this case will determine a CF(MSN) of 0 and a CF(LSN) of
 Now the A register contains $72, the correct result of adding the two BCD
 numbers. When adding BCD numbers composed of multiple bytes, the ADCA must
 be used to propagate any carries throughout the bytes being added.
-
----
-
-## Page 113
 
 DEC Decrement
 Source Forms: DEC Q; DECA; DECB
@@ -5286,10 +4882,6 @@ O11101i11 contents of B
 
 A bit set in the operand will toggle, or reverse, the state of the
 
----
-
-## Page 114
-
 corresponding bit in the register.
 
 EXG Exchange Registers
@@ -5337,10 +4929,6 @@ Operation: PC’ <- EA Type: Miscellaneous
 
 Addressing Modes: Direct; Extended; Indexed.
 Condition Codes: None are affected.
-
----
-
-## Page 115
 
 Description: The effective address, as specified by the operand field, is
 
@@ -5402,10 +4990,6 @@ as LDB #$8C results in the B register containing $8C and, in the CC
 
 register, N is set and Z and V are cleared.
 
----
-
-## Page 116
-
 LD (16 Bit) Load Register from Memory
 Source Forms: LDD P; LDX P; LDY P; LDU P; LDS P
 
@@ -5459,10 +5043,6 @@ register. No data will be read from memory at the effective address. For
 example, the A register contains $27 and the X register contains $1A10. The
 
 LEA instruction: LEAU A,X loads the effective address ($1A37), the sum of
-
----
-
-## Page 117
 
 the contents of the A and X registers, into the U register. The A and X
 registers are not modified. Some other examples are:
@@ -5523,10 +5103,6 @@ Addressing Modes: Inherent; Extended; Direct; Indexed.
 Condition Codes:
 H - Not affected.
 
----
-
-## Page 118
-
 N - Always cleared.
 
 Z - Set if the resulting byte is zero; cleared otherwise.
@@ -5578,10 +5154,6 @@ x OODODIIOO contents of B
 As a result, D contains $0284 and, in the CC register, Z is cleared and C
 is set. The D register is composed of the A and B registers linked
 
----
-
-## Page 119
-
 together; therefore, the A and B contents are destroyed. The A register is
 the upper half and B is the lower half of the D register.
 
@@ -5627,10 +5199,6 @@ Addressing Modes: Inherent. Condition Codes: None are affected.
 
 Description: The NOP, or no-op, instruction does nothing. The MPU will
 fetch the NOP op code, decode it, and then fetch the following instruction.
-
----
-
-## Page 120
 
 OR Inclusive OR Memory into Register
 Source Forms: ORA P; ORB P
@@ -5688,10 +5256,6 @@ ORCC #950 sets bits 6 and 4 in the CC register as seen below:
 V0101 0000 operand byte
 01110010 new contents of CC
 
----
-
-## Page 121
-
 PSHS Push Registers on the Hardware Stack
 Source Forms: PSHS register list
 Postbyte: Type: Data Movement
@@ -5740,10 +5304,6 @@ If bit 5 of postbyte is set; U’ <- U-1, (U) <- Yy,
 U? <- U-1, (U) <- Yy
 If bit 4 of postbyte is set; U’ <- U-1, (U) <- X,
 
----
-
-## Page 122
-
 U’ <- U-1, (U) <- Xy
 If bit 3 of postbyte is set; U’ <- U-1, (U) <- DP
 If bit 2 of postbyte is set; U’ <- U-i, (U) <- B
@@ -5789,10 +5349,6 @@ Addressing Modes: Register.
 Condition Codes: The CC register may be pulled from the stack and
 therefore possibly change its contents. If the CC register is not pulled
 from the stack, there is no change to the CC register.
-
----
-
-## Page 123
 
 Description: The PULS can pull any, all, or none of the MPU registers from
 the S (hardware) stack, but not the S register. The registers to be pulled
@@ -5844,10 +5400,6 @@ as in the operation diagram. A byte is pulled from the stack by first
 
 reading a byte from the address contained in the U register and then
 incrementing the contents of U by one. In a statement, the registers to be
-
----
-
-## Page 124
 
 pulled are contained in the operand field and are represented by these
 abbreviations: PC, S Y, X, D, DP, B, A, and CC. The registers may be
@@ -5901,10 +5453,6 @@ Condition Codes:
 H - Not affected.
 
 N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-
----
-
-## Page 125
 
 Z - Set if the resulting byte is zero; cleared otherwise.
 V - Not affected.
@@ -5960,10 +5508,6 @@ by one.
 The RTI is usually the last instruction to be executed in an interrupt
 handler program. Normally an interrupt will cause the E bit to be set or
 
----
-
-## Page 126
-
 cleared and then all (E=1) or just the PC and CC (E=0) registers are pushed
 on the stack. Then the MPU executes the interrupt handler which, upon
 completion, can return to the interrupted program by executing the RTI. The
@@ -6013,10 +5557,6 @@ from the contents of the A or B (SBCA or SBCB) register. The resulting byte
 is routed back to its originating register. For example, address $1A07
 contains $24, the A register contains $67 and the C bit is set. The
 instruction: SBCA $1A07 performs the following subtraction:
-
----
-
-## Page 127
 
 b -C is set
 0110 0111 contents of A
@@ -6069,10 +5609,6 @@ C - Not affected.
 Description: The contents of the A or B (STA or STB) register are stored in
 the memory location specified in the operand field. For example, the B
 
----
-
-## Page 128
-
 register contains $01. The instruction: STB $220A stores $01 at address
 $220A and, in the CC register, the N, Z, and V bits are cleared.
 
@@ -6123,10 +5659,6 @@ bbb
 01101010 contents of A
 - 0010 0111 immediate byte
 0100 0011 new contents of A
-
----
-
-## Page 129
 
 In the CC register, the N, Z, and V bits are cleared.
 
@@ -6179,10 +5711,6 @@ S’ <-.§-1, (S) <- B
 S’ <- S-1, (S) <- A
 
 S’ <- 8-1, (S) <- CC
-
----
-
-## Page 130
 
 PC’ <~ (SFFFA):($FFFB)
 Addressing Modes: Inherent.
@@ -6239,10 +5767,6 @@ address is read from addresses $FFF4 and $FFF5. This vector address is put
 into the PC register, causing the MPU to start executing an instruction at
 that address. Note that the I and F bits are not affected, the IRQ and FIRQ
 interrupts may or may not be masked out, depending on their previous state.
-
----
-
-## Page 131
 
 SWI3 Software Interrupt 3
 Source Forms: SWI3
@@ -6304,10 +5828,6 @@ unmasked interrupt that lasts more than three cycles, the MPU will perform
 the interrupt sequence, causing the MPU to execute the interrupt handler
 program. When the MPU is in the stopped state, the address and data bus
 
----
-
-## Page 132
-
 signals from the MPU are electrically disconnected from the address and
 data buses so some other device can use the buses.
 
@@ -6365,10 +5885,6 @@ C.- Not affected.
 Description: A byte is read from memory (TST Q) or the A or B (TSTA or
 TSTB) register and a value of zero is subtracted from it so the ALU can set
 
----
-
-## Page 133
-
 or clear bits in the CC register. Neither the memory nor accumulator
 contents are changed. All this instruction really tells us is whether the
 byte has bit 7 set (N=1) or any bits set (Z=0). For example, The A register
@@ -6419,10 +5935,6 @@ S’. <- §-1, (S) <- CC
 Set I bit
 
 PC’ <- ($FFF8):($FFF9)
-
----
-
-## Page 134
 
 Addressing Modes: Inherent.
 Condition Codes: The E and I bits are set.
@@ -6492,10 +6004,6 @@ register bits. The only time it is prevented is after a RESET operation
 before the S register has been loaded. However, if an NMI occurs during
 this time, its occurence is remembered. When the S register is finally
 
----
-
-## Page 135
-
 loaded, the NMI interrupt sequence will begin.
 
 RESET Hardware Reset
@@ -6517,13 +6025,9 @@ when a microcomputer is turned on. It is also initiated by pressing the
 
 RESET button on the Color Computer.
 
----
+## CHAPTER 6
 
-## Page 136
-
-CHAPTER 6
-
-Assembly Programming with EDTASM+
+### Assembly Programming with EDTASM+
 
 Assembly programming requires a technical knowledge of your computer; you
 must also use and understand the operation of a text editor, an assembler,
@@ -6556,10 +6060,6 @@ code to or from tape or disk.
 Throughout this book we will use Radio Shack’s EDTASM+ ROM pack to
 demonstrate editing, assembling, and debugging. It is similar to most other
 packages that provide for editing, assembling, and debugging, but supports
-
----
-
-## Page 137
 
 storing and reading data to and from cassette tape only. When the EDTASM+
 ROM pack is plugged in, it and Extended Color BASIC are structured as seen
@@ -6604,7 +6104,7 @@ when.an improper entry is made, or some other problem arises. The EDTASM+
 manual, Radio Shack catalog number 26-3250, provides a good explanation of
 the error messages in its Appendix D.
 
-THE TEXT EDITOR
+### THE TEXT EDITOR
 
 The source code is entered from the editor mode. If the EDTASM+ module
 is plugged in, the Color Computer will be in the editor mode when first
@@ -6617,10 +6117,6 @@ Stmt No Symbol ..Cnd Operand ~- Comment
 
 The statement number is a whole number that can range from 0 - 63999. A
 series of statements are numbered so that the first statement has the
-
----
-
-## Page 138
 
 lowest number and each suceeding statement has a higher number. Statement
 numbers do not have to be incremented by one for each consecutive
@@ -6671,10 +6167,6 @@ entered. The statement is finally completed by hitting the ENTER key, which
 results in the presentation of the next statement number. Each field must
 be separated by a space or tab and the statement must be ended by the ENTER
 key. An example of this is:
-
----
-
-## Page 139
 
 I <ENTER> (invoke insert command)
 00100 BEG LDA #$20 LOAD CODE <ENTER>
@@ -6729,10 +6221,6 @@ Color Computer’s ASCII code for each character. The W command can contain
 a name for the recording or file; the name must begin with an alphabetic
 character and may be up to eight characters long. If a name is not
 
----
-
-## Page 140
-
 provided, it will be assigned the name NONAME. For example, make the
 cassette ready for recording and enter:
 
@@ -6782,10 +6270,6 @@ An interesting point is that files recorded with the editor’s write
 command can be read using BASIC’s CLOAD command. Also, files written
 with BASIC’s CSAVE "XXX",A command can be read with the editor’s
 load command.
-
----
-
-## Page 141
 
 Text Editor Commands
 
@@ -6838,10 +6322,6 @@ will copy lines 100 - 200 to the starting line number 600, and the line
 increment will be five. The original lines 100 - 200 are unchanged. An
 attempt to copy lines over others will not be executed, and an error
 message will be displayed.
-
----
-
-## Page 142
 
 w Delete - Forms: DYYY:ZZZ or DYYY or DYYY!TT
 
@@ -6905,10 +6385,6 @@ The find command will initiate a search for the text string xxx...
 starting with the line after the current line. It will stop each time the
 string is found and display the line containing the string. The search can
 
----
-
-## Page 143
-
 be initiated again by entering F, which will use the last defined search
 string. If a search does not find the string, a message so indicating will
 
@@ -6960,10 +6436,6 @@ The renumber command will assign new numbers and increments to all the
 lines in the buffer. XXX specifies the new starting line number and TIT
 specifies the new increment. If XXX is omitted, 100 or the current line
 
----
-
-## Page 144
-
 number is used. If TTT is omitted, 10 or the current increment it used. For
 example: N300,20 will renumber all the lines so the first is 300 and the
 increment is 20.
@@ -7009,16 +6481,12 @@ declining numerical order. Successive depressions of the down arrow key
 will cause the next line to be displayed followed by the higher numbered
 lines in ascending numerical order.
 
-THE ASSEMBLER
+### THE ASSEMBLER
 
 The assembler can only be activated from the editor by the assemble (A)
 command. Upon activation, the assembler will read through the statements in
 the buffer, starting with the first or lowest numbered and stopping at the
 first encounter of a statement with an END command. The output of the
-
----
-
-## Page 145
 
 assembler will be a listing of the source code, object code, and symbol
 table, and the object code in memory or on cassette tape.
@@ -7075,10 +6543,6 @@ BEG 08A6
 Unfortunately, the listing on the screen will not appear exactly like
 this because of wrap-around. The middle and right sides of the listing are
 
----
-
-## Page 146
-
 just a repeat of the original source code, lines 70 - 130. To the left of
 
 each statement that contains a valid command mnemonic and operand is its
@@ -7131,10 +6595,6 @@ The assembler does not change the source code. One can initiate the
 assembler a number of times to see the screen listing. One can also edit
 source code mistakes and then assemble it again.
 
----
-
-## Page 147
-
 Assembling To Cassette Tape
 
 The assembler is directed to put the object code on tape by not using
@@ -7185,10 +6645,6 @@ Other options can be used, such as the wait on error (WE): A TEST1/WE.
 This will stop the assembly at an erroneous statement. Again, an erroneous
 statement will not be assembled.
 
----
-
-## Page 148
-
 The Assembler Options
 
 There are nine assembler options. We have discussed two of them, IM and
@@ -7238,10 +6694,6 @@ associated source code is put on the next line. Examples are:
 A TEST1/WE/SS
 A/IM/WE/SS
 
----
-
-## Page 149
-
 The NO option causes the assembler to produce no object code. This
 option could be used to perform an initial check for source code errors. It
 can also be used to generate a spare listing on the printer. Examples are:
@@ -7288,10 +6740,6 @@ code where the source code and symbol table normally reside, or to use the
 graphics capabilities, which require the memory area in which the source
 code and symbol table normally reside. (This is discussed in more detail in
 the Technical Details section of this chapter.)
-
----
-
-## Page 150
 
 Pseudo-Commands
 
@@ -7367,10 +6815,6 @@ the program to be loaded at address $3010 and execution to start at the
 instruction in address $3015. No addresses have to be specified with the
 BASIC commands since they are read from tape.
 
----
-
-## Page 151
-
 mw EQU - Form: SYMBOL EQU EXPRESSION
 The equate command defines a symbol by assigning to the symbol the
 
@@ -7426,10 +6870,6 @@ address. The delimiters identify the text string and can be any character
 not used in that text string. FCC can be used to store messages in memory
 to be displayed on the screen by the program. The symbol is optional. If
 
----
-
-## Page 152
-
 used, it is defined.
 
 00280 LDB >LINE
@@ -7480,10 +6920,6 @@ memory starting at address zero, which is used by EDTASM+. For example:
 00140 LDD ,X++
 
 00150 END
-
----
-
-## Page 153
 
 This is assembled in memory with the A/IM/AO command; the object code of
 statements 100 and 110 is stored starting at address $1000 and the object
@@ -7537,10 +6973,6 @@ The SET command is similar to EQU except that a symbol can be set to a
 new value a number of times in one program. It also prints an S to the
 right of that symbol in the symbol table listing. This setting and
 
----
-
-## Page 154
-
 resetting of the value only happens during the assembly process, not during
 the execution of the object code. For example:
 
@@ -7593,10 +7025,6 @@ from address $0400 - $05FF. In the screen buffer 512 decimal locations each
 correspond to a unique print position on the screen. Locations $0400 -
 $041F correspond to the 32 decimal print positions of the top-most line of
 
----
-
-## Page 155
-
 the screen. A character code in location $0400 will cause that character
 
 to appear in the upper left corner of the screen. Locations $05E0 - $05FF
@@ -7631,10 +7059,6 @@ FFOO Dedicated
 FFFF Addresses
 
 Fig. 6-2 Memory map with EDTASM+.
-
----
-
-## Page 156
 
 When source code is entered and assembled in memory, EDTASM+ must use
 more RAM to store this information. This working area normally starts at
@@ -7688,10 +7112,6 @@ $2000 with the symbol table following it. If assembled into memory with the
 A/IM/WE command the object code will be put in memory immediately
 following the symbol table.
 
----
-
-## Page 157
-
 The assembler can also be set up to use USRORG. USRORG specifies the
 starting address in which to store the object code. The MO assembler option
 must be specified to use USRORG. USRORG is located at addresses 0OFD and
@@ -7725,7 +7145,7 @@ in memory using the MO and IM options: A/IM/MO/WE. This places the object
 code in memory starting at address $3000 and the working area starting at
 address $1E00. This has all been done without using the AO option.
 
-ZBUG DEBUGGING AIDS
+### ZBUG DEBUGGING AIDS
 
 ZBUG is the functional mode of EDTASM+ in which exist the debugging
 aids. One goes to ZBUG from the editor by hitting the Z and ENTER keys. The
@@ -7743,10 +7163,6 @@ change, program control, data movement, and calculations.
 Inspect and change commands display and change the contents of specific
 memory locations. The program control commands provide for executing and
 controlling the execution of a program. Also included are commands that
-
----
-
-## Page 158
 
 display and change the values in the MPU’s registers. The data movement
 commands let one move data from place to place in memory and use a printer,
@@ -7797,10 +7213,6 @@ If the displayed instruction is a branch or jump, hitting the right
 arrow (->) key will cause the display pointer to follow the branch or take
 on the value of the operand address and display its contents. This lets one
 follow the flow of a program.
-
----
-
-## Page 159
 
 m Byte Display - The second display mode is the byte mode (B). It is
 activated by typing B then ENTER. Now the contents of a memory location
@@ -7857,10 +7269,6 @@ A <ENTER> (select ASCII mode)
 displays the contents of the ROM addresses as if their contents were ASCII
 codes. As in the other display modes, one can change the contents of the
 
----
-
-## Page 160
-
 displayed memory location. The contents of a location can also be changed
 to the ASCII code of a character by entering that character preceded with
 an apostrophe. This is applicable to all four display modes. For example:
@@ -7916,10 +7324,6 @@ STR/ LDY #TABLE
 
 ST2/. LEAY 1,Y
 
----
-
-## Page 161
-
 m Symbolic, Half Symbolic, and Numeric Submodes - When displaying object
 code with its symbol table in memory, there are three submodes of the
 mnemonic display mode. They are symbolic (S), half symbolic (H), and
@@ -7969,10 +7373,6 @@ a byte’s contents as if they were the contents of the CC register, and
 
 display one of the characters, EFHINZVC, for each corresponding bit that is
 set. :
-
----
-
-## Page 162
 
 Program Control
 
@@ -8024,10 +7424,6 @@ register abbreviation of one register. For example:
 R/ (display all MPU registers)
 DP/ xx (display contents of DP register)
 
----
-
-## Page 163
-
 When a register’s contents are displayed one can enter a new value to be
 put in, just like changing the contents of memory. However, when all the
 registers are displayed, none of their contents can be changed. The ability
@@ -8078,10 +7474,6 @@ is specified by the XXXX field. The starting address of the destination
 area is specified by the YYYY field. NNNN specifies how many bytes to copy.
 The numbers entered in the fields are hexadecimal unless specified
 
----
-
-## Page 164
-
 otherwise. If you are copying a program whose symbol table is in memory, a
 symbol can be used as an address. For example: U STR 3100 35 will copy $35
 bytes of the sample program to an area of memory starting at address $3100.
@@ -8129,10 +7521,6 @@ the put command’s XXXX field. When loading a file created by assembling on
 tape, the object code will be loaded in memory starting at address 0000
 unless an ORG command was used. In that case the load address will be that
 specified by the ORG command.
-
----
-
-## Page 165
 
 m Display - Format: T XXXX YYYY
 
@@ -8186,10 +7574,6 @@ Values to be operated on are internally represented by two bytes of
 straight binary numbers. The results of any expression are also represented
 in two bytes. Thus, only integers are allowed. This allows values 0 - $FFFF
 
----
-
-## Page 166
-
 which correspond to the maximum memory address range of the MC6809E. The
 two-byte size also exactly matches the number of bytes in which a symbol’s
 value is represented. This allows expressions to be used in program
@@ -8241,10 +7625,6 @@ A234+112= 0B35
 E78-432= 0A46
 3*104= 30C
 1B*¥4A= 7CE
-
----
-
-## Page 167
 
 Leading zeros are not displayed. Numbers beginning with the hexadecimal
 digits of A - F are prefixed with a 0 to indicate it is a number and not a
@@ -8298,10 +7678,6 @@ the largest number of parentheses will be performed first. For example:
 
 ((7E+1C).OR.2525)<3= 2DF8 _— (add first, shift last)
 
----
-
-## Page 168
-
 Characters can also be in expressions where their ASCII code is the
 numeric value used to calculate the resulting value. The ASCII code is
 specified by preceding a character with an apostrophe. For example: ’B =
@@ -8315,13 +7691,9 @@ With ZBUG, one can use the Color Computer as a calculator to perform
 such tasks as converting numbers to different bases, or to perform
 arithmetic with hexadecimal, decimal, or octal numbers.
 
----
+## CHAPTER 7
 
-## Page 169
-
-CHAPTER 7
-
-Assembly Language Programming
+### Assembly Language Programming
 
 This chapter describes assembly language programming techniques,
 conventions, and guidelines. Each assembly instruction is primitive, does
@@ -8340,7 +7712,7 @@ Many examples are provided to illustrate the important concepts and
 principles. You may find they are quite useful, and incorporate them into
 your library of programs.
 
-SOURCE CODE GUIDELINES
+### SOURCE CODE GUIDELINES
 
 The source code specifies instructions and data, and also contains
 English comments describing the program. A well documented program can
@@ -8354,10 +7726,6 @@ is put in each location of the screen buffer in program loop statements
 200 - 220. Now preparation can be made to put the text line on the screen.
 The starting address ($4C0) of the eighth display line is loaded into the X
 register at line 230 and the starting address of the text (#CLTEXT) is
-
----
-
-## Page 170
 
 loaded into the Y register at line 240. The loop in lines 250 - 320
 performs a number of functions. The ASCII code for each text character is
@@ -8434,10 +7802,6 @@ There is more to documenting a source code than just commenting each
 statement. Lines 110 - 150 are the descriptive header, bracketed by lines
 100 and 160 to set it off from the instruction statements. Line 110 gives
 
----
-
-## Page 171
-
 the program name, CLRPRN (clear and print). The name is limited to six
 characters because it will be used as the name or label of the first
 instruction in the program. The name also specifies the starting address.
@@ -8488,10 +7852,6 @@ The symbols used in this program are derived by a technique to keep one
 from defining a symbol twice. The multiply-defined symbol problem is most
 likely to arise in large programs composed of many sections. One may
 mistakenly define a symbol in one section and then again in another
-
----
-
-## Page 172
 
 section. When the sections are assembled the assembler detects the error,
 which must then be corrected. The technique used here requires that each
@@ -8553,10 +7913,6 @@ coded, tested and debugged, and its source code saved on cassette tape.
 
 The source code for each section should use different line numbers so
 
----
-
-## Page 173
-
 they won’t overlap those of another section. For example, the first
 section uses lines 100 - 190. The second section should start with line
 200.
@@ -8590,10 +7946,6 @@ uses lines 100 - 190. The second section should start with line 200.
 
 The third section moves the video display codes, generated by the
 previous section, into the display buffer. In this case they are displayed
-
----
-
-## Page 174
 
 on the fifth line, toward the right side of the screen.
 
@@ -8683,10 +8035,6 @@ After each section is written and debugged, their source codes can be
 merged together to form the total program. The three source code files can
 be successively loaded by the editor’s load (L) command. If the source code
 
----
-
-## Page 175
-
 statement numbers of each file do not overlap, the files will be appended
 to each other in the editor’s text buffer. For example, the first section
 
@@ -8706,7 +8054,7 @@ run the program again to see that it displays the new value. However, be
 careful to modify just that location so other data or instructions are not
 changed.
 
-SUBROUTINES
+### SUBROUTINES
 
 Many times tasks must be done a number of times. To conserve memory,
 those program sections should exist only once. The main program will
@@ -8730,10 +8078,6 @@ The MPU is directed to a subroutine by a JSR or BSR instruction. This
 
 is known as calling a subroutine. The JSR or BSR cause the contents of
 the PC register to be pushed onto the S stack (saved), and execution starts
-
----
-
-## Page 176
 
 at the operand address, the starting address of the subroutine. A complete
 description of these instructions is in Chapter 5. When the subroutine is
@@ -8772,10 +8116,6 @@ xxxx addr to put in S reg
 
 Fig. 7-3 Establishing the S Stack.
 
----
-
-## Page 177
-
 A byte is pushed onto the stack by first decrementing the contents of
 the S register by one and then storing the byte in the memory address
 specified by the S register. This process is automatically performed by the
@@ -8811,10 +8151,6 @@ Main Program !
 |
 
 Fig. 7-4 Multiple Levels of Subroutines.
-
----
-
-## Page 178
 
 In Fig. 7-4, the main program would have to establish a stack big
 enough to also hold the registers saved when SUBA is called and when SUBA
@@ -8874,10 +8210,6 @@ bytes the subroutine will use. This amount js in addition to the two bytes
 used to store the PC register. The source code of this subroutine, and
 others, is started at high line numbers to allow the main program’s source
 code to be put in low numbered lines starting at 100. Line 1050 stores the
-
----
-
-## Page 179
 
 A, X, and CC registers in the stack because this subroutine uses them. At
 
@@ -8947,10 +8279,6 @@ Result
 Area
 
 Fig. 7-5 Passing Data to a Subroutine with a Table.
-
----
-
-## Page 180
 
 When large amounts of data are to be acted on by a subroutine, it is
 best to transfer an address to the subroutine. The main or calling program
@@ -9071,10 +8399,6 @@ HAHA KIARA DIK ER RIKI IARI KIARA RIA IIA IAI RERERERIRER,
 
 Listing 7-6 The HEXVAL Subroutine.
 
----
-
-## Page 181
-
 The address, $1800, of the descriptive table in Fig. 7-5 is passed to
 the subroutine in the X register. The subroutine works on the 38 elements
 of data in the table at address $1900 and puts the results in memory
@@ -9123,10 +8447,6 @@ indicating the number of items in the stack and where to put the results.
 The address of the descriptive table is passed to the subroutine in the X
 or Y register and the U register points to the top of the U stack. Use the
 U stack instead of the S stack because the S stack is used to store
-
----
-
-## Page 182
 
 registers. The S stack can be used to pass data, but be very careful about
 keeping track of where the data and registers are in it.
@@ -9179,10 +8499,6 @@ STA ,Y+
 the subroutine FIX does not have to save the CC register, which indicates
 the result of the DEC instruction, because its state has already been
 
----
-
-## Page 183
-
 tested by the BNE instruction.
 
 A case where the CC register does not have to be saved is when the
@@ -9234,10 +8550,6 @@ return to calling prog
 
 Fig. 7-6 Skeleton of a Simple Subroutine.
 
----
-
-## Page 184
-
 The responsibilities of the subroutine in Fig. 7-6 can be summarized
 as: 1) save registers to be used.
 2) perform task.
@@ -9284,10 +8596,6 @@ Listing 7-7. Lines 100 - 310 make up the main program. This program clears
 the screen with the CSCREN subroutine and then displays a line of text. The
 video display codes are generated with the VIDEO subroutine. Upon
 completion it stays in a loop at line 270.
-
----
-
-## Page 185
 
 100 *PROGRAM NAME: SAMPLE
 110 *BY AUTHOR - DATE
@@ -9385,10 +8693,6 @@ Listing 7-7 The SAMPLE program.
 The stack area is established at line 290 and the S register is loaded
 at line 170 with the address of the last location of the stack area plus
 
----
-
-## Page 186
-
 one. The stack area size is determined by the subroutine that stores the
 largest number of bytes. In this case the stack area is six bytes long -
 two to store the PC register plus four needed by the CSCREN subroutine.
@@ -9429,10 +8733,6 @@ for a time, and then execute another program for a time. Memory can be
 saved by having just one set of currently used subroutines in memory for
 any program to use. However, a problem arises if a program is temporarily
 
----
-
-## Page 187
-
 suspended while it is executing a shared subroutine. If that subroutine has
 its own data area for manipulating data, data may be there when it is
 suspended. If another program uses that same subroutine, the data in the
@@ -9444,7 +8744,7 @@ re-entrant subroutine does not establish its own data areas but manipulates
 data only within the registers. The CSCREN and VIDEO subroutines are
 re-entrant, but HXVAL is not.
 
-INTERRUPTS
+### INTERRUPTS
 
 An interrupt performs a function similar to that of the JSR or BSR
 instructions. It causes the MPU to jump to a program section at a specific
@@ -9474,10 +8774,6 @@ The interrupt handler is the program section the MPU is directed to by
 an interrupt via the interrupt vector table. The interrupt handler may have
 a task to perform, and upon completion execute an RTI instruction which
 will cause the interrupted program to resume its operation. A program that
-
----
-
-## Page 188
 
 is interrupted may never be returned to, however. For example, the
 interrupt may signal a condition that tells the program to quit doing its
@@ -9529,10 +8825,6 @@ Jump to FIRQ interrupt handler
 
 Table 7-2 Vector Jump Instruction Table.
 
----
-
-## Page 189
-
 An interrupt will vector the MPU to one of the vector jump instructions
 which directs the MPU to the actual interrupt handler. Fig. 7-10
 
@@ -9579,10 +8871,6 @@ interrupts. The differences are that the IRQ and FIRQ interrupts can be
 masked out, or ignored, and the hardware interrupts are initiated by an
 external device. The I bit set causes the MPU to ignore an IRQ interrupt
 signal and the F bit set masks out the FIRQ interrupt.
-
----
-
-## Page 190
 
 The IRQ interrupt sequence takes place if the I bit is clear and pin 3
 of the MC6809E dual-in-line package is temporarily set low. The sequence
@@ -9635,10 +8923,6 @@ interrupts should be ORCC #$50. This sets the I and F bits of the CC
 register, masking out any IRQ and FIRQ interrupts until the program iS
 ready for them.
 
----
-
-## Page 191
-
 Next the vector jump instruction for each type of interrupt that will
 be used must be put in memory at the effective vector address. The jump
 operand is the absolute address of the interrupt handler for that interrupt
@@ -9687,10 +8971,6 @@ them. To summarize, before using interrupts within an assembled program:
 4) if using an IRQ or FIRQ interrupt.
 A) initialize their source.
 B) clear the I and/or F bits.
-
----
-
-## Page 192
 
 These responsibilities are illustrated in Fig. 7-11 as a skeleton
 program preparing to use the SWI2 interrupt.
@@ -9742,10 +9022,6 @@ The last instruction of an interrupt handler is RTI, which returns the
 MPU to the interrupted program. The RTI will pull the CC register from the
 S stack and inspect the E bit. If the E bit is set, all the MPU registers
 
----
-
-## Page 193
-
 except S will be pulled from the stack. If the E bit is clear, only the P
 register will be pulled from the stack. If there was any modification of
 the S register by the interrupt handler, the S register should be restored
@@ -9779,10 +9055,6 @@ Main Program VIDEO Subr
 ——» ZBUG
 
 Fig. 7-12 Block Diagram of SAMPLI1 Program.
-
----
-
-## Page 194
 
 SAMPL1 uses two subroutines, CSCREN and VIDEO, to clear the screen and
 display a line of text. It then waits for an IRQ interrupt. The IRQ
@@ -9870,10 +9142,6 @@ BZ RII IRR RIKI IIR R RRR IIR RRR RIP ARR II IIR
 1080 csi STA ,X+ PUT IN BUFFER
 
 1090 CMPX. #$5FF END OF BUFFER?
-
----
-
-## Page 195
 
 1100
 1110
@@ -10058,22 +9326,14 @@ interrupt use. Assemble the source code into memory with the A/IM/WE
 
 command and verify that there are no errors. Then go to ZBUG and run it by
 
----
-
-## Page 196
-
 typing in GSAMPLI. The vector jump for the IRQ has been modified by this
 program. Therefore, one should turn the computer off and then on after
 running and experimenting with the SAMPLI program, to set that vector jump
 back to its normal value.
 
----
+## CHAPTER 8
 
-## Page 197
-
-CHAPTER 8
-
-Assembly Language and Extended Color BASIC
+### Assembly Language and Extended Color BASIC
 
 BASIC, because it exists in internal ROM, is always available and
 serves as a starting point for many programs, including assembly language
@@ -10090,7 +9350,7 @@ they exist in ROM and therefore do not take up RAM space. Also, since they
 already exist the time and effort of designing and programming them are
 avoided.
 
-USING ASSEMBLED PROGRAMS WITH BASIC
+### USING ASSEMBLED PROGRAMS WITH BASIC
 
 Assembly language programs and subroutines to be used by a BASIC
 program must share available memory with BASIC. BASIC uses certain areas of
@@ -10105,10 +9365,6 @@ uses memory locations starting at both ends of available RAM and works
 toward the center. This can be seen in Fig. 8-1. These addresses are for a
 16K computer, except for those in parentheses, which-are for a 32K
 computer.
-
----
-
-## Page 198
 
 Use
 Buffer
@@ -10148,10 +9404,6 @@ The stack area is about 100 decimal locations long.
 
 Memory For Assembled Programs
 A goal is to determine the starting and ending addresses of an unused
-
----
-
-## Page 199
 
 area in which to load assembled programs that will work with BASIC
 
@@ -10205,10 +9457,6 @@ constant with &H indicates the number is hexadecimal. Examples are:
 20 EXEC X
 20 EXEC X*3
 
----
-
-## Page 200
-
 Statement 20 will cause the MPU to start executing at $1000; statement 30
 will direct the MPU to address $3000.
 
@@ -10254,10 +9502,6 @@ is to first put the data in a predesignated memory location. Then the
 subroutine must always get the data from the same predetermined address.
 Basically, the EXEC command is not meant to be used to call subroutines,
 but to simply direct the MPU to a specific program.
-
----
-
-## Page 201
 
 Assembled
 Subroutine (SUBA)
@@ -10316,10 +9560,6 @@ Line 10 reserves memory above address $2900 for use by programs other
 
 than BASIC. At line 20 the subroutine object code is loaded into the
 reserved area. At line 30 the variable Y is set equal to the load address
-
----
-
-## Page 202
 
 of the subroutine. Then the value for X is obtained, and its pointer is
 found at line 50. At line 70 is formed the upper and lower bytes of the
@@ -10413,10 +9653,6 @@ assembly language subroutine source listing is in Listing 8-2.
 
 600 BRA PR2A GO TO CONTROLLER
 
----
-
-## Page 203
-
 B10 BRRRAKKKEKAREEAKHKERKAKREEKEEEKEEERERERERERERERERE
 
 620 PRBYDS RMB 2 WORKING AREA
@@ -10474,10 +9710,6 @@ of K.
 After the starting address of a particular subroutine is defined, it is
 called with the USRn function. The n identifier must be the same as the n
 
----
-
-## Page 204
-
 of the DEFUSRn function. The format of the USRn function in a statement
 iS:
 BV = USRn(pass arg)
@@ -10528,10 +9760,6 @@ u Passing a Numeric Argument to a Subroutine
 When control is given to the subroutine, the A and X registers’
 contents describe the data passed to it. If the passed argument is numeric,
 
----
-
-## Page 205
-
 the A register will be clear and the X register will contain the pointer to
 the value. The numeric value will be in a memory area known as the
 floating point accumulator (FAC). The value is represented in a
@@ -10578,10 +9806,6 @@ the range of values is limited to -32768 - +32767 decimal. A demonstration
 of this can be seen in Fig. 8-5. Observe that the D register, after
 returning from INTCNV, contains $0081, the signed binary equivalent of
 
----
-
-## Page 206
-
 decimal 129.
 
 BASIC Program Assembled Subroutine 1
@@ -10627,10 +9851,6 @@ BASIC Program Assembled Subroutine 2
 -- eo Descriptor
 
 Fig. 8-6 Passing a String to a Subroutine.
-
----
-
-## Page 207
 
 At line 50 the string X$ is simply defined. In this case that string,
 ABCD, exists as part of statement 50 in the statement storage area. A
@@ -10684,10 +9904,6 @@ needed because the GIVABF program performs that function. This technique is
 demonstrated in Fig. 8-7. At line 40 the variable K equals decimal 23, the
 equivalent of $0017 that was put into the D register by subroutine 3.
 
----
-
-## Page 208
-
 BASIC Program Assembled Subroutine 3
 
 20 DEFUSR3=&H2900
@@ -10734,10 +9950,6 @@ resulting in the object code in memory at address $3000. Verify that no
 errors were detected during assembling. Then go to BASIC by the-Q-command.
 Enter the BASIC program in Listing 8-5. This BASIC program calls the
 assembled subroutine and prints the returned string R$.
-
----
-
-## Page 209
 
 100 *THIS SUBROUTINE WILL FILL A BLANK STRING WITH
 110 *THE WORDS "ANY STRING WILL DO" AND SET THE
@@ -10787,7 +9999,7 @@ In this fashion one can quickly and easily put a program into memory for
 immediate testing. However, when going from EDTASM+ to BASIC the source
 code will be lost, and on the reverse path the BASIC program will be lost.
 
-SUBROUTINES IN BASIC ROM
+### SUBROUTINES IN BASIC ROM
 
 The Extended Color BASIC system in ROM is composed of many
 subroutines. They can be used by assembly language programs if the
@@ -10802,10 +10014,6 @@ subroutines in BASIC ROM that serve useful purposes, such as generating
 graphics displays, converting binary floating point to decimal, and vice
 versa. You can use ZBUG to look through ROM to try to locate them and also
 to find out how to use them.
-
----
-
-## Page 210
 
 The ROM subroutines are convenient since they already exist and do not
 
@@ -10860,10 +10068,6 @@ and $89, which points to the display position on the screen at which the
 next character will be displayed. The value of the display pointer can
 range from $0400 - $05FF, the addresses of the text display buffer.
 BASIC’s CLS command is similar to CLSCRN; the screen is cleared and the
-
----
-
-## Page 211
 
 next text displayed with the PRINT command starts at the top left corner of
 the screen.
@@ -10921,10 +10125,6 @@ will save and then restore the CC register.
 
 If location $6F contains a 00, CHROUT will display a character whose
 
----
-
-## Page 212
-
 ASCII code is in the A register on the text screen at the position
 specified by the display pointer. Each time a character is displayed, the
 display pointer is incremented by one. When the display pointer is
@@ -10970,10 +10170,6 @@ device accepts data.
 Table 8-1 Baud Control Values.
 
 If a printer is connected to the serial I/O port, it will print the
-
----
-
-## Page 213
 
 character whose ASCII code is sent out. Other devices will interpret the
 byte sent according to their design.
@@ -11036,10 +10232,6 @@ marks can not be displayed. A byte in the string, of the value $0D, causes
 DISPL to perform a carriage return and a line feed (CR/LF). The next
 display position will be at the beginning of the next line. As DISPL is
 
----
-
-## Page 214
-
 displaying a string, the display pointer is incremented by one for each
 character displayed. After performing a carriage return and line feed, the
 display pointer points to the first position of the next line. If the
@@ -11101,10 +10293,6 @@ The POLCAT subroutine samples the keyboard and returns the ASCII code
 of a character in A if a key was depressed. It also indicates whether a key
 was depressed with the Z bit of the CC register. The starting address of
 POLCAT is contained in locations $A000 and $A001. Thus, POLCAT can be
-
----
-
-## Page 215
 
 called using extended indirect addressing.
 JSR [$A000] or JSR - $AIC1
@@ -11184,10 +10372,6 @@ When the ENTER key is hit, it causes the program to return to ZBUG.
 BOG 0 AIR I IA RA AHIR IAAI RAR IA ARERR RII EKER TT TAIT
 5100 *SUBROUTINE NAME: ACHRO
 
----
-
-## Page 216
-
 2170 *THIS SUBROUTINE WILL DISPLAY THE CHARACTER
 5120 *WHOSE ASCII CODE IS IN THE A REGISTER AT THE
 5130 *POSITION SPECIFIED BY THE DISPLAY POINTER.
@@ -11263,10 +10447,6 @@ connected to bits 0 and 1 of address $FFOO. Bit 0 reflects the state of the
 right fire button and bit 1 reflects the state of the left fire button. If
 the fire button is depressed, the bit is clear; otherwise it is set.
 
----
-
-## Page 217
-
 mg JOYIN
 Function: This subroutine reads the position of both joysticks and returns
 their positions as numeric values in specific memory locations.
@@ -11315,10 +10495,6 @@ and 270 to the following:
 Assemble the JDEMO program with the A/IM/WE/AO command and verify
 there are no errors. Then go to ZBUG and run it by entering: GIDEMO. The
 cursor on the screen will now move as the joystick is moved.
-
----
-
-## Page 218
 
 100 *PROGRAM NAME: JDEMO
 110 *THIS PROGRAM WILL POSITION A CURSOR ON THE
@@ -11402,10 +10578,6 @@ conventions to determine the format of the blocks as they are recorded on
 tape. The same conventions can be used to read data from tape. A group of
 blocks on tape comprises a file, and all the blocks contain the
 
----
-
-## Page 219
-
 information in that file. A typical tape file is shown in Fig. 8-8.
 
 blank | leader | header blank | leader | data data EOF
@@ -11460,10 +10632,6 @@ type | type load sum
 
 Fig. 8-9 Header Block Format.
 
----
-
-## Page 220
-
 The bytes of a header block are described as follows:
 0,1 - Always written as $55 $3C by subroutine that creates a block.
 2 - Block type. 00 indicates a header block.
@@ -11515,10 +10683,6 @@ Used to verify that the block was read correctly.
 
 N - Always $55.
 
----
-
-## Page 221
-
 fixed length fixed
 4
 0 1 2 3 4.5
@@ -11569,10 +10733,6 @@ without disturbing the other bits in $FF21.
 The cassette motor needs to be turned off when the EOF block has been
 written, or when a data or header block has been written and it will be
 some time before the next data block will be written. This would happen in
-
----
-
-## Page 222
 
 a program that generates data to be recorded at a slow rate. After stopping
 the tape and accumulating a full data buffer, the next block is written by
@@ -11626,10 +10786,6 @@ register is clear before calling WRTLDR or it will not work (see Listing
 5910 KKRKKKHERREEKEKREEERERERRERERREREREREERERERER
 
 Listing 8-12 The WLDR Subroutine.
-
----
-
-## Page 223
 
 uw BLKOUT
 
@@ -11701,10 +10857,6 @@ B50Q FHRKARAKAHAKAKAAKEKKEREEREREREEERERERERERERR
 
 Listing 8-13 The WBLOK and MOTOFF Subroutines.
 
----
-
-## Page 224
-
 ae CSRDON
 
 Function: Turns on cassette motor and gets cassette in sync for reading by
@@ -11762,10 +10914,6 @@ Z=0 and A=01: indicate a checksum error (block was read incorrectly).
 Z=0 and A=02: indicate a memory error (block read incorrectly due to
 bad memory in read buffer area or buffer area extends
 into ROM or dedicated address area).
-
----
-
-## Page 225
 
 Before BLKIN is called the cassette must be in sync and at speed. The
 buffer starting address must also be in locations $7E and $7F. The program
@@ -11834,10 +10982,6 @@ block into a different buffer area.
 210 INCA INC A REG
 
 220 CMPA #564 DONE?
-
----
-
-## Page 226
 
 100
 110
@@ -11993,10 +11137,6 @@ RTS RETURN
 
 HAKKAR KERRIER REE REREREREER REE ER RERERREERR
 
----
-
-## Page 227
-
 6000 *SUBROUTINE NAME: WBLOK
 
 6010 *THIS WILL WRITE HEADER, DATA, OR EOF BLOCK
@@ -12084,10 +11224,6 @@ Assemble the source code with the A/IM/WE/AO command and verify there
 are no errors. Both programs are now in memory. Go to ZBUG and run the
 first. program by entering GBKOUT. It writes a leader and a data block on
 
----
-
-## Page 228
-
 tape. Position the tape back to the starting point and run RDBLK. This
 reads the data into the RDBUF buffer area. Use ZBUG to verify the data was
 loaded into RDBUF by observing that it is the same as the data in BK BUF.
@@ -12125,10 +11261,6 @@ rotation
 
 Fig. 8-13 Tracks On a Disk.
 
----
-
-## Page 229
-
 Each track is divided into 18 sectors of equal length. Each sector is
 identified by its number, from 1 to 18. Each sector contains 256 bytes of
 data. A sector is accessed by positioning a read/write head over the
@@ -12160,10 +11292,6 @@ table and the directory entries. The file allocation table is stored
 in sector 2, and the directory entries are stored in sectors 3 - 11 of
 track 17. Sectors 12 -.18 of track 17.are not used. The directory entries
 contain up to 72 entries, each 32 bytes long. Each directory entry
-
----
-
-## Page 230
 
 describes a different file on the disk. The format of an entry is shown in
 Fig. 8-15. The bytes in an entry are described as follows:
@@ -12225,10 +11353,6 @@ Registers Modified: CC.
 Pass Parameters: The DP register must contain 00. The parameters are
 passed in a-table that the contents of addresses $C006 and $C007 point to.
 
----
-
-## Page 231
-
 [$C006:$C007] = Operation code where:
 
 00 = move read/write head to track 0;
@@ -12287,10 +11411,6 @@ SEE and SEF, is put the starting address of the buffer area. Now. DSKCON can
 be called. When writing, the data in the buffer area (256 bytes) is written
 on the sector of the selected track. When reading, 256 bytes are read from
 the sector of the selected track into the buffer area. When DSKCON returns,
-
----
-
-## Page 232
 
 the return status is in location $FO or [C006:C007] +6. If its contents are
 00, the operation was performed successfully.
@@ -12355,10 +11475,6 @@ Chapter 7.
 250 STU 4,Y PUT IN TABLE
 260 JSR DISK READ DISK
 270 TST 6,Y ERRORS ?
-
----
-
-## Page 233
 
 280
 290
@@ -12500,10 +11616,6 @@ DISK PSHS A,CC,DP SAVE REGS
 
 CLRA GET 00
 
----
-
-## Page 234
-
 6860
 6870
 6880
@@ -12602,13 +11714,9 @@ DGRAN from tape with the CLOADM command. The program is run with the
 
 EXEC command.
 
----
+## CHAPTER 9
 
-## Page 235
-
-CHAPTER 9
-
-Internal Control and Graphics
+### Internal Control and Graphics
 
 The Color Computer has more major components, serving such purposes
 as input and output, video display generation, interrupt generation, and
@@ -12625,11 +11733,7 @@ devices: input or output data; the VDG; and some of the interrupt sources.
 
 821 | MC6847 |
 
----
-
-## Page 236
-
-SYNCHRONOUS ADDRESS MULTIPLEXER
+### SYNCHRONOUS ADDRESS MULTIPLEXER
 
 The SAM is the general controller of all the components in the Color
 Computer. It is a large scale integrated circuit: a Motorola MC6883. It
@@ -12674,10 +11778,6 @@ turned on. The TY bit tells the SAM how to map memory. When it is clear,
 RAM memory is available from addresses 0000 - $7FFF in a computer with 32K
 or 64K. RAM. In a computer with 16K. RAM, the RAM addresses extend from
 0000 - $3FFF. Addresses $8000 - $BFFF access the internal ROM, which
-
----
-
-## Page 237
 
 contains Color BASIC and Extended Color BASIC. Addresses $CO000 - $FEFF
 access the ROM plugged into the ROM cartridge slot. Addresses $FF00 - $FFFF
@@ -12727,10 +11827,6 @@ ROM
 Dedicated FF00 Dedicated
 
 Fig. 9-2 Effect of TY Bit on Memory Map.
-
----
-
-## Page 238
 
 u Memory Size - The memory size bits, MO and M1, tell the SAM what type of
 RAM integrated circuits are in the computer. The three different types
@@ -12787,10 +11883,6 @@ replaced with an MC68BO09E; the high speed version of the MC6809E.
 
 Setting R1 sets the high speed mode while accessing all addresses. This
 
----
-
-## Page 239
-
 will require the RAM and PIAs to be capable of this high speed. The high
 speed PIA is the MC68B21.
 
@@ -12845,10 +11937,6 @@ the size of the buffer area the SAM sends to the VDG for conversion to a
 video signal, which is then sent to the television set. The SAM sends the
 buffer contents to the VDG 60 times a second, the rate at which the picture
 
----
-
-## Page 240
-
 is continually repainted on the TV screen. The valid settings of the video
 display mode bits, the buffer size, and the display modes they use are
 
@@ -12897,10 +11985,6 @@ PIA 2 is accessed via four dedicated addresses, $FF20 through $FF23. The
 SAM, with TY clear, also decodes other addresses as PIA dedicated
 addresses. The others (redundant addresses) work just as well as the
 primary dedicated addresses, and are shown in- Table 9-5.
-
----
-
-## Page 241
 
 Primary
 PIA | Dedicated Address
@@ -12955,7 +12039,7 @@ disk controller can be accessed only through
 its primary dedicated address, as shown in Table 9-6. There are no
 redundant addresses when the TY SAM control bit is set:
 
-PERIPHERAL INTERFACE ADAPTER
+### PERIPHERAL INTERFACE ADAPTER
 
 It is through the two peripheral interface adapters, PIAs 1 and 2, that
 the MPU communicates with external devices: the keyboard, joysticks,
@@ -12966,10 +12050,6 @@ a Motorola MC6821 large scale
 integrated circuit.
 
 A PIA is composed of two halves that are almost identical. One half is
-
----
-
-## Page 242
 
 the A side and the other is the B side. Each side can input or output a
 byte of data and send an interrupt to the MPU. Since the Color Computer has
@@ -13007,10 +12087,6 @@ Data Register B (DRB)
 Fig. 9-3 Block Diagram of a PIA.
 
 Each side has a complete set of three registers, so each side can
-
----
-
-## Page 243
 
 operate independently. One register is the data register (DRA or DRB),
 through which data is sent from the MPU to the data path or from the data
@@ -13055,10 +12131,6 @@ DDRA=A5
 KFOrOGOOKO-m
 
 Fig. 9-4 Configuring the DRA.
-
----
-
-## Page 244
 
 etc. If a bit in the DDRA is clear, the corresponding bit in the DRA is
 configured for inputting. If a bit in the DDRA is set, the corresponding
@@ -13114,10 +12186,6 @@ sending of interrupts generated by CAI.
 The above description is equally applicable to the B side of the PIA:
 the CRB and CBI.
 
----
-
-## Page 245
-
 m DDR/DR Access - Bit 2 of the CRA is used to determine which register, DRA
 or DDRA, will be accessed via their dedicated address. If bit 2 is clear,
 
@@ -13167,10 +12235,6 @@ Bit 3 = 0: Upon activation of CB2, set bit 6 (CB2 flag) of the CRB.
 Bit 3 = 1: Upon activation of CB2, set bit 6 (CB2 flag) of the CRB
 and send an interrupt to the MPU.
 
----
-
-## Page 246
-
 CA2 configured as an output: (Bit 5 = 1)
 Bit 4 = 1: CB2 outputs a signal corresponding to the state of CRB bit 3.
 Bit 3 = 0: CB2 outputs a low.
@@ -13219,10 +12283,6 @@ configured to output and interrupts are disabled.
 BASIC sets up the data direction and control registers of each PIA
 register as shown in Table 9-8.
 
----
-
-## Page 247
-
 PIA Register
 
 DDRA of PIA 1
@@ -13260,7 +12320,7 @@ received. The interrupt flag is cleared by reading the contents of the
 respective DRA(DRB). Upon reading the data register, its contents will be
 in an MPU register and bits 6 and 7 in the control register are cleared.
 
-VIDEO DISPLAY GENERATOR
+### VIDEO DISPLAY GENERATOR
 
 The video display generator, or VDG, is the component which. generates a
 video signal sent to a television set to produce the picture. The VDG has a
@@ -13273,10 +12333,6 @@ A display mode is selected by setting the video display starting
 address, control bits FO - F6; and the video display mode, control bits
 VO - V2, all in the SAM. Also, the VDG operating mode, controlled by five
 VDG control bits, must_be set.
-
----
-
-## Page 248
 
 The video display starting address is normally set by BASIC to $0400,
 bit F1 set, for displaying text. Bits FO - F6 can be set to point to any
@@ -13329,10 +12385,6 @@ bits 3 - 7 for output. Then set bit 2 of the CRB at address $FF23, enabling
 access to the DRB at address $FF22. Usually, BASIC has bit 2 of the CRB
 set. Finally, put the VDG operating mode code into the DRB at address
 $FF22. This whole process is shown in Listing 9-1. The VDG operating mode
-
----
-
-## Page 249
 
 selected is GIR, with a color set of 1. At lines 250 - 290 the DRB is
 configured for output on bits 3 - 7. At lines 300 - 320, bit 2 of the CRB
@@ -13394,10 +12446,6 @@ except AI and SG4. AI and SG4 are the same display mode with different
 alphanumeric and semigraphic character sets. When any display mode is
 selected, the contents of the buffer is displayed according to the way that
 
----
-
-## Page 250
-
 display mode interprets the contents. One may also maintain several
 different buffer areas, displaying one at a time as RAM space permits.
 
@@ -13447,10 +12495,6 @@ BASIC Display Mode: SCREEN 0,X.
 
 Border Color: Black. : Buffer Size: 512
 Display Format: 64 columns, 32 rows :
-
----
-
-## Page 251
 
 Display (top left corner) Buffer Contents
 a Byte 0 [1 N,N, Nj Py Py Py Ps
@@ -13511,10 +12555,6 @@ x 0 - Black x O - Black
 0 I - Blue 0 1 - Magenta
 
 1 1 - Red 1 1 - Orange
-
----
-
-## Page 252
 
 Description: The screen is divided into 3072 pixels, and each group of six
 pixels (P, - P; e.g.) is controlled by one byte. The N bit controls the
@@ -13596,10 +12636,6 @@ BASIC Display. Mode: Not supported.
 Border Color: Black. Buffer Size: 3072
 Display Format: 64 columns, 96rows
 
----
-
-## Page 253
-
 Display (top left corner) Buffer Contents
 Po Pi Po Ps] - - Byte 0 [1 Np Ny No Po Py X X
 Peal Pos! Byte 1 [I Ny N, Ny Py Pz x &
@@ -13665,10 +12701,6 @@ PoP Pas]: - veo [TR RR ARS]
 Peal Pes rte [FRM By Py Py X™
 Byte 32 [1 Ny Ny Ny Pog Pes XX
 
----
-
-## Page 254
-
 Color Set:
 
 nw
@@ -13713,10 +12745,6 @@ control the color of all the pixels in a group. Bits P, and P, turn on
 When a pixel is off it is black; otherwise it is the assigned color of that
 group. The MSB of each byte in the buffer must be set for a pixel group to
 be controlled as described.
-
----
-
-## Page 255
 
 Graphics 1 with Color (G1C)
 BASIC Display Mode: Not supported.
@@ -13764,10 +12792,6 @@ Q 1 - Green
 
 Description: The screen is divided into 8192 pixels; each is controlled by
 one bit of a byte in the buffer. Each byte controls eight pixels. When a
-
----
-
-## Page 256
 
 bit is set, its corresponding pixel is turned on and has a color determined
 by the C bit. When a bit is clear, the pixel is turned off.and is black.
@@ -13824,10 +12848,6 @@ I
 
 1 - Buff
 
----
-
-## Page 257
-
 Description: The screen is divided into 12288 pixels; each is controlled by
 one bit of a byte in the buffer. Each byte controls eight pixels. When a
 bit is set, its corresponding pixel is turned on and has a color determined
@@ -13879,10 +12899,6 @@ Byte 0 Po Py Py P, Py P; Pe Py
 
 Byte 32 | Pyo9 Py93 Pio Pigs Pigg P17 Pigg Pigg
 
----
-
-## Page 258
-
 Color Set! C P,
 0 O - Black
 0 1 - Green
@@ -13928,10 +12944,6 @@ Border Color: If C=0, then green. Buffer Size: 6144
 If C=1, then buff.
 
 Display Format: 256 columns, 192 rows
-
----
-
-## Page 259
 
 Display (top left corner)
 Po [Pi Po [Ps [Pa [Ps [Pe [Pr _]-
@@ -14008,10 +13020,6 @@ OO RRR I KARR IRA ARAKI KI KIK IKE RRR RRR R RIKI RIRIRIR
 
 320 BLS GRB IF NOT,DO AGAIN
 
----
-
-## Page 260
-
 330 LDX #$1604 START OF BOT LINE
 
 340 GRC STA ,X+ PUT IN BUFFER
@@ -14059,7 +13067,7 @@ Assemble the source code in memory with the A/IM/WE command and
 verify there are no errors. Go to ZBUG and run it by entering: GGRPH. To
 get back to ZBUG after viewing the display press the Reset button.
 
-INTERRUPTS
+### INTERRUPTS
 
 In this section are described the interrupt sources and how to control
 their operation. The IRQ interrupt originates from devices in the Color
@@ -14079,10 +13087,6 @@ the interrupt sources of the Color Computer. One can see there are a total
 of five signals which can be used to generate an interrupt. Two signals can
 generate an IRQ interrupt, two can generate an FIRQ interrupt, and one
 generates an NMI interrupt.
-
----
-
-## Page 261
 
 READY signal
 from serial
@@ -14121,10 +13125,6 @@ to go from:a high to a low. If PIA 2 is configured to sense a high-to-low
 transition at CAl, an FIRQ interrupt will be generated when the device
 becomes ready. However, not all devices send a READY signal to the
 computer. Normally, this signal means the device is turned on, not busy
-
----
-
-## Page 262
 
 doing something, and is ready to transfer data to or receive data from the
 computer. If PIA 2 is configured to sense a low-to-high transition at CAI,
@@ -14171,10 +13171,6 @@ PIA to be able to sense another CA(B)1 activation. Clearing the flag bit
 also causes the PIA to stop sending an active interrupt signal to the MPU
 if bit 0 of the control register is set. If this is not done, the MPU will
 be interrupted again as soon as the F or I bit of the CC register is
-
----
-
-## Page 263
 
 cleared. The flag bit is cleared by having the MPU read from the
 corresponding data register (DRA or DRB).
@@ -14230,10 +13226,6 @@ access the corresponding PIA registers.
 
 252
 
----
-
-## Page 264
-
 ORG $2000
 
 ORCC #$50 SET I AND F BITS
@@ -14266,13 +13258,9 @@ cartridge slot and not through a PIA. Thus, the programming
 responsibilities exclude all references to any PIAs unless there is a PIA
 in the cartridge.
 
----
+## CHAPTER 10
 
-## Page 265
-
-CHAPTER 10
-
-Technical Details
+### Technical Details
 
 This chapter will describe the rest of the Color Computer’s internal
 devices and cartridge connector. The internal devices are used to input
@@ -14290,7 +13278,7 @@ via the cartridge connector. A cartridge could also contain a sound
 synthesizer to increase sound-making capabilities, or a speech synthesizer
 to provide voice.
 
-INTERNAL DEVICES
+### INTERNAL DEVICES
 
 All the internal devices are controlled through the PIAs. Any device
 that can be used or controlled is connected by wiring:to PIA signals: the
@@ -14303,10 +13291,6 @@ a device must have configured that signal to output by setting up bits 3,
 4, and 5 of the respective control register. No devices in the Color
 Computer send signals to any CA2 or CB2. Any PIA that receives a signal at
 CA1 or CBI must have configured them to detect the desired transition and
-
----
-
-## Page 266
 
 have enabled or disabled their interrupt by setting up bits 0 and 1 of the
 respective control register. No devices receive signals from CAI and CBI of
@@ -14359,10 +13343,6 @@ binary value read will be x1111111. This is because the PAO - PA6 inputs
 sense a high if nothing is connected to them; this being the case when no
 key is depressed.
 
----
-
-## Page 267
-
 Left Joystick Right Joystick
 Jack Jack
 
@@ -14396,10 +13376,6 @@ Each joystick has a fire button which actuates a switch. When the
 button is depressed, the switch is closed, making an electrical connection
 to a low. In Fig. 10-1, the left joystick fire button is connected to PA]
 of PIA 1, and the right to PAO. When a fire button is not depressed the
-
----
-
-## Page 268
 
 corresponding data line is high. While a fire button is depressed the
 corresponding data line, PAO or PAI, is low. Thus, one can simply read the
@@ -14458,10 +13434,6 @@ be printed is sent on pin 4 (RS2320UT).
 
 The NOT components are one-way devices. The signal can flow only into
 
----
-
-## Page 269
-
 the broad side of the triangle and out the pointed end. For example, if one
 tries to input on PAI, one will not read the signal at pin 4 of the jack.
 These components also transform the electrical signal from within the
@@ -14517,10 +13489,6 @@ cassette jack, shown in Fig. 10-2.
 Memory Size Sense
 The memory size is sensed with PB2 of PIA 2. PB2, configured as an
 
----
-
-## Page 270
-
 input, is read after power turned on to determine the position of the
 memory size switch and indicate the type of memory integrated circuits
 within the computer. The switch is actually a connector positioned at the
@@ -14555,10 +13523,6 @@ TV COMPARATOR
 
 Figure 10-3
 Cassette, Joysticks, and Sound Signal Flow.
-
----
-
-## Page 271
 
 CB1 of PIA 2
 
@@ -14607,10 +13571,6 @@ represent ones energy level thoughout the day. The vertical axis would
 represent the energy level and the horizontal axis would represent time.
 See how the energy level drops off at the end of the-day?
 
----
-
-## Page 272
-
 To use the D/A converter, bits PA7 - PA2 must be configured for output.
 Bit PA7 is the most significant bit of the six-bit number, and PA2 is the
 least. The D/A converter generates a voltage, within a range of 0 to +4.5
@@ -14654,10 +13614,6 @@ Voltage
 tO tl 2 «13 «4 Time
 
 Fig. 10-5 A Waveform Generated by the D/A Converter.
-
----
-
-## Page 273
 
 a Selector Switch - The selector switch is a dual unit composed of two
 four-position switches, shown in Fig. 10-3. One half is designated the A
@@ -14707,10 +13663,6 @@ The attenuator reduces the magnitude of the range of the analog voltage
 going to the cassette to approximately a range of zero to plus one volt;
 most cassettes are designed to accept this voltage range. One could also
 
----
-
-## Page 274
-
 connect pin 4 of the cassette jack to the auxillary input of a high
 fidelity receiver or amplifier. This way, sound generation need not be
 limited to the TV. ;
@@ -14746,10 +13698,6 @@ Voltage 4.5 LU
 t0 tl t2 t3 t4 Time
 
 Fig. 10-7 Sine Wave Generated With the D/A Converter.
-
----
-
-## Page 275
 
 This figure shows the signal the BASIC ROM cassette write subroutine
 generates with the D/A converter and sends through the attenuator to the
@@ -14801,10 +13749,6 @@ the corresponding voltages from the left joystick.
 
 A voltage is digitized by outputting, through the D/A converter, a
 successively incremented voltage. After each higher voltage that is sent,
-
----
-
-## Page 276
 
 the output of the comparator (PA7 of PIA 1) is read. PA7 clear indicates
 the voltage just sent by the D/A converter is marginally higher than the
@@ -14880,10 +13824,6 @@ Listing 10-1 The LFJY Program.
 Lines 150 - 180 set CB2 and clear CA2, selecting position 2 of the
 selector switch. Lines 190 - 240 are the successive approximation loop. The
 
----
-
-## Page 277
-
 B register is first cleared and written to the D/A converter. If PA7 of PIA
 1 is clear at lines 210 and 220 the conversion process is over. If not, the
 value in bits 7 - 2 of the B register is incremented by one by adding four
@@ -14935,10 +13875,6 @@ high compared to when it is low will determine the timbre of the sound. If
 the master switch of selector switch A is turned on the sound will be a
 combination of that selected by switch A and that generated by PBI. Since
 PB1 is a sound source, it must be configured for outputting.
-
----
-
-## Page 278
 
 Listing 10-2 generates a tone which repeatedly slides from a low to a
 high pitch. The tone is generated with the PB1 sound source.
@@ -15013,11 +13949,7 @@ cycles have been produced, and if so, the value in X is decremented to
 reduce the time delay between reversing the state of PBI, raising the
 pitch.
 
----
-
-## Page 279
-
-THE CARTRIDGE CONNECTOR
+### THE CARTRIDGE CONNECTOR
 
 The cartridge connector is a 40 contact electrical connector on the
 right side of the Color Computer. Each contact, or pin, is internally
@@ -15059,10 +13991,6 @@ their direction. A right arrow indicates the signal originates in the
 computer and is sent to the cartridge. A left arrow indicates the signal
 originates in the cartridge and is sent to the computer.
 
----
-
-## Page 280
-
 Signal Name |} Pin | Signal Name
 
 +12 volts >
@@ -15091,10 +14019,6 @@ For example, a cartridge that contains ROM, such as EDTASM+, sends the
 contents of a memory location into the computer over the data bus. If a
 cartridge contains RAM or a PIA, a byte written to it would be sent to it
 over the data bus.
-
----
-
-## Page 281
 
 Address Bus
 
@@ -15149,10 +14073,6 @@ selects the ROM or RAM within a cartridge for transfer of a byte of data.
 from $FF40 - $FF5F. SCS low enables or selects a PIA or similar
 device within a cartridge for transfer of a byte of data. SCS also
 
----
-
-## Page 282
-
 goes low when the SAM TY control bit is clear and the MPU accesses any of
 the redundant dedicated addresses associated with addresses $FF40 - $FF5F.
 SND is an analog signal that originates in a cartridge. The SND signal
@@ -15169,12 +14089,9 @@ condition, no RAM, ROM or PIAs may be accessed by the MPU. The MPU
 would only be able to access devices in the cartridge via the data and
 address busses.
 
----
+## APPENDIX A
 
-## Page 283
-
-APPENDIX A
-Flowcharts and State Diagrams
+### Flowcharts and State Diagrams
 
 Before a program is written it should be described with a textual
 description, a list of specifications, and/or a mental thought. A helpful
@@ -15214,10 +14131,6 @@ box is performed and its result is directed to the variable to the left of
 
 the arrow.
 
----
-
-## Page 284
-
 A decision is indicated by a diamond shaped box. Within the box is a
 condition which, if false, will cause an exit from one corner of the
 diamond. If the condition is true, one exits via a different corner. This
@@ -15248,10 +14161,6 @@ process.
 Special boxes represent input/output operations. To show outputting
 text to the screen, the following box is used:
 
----
-
-## Page 285
-
 The following box represents an opereation geared to the speed of a human
 operator. For example, this box represents an input operation, i.e.,
 waiting for an operator to enter the date:
@@ -15280,10 +14189,6 @@ page with a small circle:
 Fig. A-1 shows a flowchart of a program which clears memory locations
 $1000 through $2000.
 
----
-
-## Page 286
-
 Y <- $1000
 
 Address Y <- 00 |
@@ -15310,10 +14215,6 @@ re-entered. If the depressed key is a decimal digit, the ASCII code of the
 digit is put into the buffer area. If the ENTER key is depressed, the
 final state is entered: the ENTER ASCII code is appended to the decimal
 
----
-
-## Page 287
-
 integer in the buffer. The program section that follows this will read the
 digits from the buffer until the ENTER code is detected.
 
@@ -15332,13 +14233,9 @@ number in buffer
 
 Fig A-2 Example State Diagram.
 
----
+## APPENDIX B
 
-## Page 288
-
-APPENDIX B
-
-MC6809E Instructions
+### MC6809E Instructions
 
 Courtesy of Motorola, Inc.
 
@@ -15385,10 +14282,6 @@ olelelele (pauBisun) X-X +8 € | ve | xav
 aia(z[N[H uonduoseq ~|dol# [-]do[# |- [do |e [~[4o [# [— [do] suioy Tuononasy
 Olrizle quasayy| papuay}xq pexapu| aq ayeIpawty]
 a sapow-; Buissasppy “
-
----
-
-## Page 289
 
 10 BAISNjOXy |es1B07 4 MTV wos Aueg 9 Aiduinw oe
 
@@ -15443,10 +14336,6 @@ vy lsalpy jeunsag ra Zz |6L vva
 
 L ldnaIUL JOY HeAA DO-WWIV 99 L | | z_bz=| DE IVM9
 
----
-
-## Page 290
-
 46
 € | 9] aL ALS
 é |G | 46 XLS
@@ -15488,10 +14377,6 @@ uonduosag ido |v |~ [do [# | ~ [do | swioy  fuononnsyy
 
 sepoy Buissaippy
 
----
-
-## Page 291
-
 “19S Sl 2g ji yes Aueg — ase jeloads
 ‘pauyapun si Bel} Aueo-sjey yo anep
 “UOONAISU! BY} JO 1jNSaJ JOaJIP @ Se jas Sapo suOliIpuoD
@@ -15528,10 +14413,6 @@ Q-lL+WW-a €8 Qans
 8-W-a@ 03 gans
 
 VOW-V 08 Vans ans
-
----
-
-## Page 292
 
 L=A
 youesg 6u07
@@ -15607,10 +14488,6 @@ Bulsseuppy.
 
 uononjsuy
 
----
-
-## Page 293
-
 “Uaye} 1 SajOAO g ‘Uayxe] JOU YOURIG |! SajoAD g :suBaW (g)G
 
 “uaye} JOU S| YUeIq AU} fj! SajDAD Gg JO UAxe} S| YOURIG By} jI SajDAD g pue sa}Aq p auinbal sayouesq BuO] jeuONIpU_d II
@@ -15641,12 +14518,9 @@ do asjey do andy sa] Z € Oz VHa
 
 . SAHONVHE JATdWIS
 
----
+## APPENDIX C
 
-## Page 294
-
-APPENDIX C
-Color Computer Character Codes
+### Color Computer Character Codes
 
 CODES GENERATED BY THE KEYBOARD (POLCAT)
 
@@ -15714,10 +14588,6 @@ when generating the alphabetic characters. Press SHIFT and 0 to change
 mode so that lower and upper case alphabetic characters can be generated.
 Repeat this procedure to change back to the all upper case mode.
 
----
-
-## Page 295
-
 VIDEO DISPLAY CODES
 
 Normal Reverse {j | Normal Reverse
@@ -15760,11 +14630,7 @@ t 30 > 126-} 7E 62 | -3E
 Normal video is a black character on a light background. Reverse video is
 a light character on a black background.
 
----
-
-## Page 296
-
-APPENDIX D - ASCII CODES
+## APPENDIX D - ASCII CODES
 
 Most Significant Digit (Hex)
 
@@ -15860,12 +14726,9 @@ SUB - Substitute
 
 US - Unit Separator
 
----
+## APPENDIX E
 
-## Page 297
-
-APPENDIX E
-Dedicated Memory Addresses
+### Dedicated Memory Addresses
 
 Address
 
@@ -15936,10 +14799,6 @@ SWI vector location
 NMI vector location
 RESET vector location
 
----
-
-## Page 298
-
 Index
 
 A
@@ -15981,10 +14840,6 @@ cartridge connector, 268-271 edit, 131
 cassette I/O, 207-211, 263-264 effective address, 55
 
 cassette motor, 210, 258 END, 139
-
----
-
-## Page 299
 
 EOF block, 210
 EQU, 140
@@ -16082,10 +14937,6 @@ PIA dedicated addresses, 235-236
 PIA initializing, 235
 PIA interrupt flags, 236
 
----
-
-## Page 300
-
 pixcel, 239
 pointer, 37-41
 POLCAT, 203-205
@@ -16179,27 +15030,11 @@ WRTLDR, 211
 Z
 zero offset, 72-73
 
----
-
-## Page 301
 
 
 
----
-
-## Page 302
 
 
-
----
-
-## Page 303
-
-
-
----
-
-## Page 304
 
 With the right software the Color Computer is almost
 omnipotent. In your hands is a perfect example. This book
