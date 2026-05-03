@@ -20,7 +20,7 @@ Target environment for the build: **NitrOS-9 EOU on Tandy Color Computer 3 with 
 ## CPU / hardware
 
 - **CPU:** Motorola 6809E (CoCo 3) or Hitachi 6309 (compatible, faster native mode).
-- **GIME** (Graphics Interrupt Memory Enhancer): custom Tandy chip handling video, paged MMU, interrupts.
+- **GIME** (Graphics Interrupt Memory Enhancer): custom Tandy chip handling video, paged MMU, interrupts. Hardware register map at [gime.md](gime.md).
 - **RAM:** 512K (NitrOS-9 EOU target configuration).
 - **Clock:** 60 Hz NTSC, so 60 ticks/sec throughout the system. See [timing.md](timing.md).
 

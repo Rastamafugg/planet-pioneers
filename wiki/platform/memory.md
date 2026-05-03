@@ -2,7 +2,7 @@
 
 ## Process model
 
-NitrOS-9 EOU Level 2 gives each process a **single 64 KB logical address space**, mapped from 512 KB physical RAM via an 8 KB-page MMU. Code + data + stack must fit within this 64 KB window (though the **GrfDrv**-managed graphics memory lives in the system map and does not count against process space).
+NitrOS-9 EOU Level 2 gives each process a **single 64 KB logical address space**, mapped from 512 KB physical RAM via an 8 KB-page MMU. The MMU itself is part of the GIME chip — eight 6-bit Page Address Registers (PARs) per set, executive set for the kernel, task set for the process. See [gime.md](gime.md#mmu-chapter-3) for the hardware view. Code + data + stack must fit within this 64 KB window (though the **GrfDrv**-managed graphics memory lives in the system map and does not count against process space).
 
 ## DCC layout
 
@@ -42,11 +42,13 @@ Place terrain map, tile graphics, and other ROM-safe constants as `static const`
 static const unsigned char terrain_map[MAP_ROWS][MAP_COLS] = { ... };
 ```
 
-## GrfDrv and screen memory
+## Screen memory and the kernel block pool
 
-Video screens allocated via [CoVDG](covdg.md) `SS.AScrn` or [CoWin](cowin.md) come from a **separate pool managed by GrfDrv** in the system memory map, not from process address space.
+**Correction 2026-05-01:** an earlier version of this page claimed CoVDG screens come from a "GrfDrv pool". That is wrong. Per [Tech Ref Ch. 4](../../docs/reference/NitrOS-9%20EOU%20Technical%20Reference.md) line 781: "Term_VDG or VERM uses VTIO/CoVDG while Term_win40/Term_win80 and all window descriptors use VTIO/(CoWin/CoGrf)/GrfDrv". **GrfDrv backs CoWin/CoGrf only.** CoVDG (`SS.AScrn`) does its own physical-RAM allocation through the kernel block layer (`F$AllRAM` / `D.BlkMap`).
 
-**Observed limit:** allocating two 32K type-4 CoVDG screens fails (err #207). Two 16K type-2 CoVDG screens work — this is what enables [poc_cvdg16](../sources/poc-sources.md)'s page-flipping.
+Practically this still means screens compete with everything else for the same finite pool of physical 8 KB blocks — process DAT-image pages, `F$AllRAM` shared blocks, CoVDG screens, and CoWin/GrfDrv screens **all draw from the same `D.BlkMap`-tracked pool**. So a fatter parent process leaves less for child screens. `E$NoRAM (#207)` from `SS.AScrn` tells us the kernel block pool is exhausted, not anything CoVDG-specific.
+
+**Observed limit:** allocating two 32K type-4 CoVDG screens fails (err #207). Two 16K type-2 CoVDG screens work when the parent process is small (e.g. `pocrnd`). With a heavier parent (`pioneer` linking score.c + input.c + sprintf path), even the 2×16K case can hit #207 — observed 2026-05-01.
 
 To access screen bytes directly from the process:
 1. `SS.ScInf` — get screen info

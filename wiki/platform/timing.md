@@ -30,7 +30,7 @@ Proven by [poc_vsync.c](../sources/poc-sources.md) (113 lines).
 /* Register for signal 0x7F every 1/60 sec on /nil */
 ```
 
-Gives a **documented 1/60-second timing gate for measurement.** This is NOT direct GIME VBlank or HSync access — the AGENTS.md lesson explicitly cautions against describing it as "guaranteed tear-free synchronization." It is a reliable software-level 60Hz heartbeat, sufficient for frame pacing but not for hardware-tight video sync.
+Gives a **documented 1/60-second timing gate for measurement.** Under the hood it is the GIME's `Vbord` IRQ (vertical-border, fires once per 60 Hz frame — see [gime.md](gime.md#interrupts-chapter-6)) routed through NitrOS-9's VRN service. This is NOT direct GIME VBlank or HSync access — the AGENTS.md lesson explicitly cautions against describing it as "guaranteed tear-free synchronization." It is a reliable software-level 60Hz heartbeat, sufficient for frame pacing but not for hardware-tight video sync.
 
 Used in [poc_gfx.c](../sources/poc-sources.md) as the VRN VIRQ timing gate driving sprite movement.
 

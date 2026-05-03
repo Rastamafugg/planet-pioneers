@@ -21,6 +21,7 @@ Content catalog. Read this first when answering a query to find the right page, 
 ## Platform / technology
 
 - [Platform stack](platform/stack.md) — CoCo 3 + NitrOS-9 EOU + DCC overview
+- [GIME hardware reference](platform/gime.md) — ACVC register map (palette, MMU/PARs, hi-res modes, ACVC interrupts) — what NitrOS-9 abstracts
 - [CoVDG graphics](platform/covdg.md) — VDG screen types, page flipping, SS.AScrn/DScrn/FScrn
 - [CoWin graphics](platform/cowin.md) — windowing system, DWSet, drawing commands, GET/PUT
 - [CoWin text & overlays](platform/cowin-text.md) — DWSet/OWSet/OWEnd, Ch.5 text commands, Palette/DefColr, font caveats
@@ -51,6 +52,7 @@ Content catalog. Read this first when answering a query to find the right page, 
 - [stocks-and-bonds (reference repo)](sources/stocks-and-bonds.md) — Basic09 sibling project; IPC patterns we are porting
 - [DCC C Compiler docs](sources/dcc-docs.md) — library ref + user's guide (stubs)
 - [NitrOS-9 EOU docs](sources/nitros9-docs.md) — user's guide, technical ref, windowing manual (stubs)
+- [Assembly Language Programming for the CoCo 3 (Tepolt)](sources/coco3-asm-tepolt.md) — bare-metal GIME hardware reference
 
 ## Special
 

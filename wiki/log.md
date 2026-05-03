@@ -4,6 +4,18 @@ Append-only chronological record of ingests, queries, and lints. Each entry pref
 
 ---
 
+## [2026-05-03] ingest | Assembly Language Programming for the CoCo 3 (Tepolt, 1987)
+
+Ingested `docs/reference/Assembly Language Programming for the CoCo3.md` (1659 lines). Added [sources/coco3-asm-tepolt.md](sources/coco3-asm-tepolt.md) summarizing the seven chapters + Cross Reference. Created [platform/gime.md](platform/gime.md) as a hardware register-map page covering palette regs (`$FFB0–$FFBF`, composite vs RGB encoding, alternate color set), MMU/PARs (`$FFA0–$FFAF`, executive/task split), hi-res text (per-cell attribute byte: blink/underline/FRC/BKC) and graphics (formats A/B/C, scroll regs), ACVC interrupts (IRQEN/FIRQEN, Vbord = 60 Hz vsync, 12-bit Timer), MPU speed (`$FFD8`/`$FFD9`), and reset state. Added cross-links from [memory.md](platform/memory.md) (MMU/PARs), [timing.md](platform/timing.md) (Vbord ↔ VRN heartbeat), and [stack.md](platform/stack.md). Indexed both new pages. The companion volume `Assembly Language Programming for the Color Computer.md` (16 439 lines, the prerequisite CoCo 1/2 book Tepolt calls "The Book") is left for on-demand ingestion.
+
+---
+
+## [2026-05-01] correction | CoVDG does not use GrfDrv
+
+[`platform/memory.md`](platform/memory.md) previously claimed CoVDG screens came from "a separate pool managed by GrfDrv". User-corrected against [NitrOS-9 EOU Tech Ref Ch. 4](../docs/reference/NitrOS-9%20EOU%20Technical%20Reference.md) line 781: GrfDrv backs CoWin/CoGrf only; CoVDG (Term_VDG / VERM) uses VTIO/CoVDG without GrfDrv. CoVDG's `SS.AScrn` does its own physical-block allocation via the kernel layer. The downstream conclusion (screens, process DAT pages, and `F$AllRAM` blocks all compete in the same kernel pool — `D.BlkMap`) is unchanged, just labeled correctly. Page rewritten with the correction note and a new observation: with a heavier parent process (pioneer = render.c + score.c + input.c + sprintf), even 2×16K type-2 CoVDG screens can hit `#207 E$NoRAM` where the small `pocrnd` parent succeeds.
+
+---
+
 ## [2026-05-01] lesson | DCC rejects integer-literal suffixes (U/L)
 
 Build of phase-7a `main.c` failed at the colony-failure check `nw_combd() < 60000U` with four errors at line 74 (") expected", "undeclared variable", "; expected", "syntax error"). DCC K&R doesn't accept the `U`/`L` suffix on integer literals. Replaced with `(unsigned int)60000` in `main.c` and the same change in `score.c`'s `COLONY_SURVIVAL_THRESHOLD` macro. Recorded in [lessons-learned.md](implementation/lessons-learned.md) under the DCC dialect section.
