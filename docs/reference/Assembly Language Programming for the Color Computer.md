@@ -63,15 +63,15 @@ Those already familiar with assembly language may start with Chapter 3. You will
 
 10. Technical Details - Internal Devices - Cartridge Connector
 
-Appendix A - Flowcharts and State Diagrams
+- Appendix A - Flowcharts and State Diagrams
 
-Appendix B - MC6809E Instruction Set
+- Appendix B - MC6809E Instruction Set
 
-Appendix C - Color Computer Character Codes
+- Appendix C - Color Computer Character Codes
 
-Appendix D - ASCII Character and Control Codes
+- Appendix D - ASCII Character and Control Codes
 
-Appendix E - Dedicated Memory Addresses
+- Appendix E - Dedicated Memory Addresses
 
 ## CHAPTER 1
 
@@ -84,7 +84,7 @@ designed as electronic switches with two states: on and off. An electronic
 switch can be only on or off; this promotes the use of a number system with
 only two digits. This is the binary number system. Binary uses only two
 digits, 0 and 1, that respectively represent the two switch states, off and
-on,
+on.
 
 The number system we are most familiar with is the decimal number
 system, made up of 10 digits, 0 - 9. Another way to describe the decimal
@@ -92,7 +92,7 @@ number system is to say that it has a base, or radix, of 10. The base
 designation tells us the number of digits available in the system. A
 decimal number may be represented as:
 
-23549
+235<sub>10</sub>
 
 where the subscript 10 indicates the base, or radix, of the number. In base
 10, this is the familiar number 235; we don’t print the base subsript
@@ -104,12 +104,12 @@ the weight of that digit’s position. In the above example, the 5 is in the
 units (one’s) position, the 3 is in the tens position, and the 2 is in the
 hundreds position. Therefore, the value is calculated as:
 
-23549 = (2x100)+(3x10)+(5x1) -
+235<sub>10</sub> = (2x100)+(3x10)+(5x1) -
 
 In the following example there is a decimal point, also known as a radix
 point.
 
-12.75,4 = (1x10)+(2x1)+(7x.1)+(5x.01)
+12.75<sub>10</sub> = (1x10)+(2x1)+(7x.1)+(5x.01)
 
 #### Determining Position Weight
 
@@ -123,7 +123,7 @@ just to the right of the radix point. Each succeeding position number, to
 the right from the radix point, is decreased by one. The form used to
 indicate the digit positions of a numbering system in any base is:
 
-»3210.-1 -2 -3 -4..
+... 3 2 1 0 . -1 -2 -3 -4 ...
 
 where ... indicates an indefinite continuation.
 
@@ -135,33 +135,37 @@ position. The weight of a digit position is the base raised to the power of
 that position. In general, the digit position weights are calculated as
 follows:
 
-.. b? bt b®. bt be? be L.,
+... b<sup>2</sup> b<sup>1</sup> b<sup>0</sup> . b<sup>-1</sup> b<sup>-2</sup> b<sup>-3</sup> ...
 
 where b is the base of the numbering system. Therefore, the weights of each
 digit position for decimal numbers (b = 10) are:
 
-.. 10? 104 10°. 107! 10°? 1078 ...
+... 10<sup>2</sup> 10<sup>1</sup> 10<sup>0</sup> . 10<sup>-1</sup> 10<sup>-2</sup> 10<sup>-3</sup> ...
+
 or
-.. 100 10 1.0.1 .01 .001 ...
+
+.. 100 10 1 . 0.1 .01 .001 ...
 
 Raising a number to a power is accomplished by multiplying that number
 by itself the number of times the power, or exponent, indicates. If the
 exponent is negative, the result will be inverted. Examples of this
 procedure follow:
 
-10? = 10x10 = 100
-23 = 2x2x2 = 8
-10°? = 1/107 = 1/100 = .01
+10<sup>2</sup> = 10x10 = 100
+
+2<sup>3</sup> = 2x2x2 = 8
+
+10<sup>-2</sup> = 1/10<sup>2</sup> = 1/100 = .01
 
 Two situations require further explanation. When a number (N) is raised
 to the power of one, the result is that number (N). For example:
 
-N'=N, 10! = 10, 2!=2
+N<sup>1</sup>=N, 10<sup>1</sup> = 10, 2<sup>1</sup>=2
 
 When any number is raised to the power of zero, the result is always one.
 For example:
 
-N° = 1,59 = 1, 2%=1
+N<sup>0</sup> = 1, 5<sup>0</sup> = 1, 2<sup>0</sup> = 1
 
 ### BINARY NUMBERS
 
@@ -171,30 +175,47 @@ number will be referred to as decimal or binary or its base will be
 presented as a subscript. The binary number system has a base of two; the
 decimal weight of each digit position is calculated as shown:
 
-. 23 22 22 29 9-1 9-2 9-3 9-4.
+... 2<sup>3</sup> 2<sup>2</sup> 2<sup>1</sup> 2<sup>0</sup> . 2<sup>-1</sup> 2<sup>-2</sup> 2<sup>-3</sup> 2<sup>-4</sup> ...
 
 where the exponent indicates the digit position.
 
-Digit Decimal
-Position Weight
-
-Woy nnhwndr ©
+| Digit Position | Decimal Weight |
+|-|-|
+| 0 | 1 |
+| 1 | 2 |
+| 2 | 4 |
+| 3 | 8 |
+| 4 | 16 |
+| 5 | 32 |
+| 6 | 64 |
+| 7 | 128 |
+| 8 | 256 |
+| 9 | 512 |
+| 10 | 1024 |
+| 11 | 2048 |
+| 12 | 4096 |
+| 13 | 8192 |
+| 14 | 16384 |
+| 15 | 32768 |
 
 Table 1-1 Decimal Weights of Binary Digit Positions.
 
 This may also be represented as:
 
-w 8 4 2 1.1/2 1/4 1/8 1/16...
+... 8 4 2 1 . 1/2 1/4 1/8 1/16 ...
 
 In Table 1-1 the decimal weights of the binary digit positions 0 - 15 are
 given. You should be able to verify the values in Table 1-1.
 
-Straight Binary Numbers
+#### Straight Binary Numbers
+
 A binary number is made up of a series of the binary digits 0 and 1.
 Examples of binary numbers are:
 
 101
+
 101100
+
 110.01
 
 The radix point is used the same as in a decimal number; it is not usually
@@ -203,7 +224,9 @@ is the sum of the all products of each digit and the decimal weight of that
 digit’s position. This is one way of converting binary numbers to decimal:
 
 101 = (1x4)+(0x2)+(1x1) = 5
+
 10110 = (1x16)+(0x8)+(1x4)+(1x2)+(0x1) = 22
+
 110.01 = (1x4)+(1x2)+(0x1)+(0x1/2)+(1x1/4) = 6 1/4
 
 A binary digit is commonly called a bit, and a numeric suffix is
@@ -226,8 +249,10 @@ magnitude of the number. The bit at the leftmost position is the most
 significant bit, or MSB, because it contributes most to the magnitude of
 the number. An example is:
 
-M L
-10011010
+```
+M        L
+ 10011010
+```
 
 where the M and L respectively indicate the most and least significant
 bits.
@@ -238,12 +263,12 @@ the magnitude of the number, and none of the bits are used to indicate the
 sign of the number. All straight binary numbers are considered to be
 positive.
 
-Signed Binary Numbers
+#### Signed Binary Numbers
 
 Typically, a personal digital computer works with eight bits at a
 time, just as a calculator or adding machine may work with eight to twelve
 decimal digits, depending on the model. With eight bits, straight binary
-numbers from 00000000 (0,,) to 11111111 (255,,) can be represented.
+numbers from 00000000 (0<sub>10</sub>) to 11111111 (255<sub>10</sub>) can be represented.
 Signed binary is a technique to represent positive and negative numbers.
 Signed. binary numbers indicate the sign of a number, but cannot represent
 as large a number in a given number of bits because the MSB is designated
@@ -252,7 +277,7 @@ jis a one, the number is negative.
 
 Positive signed binary numbers appear the same as straight binary
 numbers but with a reduced range. An eight-bit positive number can range
-from 00000000 (0,,) to 01111111 (127,,). Representing negative numbers
+from 00000000 (0<sub>10</sub>) to 01111111 (127<sub>10</sub>). Representing negative numbers
 is less straightforward. A negative number is formed by computing the
 two’s complement of the positive number. That is, a negative number (-X)
 is the two’s complement of the same positive number (+X).
@@ -265,40 +290,42 @@ opposite state for all the bits to the left of the 1 bit you first copied.
 Here are some examples of the conversion process. The top number is the
 positive number; the bottom is the two’s complement (negative number).
 
-*
-00000100 (+4,5)
+```
+     *
+00000100 (+4<sub>10</sub>)
 >>>>>\\\
-11111100 (-4,5)
-*
-00110010 (+504)
+11111100 (-4<sub>10</sub>)
+      *
+00110010 (+50<sub>10</sub>)
 >>>>>>\\
-11001110 (-50,,)
+11001110 (-50<sub>10</sub>)
+```
 
 The * marks the rightmost 1 bit, the \ indicates a direct copying down, and
 the > indicates copying of the opposite state. Notice that negative numbers
 always have the MSB set.
 
 The range of negative numbers that can be represented with eight bits
-is 11111111 (-1,,) to 10000000 (-128,,). Only 256 numbers can be
+is 11111111 (-1<sub>10</sub>) to 10000000 (-128<sub>10</sub>). Only 256 numbers can be
 represented in eight bits; this is the same for straight binary (0 - 255)
 and signed binary (-128 - +127). Table 1-2 shows a sequence of signed
 binary numbers and their decimal equivalents. As you can see, the sign bit
 is set in all the negative numbers, and is clear in all the positive
-
 numbers.
-Signed Binary
 
-00000101
-00000100
-00000011
-00000010
-00000001
-00000000
-11111111
-11111110
-11111101
-11111100
-11111011
+| Signed Binary | Decimal |
+|:-:|-:|
+| 00000101 | +5 |
+| 00000100 | +4 |
+| 00000011 | +3 |
+| 00000010 | +2 |
+| 00000001 | +1 |
+| 00000000 | 0 |
+| 11111111 | -1 |
+| 11111110 | -2 |
+| 11111101 | -3 |
+| 11111100 | -4 |
+| 11111011 | -5 |
 
 Table 1-2 Signed Binary and Decimal Integers.
 
@@ -308,45 +335,38 @@ complement of the number. This will give you the positive binary value.
 From this you can find the decimal value by adding the products of the
 digits and their digit position decimal weights. For example:
 
-find decimal
+find decimal value of 11100100
 
-value of 11-1001 .00
-form two’s :
-complement 0003141400
-bit decimal
+form two’s complement 00011100
 
-weight 128 64 3216 8 4 2 J
-decimal
+bit decimal weight 128 64 32 16 8 4 2 1
 
-value = (1x4) + (1x8) + (1x16) = 28
-therefore: 11100100 = -2815
+decimal value = (1x4) + (1x8) + (1x16) = 28
+
+therefore: 11100100 = -28<sub>10</sub>
 
 In preceding examples, eight bits were used to represent signed binary
-
 numbers; this can be increased to 16 or 32 or however many bits are needed
 to represent the range of numbers one will be working with. An eight-bit
 signed binary number can be represented with more bits by adding bit
 positions to the left and assigning them their proper state. The state of
-
 the added bit positions will be the same as the state of the original MSB,
-
 or sign bit. Here are examples of converting an eight-bit signed binary
 number to 16 bits:
 
-*
+```
+               *
+8 bit          00000110 (6<sub>10</sub>)
 
-8 bit 00000110. (46,9)
+       *
+16 bit 0000000000000110 (+6<sub>10</sub>)
 
-*
+               *
+8 bit          11111011 (-5<sub>10</sub>)
 
-16 bit 0000000000000110 (+645)
-
-*
-8 bit 11111011 (-5,5)
-
-*
-
-16 bit = 1111111111111011 (-S10)
+       *
+16 bit 1111111111111011 (-5<sub>10</sub>)
+```
 
 where * indicates the sign bit. This process of repeating the sign bit in
 the added bit positions is called sign extension.
@@ -357,7 +377,8 @@ The arithmetic operations of addition, subtraction, multiplication,
 and division can be performed with binary numbers. These binary operations
 are quite similar to their decimal counterparts.
 
-Addition
+#### Addition
+
 Addition is performed by adding the digits in-a column, one column at
 a time, from right to left. If the result is less than the base, that
 result is put into the corresponding digit position of the sum. If the
@@ -366,25 +387,34 @@ the result and the resulting digit is put into its digit position in the
 sum and a carry of one is added to the next column of digits to the left.
 This can be seen in the following decimal example:
 
-cc
-376
-+ 76
-452
+```
+  cc
+  376
+ + 76
+ ----
+  452
+```
 
 where 6+6 = 12 and 12-10 = 2 and a carry of one;
+
 where a carry of 1+7+7 = 15 and 15-10 = 5 and a carry of one;
+
 and where a carry of 143 = 4.
 
 An example of binary addition, (base = 2), using this technique is:
 
-Cc
-1010
-+ 0011
-1101
+```
+     c
+    1010
+  + 0011
+  ------
+    1101
+```
 
 Beginning in the rightmost column, 0+1 = 1;
 
-in the 2nd column, 141] = 2 and 2-2 = 0 with carry of one;
+in the 2nd column, 1+1 = 2 and 2-2 = 0 with carry of one;
+
 in the 3rd column, a carry of 1+0+0 = 1;
 
 and in the leftmost column, 1+0 = 1.
@@ -396,20 +426,26 @@ adding zeros and ones is only four. The four possible combinations of
 adding zeros and ones can be considered the rules of binary addition. They
 are:
 
-(1) (2) (3) (4)
-0 0 1 1
-+0 +1 +0 +1
-0 1 1 c0,or 10
+```
+   (1)    (2)    (3)    (4)
+       0      0      1      1
+     + 0    + 1    + 0    + 1
+     ---    ---    ---    ---
+       0      1      1    c 0 , or 10
+```
 
 The first three cases are straightforward; in the fourth case, one added to
 one is zero with a carry of one, to be added to the next column. In this
 case the next bit is a zero so the result is a binary 10. Examples of
 adding binary numbers are:
 
+```
 c ccc
-0100 1001 101
-+1001 +101 +11
-1101 1110 1000
+    0100    1001     101
+  + 1001   + 101    + 11
+  ------   -----    ----
+    1101    1110    1000
+```
 
 You can double check the above examples by converting the binary numbers to
 decimal and seeing that the results of decimal addition are the same.
@@ -425,14 +461,15 @@ straight binary addition is larger than 255 (decimal) in a computer that
 uses eight bit positions, the correct result will not be generated. This
 condition is called overflow. An example of an eight-bit overflow as a
 result of addition is shown below. The values in parentheses are the
-
 decimal equivalents.
 
-cc
-11000110 (198)
-
-+ O1OLTIOOI + (89)
-00011111 not equal to (287)
+```
+   cc
+    11000110                 (198)
+  + 01011001                + (89)
+  ----------                ------
+    00011111    not equal to (287)
+```
 
 An overflow generated by adding straight binary numbers is detected by
 watching for a carry beyond the MSB. If a carry is generated from the MSB
@@ -443,36 +480,44 @@ With the ability to add binary numbers one can count. Table 1-3 is a
 list of the first 16 positive binary integers, starting with zero, and
 their equivalent decimal values. You should be able to reproduce this table
 by counting in binary; start with zero and add a 1 to generate each
-
 consecutive number.
-Decimal
 
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
+| Binary | Decimal |
+|-:|-:|
+| 0000 | 0 |
+| 0001 | 1 |
+| 0010 | 2 |
+| 0011 | 3 |
+| 0100 | 4 |
+| 0101 | 5 |
+| 0110 | 6 |
+| 0111 | 7 |
+| 1000 | 8 |
+| 1001 | 9 |
+| 1010 | 10 |
+| 1011 | 11 |
+| 1100 | 12 |
+| 1101 | 13 |
+| 1110 | 14 |
+| 1111 | 15 |
 
 Table 1-3 Binary and Decimal Integers.
 
-Another Two’s Complement Technique
+#### Another Two’s Complement Technique
 
 We now have the ability to calculate the two’s complement with a second
 technique. First write down a positive binary number. Then copy each bit,
 but in its opposite state, and add one to the result. For example:
 
-8-bit positive 00000101 (+540)
+```
+    8-bit positive      00000101 (+540)
+                        11111010
+                       +       1
+                       --------- 
+    two’s complement =  11111011 (-549)
+```
 
-11111010
-two’s + 1
-complement = 11111011 (-549)
-
-Subtraction
+#### Subtraction
 
 To subtract decimal numbers, you first note the sign of the number of
 the larger magnitude, subtract the number of the smaller magnitude from the
@@ -484,13 +529,16 @@ currently being subtracted from, and adds the base (ten for decimal) to the
 digit in the column you are currently working. An example of decimal
 subtraction is:
 
-b
-342
--_ 15
-
-327
+```
+     b
+    342
+   - 15
+   ----
+    327
+```
 
 Here 2 is less than 5, so borrow from 4 (4 - I = 3),
+
 add the base to 2 (10 + 2 = 12); 12 -5=7;
 
 3 is larger than or equals 1, so 3 - 1 = 2;
@@ -500,39 +548,50 @@ and 3 is larger than or equals 0, so 3 - 0 = 3.
 The b indicates a borrow. Using this same technique, an example of binary
 subtraction would look like:
 
-Clo rt
+```
+     b
+     101
+    -011
+    ----
+     010
+```
 
-01
-- 1]
-10
 1 is larger than or equals 1, so 1 - 1 = 0;
+
 0 is less than 1, so borrow from 1 (1 - 1 = 0),
 
 add the base to 0 (2 + 0 = 2), and subtract 2-1=1;
+
 and 0 is larger than.or equals 0, so. 0 - 0 =.0.
 
 All the possible results of subracting zeros and ones in binary can be
 shown in four cases:
 
-(1) 0 (2) bO (3) 1 (4) 1
-=0 xl =O xl
-0 1 1 0
+```
+    (1) 0    (2) b O    (3) 1    (4) 1
+       -0         -l       -O       -l
+       --         --       --       --
+        0          1        1        0
+```
 
 The b indicates a borrow from the next most significant position. One could
 use the four rules to perform binary subtraction. Some examples of binary
 subtraction follow. The values in parentheses are decimal.
 
-b
-(A) 1110 (14) (B) 1010 (10)
-- 100 (-4) - 0100 (-4)
-1010 (+10) 0110. (46)
-bb
-(C) 00010100 (20) 00101011 (43)
+```
+                          b
+    (A) 1110  (14)     (B) 1010 (10)
+       - 100  (-4)       - 0100 (-4)
+       -----   --        ------  --
+        1010 (+10)         0110 (+6)
+                              b b
+    (C) 00010100  (20)      00101011  (43)
+      - 00101011 (-43) => - 00010100 (-20)
+      ----------  ---     ----------  ---
+                            00010111 (+23)
 
-- 00101011 (-43) => - 00010100 (-20)
-OOOIOIII — (+23)
-
-two’s complement = 11110111 (-23)
+         two’s complement = 11110111 (-23)
+```
 
 In example C the result is negative, so the additional step of calculating
 the two’s complement is required.
@@ -545,11 +604,14 @@ if a larger number is subtracted from a smaller number and an apparently
 invalid result. The correct result is the two’s complement of the interim
 result. An example:
 
-b. 01.1.0 (6)
-- 1010 - (10)
-1100 interim result
+```
+     b 0110        (6)
+    -  1010     - (10)
+    -------     ------
+       1100     interim result
 
-0100 (-4)
+       0100       (-4)
+```
 
 Another subtraction technique is to add a negative number to a positive
 number according to the following relationship:
@@ -558,14 +620,15 @@ a+(-b)=a-b
 
 This uses signed binary to represent positive and negative values, and
 follows the rules of binary addition. Examples of eight-bit subtraction
-using this technique are: :
+using this technique are:
 
-ccc
-
-00100110 (+38) 00010010 (+18)
-+ 11111000 (-8) + 11101100 (-20)
-
-00011110 (+30) 11111110 (-2)
+```
+     ccc
+      00100110 (+38)      00010010 (+18)
+    + 11111000  (-8)    + 11101100 (-20)
+    ----------  ----    ---------- -----
+      00011110 (+30)      11111110  (-2)
+```
 
 Two positive signed binary numbers can also be added to give the total
 in signed binary. If the result of signed binary addition is too large
@@ -582,19 +645,26 @@ other does not, there is an overflow or underflow. Below are two examples
 of adding signed binary numbers. Example A generates an overflow condition
 and B generates an underflow.
 
-(A) ce ccc (B) c
-01010011 10010110
-+ 00110101 + 11001000
-10001000 01011110
-Multiplication
+```
+    (A)  cc ccc     (B) c
+        01010011         10010110
+      + 00110101       + 11001000
+      ----------       ----------
+        10001000         01011110
+```
+
+#### Multiplication
 
 The process of straight binary multiplication is very similar to
 decimal multiplication. The main difference is in the binary multiplication
 table, which follows:
 
-0 0 1 1
-x0 x1 x0 x1
-0 0 0 ]
+```
+     0     0     1     1
+   x 0   x 1   x 0   x 1
+   ---   ---   ---   ---
+     0     0     0     1
+```
 
 Multiplication is performed by multiplying each bit of the multiplicand
 by each bit of the multiplier using the binary multiplication table. The
@@ -602,20 +672,22 @@ result is placed underneath each multiplier bit position and extended to
 the left. Then the results of each bit multiplication are added together to
 give the final answer. Examples of this process are:
 
-(A) (B)
-00101101 (45) , 00010100 (20)
-x i (3) x 101 (5)
-00101101 00010100
-00101101 00000000
-010000111 (135) 00010100
-
-0001100100 = (100)
+```
+    (A)                  (B)
+          00101101  (45)       00010100  (20)
+        x       11   (3)     x      101   (5)
+        ----------           ----------
+          00101101             00010100
+         00101101             00000000
+        ----------           00010100
+         010000111 (135)     ----------
+                             0001100100  (100)
+```
 
 When multiplying, be careful that the result fits within the number of
-
 bits a computer uses. The largest result (in straight binary) that can be
-represented is 11111111 (255,,) in eight bits and 1111111111111111
-(65535,,) in 16 bits. If the result is larger than the limit, the most
+represented is 11111111 (255<sub>10</sub>) in eight bits and 1111111111111111
+(65535<sub>10</sub>) in 16 bits. If the result is larger than the limit, the most
 significant one bits that fall beyond the number of working bit positions
 will be lost, and the final result will be meaningless.
 
@@ -628,7 +700,7 @@ the binary point of the multiplicand to the right one, two, or three
 positions. Multplication of signed binary numbers is not often attempted
 because of the difficulties of handling the sign bit.
 
-Division
+#### Division
 
 Division is the process of determining how many times one number (the
 divisor) is contained in another number (the dividend). Binary division is
@@ -637,7 +709,23 @@ error method to see how many times the divisor is contained in the
 dividend. In binary long division, the divisor either is (1), or is not (0)
 contained in a group of bits. Consider the following example:
 
-1010/10 = 0101
+```
+    1010 / 10 =      0101
+                    -----
+                10 / 1010
+                    -0
+                    --
+                     10
+                    -10
+                    ---
+                      01
+                      -0
+                      --
+                       10
+                      -10
+                       --
+                        0
+```
 
 The division process follows: 10 is not contained in 1 (the MSB of the
 dividend), so put a 0 (MSB) in the quotient area, subtract 0 x 10 from 1,
@@ -650,9 +738,7 @@ is contained in 10, so put a 1 in the quotient area, subtract 1.x 10 from
 
 If the divisor has only one bit set in it, as in the last example, the
 quotient is the dividend shifted to the right N bit positions with resptect
-to the binary point (.N is the bit position of the bit set in the divisor).
-
-13
+to the binary point (N is the bit position of the bit set in the divisor).
 
 Put another way, division can be accomplished by shifting the binary point
 of the dividend to the left if the divisor is binary 10, 100, 1000, etc.,
@@ -669,10 +755,12 @@ is true or false. If the statement, it is raining, is true, the bit is set
 to 1. If it is false, the bit is cleared to 0. A number of bits could be
 used to represent a number of events as follows:
 
-bit O indicates it is raining
-bit 1 indicates it is cloudy = 1001
+```
+bit 0 indicates it is raining
+bit 1 indicates it is cloudy    = 1001
 bit 2 indicates I am indoors
 bit 3 indicates I am hungry
+```
 
 The four bit code above, read from left to right, reveals that: I am
 hungry, I am not indoors, it is not cloudy, and it is raining. Depending on
@@ -681,48 +769,49 @@ the state of any other bit. This is quite unlike any arithmetic operations
 we have covered; these nonarithmetic operations are called logical
 operations.
 
-Complement
+#### Complement
 
 The logical operation of taking a complement is to reverse the bit
 states. Forming the complement of a bit or a series of bits is performed by
 replacing each 1 with a 0, and each 0 with a 1. The symbol that indicates a
 complement is to be taken is a bar over the quantity to be complemented:
 
-1=0
-
-0110 = 1001
+```
+    _
+    1 = 0
+ ____
+ 0110 = 1001
+```
 
 Since a bit can be in only one of two states, a complemented bit is
 not in its original state. This may seem obvious, but the concept is useful
 in representing logical relationships:
 
-X= not X
-it is raining = it is not raining
-
-true = false
+```
+   _
+   X = not X
+   _____________
+   it is raining = it is not raining
+   ____
+   true = false
+```
 
 X is a condition represented by a bit. The complement of an event may also
 be called not an event.
 
-Inclusive Or
-Inclusive or (OR) is a logical operation performed between two or
+#### Inclusive Or
 
+Inclusive or (OR) is a logical operation performed between two or
 more bits, although digital computers usually perform an inclusive or
 between only two bits. The four possible cases of inclusive oring a pair of
 bits are:
 
-OR 0 = 0
-l=1
-0=1
-l=1
-
-0
-0
-1
-1
-
-O00
-AWA
+```
+   0 OR 0 = 0
+   0 OR 1 = 1
+   1 OR 0 = 1
+   1 OR 1 = 1
+```
 
 where OR indicates that the inclusive or operation is to be performed
 between the two bits surrounding it. As you can see, the result of
@@ -731,6 +820,14 @@ inclusive or is also known simply as an OR operation. A truth table can
 also be used to represent this logical operation on two bits, A and B, as
 seen in Fig. 1-1.
 
+```
+      A  0   1
+    B \_________
+     0 | 0 | 1 |
+       ---------
+     1 | 1 | 1 |
+       ---------
+```
 Fig. 1-1 The OR Operator Truth Table.
 
 The top row of Fig. 1-1 shows the possible states of A, and the
@@ -740,114 +837,150 @@ the row of the particular. value of B. In a computer that works with eight
 bits, a group of eight bits is ORed with another group of eight bits. The
 ORing process is done between bits of the same bit position as follows:
 
-01101001 = X
-00110001 = Y
-01111001 = X OR Y
+```
+    01101001 = X
+    00110001 = Y
+    --------
+    01111001 = X OR Y
+```
 
-And
+#### And
 
 The AND operation between a number of bits results in a 1 only if all
 the bits being ANDed are 1. The four possible cases of ANDing two bits
 are:
 
+```
+   0 AND 0 = 0
+   0 AND 1 = 0
+   1 AND 0 = 0
+   1 AND 1 = 1
+```
+
+
 The truth table for the AND operation of bits A and B is shown in Fig. 1-2
 where you can see that A AND B is true only if A and B are both true.
 
-A 0 1
-B
-
-0 lo] ol
-1 [0] 1]
-
+```
+      A  0   1
+    B \_________
+     0 | 0 | 0 |
+       ---------
+     1 | 0 | 1 |
+       ---------
+```
 Fig. 1-2 The AND Operator Truth Table.
 
 The ANDing of two groups of bits is done by ANDing pairs of bits in
 the same bit position. An example is:
 
-01101001 = X
-11010011 = Y
-01000001 = X AND Y
+```
+    01101001 = X
+    11010011 = Y
+    --------
+    01000001 = X AND Y
+```
 
-Exclusive Or
+#### Exclusive Or
+
 The exclusive or (XOR) operation performed on two bits results in 1
 only if just one of the bits is a 1. The four possible cases are:
 
-0 XOR 0=0
-0 XOR 1 =1
-1 XOR 0= 1
-1 XOR 1=0
+```
+   0 XOR 0 = 0
+   0 XOR 1 = 1
+   1 XOR 0 = 1
+   1 XOR 1 = 0
+```
 
 The truth table for the XOR operation of bits A and B is shown in Fig. 1-3
 where you can see that A XOR B is true only if only A or only B is true.
+
+```
+      A  0   1
+    B \_________
+     0 | 0 | 1 |
+       ---------
+     1 | 1 | 0 |
+       ---------
+```
 
 Fig. 1-3 The XOR Operator Truth Table.
 
 Exclusive oring two eight-bit groups is performed between pairs of
 bits in the same bit position, as seen below:
 
-01101001 = X
-01011101 = Y
-00110100 = X XOR Y
+```
+    01101001 = X
+    01011101 = Y
+    --------
+    00110100 = X XOR Y
+```
 
-Boolean Algebra
+#### Boolean Algebra
+
 The set of rules governing the use of logical operations is called
-
 Boolean algebra. The logical operators AND, OR, and NOT and the numbers 0
 and 1 are used in Boolean algebra. The operators AND and OR are represented
-with the symbols, A and V, respectively. Sometimes the AND symbol, /,
-
+with the symbols, ∧ and ∨, respectively. Sometimes the AND symbol, ∧,
 is not used at all; instead the two quantities are just written next to
-
 each other. The new symbols and their usage are shown:
 
-A AND B =AAB= AB
-AOR B=AVB
+```
+    A AND B = A ∧ B = AB
+    A  OR B = A ∨ B
+```
 
-The exclusive OR operation is indicated with the + symbol.
+The exclusive OR operation is indicated with the ⊕ symbol.
 The basic rules of Boolean algebra using binary numbers are:
+```
+   _               _
+1) 0 = 1        2) 1 = 0
 
-1) O0=1 2) 1=0
+3) A ∧ 1 = A    4) A ∨ 0 = A
 
-3) AAIL=A 4) AVO=A
+5) A ∧ A = A    6) A ∨ A = A
 
-5) AAA=A 6) AVA=A
-7) AAO0=0 8) Avl=l
-9) AAA=0 10) AVA=I1
-ll) A=A
+7) A ∧ 0 = 0    8) A ∨ 1 = 1
+       _               _
+9) A ∧ A = 0   10) A ∨ A = 1
+    =
+ll) A = A
+```
 
 A is a Boolean variable that can represent a bit; the double bar over the A
 in rule 11 indicates that A has been complemented twice. Notice the pairs
 of rules: 1 and 2, 3 and 4, 5 and 6, 7 and 8, and 9 and 10. Given half of a
 pair, the other half can be found by exchanging 0 and 1, and the
-operators, V and A. For example:
+operators, ∨ and ∧. For example:
 
-7) 0=0
-\ \
-1
+```
+    7) A ∧ 0 = 0
+         \ \  \
+    8) A ∨ 1 = 1
+```
 
-<->
-_
-
-A
-8) A =
 The \ indicates copying down the opposite symbol. This is the principle of
 duality, or rule 8 is the dual of rule 7.
 
-The Boolean operations of A and V follow the laws of commutation,
+The Boolean operations of ∧ and V follow the laws of commutation,
 
 association, and distribution. The commutative law states that the
 result of an algebraic operation is independent of the order in which it is
 performed. This is expressed as:
 
-AVB=BVA
-AAB=BAA
+```
+    A ∨ B = B ∨ A
+    A ∧ B = B ∧ A
+```
 
 The associative law states that the result of a series of identical
-
 operations is independent of the order in which it is performed:
 
-AV(BVC)=(AVB) VC
-A A(BC) = (AB) AC
+```
+A ∨ (B ∨ C) = (A ∨ B) ∨ C
+A ∧ (BC) = (AB) ∧ C
+```
 
 The operations within parentheses are performed first.
 
@@ -856,16 +989,23 @@ between a Boolean variable A and a group of variables equals the result of
 the algebraic operation between the variable A and each variable within the
 group. Below are two examples of this law:
 
-AV(BAC) =(AVB)A(AVC)
-AA(B VC) = (AAB) V{AAC)
+```
+A ∨ (B ∧ C) = (A ∨ B) ∧ (A ∨ C)
+A ∧ (B ∨ C) = (A ∧ B) ∨ (A ∧ C)
+```
 
 By inspecting the above examples, you can see that each pair consists
 of a Boolean expression and its dual. Here are the rest of the Boolean laws
 or equalities:
 
-12) AVAB=AVB 13) AA(A VB)=AAB
-14) A¥B=ABVAB 15) AVB=AAB
-16) AAB=AVB
+```
+        _                          _
+12) A ∧ AB = A ∨ B        13) A ∧ (A ∨ B) = A ∧ B
+             _     _        _____   _   _ 
+14) A ⊕ B = AB v AB    15) A ∨ B = A ∧ B
+    _____   _   _
+16) A ∧ B = A ∨ B
+```
 
 Rule 13 is the dual of 12, and 16 is the dual of 15. Rules 15 and 16 are
 known as De Morgan’s law.
@@ -876,9 +1016,11 @@ and the computer must do. Here’s an example: you are in charge of putting a
 toddler to bed. You have determined that the following facts and steps will
 guide you in this chore.
 
-A = the toddler is tired
-B = it is the toddler’s bedtime
-C = put the toddler to bed
+```
+    A = the toddler is tired
+    B = it is the toddler’s bedtime
+    C = put the toddler to bed
+```
 
 After giving it careful thought, you have decided that you will put the
 child to bed (C is true) under any of the following conditions: when he is
@@ -886,16 +1028,32 @@ tired and it is not his bedtime, or when he is not tired and it is his
 bedtime, or when he is tired and it is his bedtime. This can be represented
 as:
 
-C = (AA B)V(A AB) V(AAB)
+```
+             _     _
+    C = (A ∧ B) ∨ (A ∧ B) ∨ (A ∧ B)
+```
 
 The expression can be simplified by using the laws of Boolean algebra.
 
 Using the associative law we arrive at:
-C = A(BVB)VAB
+
+```
+      _        _
+C = A(B ∨ B) ∨ AB
+```
+
 Using rules 10 and 3 the above equation reduces to:
-C= AV AB
+
+```
+        _
+C = A ∨ AB
+```
+
 Then, applying rule 12 gives us the final equation:
-C=AVB
+
+```
+C = A ∨ B
+```
 
 We now see that the toddler should be put to bed if he is tired or if
 it is his bed time. Had you programmed a computer to make this decision for
@@ -915,13 +1073,15 @@ eight-bit word. A 16-bit group is called a double byte, or a 16-bit word or
 a word sixteen bits long. The Color Computer uses bytes and double bytes. A
 byte and double byte are graphically shown in Fig. 1-4.
 
-716] 5]4]3]2[1]0| byte (8-bit word)
+```
+    ┌───┬───┬───┬───┬───┬───┬───┬───┐
+    │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │    byte (8-bit word)
+    └───┴───┴───┴───┴───┴───┴───┴───┘
 
-double byte
-(16-bit word)
-
-[15 [i4]i3fi2[ai [rol9]s}7)6|5]4[3]2]1/0|
-
+    ┌────┬────┬────┬────┬────┬────┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐
+    │ 15 │ 14 │ 13 │ 12 │ 11 │ 10 │ 9 │ 8 │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │    double byte (16-bit word)
+    └────┴────┴────┴────┴────┴────┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
+```
 Fig. 1-4 A byte and a double byte.
 
 In Fig. 1-4 each box is numbered according to its bit position. A byte
@@ -930,17 +1090,22 @@ The nibble composed of bits 7 - 4 is the upper or most significant, and the
 nibble composed of bits 3 -0 is the lower or least significant. A nibble
 may also be considered to be a four-bit word. A 16-bit word is divided into
 four nibbles, where the least significant is nibble 0 and the most
-
 significant is nibble 3. Figure 1-5 illustrates how bytes and double bytes
 are divided into nibbles.
 
-a byte
+```
+    ┌───┬───┬───┬───┬───┬───┬───┬───┐
+    │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │    byte (8-bit word)
+    └───┴───┴───┴───┴───┴───┴───┴───┘
+     ──────┬──────── ──────┬────────
+       upper nibble    lower nibble
 
-upper nibble lower nibble
-
-15 141312 11109876543210 a double byte
-3 2 ] 0
-
+    ┌────┬────┬────┬────┬────┬────┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐
+    │ 15 │ 14 │ 13 │ 12 │ 11 │ 10 │ 9 │ 8 │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │    double byte (16-bit word)
+    └────┴────┴────┴────┴────┴────┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
+     ────────┬────────── ───────┬───────── ──────┬──────── ──────┬────────
+             3                  2                1               0         <-- nibbler number
+```
 Fig. 1-5 The locations of nibbles.
 
 <= nibble number
@@ -948,9 +1113,9 @@ Fig. 1-5 The locations of nibbles.
 The decimal quantity of numbers that can be represented with a group
 of bits is the decimal number of unique combinations of zeros and ones that
 can be constructed within that group of bits. For a group of N bits there
-are 2N unique combinations. That means that a nibble can represent one of
-16 (2*) decimal numbers, a byte can represent one of 256 (2°) decimal
-numbers, and a double byte can represent one of 65,536 (21°) decimal
+are 2<sup>N</sup> unique combinations. That means that a nibble can represent one of
+16 (2<sup>4</sup>) decimal numbers, a byte can represent one of 256 (2<sup>8</sup>) decimal
+numbers, and a double byte can represent one of 65,536 (2<sup>16</sup>) decimal
 numbers. Also, if a group of bits is expanded to include one more bit, the
 quantity of numbers it can represent is doubled.
 
@@ -963,35 +1128,57 @@ base is 16 and is composed of 16 digits. Table 1-4 lists the 16 hexadecimal
 digits and their equivalent binary and decimal values. You should memorize
 this table.
 
-Converting Binary To Hexadecimal
+#### Converting Binary To Hexadecimal
+
 To convert a binary number to a hexadecimal number, let each nibble be
 represented by its hexadecimal equivalent digit. Some examples are:
 
-0010 1010 binary byte
-2 A = 2A,, hexadecimal
+```
+    0010 1010                               binary byte
+      2    A            =   2A<sub>16</sub> hexadecimal
 
-0011 1111011031100 binary double byte
-3 F 6 C = 3F6C,, hexadecimal
+    0011 1111 0110 1100                     binary double byte
+      3    F    6    C  = 3F6C<sub>16</sub> hexadecimal
+```
 
 Notice that the hexadecimal representation is much more compact.
 
-WOomwayaAU kWNr ©
+| Binary | Decimal | Hexadecimal |
+|-:|-:|:-:|
+| 0000 | 0 | 0 |
+| 0001 | 1 | 1 |
+| 0010 | 2 | 2 |
+| 0011 | 3 | 3 |
+| 0100 | 4 | 4 |
+| 0101 | 5 | 5 |
+| 0110 | 6 | 6 |
+| 0111 | 7 | 7 |
+| 1000 | 8 | 8 |
+| 1001 | 9 | 9 |
+| 1010 | 10 | A |
+| 1011 | 11 | B |
+| 1100 | 12 | C |
+| 1101 | 13 | D |
+| 1110 | 14 | E |
+| 1111 | 15 | F |
 
 Table 1-4 Hexadecimal, Binary, and Decimal Numbers.
 
-Converting Hexadecimal To Binary
+#### Converting Hexadecimal To Binary
 
 To convert hexadecimal to binary, just reverse the above procedure.
 Replace each hexadecimal digit with its equivalent four-bit binary code
 from Table 1-4. Examples of this are:
 
-2 A hexadecimal
-0010 1010. binary byte
+```
+      2    A             hexadecimal
+    0010 1010            binary byte
 
-D A ] 7 hexadecimal
-1101 1010 0001 O111 binary double byte
+      D    A    1    7   hexadecimal
+    1101 1010 0001 0111  binary double byte
+```
 
-Converting Hexadecimal To Decimal
+#### Converting Hexadecimal To Decimal
 
 To convert hexadecimal to decimal, one could first convert to. binary,
 as above, and then convert from binary to decimal. One could also convert
@@ -1000,41 +1187,53 @@ digit’s decimal value and the decimal weight of its digit position. The
 decimal value of each digit can be determined from Table 1-4. The decimal
 weight of each digit position is 16 raised to the power of the digit
 position. The digit positions are: ...3 2 1 0. The decimal weight of
-each digit position is: ... 16° 16? 16+ 16°, or: ... 4096
-256° 16 1. Examples of converting from hexadecimal to decimal are:
+each digit position is: ... 16<sup>3</sup> 16<sup>2</sup> 16<sup>1</sup> 16<sup>0</sup>, or: ... 4096
+256 16 1. Examples of converting from hexadecimal to decimal are:
 
-7€ =(7x16)+(12x1)= 124,,
-F2 = (15x 16)+(2x1) = 242,,
-31A2 = (3x4096) + (1x256) + (10x16) + (2x1) =12706,,
+```
+7C = (7 x 16) + (12 x 1) = 124<sub>10</sub>
+F2 = (15 x 16) + (2 x 1) = 242<sub>10</sub>
+31A2 = (3 x 4096) + (1 x 256) + (10 x 16) + (2 x 1) = 12706<sub>10</sub>
+```
 
-Changing The Base
+#### Changing The Base
+
 A generalized technique exists for converting a number in any base to
 a number in any other base. A number N in base x may be converted to base y
 by a series of divisions of N by y, with the division performed in base x.
-The remainders from the divisions will be the digits of the number in base
-y.
+The remainders from the divisions will be the digits of the number in base y.
 
-vA
-y \4 rt)
-y \_N, Ay
-y \_N, 2
+```
+    y \ N
+       ----
+      y \ N<sub>1</sub>       A<sub>0</sub>
+         ----
+        y \ N<sub>2</sub>     A<sub>1</sub>
+            ----
+           y \ N<sub>3</sub>  A<sub>2</sub>
+               ----
+```
 
-The remainders A,, which must be smaller than y, are the digits of the
-converted number as follows: ... A, A, Aj, As an example, let us
-convert 688,, to hexadecimal.
+The remainders A<sub>i</sub>, which must be smaller than y, are the digits of the
+converted number as follows: ... A<sub>2</sub> A<sub>1</sub> A<sub>0</sub>. As an example, let us convert 688<sub>10</sub> to hexadecimal.
 
-6 \_688 remainders
-awn 0
-16 2 11 = B (from Table 1-4)
-0 2
+```
+    16 \ 688                 remainders
+        ----
+      16 \ 43                0
+          ----
+        16 \ 2               11 = B (from Table 1-4)
+            ----
+             0               2
+```
 
-therefore 688, = 2B0,,
+therefore 688<sub>10</sub> = 2B0<sub>16</sub>
 
 In the above example, 688 divided by 16 is 43, with a remainder of 0, 43
 divided by 16 is 2, with a remainder of 11, and 2 divided by 16 is 0, with
 a remainder of 2.
 
-Arithmetic Operations
+#### Arithmetic Operations
 
 The normal arithmetic operations of addition, subtraction,
 multiplication, and division can be done with hexadecimal numbers, though
@@ -1044,29 +1243,26 @@ a carry is generated when the sum of a column of digits is equal to or
 greater than 16, decimal. The total of the column generating the carry is
 then reduced by 16, the base. Some examples are:
 
-Cc
-2F
-+0
-
-Mio > Oo
-
-1A 8
-+23E
-3E6
-
-Niro w
-
-30
+```
+      c        c
+      2F      1A84
+    + 01    + 23E2
+    ----    ------
+      30      3E66
+```
 
 The subtraction process is performed like that described for decimal ~
 and binary numbers. When a borrow is generated, remember to add 16 to the
 digit being subtracted from in the column that generated the borrow. Also,
 decrement the digit being borrowed from. Two examples are:
 
-b b
-3.3 2A5C
-- 05 -_18E7
-2E 1175
+```
+      b        b
+      33      2A5C
+    - 05    - 18E7
+    ----    ------
+      2E      1175
+```
 
 You can check the results of hexadecimal arithmetic by converting the
 examples to binary and performing the operations again.
