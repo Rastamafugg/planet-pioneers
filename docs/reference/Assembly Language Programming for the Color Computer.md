@@ -2,44 +2,13 @@
 
 _OCR-extracted text. Source: docs/reference/Assembly Language Programming for the Color Computer.pdf_
 
+Assembly Language Programming
 
-
----
-
-## Page 1
-
-pgMage Ppoypamuming
 for the
 
-TRS-80®° COLOR COMPUTER
-a
+TRS-80® COLOR COMPUTER
 
-. >
-225
-LES
-
-by
-LAURENCE A. TEPOL
-
-Gitte
-
-i
-
----
-
-## Page 2
-
-
-
----
-
-## Page 3
-
-ASSEMBLY LANGUAGE PROGRAMMING
-
-For The
-TRS-80 7 COLOR COMPUTER
-plus a users guide to EDTASM+ *
+plus a users guide to EDTASM+®
 
 By
 Laurence A. Tepolt
@@ -48,250 +17,61 @@ Published by TEPCO
 30 Water Street
 Portsmouth, RI 02871
 
----
+## Introduction
 
-## Page 4
+This book is for the Color Computer owner who has learned how to program in BASIC and wants to learn assembly language. Information and concepts are presented in an order that will facilitate learning: we'll progress from simple, more basic concepts in the early chapters through more advanced topics in later chapters. When new technical words are introduced their first use will be printed bold to get your attention.
 
-Every effort has been made to ensure that the information provided in this
-book is accurate and complete. However, neither TEPCO nor the author assume
-any liability resulting from omissions, inaccuracies, or from the use of
-information contained herein.
+Specific information in this book applies to Color BASIC 1.1, Extended Color BASIC 1.0, Disk Extended Color BASIC 1.0, and the E revision Color Computer. Some of the differences (they are quite minor) in the Color Computer 2 are also presented.
 
-Radio Shack, TRS-80, EDTASM+, Color BASIC, Extended Color BASIC,
-and Disk Extended Color BASIC are registered trademarks of the Tandy
-Corporation.
+Each new concept is followed by an example or two. Each example should be studied, although it would be better to work them out. Even better, try to construct similar examples to solve. You'll remember each concept more clearly if you work out some problems using them.
 
-Copyright (c) 1985 by Laurence A. Tepolt. All rights reserved. No part of
-this book may be reproduced in any form or by any means without written
-permission from the publisher. Printed in the United States of America.
+An assembly language programmer specifies each operation the computer will perform. Thus, this language is quite tedious. The computer will do just what you direct it, and nothing else, resulting in programs that run very fast. Assembly language is a symbolic language, in that the programmer specifies the operations to be performed by using their symbol. The programmer must understand the operations the computer can perform.
 
----
+Chapter 1 is a comprehensive introduction to binary numbers, which all digital computers use. Digital computers work with digits, or numbers, and the numbering system they use is called the binary number system. Chapter 2 describes how binary numbers are used to represent information, as numbers or text data. Also covered are the operation and use of a computer’s memory, and how information is organized in it. At the end of Chapter 2 I describe how Extended Color BASIC represents and stores data in memory.
 
-## Page 5
+Chapter 3 describes the MC6809E - the microprocessor used in the Color Computer. Its operation and internal structure are described in detail - neccessary information for an assembly language programmer. Chapters 4 and 5 describe the addressing modes and the instructions the MC6809E uses. Addressing modes are the various techniques the microprocessor uses to store data in or read data from memory. The instructions are the commands the microprocessor is capable of performing.
 
-Dedication
+Chapter 6 describes the operation and use of EDTASM+, a very good text editor and assembler sold by Radio Shack. All assembly program examples in this book were written using the EDTASM+ ROM pack. You should understand as much as possible about the assembler you are using because it is the primary tool used to create a program. Chapter 7 describes how to write assembly language programs. Conventions and guidelines are provided to help the programmer write programs that work and that make editing or debugging much easier. Techniques for writing subroutines and interrupt handlers are also presented. Chapter 8 contains techniques and information needed to make assembly language programs work with BASIC programs. Many of the subroutines that exist in BASIC ROM are presented along with how your assembly language programs can use them. These subroutines primarily serve to transfer data between the computer and other devices such as the keyboard, screen, printer, joysticks, cassette, and disk.
 
-To my wife:
-Janet Milotte Tepolt.
+Chapter 9 reveals other internal workings of the Color Computer. You will see how to control the graphics display modes, interrupts, and some other aspects of the computer’s operation. Chapter 10 goes deeper into the operation of the computer, describing how data‘is transmitted to or received from other devices such as the printer, joysticks, keyboard, and cassette, and how to make and control sound. The cartridge connector is also described.
 
-Acknowledgments
-
-I wish to thank the many people who encouraged me to write this book, and
-those who allowed me to devote most of my personal time to this effort.
-Special thanks to Motorola, Inc., who allow some of their documentation to
-be reprinted here. Finally, I am indebted to Donald R. Milotte for his
-comments, suggestions, and his careful review as the book was being
-written.
-
----
-
-## Page 6
-
-Preface
-
-After happily owning and using my Color Computer for some time, I
-decided to try assembly language programming. I found no book available,
-however, that adequately presents assembly language programming applied
-specifically to the Color Computer. I ended up using several books, jumping
-from one to another to piece together the information I required for each
-program.
-
-I became quite tired of not having the necessary information required
-to program my computer available in one place or book. So I began this
-book; a book for the assembly language programmer of the Color Computer. I
-structured this book as a learning aid for readers unfamiliar with assembly
-language so that they can learn it themselves. You will truly enjoy
-learning, and then programming, in assembly language; and you will be
-amazed at the results you can achieve on your Color Computer.
-
----
-
-## Page 7
-
-Introduction
-
-This book is for the Color Computer owner who has learned how to
-program in BASIC and wants to learn assembly language. Information and
-concepts are presented in an order that will facilitate learning: we'll
-progress from simple, more basic concepts in the early chapters through
-more advanced topics in later chapters. When new technical words are
-introduced their first use will be printed bold to get your attention.
-
-Specific information in this book applies to Color BASIC 1.1, Extended
-Color BASIC 1.0, Disk Extended Color BASIC 1.0, and the E revision Color
-Computer. Some of the differences (they are quite minor) in the Color
-Computer 2 are also presented.
-
-Each new concept is followed by an example or two. Each example should
-be studied, although it would be better to work them out. Even better, try
-to construct similar examples to solve. You'll remember each concept more
-clearly if you work out some problems using them.
-
-An assembly language programmer specifies each operation the computer
-will perform. Thus, this language is quite tedious. The computer will do
-just what you direct it, and nothing else, resulting in programs that run
-very fast. Assembly language is a symbolic language, in that the
-programmer specifies the operations to be performed by using their symbol.
-The programmer must understand the operations the computer can perform.
-
-Chapter | is a comprehensive introduction to binary numbers, which all
-digital computers use. Digital computers work with digits, or numbers, and
-the numbering system they use is called the binary number system. Chapter 2
-describes how binary numbers are used to represent information, as numbers
-or text data. Also covered are the operation and use of a computer’s
-memory, and how information is organized in it. At the end of Chapter 2 I
-describe how Extended Color BASIC represents and stores data in memory.
-
-Chapter 3 describes the MC6809E - the microprocessor used in the Color
-Computer. Its operation and internal structure are described in detail -
-neccessary information for an assembly language programmer. Chapters 4 and
-5 describe the addressing modes and the instructions the MC6809E uses.
-Addressing modes are the various techniques the microprocessor uses to
-store data in or read data from memory. The instructions are the commands
-the microprocessor is capable of performing.
-
-Chapter 6 describes the operation and use of EDTASM+, a very good text
-editor and assembler sold by Radio Shack. All assembly program examples in
-this book were written using the EDTASM+ ROM pack. You should understand as
-much as possible about the assembler you are using because it is the
-primary tool used to create a program. Chapter 7 describes how to write
-
----
-
-## Page 8
-
-assembly language programs. Conventions and guidelines are provided to help
-the programmer write programs that work and that make editing or debugging
-much easier. Techniques for writing subroutines and interrupt handlers are
-also presented. Chapter 8 contains techniques and information needed to
-
-make assembly language programs work with BASIC programs. Many of the
-subroutines that exist in BASIC ROM are presented along with how your
-assembly language programs can use them. These subroutines primarily serve
-to transfer data between the computer and other devices such as the
-keyboard, screen, printer, joysticks, cassette, and disk.
-
-Chapter 9 reveals other internal workings of the Color Computer. You
-will see how to control the graphics display modes, interrupts, -and some
-other aspects of the computer’s operation. Chapter 10 goes deeper into the
-operation of the computer, describing how data‘is transmitted to or
-received from other devices such as the printer, joysticks, keyboard, and -
-cassette, and how to make and control sound. The cartridge connector is
-also described.
-
-Even though much information is provided in this book, it is still an
-introduction. This book presents all the information about the Color
-Computer hardware any programmer might need. However, there are many
-more concepts and philosophies concerning assembly language programming
-than those presented here. For instance, many employers have established
-unique conventions and guidelines for programming that apply to specific
-types of programs that employer develops.
+Even though much information is provided in this book, it is still an introduction. This book presents all the information about the Color Computer hardware any programmer might need. However, there are many more concepts and philosophies concerning assembly language programming than those presented here. For instance, many employers have established unique conventions and guidelines for programming that apply to specific types of programs that employer develops.
 
 To use this book, start at the first chapter and procede to the last.
 
-Those already familiar with assembly language may start with Chapter 3.
-You will find this book provides all the information a beginner or expert
-needs to program the Color Computer in assembly language.
+Those already familiar with assembly language may start with Chapter 3. You will find this book provides all the information a beginner or expert needs to program the Color Computer in assembly language.
 
----
+## Table of Contents
 
-## Page 9
+1. The Binary Number System - Binary Numbers - Arithmetic Operations - Logical Operations - Hexadecimal Numbers
 
-Table of Contents
+2. Memory and Data Representation - Memory - Data Representation - Data Structures - Extended Color BASIC Data Formats
 
-1 The Binary Number System .
-Binary Numbers - Arithmetic Operations - Logical
-Operations - Hexadecimal Numbers
+3. Introduction to the MC6809E Microprocessor - MC6809E Internal Architecture - MC6809E External — Connections - Interrupts
 
-2 Memory and Data Representation . . .
-Memory - Data Representation - Data Structures -
-Extended Color BASIC Data Formats
+4. Addressing Modes of the MC6809E - Inherent - Immediate - Extended - Extended Indirect - Register - Indexed - Indexed Indirect - Relative - Direct - PC Relative - Indirect PC Relative
 
-3 Introduction to the MC6809E Microprocessor . .
-MC6809E Internal Architecture - MC6809E External —
-Connections - Interrupts
+5. MC6809E Instruction Set
 
-4 Addressing Modes of the MC6809E
+6. Assembly Programming with EDTASM+ - Text Editor - Assembler - ZBUG Debugging Aids
 
-Inherent - Immediate - Extended - Extended Indirect -
+7. Assembly Language Programming - Source Code Guidelines - Subroutines - Interrupts
 
-Register - Indexed - Indexed Indirect - Relative -
-Direct - PC Relative - Indirect PC Relative
+8. Assembly Language and Extended Color BASIC - Using Assembled Programs with BASIC - Subroutines in BASIC ROM
 
-5 MC6809E Instruction Set .
+9. Internal Control and Graphics - Synchronous Address Multiplexer - Peripheral Interface Adapter - Video Display Generator - Interrupts
 
-6 Assembly Programming with EDTASM+ .
-Text Editor - Assembler - ZBUG Debugging Aids
-
-7 Assembly Language Programming .
-Source Code Guidelines - Subroutines - Interrupts
-
-8 Assembly Language and Extended Color BASIC. .
-Using Assembled Programs with BASIC - Subroutines
-in BASIC ROM
-
-9 Internal Control and Graphics
-
-Synchronous Address Multiplexer - Peripheral ‘Interface
-
-Adapter - Video Display Generator - Interrupts
-
-10 Technical Details .
-Internal Devices - Cartridge Connector
+10. Technical Details - Internal Devices - Cartridge Connector
 
 Appendix A - Flowcharts and State Diagrams
 
-Appendix B - MC6809E Instruction Set .
-
-24
-
-47
-
-66
-
-84
-
-125
-158
-
-186
-
-224
-
-254
-
-272
-
-277
-
----
-
-## Page 10
+Appendix B - MC6809E Instruction Set
 
 Appendix C - Color Computer Character Codes
+
 Appendix D - ASCII Character and Control Codes
 
 Appendix E - Dedicated Memory Addresses
-
-Index
-
-283
-
-285
-
-286
-
-287
-
----
-
-## Page 11
-
-
-
----
-
-## Page 12
 
 CHAPTER 1
 
