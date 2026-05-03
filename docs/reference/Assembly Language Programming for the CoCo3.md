@@ -267,7 +267,7 @@ The ROM, or read-only memory, is a type of memory such that its content (instruc
 The ACVC, or advanced color video chip, is the main controller of the computer. Some people call it the GIME chip. It controls the operating modes and synchronizes the operation of the other major components. The functional areas in the ACVC are described below.
 
 - VDG - The video display generator is that which controls and generates the original CoCo display modes. It generates a video signal which is sent to the Tv or monitor.
-- SAM - The synchronous address multiplexer is used in conjunction with the vpG to generate the original CoCo display modes and to control the MPU clock rate and ROM/RAM map mode.
+- SAM - The synchronous address multiplexer is used in conjunction with the VDG to generate the original CoCo display modes and to control the MPU clock rate and ROM/RAM map mode.
 - Palette Registers - There are sixteen palette registers which can be loaded by a program with the codes that correspond to the colors that program will use. Then, to generate the desired colors, the program specifies the appropriate palette registers.
 - MMU - The memory management unit serves as a programmable interface between the MPU and RAM. It intercepts the 16-bit address from the MPU and expands it to nineteen bits before sending it to RAM. This allows the MPU to access up to 512K of memory. The MMU is composed of the logic necessary to perform the address expansion and sixteen page address registers (PARS). The PARS exist as two sets of eight PARS each.
 - ACVC Control Registers - These include the other registers used to control the new high resolution display modes, interrupts, and other miscellaneous operating modes.
@@ -971,13 +971,13 @@ This section describes the operation and use of the high resolution graphics dis
 
 In all graphics modes the monitor screen is divided into pixels by an imaginary grid. The horizontal and vertical resolutions specify the number of pixels in a row and column, respectively. The higher resolutions cause the grid lines to be closer together and there to be more smaller pixels over the screen extent. A particular display mode causes the screen to be divided into a fixed number of rows and columns of pixels. Associated with a display is its buffer which is organized such that there is a correspondence between the position of a group of bits and the pixel it controls. A graphics display buffer organization is similar to that of a text display. The first byte of the buffer controls pixels at the upper left corner of the screen. The following bytes control pixels to the right in that row. The last buffer byte controls the pixels at the lower right corner of the screen.
 
-A pixel is controlled by specifying its color. Its color is specified by its controlling bits selecting a palette register. Each of the twenty-two display modes use one of three pixel control schemes. The scheme in use is determined by the CRES1-o0 bits. Three of their combinations, shown in Fig. 4-2, determine how each byte in a buffer is interpreted for pixel control.
+A pixel is controlled by specifying its color. Its color is specified by its controlling bits selecting a palette register. Each of the twenty-two display modes use one of three pixel control schemes. The scheme in use is determined by the CRES1-0 bits. Three of their combinations, shown in Fig. 4-2, determine how each byte in a buffer is interpreted for pixel control.
 
 | CRES1 | CRES0 | Format | Byte Content |
 |-|-|-|-|
-| 0 | 0 | A | P0 P0 P0 P0 P0 P0 P0 P0 |
-| 0 | 1 | B | P1 P0 P1 P0 P1 P0 P1 P0 |
-| 1 | 0 | C | P3 P2 P1 P0 P3 P2 P1 P0 |
+| 0 | 0 | A | P<sub>0</sub> P<sub>0</sub> P<sub>0</sub> P<sub>0</sub> P<sub>0</sub> P<sub>0</sub> P<sub>0</sub> P<sub>0</sub> |
+| 0 | 1 | B | P<sub>1</sub> P<sub>0</sub> P<sub>1</sub> P<sub>0</sub> P<sub>1</sub> P<sub>0</sub> P<sub>1</sub> P<sub>0</sub> |
+| 1 | 0 | C | P<sub>3</sub> P<sub>2</sub> P<sub>1</sub> P<sub>0</sub> P<sub>3</sub> P<sub>2</sub> P<sub>1</sub> P<sub>0</sub> |
 
 Fig. 4-2. Buffer Byte Formats
 
@@ -1602,12 +1602,41 @@ This section provides information about other differences between the CoCo 3 and
 
 The new keyboard has four additional keys (F1, F2, CTRL, and ALT). Also, new joysticks, each with two fire buttons, are accommodated. All the keyboard keys and fire buttons are read by PIA1 as shown in Fig. 7-3. Button 2 is the new joystick button.
 
-
+```
+                                ┌──────── Left  Joystick Button 2
+                                │ ┌────── Right Joystick Button 2
+                                │ │ ┌──── Left  Joystick Button 1
+                                │ │ │ ┌── Right Joystick Button 1
+                                │ │ │ │
+┌────────────────────┐          │ │ │ │           Keyboard
+│                PA7 │          │ │ │ │
+│   PIA 1        PA6 ├───◄──────│─│─│─│─  shft F2   F1  CTRL  ALT  brk  clr  enter
+│                PA5 ├───◄──────│─│─│─│─   /    .    -    ,    ;    :    9    8
+│                PA4 ├───◄──────│─│─│─│─   7    6    5    4    3    2    1    0
+│ CRA = $FF01    PA3 ├───◄──────┴─│─│─│─   sp   →    ←    ↓    ↑    Z    Y    X
+│ DRA/DDRA =     PA2 ├───◄────────┴─│─│─   W    V    U    T    S    R    Q    P
+│      $FF00     PA1 ├───◄──────────┴─│─   O    N    M    L    K    J    I    H
+│                PA0 ├───◄────────────┴─   G    F    E    D    C    B    A    @
+│                    │                     │    │    │    │    │    │    │    │
+│                CA1 ├───◄───              │    │    │    │    │    │    │    │
+│                    │                     │    │    │    │    │    │    │    │
+│                CB1 ├───◄───              │    │    │    │    │    │    │    │
+│                    │                     │    │    │    │    │    │    │    │
+│                PB7 ├───►─────────────────┘    │    │    │    │    │    │    │
+│                PB6 ├───►──────────────────────┘    │    │    │    │    │    │
+│                PB5 ├───►───────────────────────────┘    │    │    │    │    │
+│ CRB = $FF03    PB4 ├───►────────────────────────────────┘    │    │    │    │
+│ DRB/DDRB =     PB3 ├───►─────────────────────────────────────┘    │    │    │
+│      $FF02     PB2 ├───►──────────────────────────────────────────┘    │    │
+│                PB1 ├───►───────────────────────────────────────────────┘    │
+│                PB0 ├───►────────────────────────────────────────────────────┘
+└────────────────────┘
+```
 Fig. 7-3. Keyboard and Joystick Button Connection
 
 #### A Split Dedicated Address
 
-In the original CoCo the vpG was connected to bits PB7-3 of PIA 2 (accessed via dedicated address rF22). Now the vba is incorporated into the ACVC, leaving bits PB7-3 of PIA 2 unused. Now, whenever dedicated address FF22 is accessed (read or write) the transmitted byte is split such that bits 7-3 are connected to the VDG in the ACVC and bits 2-0 are connected to side B of PIA 2 (as before).
+In the original CoCo the VDG was connected to bits PB7-3 of PIA 2 (accessed via dedicated address FF22). Now the vba is incorporated into the ACVC, leaving bits PB7-3 of PIA 2 unused. Now, whenever dedicated address FF22 is accessed (read or write) the transmitted byte is split such that bits 7-3 are connected to the VDG in the ACVC and bits 2-0 are connected to side B of PIA 2 (as before).
 
 #### Redundant Dedicated Addresses
 
@@ -1657,3 +1686,136 @@ Of the dedicated addresses, some may be only written to and others either writte
 Table 7-2. Dedicated Address Accessibility
 
 ## APPENDIX A
+
+### High Resolution Text Characters and Video Codes
+
+| Char | Video dec | Code hex |
+|------|-----------|----------|
+| Ç    | 0         | 00       |
+| ü    | 1         | 01       |
+| é    | 2         | 02       |
+| â    | 3         | 03       |
+| ä    | 4         | 04       |
+| à    | 5         | 05       |
+| å    | 6         | 06       |
+| ç    | 7         | 07       |
+| ê    | 8         | 08       |
+| ë    | 9         | 09       |
+| è    | 10        | 0A       |
+| ï    | 11        | 0B       |
+| î    | 12        | 0C       |
+| ß    | 13        | 0D       |
+| Ä    | 14        | 0E       |
+| Å    | 15        | 0F       |
+| ó    | 16        | 10       |
+| æ    | 17        | 11       |
+| Æ    | 18        | 12       |
+| Ô    | 19        | 13       |
+| ö    | 20        | 14       |
+| ø    | 21        | 15       |
+| û    | 22        | 16       |
+| ù    | 23        | 17       |
+| Ø    | 24        | 18       |
+| Ö    | 25        | 19       |
+| Ü    | 26        | 1A       |
+| §    | 27        | 1B       |
+| £    | 28        | 1C       |
+| ±    | 29        | 1D       |
+| °    | 30        | 1E       |
+| ƒ    | 31        | 1F       |
+| sp   | 32        | 20       |
+| !    | 33        | 21       |
+| "    | 34        | 22       |
+| #    | 35        | 23       |
+| $    | 36        | 24       |
+| %    | 37        | 25       |
+| &    | 38        | 26       |
+| '    | 39        | 27       |
+| (    | 40        | 28       |
+| )    | 41        | 29       |
+| *    | 42        | 2A       |
+| +    | 43        | 2B       |
+| ,    | 44        | 2C       |
+| -    | 45        | 2D       |
+| .    | 46        | 2E       |
+| /    | 47        | 2F       |
+| 0    | 48        | 30       |
+| 1    | 49        | 31       |
+| 2    | 50        | 32       |
+| 3    | 51        | 33       |
+| 4    | 52        | 34       |
+| 5    | 53        | 35       |
+| 6    | 54        | 36       |
+| 7    | 55        | 37       |
+| 8    | 56        | 38       |
+| 9    | 57        | 39       |
+| :    | 58        | 3A       |
+| ;    | 59        | 3B       |
+| <    | 60        | 3C       |
+| =    | 61        | 3D       |
+| >    | 62        | 3E       |
+| ?    | 63        | 3F       |
+| @    | 64        | 40       |
+| A    | 65        | 41       |
+| B    | 66        | 42       |
+| C    | 67        | 43       |
+| D    | 68        | 44       |
+| E    | 69        | 45       |
+| F    | 70        | 46       |
+| G    | 71        | 47       |
+| H    | 72        | 48       |
+| I    | 73        | 49       |
+| J    | 74        | 4A       |
+| K    | 75        | 4B       |
+| L    | 76        | 4C       |
+| M    | 77        | 4D       |
+| N    | 78        | 4E       |
+| O    | 79        | 4F       |
+| P    | 80        | 50       |
+| Q    | 81        | 51       |
+| R    | 82        | 52       |
+| S    | 83        | 53       |
+| T    | 84        | 54       |
+| U    | 85        | 55       |
+| V    | 86        | 56       |
+| W    | 87        | 57       |
+| X    | 88        | 58       |
+| Y    | 89        | 59       |
+| Z    | 90        | 5A       |
+| [    | 91        | 5B       |
+| \    | 92        | 5C       |
+| ]    | 93        | 5D       |
+| ↑    | 94        | 5E       |
+| ←    | 95        | 5F       |
+| ^    | 96        | 60       |
+| a    | 97        | 61       |
+| b    | 98        | 62       |
+| c    | 99        | 63       |
+| d    | 100       | 64       |
+| e    | 101       | 65       |
+| f    | 102       | 66       |
+| g    | 103       | 67       |
+| h    | 104       | 68       |
+| i    | 105       | 69       |
+| j    | 106       | 6A       |
+| k    | 107       | 6B       |
+| l    | 108       | 6C       |
+| m    | 109       | 6D       |
+| n    | 110       | 6E       |
+| o    | 111       | 6F       |
+| p    | 112       | 70       |
+| q    | 113       | 71       |
+| r    | 114       | 72       |
+| s    | 115       | 73       |
+| t    | 116       | 74       |
+| u    | 117       | 75       |
+| v    | 118       | 76       |
+| w    | 119       | 77       |
+| x    | 120       | 78       |
+| y    | 121       | 79       |
+| z    | 122       | 7A       |
+| {    | 123       | 7B       |
+| \|   | 124       | 7C       |
+| }    | 125       | 7D       |
+| ~    | 126       | 7E       |
+| ─    | 127       | 7F       |
