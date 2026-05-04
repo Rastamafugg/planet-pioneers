@@ -1289,9 +1289,12 @@ microprocessing unit, or MPU, and the random access memory. The MPU
 is the section of the computer that performs the arithmetic and logical
 operations on the bytes of data.
 
+```
+┌─────────┐   data flow   ┌──────────┐
+│   MPU   │ ◄───────────► │  MEMORY  │
+└─────────┘               └──────────┘
+```
 Fig. 2-1 A Simplified Microcomputer Block Diagram.
-
-MEMORY
 
 The two operations the memory is capable of are storing and
 reading. The store, or write, operation is the process of putting a
@@ -1309,6 +1312,17 @@ differentiate one cell from another, all the cells are numbered from 0 to
 N-1 where the memory contains N cells. Fig. 2-2 depicts a memory of 16
 cells where the cells are numbered from 0 to F, hexadecimal.
 
+```
+┌───┬───┬───┬───┐
+│ 0 │ 1 │ 2 │ 3 │
+├───┼───┼───┼───┤
+│ 4 │ 5 │ 6 │ 7 │
+├───┼───┼───┼───┤
+│ 8 │ 9 │ A │ B │
+├───┼───┼───┼───┤
+│ C │ D │ E │ F │
+└───┴───┴───┴───┘
+```
 Fig. 2-2 A Memory with Hexadecimal Addresses.
 
 The memory in Fig. 2-2 is drawn for convenience as a square with four °
@@ -1318,8 +1332,8 @@ is called its address or location. For example, one could store a-byte
 in address one (cell number one), or store a double byte in addresses four
 and five, where the most significant byte would be put in address four and
 the least significant byte in address five. An-example of memory usage
-would be to read a byte from address 5,,, manipulate that byte, and
-storing the resulting byte in address B,,.
+would be to read a byte from address 5<sub>16</sub> manipulate that byte, and
+storing the resulting byte in address B<sub>16</sub>.
 
 Whatever byte is stored at an address is currently the contents of
 that address. When a byte is read from an address, the content is not
@@ -1332,9 +1346,9 @@ Let’s turn on the Color Computer and experiment with writing to and
 reading from memory. The BASIC command for writing into memory is
 POKE X,Y where X is the decimal number or expression of the address and Y
 is the decimal value or-expression of the byte to be stored. Type the
-
 following command:
-POKE 3000,185 (ENTER)
+
+    POKE 3000,185 (ENTER)
 
 (ENTER) indicates that the ENTER key must bedepressed. All the following
 type-in examples require the ENTER key to be depressed.
@@ -1345,7 +1359,7 @@ memory address is PEEK (Z), where Z is the decimal number or expression of
 the address to be read. Let’s read and print the location we have just
 written to. Type the following command:
 
-PRINT PEEK(3000)
+    PRINT PEEK(3000)
 
 You will see the value of the byte in address 3000 printed on the
 screen, that is, the 185 we previously stored there. BASIC is designed to
@@ -1355,31 +1369,35 @@ is BB8. You can check this with one of the conversion techniques covered in
 Chapter 1. We can read and print the content of the original address by
 typing:
 
-PRINT PEEK(&HBB8)
+    PRINT PEEK(&HBB8)
 
 You will see 185 printed, the value we originally stored in the
 address. To have the values printed in hexadecimal, the variable to be
 printed must be modified with the HEX$ function, as below:
-PRINT HEX$(PEEK(&HBB8))
+
+    PRINT HEX$(PEEK(&HBB8))
+
 This will print B9 as the hexadecimal value of the byte at address BB8.
 Convert B9 to decimal and you will see it is equal. to 185. A more compact
 way of indicating a hexadecimal number in text is to prefix the number with
 a dollar sign ($). Let’s store $C2 at address $1000:
-| POKE &H1000,&HC2
+
+     POKE &H1000,&HC2
 
 To read and print the contents of address $1000, type:
 
-PRINT HEX$(PEEK(&H1000))
+    PRINT HEX$(PEEK(&H1000))
 
 This prints C2, the hexadecimal value of the byte we stored at address
 $1000. The PRINT HEX$ command has a fault, demonstrated as follows:
 
-POKE &H1000,&HOF
+    POKE &H1000,&HOF
 
 This stores a byte of $0F at $1000. Now print the content by typing:
-PRINT HEX$(PEEK(&H1000))
 
-You will see F is printed instead of OF. The PRINT HEX$ command does not
+    PRINT HEX$(PEEK(&H1000))
+
+You will see F is printed instead of 0F. The PRINT HEX$ command does not
 print leading zeros.
 
 Experiment more by yourself, but be sure to use addresses larger than
@@ -1388,7 +1406,7 @@ store a decimal value larger than 255 or less than zero, you will get an FC
 error message because the value is outside the range that can be
 represented in one byte in straight binary.
 
-More About Memories
+#### More About Memories
 
 When someone asks how much memory your computer has, he is actually
 asking how many cells or addresses its memory has. Your response could be
@@ -1396,15 +1414,14 @@ the number of cells in decimal, such as 16,384. You might also answer 16K,
 where one K. is 1024 decimal. Notice that 1024 is the decimal weight of the
 bit position ten. So 16K. is:
 
-16K = 16 x 1024 = 16384
+    16K = 16 x 1024 = 16384
 
 The maximun amount of memory the Color Computer can work with is 64K, or
 65,536 memory locations. These addresses are numbered from 0 - 65,535 in
 decimal or from 0000 - FFFF in hexadecimal. Notice that it takes exactly
-
 two bytes to represent the address.
 
-Read Only Memory
+#### Read Only Memory
 
 Another type of memory is known as read only memory or ROM. One can
 not alter the contents of read only memory. A ROM has specific data stored,
@@ -1417,39 +1434,47 @@ memory by reading the content of an address in ROM and trying to store
 another value in its place. A demonstration using BASIC PEEK and POKE
 commands is:
 
+```
 PRINT PEEK(&H9000)
-
-132 (observe original value)
-POKE &H9000,92 (try to change it)
+132                (observe original value)
+POKE &H9000,92     (try to change it)
 PRINT PEEK(&H9000)
-
-132 (observe it was not changed);
+132                (observe it was not changed);
+```
 
 Addresses above $BFFF are reserved for use by plug-in ROM packs such as
-
 games, EDTASM4, or a disk controller.
 
 A diagram depicting the memory addresses, their use, and memory type
 can be seen in Fig. 2-3. This diagram is known as a memory map; it shows
 how memory is organized and used. Memory locations $0000 - $7FFF of a 32K
-($0000 - $4FFF for 16K.) Color Computer are RAM..As we learn more we will be
+($0000 - $4FFF for 16K.) Color Computer are RAM. As we learn more we will be
 able to add detail to this map by indicating what some of the addresses are
-
 used for.
-Decimal Hexadecimal Memory
-Address Address Type
-0 0000
-16383
-32767
-32768
-Internal
-ROM
-49151
-49152
-External
-ROM
-65535
 
+```
+┌─────────┬─────────────┬──────────────┐
+│ Decimal │ Hexadecimal │   Memory     │
+│ Address │   Address   │    Type      │
+╞═════════╪═════════════╪══════════════╡
+│    0    │    0000     │              │
+│         │             │     RAM      │
+│  16383  │    4FFF     │              │
+│         │             │              │
+│         │             │     RAM      │
+│  32767  │    7FFF     │              │
+├─────────┼─────────────┼──────────────┤
+│  32768  │    8000     │              │
+│         │             │   Internal   │
+│         │             │     ROM      │
+│  49151  │    BFFF     │              │
+├─────────┼─────────────┼──────────────┤
+│  49152  │    C000     │              │
+│         │             │   External   │
+│         │             │     ROM      │
+│  65535  │    FFFF     │              │
+└─────────┴─────────────┴──────────────┘
+```
 Fig. 2-3 A Memory Map of the Color Computer.
 
 ### DATA REPRESENTATION
@@ -1461,10 +1486,10 @@ concerning how data should be represented and stored in memory. Each
 convention has strong points and weak points, making it useful or not for a
 particular situation.
 
-Straight Binary
-Straight binary lets us represent only positive integers. As you know,
+#### Straight Binary
 
-one byte in straight binary can‘represent decimal integers from 0 -. 255. To
+Straight binary lets us represent only positive integers. As you know,
+one byte in straight binary can‘represent decimal integers from 0 - 255. To
 represent larger numbers, more bytes must be used. For instance, two bytes
 can represent decimal integers from 0 - 65535. Suppose we had measured the
 daily wind speed, in integer miles per hour, and wanted to store the speed
@@ -1476,9 +1501,10 @@ locations - that is the first day’s wind speed would be stored at address
 address 1002, and so on. Sequentially stored bytes are typically depicted
 as below:
 
-1000 07 12 03 05
-
-1004. 12 17 08 06
+```
+1000   07 12 03 05
+1004   12 17 08 06
+```
 
 Each row is preceded by the address in which the first byte is stored. The
 second byte is stored in the next higher address, and each succeeding byte
@@ -1498,46 +1524,47 @@ N+l. If three bytes were required they would be stored in three consecutive
 addresses. A two byte value ($1C27) and a three byte value ($023A1B) are
 shown stored in memory below:
 
-2000 IC 27
-2002. 02 3A IB
+```
+2000   IC 27
+2002   02 3A IB
+```
 
 The straight binary technique uses the least amount of memory to store
 numbers, because all the bits are used to determine the value of a number,
 and none are used to indicate the sign or where the radix point is. Also, a
 program that uses straight binary values will execute, or run, faster
 because the quantities are in the form the MPU most readily works with and
-the least number of ‘memory addresses have to:be read.
+the least number of memory addresses have to be read.
 
-Signed Binary
+#### Signed Binary
+
 Signed binary has an advantage over straight binary because it can
-
 represent negative integers. One byte can represent any decimal integer
-
-from -128 - +127. Two bytes can represent any decimal integer from -32768 -
+from -128 to +127. Two bytes can represent any decimal integer from -32768 to
 +32767. A signed binary byte can be stored anywhere in memory, or a Series
 of bytes can be stored in consecutive memory locations. A number
 represented by two or more bytes is stored in memory by putting the most
 significant byte at address N and the next most significant bytes at
-
 addresses N+1, N+2, etc. This can be shown as:
 
-1000 FF FC
-1002. =00 12
+```
+1000   FF FC
+1002   00 12
+```
 
 Decimal -4 is represented by two bytes stored at addresses 1000 and 1001,
 and a decimal +18 is represented by two bytes stored at addresses 1002 and
 1003.
-Remember that the most significant bit is the sign bit; if it is set
 
+Remember that the most significant bit is the sign bit; if it is set
 the number is negative, and if it is clear the number is positive. A number
 represented by one byte can be represented by two or more bytes by using
 the process of sign extension. This is done by repeating the sign bit in
-all the bits of the new bytes prefixed to the original byte. Two examples
-are:
+all the bits of the new bytes prefixed to the original byte. Two examples are:
 
-A3 (-9349) => FFA3 (-93,9)
+A3 (-93<sub>10</sub>)  => FFA3 (-93<sub>10</sub>)
 
-6C (+108,5) => 006C = (+108,,)
+6C (+108<sub>10</sub>) => 006C (+108<sub>10</sub>)
 
 The bytes are shown in hexadecimal.
 
@@ -1545,7 +1572,7 @@ As in straight binary, signed binary lets you pack nearly the most
 data into the least amount of memory. An added plus is the ability to
 represent negative numbers.
 
-Binary Coded Decimal
+#### Binary Coded Decimal
 
 Sometimes it is desirable to use and manipulate decimal numbers in the
 computer. This can be done using binary coded decimal, or BCD,
@@ -1555,18 +1582,21 @@ decimal digits and the other numbers, A - F, are not allowed. In BCD a byte
 can represent two decimal digits, or N bytes can represent 2xN decimal
 digits. Some examples of BCD are:
 
+```
 Byte => BCD Value
-
-73 73
-12 12
-0389 389
-1C77 not a valid BCD number
+ 73      73
+ 12      12
+0389    389
+1C77    not a valid BCD number
+```
 
 The bytes are stored in memory as before, the most significant byte at
 address N and the next most significant bytes at addresses N+1, N+2, etc:
 
-1020 02 19
-1030 .00 92 01
+```
+1020   02 19
+1030   00 92 01
+```
 
 A double byte representing decimal 219 is stored at 1020 and 1021, anda
 triple byte representing decimal 9201 is stored at 1030, 1031, and 1032.
@@ -1578,28 +1608,27 @@ The arithmetic operations of addition and subtraction can be performed
 on BCD numbers. For addition, a microcomputer simply adds the two numbers
 together as though they were straight binary.
 
-tn N
+```
+      72      0102
+    + 25    + 3744
+    ----    ------
+      97      3846
+```
 
-7
-+ 2
-97
-
-010
-+374
-384
-
-AI wo
-
-‘Sometimes adding two BCD digits will result in an illegal digit, that is,
+Sometimes adding two BCD digits will result in an illegal digit, that is,
 one of the six unused hexadecimal digits of A - F. To correct this, six is
 added to the illegal digit, and any generated carry is added to the next
 digit to the left. Two examples follow:
 
-28 1073
-+ 17 +2055
-3 F 30C8
-+ 6 + 6
-45 3128
+```
+      28      1073
+    + 17    + 2055
+    ----    ------
+      3F      30C8
+    +  6    +    6
+    ----    ------
+      45      3128
+```
 
 You can see that the final results are the sums of the decimal numbers.
 
@@ -1609,15 +1638,16 @@ Again, the result of subtraction may generate an illegal BCD digit. This
 digit is corrected by subtracting six from it. This correcting process can
 be below.
 
-b b
-
-73 2376
-- 05 -~ 1755
-
-6E 0C21
--__ 6 -__6
-
-6 8 0621
+```
+      b       b
+      73      2376
+    - 05    - 1755
+    ----    ------
+      6E      0C21
+    -  6    -    6
+    ----    ------
+      68      0621
+```
 
 The process of correcting illegal BCD digits after adding or subtracting is
 known as decimal adjust.
@@ -1625,31 +1655,27 @@ known as decimal adjust.
 Often the number of digits making up a BCD number may not be known.
 Thus, it is not known how many bytes to read from memory to assemble the
 complete number. It would also be helpful to be able to assign a sign to a
-
 number, and to have a decimal point. These items can be included in a BCD
 number at the expense of using more memory cells. This can be done as seen
 below:
 
-SS PP DD DD DD DD EE
+    SS PP DD DD DD DD EE
 
 where the first byte, on the left, (SS) would indicate the sign (say a 00
-
 for positive and a O1 for negative) and the second byte (PP) would contain
 a count of decimal digits to skip, going left to right, to place the
-
 decimal point. These two bytes are followed by the BCD digits (D) and an
 end code (EE). An example of this as stored in memory is:
 
-2000 01 05 29 21 44 30 EE = -29214.43,,
+    2000   01 05 29 21 44 30 EE = -29214.43<sub>10</sub>
 
 The advantage of this technique, called expanded BCD, is the ability to
-
 store an exact copy of any decimal number in memory. Two disadvantages are
 that BCD uses a lot of memory to store a number, and that programs using
 BCD numbers execute more slowly because of the larger number of bytes that
 must be read and manipulated.
 
-Fixed Point Representation
+#### Fixed Point Representation
 
 The numeric representation techniques of straight binary, signed
 binary, and packed BCD are only capable of representing integers, except
@@ -1678,19 +1704,20 @@ portray a numeric variable with a large or very large range, for example,
 the count of bacteria in a quart of water. This count could range from zero
 to several million. To store this variable in memory using BCD, one would
 have to designate a field of four bytes to hold eight decimal digits. Some
-
 typical bacteria counts stored in memory might look like this:
 
-2000 00 01 79 20
-2004. 01 10 27 36
-2008 00 00 01 42
+```
+2000   00 01 79 20
+2004   01 10 27 36
+2008   00 00 01 42
+```
 
 As you can see, the bacteria count of 1,102,736 at address 2004 uses all
 the available bytes, but the lower valued counts do not use all the
 reserved bytes. The bytes containing leading zeros or trailing zeros are
 wasted.
 
-Floating Point Representation
+#### Floating Point Representation
 
 Often a number or a result of a calculation need not be exactly
 correct. The quantities need be accurate only to so many decimal places,
@@ -1703,25 +1730,25 @@ binary floating point. The advantage of binary floating point is it
 can represent a large range of numbers with a fixed number of bytes.
 
 First let’s review decimal floating point, also known as exponential
-or scientific notation. A floating point number is written in the
-form:
+or scientific notation. A floating point number is written in the form:
 
-+/- N.NNN... x 10*/-#
++/- N.NNN... x 10<sup>*/-#</sup>
 
 where its value is equal to the number N.NNN... multiplied times 10 raised
 to the power of E. The number N.NNN... is the mantissa and the exponent,
 E, is the characteristic, or simply, the exponent. Any decimal number
 that can be represented as a string of digits and an appropriately placed
 decimal point can also be represented with decimal floating point. Some
-examples of fixed point decimal numbers and their floating point
-equivalents are:
-+12=1.2x 10!
-- 542.7 = - 5.427 x 10?
-+ 000678 = + 6.78 x 10%
+examples of fixed point decimal numbers and their floating point equivalents are:
+
++12 = 1.2 x 10<sup>1</sup>
+
+-542.7 = -5.427 x 10<sup>2</sup>
+
++.000678 = +6.78 x 10<sup>4</sup>
 
 In the first example we can see that 12 is indeed equal to 1.2 times 10
-(101). In the examples the mantissas have been normalized or adjusted
-
+(10<sup>1</sup>). In the examples the mantissas have been normalized or adjusted
 so their value is greater than or equal to one and less than ten. The
 mantissa is normalized according to convention. It is the job of the
 exponent to indicate the general magnitude of the number. The mantissa
@@ -1730,16 +1757,19 @@ The sign of decimal floating point is simply indicated with a plus or minus
 sign to the left of the mantissa.
 
 Binary floating point is written in the form:
-+/- .NNN... * 2*/-E
+
++/- .NNN... * 2<sup>*/-E</sup>
 
 where the mantissa .NNN... is a binary number normalized so the bit to the
 right of the radix, or binary point is always 1. The value is found by
 multiplying the mantissa by 2 raised to the power of E. Some examples of
 finding the binary value of binary floating point numbers are:
 
-.110x23 = .110x8,, = .110x1000, =110.
-1011x27* = .1011x1/4,) = .1011x.01, =.001011
-.1001x2® = .1001x32,, = .1001x100000, =10010.
+.110x2<sup>3</sup> = .110x8<sub>10</sub> = .110x1000<sub>2</sub> = 110.
+
+1011x2<sup>-2</sup> = .1011x1/4<sub>10</sub> = .1011x.01<sub>2</sub> = .001011
+
+.1001x2<sup>5</sup> = .1001x32<sub>10</sub> = .1001x100000<sub>2</sub> = 10010.
 
 A fixed point binary value can also be found by moving the binary point of
 the mantissa to the right if the exponent is positive, or to the left if
@@ -1756,12 +1786,13 @@ was shifted. The sign of the exponent is plus if the binary point was
 shifted to the left, or minus if to the right. An example of this
 conversion process is:
 
-1) Given 1010.
-Mantissa = .1010 (binary pointt
-shifted left 4 positions)
-Exponent = 4 (number of shifts)
-Sign of exponent = + (left shift)
-Therefore, 1010. = .1010 x 2*4
+```
+    1) Given 1010.
+         Mantissa = .1010 (binary point shifted left 4 positions)
+         Exponent = 4 (number of shifts)
+         Sign of exponent = + (left shift)
+       Therefore, 1010. = .1010 x 2<sup>+4</sup>
+```
 
 Now we need to be able to store floating point in memory. One way would
 be to reserve three bytes for each number. The most significant byte would
@@ -1769,18 +1800,20 @@ contain the exponent(EE) in signed binary to accommodate positive or
 negative exponents. The next two bytes could contain the normalized
 mantissa (NNNN) in straight binary where the binary point is always at the
 far left. For example, this could be stored in memory at addresses 1000,
-
 1001, and 1002 as:
-1000 EE NN NN
+
+```
+1000   EE NN NN
+```
 
 A specific number could be stored in memory as:
 
-The floating point number = .11011 x 27
-
-The mantissa .11011 = D& 00
-
+```
+The floating point number = .11011 x 2<sup>-7</sup>
+The mantissa .11011 = D8 00
 The exponent = F9 (two’s complement of decimal 7)
 So, at 1000: F9 D8 00
+```
 
 The limitation of this example is that only positive binary floating point
 numbers can be represented.
@@ -1793,11 +1826,10 @@ which a decimal number from 0 - 65535 can be represented. The accuracy can
 be increased or decreased by respectively increasing or decreasing the
 number of bytes reserved for the mantissa. The range of the magnitude is
 determined by the possible range of the exponent. In the example the
-exponent could range from -128 - +127. This is approximately equivalent to
-a decimal range of 1038 to 107°8. If more or fewer bits were reserved
-for the exponent, the range would be more or less.
+exponent could range from -128 to +127. This is approximately equivalent to
+a decimal range of 10<sup>38</sup> to 10<sup>-38</sup>. If more or fewer bits were reserved for the exponent, the range would be more or less.
 
-Character Representation
+#### Character Representation
 
 The alphabetical characters are also stored, manipulated, transmitted,
 and printed by computers. These characters include the alphabet - upper-
@@ -1812,8 +1844,13 @@ used by most microcomputers. ASCII is a seven-bit code by which up to 127
 different characters can be represented. The seven-bit code is implemented
 using the seven less significant bits in a byte as seen below:
 
-765432410 a byte
-7-bit ASCII code
+```
+    ┌───┬───┬───┬───┬───┬───┬───┬───┐
+    │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │    a byte
+    └───┴───┴───┴───┴───┴───┴───┴───┘
+         └────────────┬────────────┘
+              7-bit ASCII code
+```
 
 Bit 7 is not used, In most cases it will be clear. Appendix D shows all
 the characters and their ASCII codes in hexadecimal.
@@ -1824,7 +1861,6 @@ left of that row and the most significant three bits is the hexadecimal
 digit at the top of that column. This gives the ASCII code for M as $4D.
 The two leftmost columns of characters in Appendix D are control codes.
 The control codes are not printable but are used to control an external
-
 device that data is being sent to. For example, the control codes FF (form
 feed) and CR (carriage return) would be used when sending data to a
 printer. (All the control codes are listed in more detail in Appendix D.)
@@ -1834,9 +1870,11 @@ each byte containing the ASCII code of a character. An illustration of
 characters stored in memory at sequential addresses $2000 through $2014
 follows. This example can be decoded by using Appendix D.
 
-2000 54 68 69 73 20 69 73 20
-2008 41 53 43 49 49 20 65 6E
-2010 63 6F 64 65 64
+```
+2000   54 68 69 73 20 69 73 20
+2008   41 53 43 49 49 20 65 6E
+2010   63 6F 64 65 64
+```
 
 ### DATA STRUCTURES
 
@@ -1852,7 +1890,7 @@ individual wind speeds are the elements of that group. If the elements
 are not in any particular order in the group, then that group is a block
 of data.
 
-Tables
+#### Tables
 
 A table, or list, is a group of the same type and same length
 elements where the elements are stored in some order in sequential memory
@@ -1866,8 +1904,10 @@ element would be at the first memory address of the table and the second
 element would be at the second memory address, etc. The table can be
 represented as:
 
-5000 E0 El E2 E3
-5004 E4 E5 E6 E7
+```
+5000   E0 El E2 E3
+5004   E4 E5 E6 E7
+```
 
 The table starts at address $5000 and each element is denoted by EX, (X
 indicates the element number).
@@ -1883,49 +1923,58 @@ number of bytes each element uses in the second byte. Immediately following
 this would be the elements. Upon initially accessing a table, the number of
 elements and the length of each element would be read. The user could then
 calculate the address of any element, and the last address of the table.
-
 The address of any element(X), where the elements are numbered starting
 with zero, is found with the following equation:
 
-X = element number
-L = number of bytes in a element
-element address = pointer +2+(XxL)
+```
+        X = element number
+        L = number of bytes in a element
+        element address = pointer + 2 + (X x L)
+```
 
 where 2 is the number of bytes at the beginning of the table that contain
 the number of elements and number of bytes in an element. The last address
 used by the table is found through the following equation:
 
-N = number of elements in table
-L = number of bytes in a element
-last address = pointer +1+(N+1)xL
+```
+        N = number of elements in table
+        L = number of bytes in a element
+        last address = pointer + 1 + (N + 1) x L
+```
 
 A table of seven elements with each element three bytes long is
 illustrated in Fig. 2-4. The pointer is the value $4300, the starting
 address of the table. Knowing the pointer value, the number of elements,
 and the number of bytes in each element, the address of any element can be
-found. The address of the first element, element 0, can be found as
-follows:
+found. The address of the first element, element 0, can be found as follows:
 
-pointer = $4300 N=7
-L=3 X = element number
+```
+    pointer = $4300     N = 7
+    L = 3               X = element number
 
-address of element #0 = pointer+2+(XxL)
-= 4300 +2+(0x3)
-= 4302
+    address of element #0 = pointer + 2 + (X x L)
+                          = 4300 + 2 + (0 x 3)
+                          = 4302
+```
 
 You should be able to use this equation to find the address of any element
 in the table and then double check it against Fig. 2-4. You should also be
 able to determine the last address used by this table. Remember when doing
 the arithmetic that the numbers are hexadecimal.
 
-ele #0 ele #1
-4300 NN LL : moomoon
+```
+                        ele #0      ele #1
+                      ----------  ----------  
+    4300    NN  LL    ::  ::  ::  ::  ::  ::
 
-ele #2 ele #3 ele #4
+             ele #2      ele #3      ele #4
+           ----------  ----------  ----------
+    4308   ::  ::  ::  ::  ::  ::  ::  ::  ::
 
-ele #5 ele #6
-43 1 i) oe oe oe oo oe
-
+                  ele #5      ele #6
+           --   ----------  ----------
+    4310   ::   ::  ::  ::  ::  ::  ::
+```
 Fig. 2-4 A Table in Memory.
 
 Linking Tables
@@ -1939,25 +1988,27 @@ rainfall in Boston. There could be a table of the rainfall for the year
 chronological order, one would have to go back and find the pointer for the
 next year’s table. This process could be simplified if the tables were
 somehow linked. The tables can be linked by placing the pointer to the
-next table at the end of the current table, this is illustrated in Fig.
+next table at the end of the current table, this is illustrated in Fig. 2-5.
 
-2-5.
-
-1982
-
-1980
-
-1981
-
-rainfall
-table
-
-rainfall
-table
-
-rainfall
-table
-
+```
+┌────────────┐                            ┌────────────┐
+│ table data │                        ┌──►│ table data │
+├────────────┤                        │   ├────────────┤
+│            │                        │   │            │
+│    1980    │       ┌────────────┐   │   │    1982    │
+│            │   ┌──►│ table data │   │   │            │
+│  rainfall  │   │   ├────────────┤   │   │  rainfall  │
+│   table    │   │   │            │   │   │   table    │
+│            │   │   │    1981    │   │   │            │
+│            │   │   │            │   │   │            │
+├────────────┤   │   │  rainfall  │   │   ├────────────┤
+│  pointer   │───┘   │   table    │   │   │  pointer   │
+└────────────┘       │            │   │   └────────────┘
+                     │            │   │     
+                     ├────────────┤   │     
+                     │  pointer   │───┘
+                     └────────────┘
+```
 Fig. 2-5 Linked Tables.
 
 In Fig. 2-5 each table is made up of three components: the table data
@@ -1966,31 +2017,43 @@ in that table; the body of elements; and a pointer which is the address of
 the next table. The pointer of the very last table would have to contain a
 unique code, such as $FFFF, to indicate there are no more tables. That
 pointer could also point back to the first table, resulting in a set of
-
 circularly linked tables. The linkage in Fig. 2-5 can be made circular by
 drawing an arrow from the pointer of the last table to the top of the first
 table. Circularly linked tables would be used when repetitively searching
 the tables for certain elements.
 
-Tables‘can be doubly linked to allow reading either forward or
+Tables can be doubly linked to allow reading either forward or
 backward. This would require another pointer in each table, to the address
 of the previous, table, as seen in Fig. 2-6.
 
-table data table data
-
-table data
-
-Vv
-
-table #1 table #2 table #3
-
+```
+┌────────────┐                            ┌────────────┐
+│  pointer   │                        ┌──►│  pointer   │
+├────────────┤                        │   ├────────────┤
+│ table data │                        │   │ table data │
+├────────────┤       ┌────────────┐   │   ├────────────┤
+│            │   ┌──►│  pointer   │   │   │            │
+│    1980    │   │   ├────────────┤   │   │    1982    │
+│            │   │   │ table data │   │   │            │
+│  rainfall  │   │   ├────────────┤   │   │  rainfall  │
+│   table    │   │   │            │   │   │   table    │
+│            │   │   │    1981    │   │   │            │
+│            │   │   │            │   │   │            │
+├────────────┤   │   │  rainfall  │   │   ├────────────┤
+│  pointer   │◄──┘   │   table    │   │   │  pointer   │
+└────────────┘       │            │   │   └────────────┘
+                     │            │   │     
+                     ├────────────┤   │     
+                     │  pointer   │◄──┘
+                     └────────────┘
+```
 Fig. 2-6 Doubly Linked Tables.
 
 The backward pointer of the first table should contain a unique code,
 such as a $0000, to indicate there are no tables previous to it. Doubly
 linked tables can also be circularly linked.
 
-Directories
+#### Directories
 
 If we were working with a number of related tables, such as rainfall,
 snowfall, and wind speed, an aditional technique is needed to keep track of
@@ -1998,60 +2061,65 @@ them. A directory is used; the directory is a table of pointers to the
 related tables. In Fig. 2-7, the directory is composed of three elements:
 the three pointers to the to the Boston weather tables.
 
-Boston
-
-rain
-
-table
-Boston directory
-
-rain pointer
-snow pointer
-wind pointer
-
-|
-
-Boston
-wind
-table
-
+```
+                                    ┌──────────┐
+                                    │  Boston  │
+                        ┌──────────►│  rain    │
+                        │           │  table   │
+                        │           └──────────┘
+    Boston directory    │      
+   ┌────────────────┐   │           ┌──────────┐
+   │  rain pointer  │───┘           │  Boston  │
+   ├────────────────┤               │  snow    │
+   │  snow pointer  │──────────────►│  table   │
+   ├────────────────┤               └──────────┘
+   │  wind pointer  │───┐
+   └────────────────┘   │           ┌──────────┐
+                        │           │  Boston  │
+                        └──────────►│  wind    │
+                                    │  table   │
+                                    └──────────┘
+```
 Fig. 2-7 A Single Level Directory.
 
 Were weather tables available for many cities, Fig. 2-7 would be expanded
 to include a directory of cities to point to each city’s directory. Two
-
 levels of directories can be seen in Fig. 2-8. This system of directories
 pointing to sub-directories is called a tree directory.
 
-Boston directory
-
-rain pointer
-snow pointer
-wind pointer
-
-City directory N.Y.C. directory
-
-Boston pointer
-N.Y.C. pointer
-
-San Diego pointer
-
-|
-
-San Diego directory
-
-rain pointer
-snow pointer
-
-wind directory
-
+```
+                                        Boston directory
+                                       ┌──────────────┐
+                                       │ rain pointer │
+                                       ├──────────────┤
+                           ┌──────────►│ snow pointer │
+                           │           ├──────────────┤
+                           │           │ wind pointer │
+                           │           └──────────────┘
+    City directory         │            N.Y.C. directory
+   ┌───────────────────┐   │           ┌──────────────┐
+   │ Boston pointer    │───┘           │ rain pointer │
+   ├───────────────────┤               ├──────────────┤
+   │ N.Y.C. pointer    │──────────────►│ snow pointer │
+   ├───────────────────┤               ├──────────────┤
+   │ San Diego pointer │───┐           │ wind pointer │
+   └───────────────────┘   │           └──────────────┘
+                           │            San Diego directory
+                           │           ┌──────────────┐
+                           │           │ rain pointer │
+                           │           ├──────────────┤
+                           └──────────►│ snow pointer │
+                                       ├──────────────┤
+                                       │ wind pointer │
+                                       └──────────────┘               
+```
 Fig. 2-8 A Two Level Directory.
 
 Directories are also used to keep track of where information is stored
 on a disk. In fact, the most important table stored on a disk is the disk
 directory.
 
-Queues
+#### Queues
 
 Another method of organization is a queue. A queue is composed of a
 list of elements in sequential memory locations and a pointer to the next
@@ -2067,13 +2135,11 @@ analogous to a stack of blocks where the first block into the stack is at
 the bottom and the most recent block put on the stack is at the top of the
 stack. In fact, a LIFO queue is also known as a stack. When removing
 blocks from the stack, the first lifted off is the top and most recently
-
 added block. A LIFO queue is organized as elements stored in sequential
 memory locations. A pointer contains the address of the most recently added
 element. After that element is read, or taken off the stack, the pointer is
 changed to point to the next most recently added element. To add an element
 to a stack is to push it onto the stack, and to retrieve an element from
-
 a stack is to pull or pop it off the stack.
 
 ### EXTENDED COLOR BASIC DATA FORMATS
@@ -2090,30 +2156,34 @@ function. However, before the pointer can be found the variable must have
 been previously used or established by BASIC. The following commands will
 produce the pointer of variable X:
 
-XK = 1234
+```
+X = 1234
 PRINT VARPTR(X)
+```
 
 The displayed value will be a decimal address. Remember that the numeric
 values BASIC accepts or prints are normally decimal. The value of a pointer
 can also be assigned to another variable. This can be done with the
 following commands:
 
+```
 X = 1234
 A = VARPTR(X)
 PRINT A
+```
 
-Numeric Variables
+#### Numeric Variables
 
-A _variable’s value is represented in five bytes in binary floating
+A variable’s value is represented in five bytes in binary floating
 point format. The pointer of a numeric variable, obtained by using the
 VARPTR function, will be the decimal address of the first byte. The binary
 floating point numbers used by Extended Color BASIC have a normalized
 mantissa composed of 32 bits, or four bytes. The floating point number can
 be written. as:
 
-+/- .BBBBBBBB * 2+/-E
-where each B represents a nibble. The two quantities that completely
++/- .BBBBBBBB * 2<sup>+/-E</sup>
 
+where each B represents a nibble. The two quantities that completely
 describe the floating point number are the mantissa and the exponent. The
 quantities are stored in five bytes in sequential memory locations:
 
@@ -2130,18 +2200,21 @@ greater than 128, the exponent is positive, and if the value is less than
 128, the exponent is negative. Of course, if the exponent byte’s value is
 128, the exponent is zero. Some examples are:
 
-Exponent byte=A2,,=162,,,
-so exponent = 162-128 = +34,).
+Exponent byte = A2<sub>16</sub> = 162<sub>10</sub>
 
-Exponent byte =56,,=86,,,
-so exponent = 86-128 = -42,,
+So exponent = 162-128 = +34<sub>10</sub>
+
+Exponent byte = 56<sub>16</sub> = 86<sub>10</sub>
+
+So exponent = 86-128 = -42<sub>10</sub>
 
 The hexadecimal value of the exponent can be found by subtracting $80 from
 the hexadecimal value of the exponent byte. An example of the hexadecimal
 calculations can be seen below:
 
 Exponent byte = $88,
-so exponent = $88 - $80 = +$8
+
+So exponent = $88 - $80 = +$8
 
 The exponent is positive if the MSB of the exponent byte is set, and
 negative if it is not set. The exponent byte of a value of zero is reserved
@@ -2160,48 +2233,51 @@ the right of the always set bit of a normalized mantissa. An example of
 decoding the hexadecimal four-byte mantissa field into the actual binary
 mantissa is:
 
+```
 4 bytes = 03 41 01 00
 binary code = 0000 0011 0100 0001 0000 0001 0000 0000
-
-\
-mantissa = + .1000 0011 0100 0001 0000 0001 0000 0000
+             \
+mantissa =   + .1000 0011 0100 0001 0000 0001 0000 0000
+               --
+```
 
 where the underlined .1 is always assumed to be there and the bits from the
 binary code, after the sign bit, are copied behind it. Now a whole floating
 point number can be decoded from the format used by Extended Color BASIC.
 An example follows:
 
+```
 5-byte code is 83 C4 20 00 00
 the exponent = 83 - 80 = +3
 the mantissa is found as:
-C4 20 00 00
-1100 0100 0010 0000 0000 0000 0000 0000
-
-\
--.1100 0100 0010 0000 0000 0000 0000 0000
+      C4        20        00        00
+   1100 0100 0010 0000 0000 0000 0000 0000
+   \
+   -.1100 0100 0010 0000 0000 0000 0000 0000
 the whole floating point number is;
--.1100 0100 0010 0000 0000 0000 0000 0000 x 2*%
+   -.1100 0100 0010 0000 0000 0000 0000 0000 x 2<sup>+3</sup>
+```
 
-The binary value can be found by multiplying the mantissa by 2** or by
-using the technique of shifting the binary point, resulting
-
-in: ~110.00100001, where the trailing zeros have been dropped. You should
+The binary value can be found by multiplying the mantissa by 2<sup>+3</sup> or by using the technique of shifting the binary point, resulting
+in: -110.00100001, where the trailing zeros have been dropped. You should
 be able to convert this to decimal.
 
-String Variables
+#### String Variables
 
 A string variable exists in memory as a sequence of codes representing
 a sequence of characters. Each code occupies one byte. The code used is
 ASCII, except for a few special characters. The following BASIC program
 will print many of the text characters and their codes.
 
+```
 10 CLS:X=32
 20 FOR K=0 TO 5
 30 PRINT HEX$(X+16*K);" ";CHR$(X+16*K);" ";
 40 NEXT K
 50 X=X+1
-- 60 IF X<48 THEN PRINT:GOTO 20
+60 IF X<48 THEN PRINT:GOTO 20
 70 GOTO 70
+```
 
 This program will put six pairs of columns on the screen. The left
 column of a pair is the hexadecimal code and the right column is the
@@ -2215,33 +2291,34 @@ program.) The string descriptor is a group of five consecutive bytes in
 memory that describe a particular string. The first byte contains the
 number of characters in the string in straight binary. The third and fourth
 bytes contain the address of the first byte of the string. The second and
-
 fifth bytes are used by BASIC and should not be changed. A diagram of the
 string descriptor is:
 
-NN XX AA AA XX,
+    NN XX AA AA XX,
 
 The NN byte contains the length of the string, and AAAA is the starting
 address of the string. You can use the PEEK function to inspect the string
 descriptor or the string itself at address AAAA.
 
-Numeric Variable Arrays
+#### Numeric Variable Arrays
 
 Extended Color BASIC can use single dimension arrays, A(X), two
 dimension arrays, A(X,Y), and three dimension arrays, A(X,Y,Z). Each
 element of an array is a numeric variable stored in memory just like a
 regular numeric variable, that is, as a five-byte binary floating point
-number,
+number.
 
 The pointer to the first byte of an array element is obtained by using
 the VARPTR function. However, the pointer to the first element of an array
 is the value given by VARPTR plus seven. For a single dimension array that
 has already been dimensioned via the DIM command, the pointer can be found
-as seen below: :
+as seen below:
 
+```
 10 DIM A(9)
 20 P = VARPTR(A(0)) + 7
 30 P2 = VARPTR(A(2))
+```
 
 P equals the starting address of element 0 or the whole array. P2 is the
 starting address of element 2.
@@ -2251,55 +2328,57 @@ consecutive memory locations. The next variable follows immediately after
 each variable. A single dimension numeric array is arranged in memory
 starting at address P as seen below:
 
-P A(0)
-P+5 A(1)
+```
+     P    A(0)
+     P+5  A(1)
 P2 = P+A  A(2)
+```
 
 The pointers to the elements of a two dimension array are found as
-follows: =
+follows:
 
+```
 10 DIM A(2,2)
-
 20 P = VARPTR(A(0,0)) + 7
-
 30 P2 = VARPTR(A(2,0))
+```
 
-In the two dimension array, A(2,2) for example, elements are arranged in
+In the two dimension array, A(2,2) for example, elements are arranged in memory as follows:
 
-memory as follows:
-
-P _A(0,0)
-P+5  A(1,0)
-
-P2=P+A (2,0)
-P+F  A(0,1)
-
-P+14 A(1,1)
-P+19 A(2,1)
-P+1E (0,2)
-P+23 A(1,2)
-P+28 A(2,2)
+```
+   P      A(0,0)
+   P+5    A(1,0)
+P2=P+A    A(2,0)
+   P+F    A(0,1)
+   P+14   A(1,1)
+   P+19   A(2,1)
+   P+1E   A(0,2)
+   P+23   A(1,2)
+   P+28   A(2,2)
+```
 
 The pointers to elements of a three dimension array are found as follows.
 
+```
 10 DIM A(1,1,1)
 20 P = VARPTR(A(0,0,0)) +7
 30 P4 = VARPTR(A(0,0,1))
+```
 
-The elements of array A(1,1,1) are arranged in memory starting at address P
-as follows:
+The elements of array A(1,1,1) are arranged in memory starting at address P as follows:
 
-P _A(0,0,0)
-P+5  A(1,0,0)
-P+A —_A(0,1,0)
-P+F A(1,1,0)
+```
+   P      A(0,0,0)
+   P+5    A(1,0,0)
+   P+A    A(0,1,0)
+   P+F    A(1,1,0)
+P4=P+14   A(0,0,1)
+   P+19   A(1,0,1)
+   P+1IE  A(0,1,1)
+   P4+23  A(1,1,1)
+```
 
-P4=P+14 A(0,0,1)
-P+19 A(1,0,1)
-P+1IE A(0,1,1)
-P4+23. A(1,1,1)
-
-String Variable Arrays
+#### String Variable Arrays
 
 String variable arrays of single, two, and three dimensions are also
 available. The string elements of an array are arranged in an orderly
@@ -2316,28 +2395,27 @@ descriptor, where there is a string descriptor for each string in the
 array. However, the pointer to the string descriptor of array element 0 is
 the value given by VARPTR plus seven. Again, the first byte of the string
 descriptor is the length of that string, and the third and fourth bytes
-
 contain the address of the first byte of that string. The pointer to the
 string descriptor can be found as follows:
 
+```
 10 DIM A3$(9)
-
 15 FOR X=0 TO 9
-
 20 A$(X)="STRING" + STRS$(X)
 25 NEXT X
-
 30 P=VARPTR(A(3))
+```
 
 P is the address of the string descriptor of array element A$(3). The
 address of the first byte of this string can be calculated and printed, in
 hexadecimal, by adding the following
 
+```
 40 P1=256*PEEK (P+2)+PEEK(P+3)
 50 PRINT HEX$(P1)
+```
 
-Statements 15 - 25 use, and thus establish, each string element of the
-array.
+Statements 15 - 25 use, and thus establish, each string element of the array.
 
 ## CHAPTER 3
 
