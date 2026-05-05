@@ -27,13 +27,13 @@ Each new concept is followed by an example or two. Each example should be studie
 
 An assembly language programmer specifies each operation the computer will perform. Thus, this language is quite tedious. The computer will do just what you direct it, and nothing else, resulting in programs that run very fast. Assembly language is a symbolic language, in that the programmer specifies the operations to be performed by using their symbol. The programmer must understand the operations the computer can perform.
 
-Chapter 1 is a comprehensive introduction to binary numbers, which all digital computers use. Digital computers work with digits, or numbers, and the numbering system they use is called the binary number system. Chapter 2 describes how binary numbers are used to represent information, as numbers or text data. Also covered are the operation and use of a computer’s memory, and how information is organized in it. At the end of Chapter 2 I describe how Extended Color BASIC represents and stores data in memory.
+Chapter 1 is a comprehensive introduction to binary numbers, which all digital computers use. Digital computers work with digits, or numbers, and the numbering system they use is called the binary number system. Chapter 2 describes how binary numbers are used to represent information, as numbers or text data. Also covered are the operation and use of a computer's memory, and how information is organized in it. At the end of Chapter 2 I describe how Extended Color BASIC represents and stores data in memory.
 
 Chapter 3 describes the MC6809E - the microprocessor used in the Color Computer. Its operation and internal structure are described in detail - neccessary information for an assembly language programmer. Chapters 4 and 5 describe the addressing modes and the instructions the MC6809E uses. Addressing modes are the various techniques the microprocessor uses to store data in or read data from memory. The instructions are the commands the microprocessor is capable of performing.
 
 Chapter 6 describes the operation and use of EDTASM+, a very good text editor and assembler sold by Radio Shack. All assembly program examples in this book were written using the EDTASM+ ROM pack. You should understand as much as possible about the assembler you are using because it is the primary tool used to create a program. Chapter 7 describes how to write assembly language programs. Conventions and guidelines are provided to help the programmer write programs that work and that make editing or debugging much easier. Techniques for writing subroutines and interrupt handlers are also presented. Chapter 8 contains techniques and information needed to make assembly language programs work with BASIC programs. Many of the subroutines that exist in BASIC ROM are presented along with how your assembly language programs can use them. These subroutines primarily serve to transfer data between the computer and other devices such as the keyboard, screen, printer, joysticks, cassette, and disk.
 
-Chapter 9 reveals other internal workings of the Color Computer. You will see how to control the graphics display modes, interrupts, and some other aspects of the computer’s operation. Chapter 10 goes deeper into the operation of the computer, describing how data‘is transmitted to or received from other devices such as the printer, joysticks, keyboard, and cassette, and how to make and control sound. The cartridge connector is also described.
+Chapter 9 reveals other internal workings of the Color Computer. You will see how to control the graphics display modes, interrupts, and some other aspects of the computer's operation. Chapter 10 goes deeper into the operation of the computer, describing how data‘is transmitted to or received from other devices such as the printer, joysticks, keyboard, and cassette, and how to make and control sound. The cartridge connector is also described.
 
 Even though much information is provided in this book, it is still an introduction. This book presents all the information about the Color Computer hardware any programmer might need. However, there are many more concepts and philosophies concerning assembly language programming than those presented here. For instance, many employers have established unique conventions and guidelines for programming that apply to specific types of programs that employer develops.
 
@@ -95,13 +95,13 @@ decimal number may be represented as:
 235<sub>10</sub>
 
 where the subscript 10 indicates the base, or radix, of the number. In base
-10, this is the familiar number 235; we don’t print the base subsript
+10, this is the familiar number 235; we don't print the base subsript
 because we assume everyone is using same base. However, when not using base
 10, you should indicate this with a subscripted number that indicates the
 base being used.
 The value of a number is the sum of all the products of each digit and
-the weight of that digit’s position. In the above example, the 5 is in the
-units (one’s) position, the 3 is in the tens position, and the 2 is in the
+the weight of that digit's position. In the above example, the 5 is in the
+units (one's) position, the 3 is in the tens position, and the 2 is in the
 hundreds position. Therefore, the value is calculated as:
 
 235<sub>10</sub> = (2x100)+(3x10)+(5x1) -
@@ -221,7 +221,7 @@ Examples of binary numbers are:
 The radix point is used the same as in a decimal number; it is not usually
 printed if no digits are to its right. The decimal value of a binary number
 is the sum of the all products of each digit and the decimal weight of that
-digit’s position. This is one way of converting binary numbers to decimal:
+digit's position. This is one way of converting binary numbers to decimal:
 
 101 = (1x4)+(0x2)+(1x1) = 5
 
@@ -279,16 +279,16 @@ Positive signed binary numbers appear the same as straight binary
 numbers but with a reduced range. An eight-bit positive number can range
 from 00000000 (0<sub>10</sub>) to 01111111 (127<sub>10</sub>). Representing negative numbers
 is less straightforward. A negative number is formed by computing the
-two’s complement of the positive number. That is, a negative number (-X)
-is the two’s complement of the same positive number (+X).
+two's complement of the positive number. That is, a negative number (-X)
+is the two's complement of the same positive number (+X).
 
-The two’s complement is calculated by first writing down the
+The two's complement is calculated by first writing down the
 corresponding positive eight-bit binary number. Then copy the rightmost 1
 bit and all the bits to the right of it, if any. Finally, write the
 opposite state for all the bits to the left of the 1 bit you first copied.
 
 Here are some examples of the conversion process. The top number is the
-positive number; the bottom is the two’s complement (negative number).
+positive number; the bottom is the two's complement (negative number).
 
 ```
      *
@@ -329,15 +329,15 @@ numbers.
 
 Table 1-2 Signed Binary and Decimal Integers.
 
-If you are presented with a two’s complement negative number and you
-want to know its binary or decimal value, simply compute the two’s
+If you are presented with a two's complement negative number and you
+want to know its binary or decimal value, simply compute the two's
 complement of the number. This will give you the positive binary value.
 From this you can find the decimal value by adding the products of the
 digits and their digit position decimal weights. For example:
 
 find decimal value of 11100100
 
-form two’s complement 00011100
+form two's complement 00011100
 
 bit decimal weight 128 64 32 16 8 4 2 1
 
@@ -503,9 +503,9 @@ consecutive number.
 
 Table 1-3 Binary and Decimal Integers.
 
-#### Another Two’s Complement Technique
+#### Another Two's Complement Technique
 
-We now have the ability to calculate the two’s complement with a second
+We now have the ability to calculate the two's complement with a second
 technique. First write down a positive binary number. Then copy each bit,
 but in its opposite state, and add one to the result. For example:
 
@@ -514,7 +514,7 @@ but in its opposite state, and add one to the result. For example:
                         11111010
                        +       1
                        --------- 
-    two’s complement =  11111011 (-549)
+    two's complement =  11111011 (-549)
 ```
 
 #### Subtraction
@@ -590,18 +590,18 @@ subtraction follow. The values in parentheses are decimal.
       ----------  ---     ----------  ---
                             00010111 (+23)
 
-         two’s complement = 11110111 (-23)
+         two's complement = 11110111 (-23)
 ```
 
 In example C the result is negative, so the additional step of calculating
-the two’s complement is required.
+the two's complement is required.
 
 For a digital computer to perform these involved processes would
 require additional digital circuitry and increased cost. Computers that
 can perform straight binary subtraction may shorten the process by not
 determining the larger of the two numbers, generating an overflow condition
 if a larger number is subtracted from a smaller number and an apparently
-invalid result. The correct result is the two’s complement of the interim
+invalid result. The correct result is the two's complement of the interim
 result. An example:
 
 ```
@@ -748,7 +748,7 @@ or decimal 2, 4, 8, 18, etc.
 
 We have seen how bits can represent numbers; as you remember, bits
 were Originally used to represent the state of electronic switches. Just as
-bits are used to represent the computer’s internal switch states, we could,
+bits are used to represent the computer's internal switch states, we could,
 by analogy, use a bit to indicate the state or condition of anything we
 choose. The state of a bit is determined by asking if an event or situation
 is true or false. If the statement, it is raining, is true, the bit is set
@@ -1002,23 +1002,23 @@ or equalities:
         _                          _
 12) A ∧ AB = A ∨ B        13) A ∧ (A ∨ B) = A ∧ B
              _     _        _____   _   _ 
-14) A ⊕ B = AB v AB    15) A ∨ B = A ∧ B
+14) A ⊕ B = AB ∨ AB    15) A ∨ B = A ∧ B
     _____   _   _
 16) A ∧ B = A ∨ B
 ```
 
 Rule 13 is the dual of 12, and 16 is the dual of 15. Rules 15 and 16 are
-known as De Morgan’s law.
+known as De Morgan's law.
 
 The rules and laws of Boolean algebra will be useful to help you
 simplify complicated expressions, thereby reducing the amount of work you
-and the computer must do. Here’s an example: you are in charge of putting a
+and the computer must do. Here's an example: you are in charge of putting a
 toddler to bed. You have determined that the following facts and steps will
 guide you in this chore.
 
 ```
     A = the toddler is tired
-    B = it is the toddler’s bedtime
+    B = it is the toddler's bedtime
     C = put the toddler to bed
 ```
 
@@ -1183,7 +1183,7 @@ from Table 1-4. Examples of this are:
 To convert hexadecimal to decimal, one could first convert to. binary,
 as above, and then convert from binary to decimal. One could also convert
 directly from hexadecimal to decimal by summing the products of each
-digit’s decimal value and the decimal weight of its digit position. The
+digit's decimal value and the decimal weight of its digit position. The
 decimal value of each digit can be determined from Table 1-4. The decimal
 weight of each digit position is 16 raised to the power of the digit
 position. The digit positions are: ...3 2 1 0. The decimal weight of
@@ -1280,7 +1280,7 @@ Bytes of data for immediate or near term use are stored in the random
 access memory, or RAM. The memory is called random access because any
 byte stored in it is just as accessible as any other byte. The memory is a
 major subunit of a digital computer, and is usually made up of thousands of
-electronic circuits. Because electronic circuits don’t work without
+electronic circuits. Because electronic circuits don't work without
 electrical power, all bytes stored in memory are lost when power is turned
 off, even if only momentarily. A memory in which data storage depends on
 the presence of power is said to be volatile. Fig. 2-1 is a simplified
@@ -1305,7 +1305,7 @@ performs an arithmetic operation on that byte, and then stores the
 resultant byte in memory.
 
 We have seen that bytes can be stored in and read from memory, but we
-need also to know where in memory the byte will be stored or read. Let’s
+need also to know where in memory the byte will be stored or read. Let's
 learn how the memory is organized: conceive of the memory as composed of
 cells, in each of which one and only one byte can be stored. To
 differentiate one cell from another, all the cells are numbered from 0 to
@@ -1342,7 +1342,7 @@ changed. This is analogous to playing a cassette tape; after listening to a
 Writing puts a new byte in the specified cell and destroys its previous
 contents.
 
-Let’s turn on the Color Computer and experiment with writing to and
+Let's turn on the Color Computer and experiment with writing to and
 reading from memory. The BASIC command for writing into memory is
 POKE X,Y where X is the decimal number or expression of the address and Y
 is the decimal value or-expression of the byte to be stored. Type the
@@ -1356,7 +1356,7 @@ type-in examples require the ENTER key to be depressed.
 You have just stored a straight binary byte of decimal value 185 in
 decimal address 3000. The BASIC function for reading the content of a
 memory address is PEEK (Z), where Z is the decimal number or expression of
-the address to be read. Let’s read and print the location we have just
+the address to be read. Let's read and print the location we have just
 written to. Type the following command:
 
     PRINT PEEK(3000)
@@ -1380,7 +1380,7 @@ printed must be modified with the HEX$ function, as below:
 This will print B9 as the hexadecimal value of the byte at address BB8.
 Convert B9 to decimal and you will see it is equal. to 185. A more compact
 way of indicating a hexadecimal number in text is to prefix the number with
-a dollar sign ($). Let’s store $C2 at address $1000:
+a dollar sign ($). Let's store $C2 at address $1000:
 
      POKE &H1000,&HC2
 
@@ -1429,7 +1429,7 @@ at the time of its manufacture, in each of its locations that can not be
 changed; one can only read from this type of memory. In the Color Computer
 the internal ROM occupies addresses $8000 - $BFFF. This ROM contains Color
 BASIC and Extended Color BASIC, the programs that interpret and execute
-your BASIC program’s statements. Verify that this is indeed read only
+your BASIC program's statements. Verify that this is indeed read only
 memory by reading the content of an address in ROM and trying to store
 another value in its place. A demonstration using BASIC PEEK and POKE
 commands is:
@@ -1496,8 +1496,8 @@ daily wind speed, in integer miles per hour, and wanted to store the speed
 in memory. One byte in straight binary would represent the wind speed for
 one day, since the speeds would be within the permissible range and would
 never be negative. The data bytes would be stored in sequential memory
-locations - that is the first day’s wind speed would be stored at address
-1000, the second day’s speed at address 1001, the third day’s speed at
+locations - that is the first day's wind speed would be stored at address
+1000, the second day's speed at address 1001, the third day's speed at
 address 1002, and so on. Sequentially stored bytes are typically depicted
 as below:
 
@@ -1509,8 +1509,8 @@ as below:
 Each row is preceded by the address in which the first byte is stored. The
 second byte is stored in the next higher address, and each succeeding byte
 is stored in the next sequentially higher address. In our example, the
-first day’s wind speed is 7 miles per hour, stored at address 1000; the
-second day’s speed is 12, stored at address 1001, the third day’s speed is
+first day's wind speed is 7 miles per hour, stored at address 1000; the
+second day's speed is 12, stored at address 1001, the third day's speed is
 3, stored at address 1002, and so on. There is no rule saying how many
 addresses would be in each row; normally, the length of a row would be such
 that it made sense or was easy to read. In fact, the above example should
@@ -1729,7 +1729,7 @@ digital computers to represent numbers to a certain accuracy is called
 binary floating point. The advantage of binary floating point is it
 can represent a large range of numbers with a fixed number of bytes.
 
-First let’s review decimal floating point, also known as exponential
+First let's review decimal floating point, also known as exponential
 or scientific notation. A floating point number is written in the form:
 
 +/- N.NNN... x 10<sup>*/-#</sup>
@@ -1811,7 +1811,7 @@ A specific number could be stored in memory as:
 ```
 The floating point number = .11011 x 2<sup>-7</sup>
 The mantissa .11011 = D8 00
-The exponent = F9 (two’s complement of decimal 7)
+The exponent = F9 (two's complement of decimal 7)
 So, at 1000: F9 D8 00
 ```
 
@@ -1986,7 +1986,7 @@ used in a specific order; take the case of three annual tables of daily
 rainfall in Boston. There could be a table of the rainfall for the year
 1980, the year 1981, and the year 1982. After scanning a table in
 chronological order, one would have to go back and find the pointer for the
-next year’s table. This process could be simplified if the tables were
+next year's table. This process could be simplified if the tables were
 somehow linked. The tables can be linked by placing the pointer to the
 next table at the end of the current table, this is illustrated in Fig. 2-5.
 
@@ -2083,7 +2083,7 @@ the three pointers to the to the Boston weather tables.
 Fig. 2-7 A Single Level Directory.
 
 Were weather tables available for many cities, Fig. 2-7 would be expanded
-to include a directory of cities to point to each city’s directory. Two
+to include a directory of cities to point to each city's directory. Two
 levels of directories can be seen in Fig. 2-8. This system of directories
 pointing to sub-directories is called a tree directory.
 
@@ -2126,7 +2126,7 @@ list of elements in sequential memory locations and a pointer to the next
 element to be read. One type of queue is the first-in-first-out or
 FIFO. A FIFO queue is analogous to a waiting line: the first person in
 the line is the first to be served. In a FIFO queue the first, or oldest,
-element is found by a pointer that contains that element’s address. After
+element is found by a pointer that contains that element's address. After
 the first element is processed the pointer is directed to the next oldest
 element in the queue.
 
@@ -2150,7 +2150,7 @@ organizational scheme for storing them in memory. To write assembly
 language programs using BASIC variables, we need to know their location and
 format.
 
-To find were BASIC has stored a variable that variable’s pointer must
+To find were BASIC has stored a variable that variable's pointer must
 be found. The pointer to variable X is found with the VARPTR(X) BASIC
 function. However, before the pointer can be found the variable must have
 been previously used or established by BASIC. The following commands will
@@ -2174,7 +2174,7 @@ PRINT A
 
 #### Numeric Variables
 
-A variable’s value is represented in five bytes in binary floating
+A variable's value is represented in five bytes in binary floating
 point format. The pointer of a numeric variable, obtained by using the
 VARPTR function, will be the decimal address of the first byte. The binary
 floating point numbers used by Extended Color BASIC have a normalized
@@ -2197,7 +2197,7 @@ the first byte with a modified binary representation. The decimal value of
 the exponent is found by subtracting a decimal 128 from the decimal value
 of the exponent byte. Thus, if the decimal value of the exponent byte is
 greater than 128, the exponent is positive, and if the value is less than
-128, the exponent is negative. Of course, if the exponent byte’s value is
+128, the exponent is negative. Of course, if the exponent byte's value is
 128, the exponent is zero. Some examples are:
 
 Exponent byte = A2<sub>16</sub> = 162<sub>10</sub>
@@ -2469,7 +2469,7 @@ jooks up the op codes and lengths of various instructions, addresses of
 where data are stored, and then, by hand assembles the op codes and operand
 fields to form the instructions of a program. This is termed the lowest
 level of programming. It is quite tedious, and in the process of working
-with the program particulars it’s easy to become divorced from the big
+with the program particulars it's easy to become divorced from the big
 picture of the problem the program is meant to solve.
 
 Assembly language is the next higher level language, though it is still
@@ -2544,7 +2544,7 @@ found in Chapter Five.
 
 The controller block is the device that orchestrates the internal
 operations to accomplish some particular task. Tasks can include reading an
-instruction from memory, decoding an instruction’s op code, and directing
+instruction from memory, decoding an instruction's op code, and directing
 the other components to perform an instruction. The instruction (or I)
 register within the controller is where the op code of the current
 instruction is stored. The controller decodes the op code to determine the
@@ -2800,7 +2800,7 @@ series of arithmetic or logic operations accumulate in the A or B register.
 It is in these registers that a byte about to be manipulated or the
 resulting byte from the ALU are stored.
 
-Let’s explore some of the capabilities of the A and B registers by
+Let's explore some of the capabilities of the A and B registers by
 using some instructions. Suppose we want to exclusive or the two bytes that
 reside at addresses $3100 and $3104, and then store the result at address
 $3108. First we would use the Load A (LDA) instruction to read a byte from
@@ -2809,7 +2809,7 @@ mnemonic, would appear as: LDA $3100. Then the Exclusive OR A (EORA)
 instruction could be used. This instruction will read a byte from memory,
 perform the exclusive or operation between that byte and the byte in the A
 register, and then route the resulting byte into the A register, destroying
-the register’s previous contents. This instruction will appear as: EORA
+the register's previous contents. This instruction will appear as: EORA
 $3104 .We now have the answer we want, but it is in the A register. It can
 be stored in memory with the Store A (STA) instruction as: STA $3108. The
 Store A instruction will store the contents of the A register at memory
@@ -2946,7 +2946,7 @@ next lower byte in the stack.
 
 A byte can also be pushed, or added, to the stack with a store
 instruction. The operand will be the U register, with auto-decrementing of
-one specified. Let’s say the U register contains $3FFC, that it points to
+one specified. Let's say the U register contains $3FFC, that it points to
 the top of the stack in Fig. 3-4. The instruction: STA ,-U_ will first
 decrement the contents of the U register by one. (Note that the minus sign
 comes before the U in the operand.) The U register will now contain $3FFB.
@@ -2954,7 +2954,7 @@ Then the contents of the A register will be stored at that address, or at
 the new top of stack.
 
 There are four special instructions for stack use. The PSHU and PULU
-instructions respectively push on and pull off the U (user’s) stack the
+instructions respectively push on and pull off the U (user's) stack the
 contents of a register or registers. The PSHS and PULS instructions
 respectively push on and pull off the S, or hardware, stack the contents of
 a register or registers. An example of using the PULU instruction is: PULU
@@ -3107,7 +3107,7 @@ Computer, both addresses are in BASIC ROM.
 
 The TSC, BUSY, LIC, BS, BA, and AVMA control signals are not used in
 the Color Computer. These signals can be used to control sharing the system
-bus with other devices or MPU’s that could be connected to the system bus.
+bus with other devices or MPU's that could be connected to the system bus.
 A hardware interrupt is initiated by IRQ, NMI, or
 FIRQ being set active.
 
@@ -3151,9 +3151,7 @@ Computer.
 
 Table 3-1 The Color Computer Vector Table
 
-If your computer has a different version of BASIC, the vectors may be
-different than those in Table 3-1. The contents of addresses $FFF2 through
-$FFFF can be found with the following BASIC program.
+If your computer has a different version of BASIC, the vectors may be different than those in Table 3-1. The contents of addresses $FFF2 through $FFFF can be found with the following BASIC program.
 
 ```
 10 CLS
@@ -3388,7 +3386,7 @@ In assembly language a complete instruction is specified by a statement
 where a statement is made of up to five fields. Each field is a group of
 character positions in which is put information describing the statement.
 The fields are statement number, symbol, command, operand, and comment.
-We’ll look first at the command and operand fields, since they are used to
+We'll look first at the command and operand fields, since they are used to
 specify the instruction type and addressing mode.
 
 Motorola has developed a set of conventions for an assembler to follow
@@ -3433,7 +3431,7 @@ how the operand is to be treated. An instruction, in memory at address
 ### INHERENT ADDRESSING
 
 Inherent, or implied, addressing is the simplest addressing mode; the
-operand is implied within the op code. A programmer doesn’t have to
+operand is implied within the op code. A programmer doesn't have to
 explicitly define the operand by putting something in the operand field of
 a statement. Some instructions that use inherent addressing are the
 increment, decrement, clear, negate, and the software interrupts. For
@@ -3460,14 +3458,13 @@ in the operand field. An example would be:
     LDA #$4C
 
 The Load A (LDA) instruction will load the hexadecimal value of 4C into the
-A register. This machine instruction would reside in memory at address 1000
-as:
+A register. This machine instruction would reside in memory at address 1000 as:
 
 ```
     1000   86 4C
 ```
 
-$86 is the op code of the LDA instruction with immediate addressing and the
+The value $86 is the op code of the LDA instruction with immediate addressing and the
 following byte is the immediate operand. Some more examples of immediate
 addressing are: ADDB #$1F and LDX ¥#DEBIT. In the first example, the
 ADDB instruction will add the value of the immediate operand ($1F) to the
@@ -3482,7 +3479,7 @@ at address 1000 as:
     1002   8E 21 02
 ```
 
-$CB is the op code of ADDB with immediate addressing specified, followed by
+The value $CB is the op code of ADDB with immediate addressing specified, followed by
 the immediate byte. At 1002 is the op code of LDX with immediate
 addressing, followed by the two immediate bytes. If the register being used
 is one byte long, the immediate operand is one byte long, and if the
@@ -3510,7 +3507,7 @@ $0445. This machine instruction would be organized in memory at address
     1000   F7 04 45
 ```
 
-$F7 is the op code of STB with extended addressing. This is followed by two
+The value $F7 is the op code of STB with extended addressing. This is followed by two
 bytes that contain the effective address where the upper, or most
 significant, byte of the addresss immediately follows the op code, and the
 lower, or least significant, byte of the address is last. An instruction
@@ -3558,7 +3555,7 @@ memory at address 1000 as:
     1022   31 F2
 ```
 
-$A7 is the STA with indexed addressing op code. The effective address would
+The value $A7 is the STA with indexed addressing op code. The effective address would
 be in memory at address $1022.
 
 ### REGISTER ADDRESSING
@@ -3626,7 +3623,7 @@ and A registers onto the U stack in that order.
 The registers to be pushed or pulled are indicated in the machine
 instruction by a postbyte. Each bit of the postbyte corresponds to one of
 the eight registers that can be pushed or pulled. The format of the
-postbyte can be seen in Fig. 4-2. If a register’s corresponding indicator
+postbyte can be seen in Fig. 4-2. If a register's corresponding indicator
 bit is set, it will be pushed or pulled. When the MPU is pushing registers
 on a stack, the order is determined by scanning the postbyte from left to
 right, and if a bit is set, the corresponding register is pushed on the
@@ -3669,7 +3666,7 @@ at address 1000 as:
     1000   36 32
 ```
 
-$36 is the PSHU op code and $32 is the postbyte directing that the Y, X,
+The value $36 is the PSHU op code and $32 is the postbyte directing that the Y, X,
 and A registers are to be pushed on the U stack, in that order. The
 contents of these registers would be stored in memory on the U stack, as
 depicted in Fig. 4-3.
@@ -3799,7 +3796,7 @@ instruction will load the A register with the byte read from the effective
 address, calculated as the contents of the S register plus 7. The STB
 instruction stores the contents of the B register in the effective address,
 calculated as the sum of the contents of the X register plus -3. After
-executing these instructions, neither the S nor X registers’ contents will
+executing these instructions, neither the S nor X registers' contents will
 have changed.
 
 The machine instructions for these examples will be composed of: the op
@@ -3925,8 +3922,7 @@ plus signs. Two examples are:
     STU  ,X++
 ```
 
-The X register is first loaded, by the LDX instruction, with an address of
-$2400. The STA instruction stores the contents of the A register at the
+The X register is first loaded, by the LDX instruction, with an address of $2400. The STA instruction stores the contents of the A register at the
 address ($2400) contained in the X register. Then the value in the X
 register is incremented by one, as specified by the single + sign. The X
 register now contains a $2401. The STU instruction stores the contents of
@@ -3939,7 +3935,7 @@ a table.
 
 An instruction with auto-decrementing specified will first decrement
 the contents of the index register by one or two and then proceed with the
-instruction’s execution using the new effective address contained in the
+instruction's execution using the new effective address contained in the
 index register. Auto-decrementing by one is specified by a minus (-) sign
 before the index register in the operand field. Auto-decrementing by two is
 specified by two minus signs. Two examples are:
@@ -3974,7 +3970,7 @@ memory at address 1000 as:
     1000   A6 EO
 ```
 
-$A6 is the op code of the LDA with indexed addressing. The $E0 postbyte
+The value $A6 is the op code of the LDA with indexed addressing. The $E0 postbyte
 specifies auto-incrementing by one of the S index register.
 
 ### INDEXED INDIRECT ADDRESSING
@@ -4006,8 +4002,7 @@ A detailed example of indexed indirect addressing follows. Memory
 locations $2310 and $2311 contain the address $1A0A. The X register
 contains $2300. The instruction: STA $10,X will form an address of 2310
 by adding the offset, $10, to the contents of the X register. Then the
-effective address will be read out of addresses $2310 and $2311, yielding a
-$1A0A. Finally the contents of the A register are stored at address $1A0A.
+effective address will be read out of addresses $2310 and $2311, yielding a $1A0A. Finally the contents of the A register are stored at address $1A0A.
 
 The machine instruction is composed of an op code specifying indexed
 addressing, a postbyte specifying indirect addressing, and an offset of one
@@ -4049,9 +4044,9 @@ offset postbyte obtained from Table 4-2. The $10 is the offset byte.
 ### RELATIVE ADDRESSING
 
 Relative addressing is used only with branch instructions, where the
-address to branch to is relative to the PC register’s contents. A branch
-instruction’s operation is to see if certain CC register bit states match
-the condition it’s looking for. If they match, the PC register’s contents
+address to branch to is relative to the PC register's contents. A branch
+instruction's operation is to see if certain CC register bit states match
+the condition it's looking for. If they match, the PC register's contents
 are modified, forcing the MPU to execute instructions at some other
 address. Remember, the PC register contains the address of the next
 instruction to be performed.
@@ -4125,11 +4120,11 @@ sign. Two examples are:
     STU <$2082
 ```
 
-The DP register was previously loaded with $20. The LDA instruction’s
+The DP register was previously loaded with $20. The LDA instruction's
 effective address is 20DE, the combination of the DP register and the
 operand. The assembler will assemble the STU instruction as STU <$82. It
 will drop the most significant byte of a two-byte operand if we have
-informed the assembler of the DP register’s contents with SETDP command
+informed the assembler of the DP register's contents with SETDP command
 (described in Chapter Six) and the most significant byte of the operand
 address is equal to the contents of the DP register.
 
@@ -4184,7 +4179,7 @@ TABLE = RMB 20
 
 The STA statement is using PC relative addressing. The bottom statement
 uses the mnemonic of RMB, a command to tell the assembler to reserve memory
-bytes, in this case 20 decimal. The reserved ’20 sequential memory locations
+bytes, in this case 20 decimal. The reserved '20 sequential memory locations
 is named TABLE, and the assembler has assigned the starting address of
 those 20 bytes to be equivalent to TABLE. The assembler will construct the
 LDX instruction using the TABLE address. In the case of the STA
@@ -4297,7 +4292,7 @@ The 59 instructions of the MC6809E are its instruction set. This
 chapter describes the operation of the instructions; some very similar
 instructions may be grouped together in one description. The descriptions
 are titled with the instruction mnemonics and are in alphabetical order.
-Within each description is the instruction’s source form, type, operation,
+Within each description is the instruction's source form, type, operation,
 affect on the CC register bits, legal addressing modes, and the description
 of its operation, with examples.
 
@@ -4322,56 +4317,53 @@ minus, or positive value in a memory location or the A or B register.
 Branch instructions let the MPU make decisions based on the conditions of
 certain bits in the CC register. These instructions should be used
 immediately after an instruction that modifies the CC register, if a
-
-The A register.
-The B register.
-The condition code register.
-The D register.
-An 8-bit offset of a branch instruction.
-A 16-bit offset of a branch instruction.
-The direct page register.
-The effective address.
-Least significant nibble.
-Most significant nibble.
-Memory location contents specified by the operand field.
-The immediate byte following an op code
-An operand field specifying a memory location to be accessed by
-the immediate, direct, extended, indexed, or the special cases
-of indexed addressing.
-Program counter register.
-An operand field specifying a memory location by the direct,
-extended, indexed, or the special cases of indexed addressing.
-A byte will be read, modified, and written back to it.
-A register before an operation.
-A register after an operation.
-The S register.
-A register within the MPU where results are temporarily stored.
-The U register.
-The X register.
-A. byte (two hexadecimal digits).
-Most significant byte of a 16-bit number.
-Least significant byte of a 16-bit number.
-The Y register.
-Contents of a register.in parentheses is used as an address.
-Indicates the immediate addressing mode.
-Indicates the following number is hexadecimal
-Brackets around the operand indicate indirect addressing.
-In operand field, indicates indexed addressing.
-Indicates a transfer of data.
-Logical AND.
-Logical OR.
-Logical exclusive OR.
-Logical NOT or complement.
-Indicates the quantities are concatenated.
-Arithmetic addition, subtraction, or multiplication.
-
-Table 5-1 Abbreviations and Meanings.
-
 decision based on the results of that instruction is desired. The
 miscellaneous instructions are those that do not fit in any of the other
 types; they include software interrupts, return from interrupt, sync, etc.
 In the descriptions, abbreviations and symbols will be used, whose
 definitions can be found in Table 5-1.
+
+| Symbol | Description |
+|-|-|
+| A | The A register. |
+| B | The B register. |
+| CC | The condition code register. |
+| D | The D register. |
+| DD | An 8-bit offset of a branch instruction. |
+| DDDD | A 16-bit offset of a branch instruction. |
+| DP | The direct page register. |
+| EA | The effective address. |
+| LSN | Least significant nibble. |
+| MSN | Most significant nibble. |
+| M | Memory location contents specified by the operand field. |
+| MI | The immediate byte following an op code |
+| P | An operand field specifying a memory location to be accessed by the immediate, direct, extended, indexed, or the special cases of indexed addressing. |
+| PC | Program counter register. |
+| Q | An operand field specifying a memory location by the direct, extended, indexed, or the special cases of indexed addressing. A byte will be read, modified, and written back to it. |
+| R | A register before an operation. |
+| R' | A register after an operation. |
+| S | The S register. |
+| TEMP | A register within the MPU where results are temporarily stored. |
+| U | The U register. |
+| X | The X register. |
+| xx | A byte (two hexadecimal digits). |
+| xx<sub>U</sub> | Most significant byte of a 16-bit number. |
+| xx<sub>L</sub> | Least significant byte of a 16-bit number. |
+| Y | The Y register. |
+| ( ) | Contents of a register.in parentheses is used as an address. |
+| # | Indicates the immediate addressing mode. |
+| $ | Indicates the following number is hexadecimal |
+| [ ] | Brackets around the operand indicate indirect addressing. |
+| , | In operand field, indicates indexed addressing. |
+| <-> | Indicates a transfer of data. |
+| ∧ | Logical AND. |
+| ∨ | Logical OR. |
+| ⊕ | Logical exclusive OR. |
+| ¬ | Logical NOT or complement. |
+| : | Indicates the quantities are concatenated. |
+| +,-,* | Arithmetic addition, subtraction, or multiplication. |
+
+Table 5-1 Abbreviations and Meanings.
 
 The condition code description explains which bits of the CC register
 are affected, and how they are modified by each instruction. These
@@ -4385,45 +4377,47 @@ indirect, PC relative, and PC relative indirect addressing. The RESET and
 interrupt operations are also included at the end of this chapter; they
 perform functions similar to instructions.
 
-ABX Add Accumulator B into the X Register
-Source Form: ABX
+#### ABX - Add Accumulator B into the X Register
 
-Operation: X’ <- X+B Type: Arithmetic
+| | |
+|-|-|
+| Source Form: | ABX |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent. |
+| Operation: | X' <- X+B |
 
-Addressing Modes: Inherent. Condition Codes: Not Affected.
+Condition Codes: Not Affected.
 
 Description: The contents of the B register, in straight binary, are added
 to the contents of the X register; the result is routed back into the X
 register. For example:
 
-LDB #$21
-LDX #$1091
-ABX
-
+```
+    LDB #$21
+    LDX #$1091
+    ABX
+```
 LDB and LDX load the immediate values of $21 and $1091, respectively, into
 the B and X registers. After the ABX instruction executes the X register
 contains $10B3, the sum of the contents of the B register and the original
 contents of the X register. Note that the contents of the B register are
-
 not changed.
 
-ADC Add with Carry into Register
-Source Forms: ADCA P ; ADCB P
-Operation: R’ <- R+M+C Type: Arithmetic
+#### ADC - Add with Carry into Register
 
-Addressing Modes: Immediate, Extended, Direct, and Indexed.
+| | |
+|-|-|
+| Source Forms: | ADCA P ; ADCB P |
+| Type: | Arithmetic |
+| Addressing Modes: | Immediate, Extended, Direct, and Indexed. |
+| Operation: | R' <- R+M+C  |
+
 Condition Codes:
-H - Set if the operation caused a half carry, or carry from bit 3 in
-the ALU; cleared otherwise.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-will indicate a negative result if using signed binary.
-Z - Set if the resulting byte is zero; cleared otherwise.
-
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary numbers.
-
-C - Set if a carry out of bit 7 in the ALU is generated by this
-operation; cleared otherwise.
+- H - Set if the operation caused a half carry, or carry from bit 3 in the ALU; cleared otherwise.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set will indicate a negative result if using signed binary.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary numbers.
+- C - Set if a carry out of bit 7 in the ALU is generated by this operation; cleared otherwise.
 
 Description: A byte is read from a memory location as specified by the
 operand field. The sum of that byte, the current carry (C) bit, and the
@@ -4432,35 +4426,44 @@ reigster. An example of ADCB using extended addressing can.be set up.
 Suppose the B register contains $68, the C bit is clear, and memory
 location $2820 contains $A5. The instruction ADCB $2820 will execute using
 the following process:
-0 current state of C bit
-1010 0101 byte read from $2820
-+0110 1000 current contents of B
-C=1 0000 1101 new contents of B
+
+```
+                   0     current state of C bit
+           1010 0101     byte read from $2820
+         + 0110 1000     current contents of B
+         -----------
+    C=1    0000 1101     new contents of B
+```
+
 The B register will contain $0D and the C bit will be set. The H, N, Z, and
 V bits are cleared. This instruction would be used when adding two strings
 of bytes such as:
-XX XK XX XX
-+ YY YY YY YY
+
+```
+           XX XX XX XX
+         + YY YY YY YY
+         -------------
+```
 
 The addition would be performed byte by byte from right to left. Any carry
 generated by adding of two bytes would be added, by the ADC instruction,
 with the next two bytes to the left; in effect, propagating any carries.
 
-ADD (8 Bit Add Memory into Register
-Source Forms: ADDA P ; ADDB P
-Operation: R’.<- R+M Type: Arithmetic
+#### ADD (8 Bit) - Add Memory into Register
 
-Addressing Modes: Immediate; Extended; Direct; Indexed.
+| | |
+|-|-|
+| Source Forms: | ADDA P ; ADDB P |
+| Type: | Arithmetic |
+| Addressing Modes: | Immediate; Extended; Direct; Indexed. |
+| Operation: | R'.<- R+M |
+
 Condition Codes:
-H - Set if the operation caused a half carry, or carry from bit 3 in
-the ALU; cleared otherwise.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. The N
-bit set indicates a negative result if using signed binary.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary numbers.
-C - Set if a carry out of the ALU, from bit 7, is generated; cleared
-otherwise.
+- H - Set if the operation caused a half carry, or carry from bit 3 in the ALU; cleared otherwise.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. The N bit set indicates a negative result if using signed binary.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary numbers.
+- C - Set if a carry out of the ALU, from bit 7, is generated; cleared otherwise.
 
 Description: A byte is read from memory as specified by the operand field.
 That byte is added to the contents of the A or B (ADDA or ADDB) register
@@ -4470,206 +4473,235 @@ If, for example, the A register contains $A3, then the ADDA with immediate
 addressing: ADDA #$22 will result in the A register containing $C5, the sum
 of $A3 and $22. This process is shown as:
 
-1010 0011 current contents of A
-+0010 0010 immediate byte from memory
-1100 0101 new contents of A
+```
+          1010 0011     current contents of A
+        + 0010 0010     immediate byte from memory
+        -----------
+          1100 0101     new contents of A
+```
 
 The CC register bits are also modified so the N bit is set and the H, Z, V,
 and C bits are cleared.
 
-ADD (16 Bit Add Memory into Register
-Source Form: ADDD P
-Operation: D’ <- D+M:M+1 Type: Arithmetic
+#### ADD (16 Bit) - Add Memory into Register
 
-Addressing Modes: Immediate; Extended; Direct; Indexed.
+| | |
+|-|-|
+| Source Form: | ADDD P |
+| Type: | Arithmetic |
+| Addressing Modes: | Immediate; Extended; Direct; Indexed. |
+| Operation: | D' <- D+M:M+1  |
+
 Condition Codes:
-
-H - Not affected.
-
-N - Set if bit 15 of the resulting 16-bit word is set; cleared
-otherwise. N set indicates a negative result if using signed
-binary.
-
-Z - Set if the resulting word is zero; cleared otherwise.
-
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary numbers.
-
-C - Set if a carry is generated from bit 15; cleared otherwise.
+- H - Not affected.
+- N - Set if bit 15 of the resulting 16-bit word is set; cleared otherwise. N set indicates a negative result if using signed binary.
+- Z - Set if the resulting word is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary numbers.
+- C - Set if a carry is generated from bit 15; cleared otherwise.
 
 Description: Two bytes are read from two consecutive memory locations; the
 operand field specifies the first address. The two bytes are concatenated
-
 to produce a 16-bit word to be added to the contents of the D register. If
 two bytes are stored at addresses $1900 and $1901 such as:
 
-1900 01 7D
+```
+    1900   01 7D
+```
 
 and the D register contains $6091, the following instruction with extended
 addressing: ADDD $1900 will result in the D register containing $620E, the
 sum of $6091 and $017D. The CC register would also be modified so that N,
 Z, V, and C are clear.
 
-AND Logical AND Memory into Register
-Source Forms: ANDA P; ANDB P
+#### AND - Logical AND Memory into Register
 
-Operation: R’ <- RAM Type: Logic
-Addressing Modes: Immediate, Extended, Direct, Indexed.
+| | |
+|-|-|
+| Source Forms: | ANDA P; ANDB P |
+| Type: | Logic |
+| Addressing Modes: | Immediate, Extended, Direct, Indexed. |
+| Operation: | R' <- RAM |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. The N
-bit set indicates a negative result if using signed binary.
-
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Always cleared by this instruction.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. The N bit set indicates a negative result if using signed binary.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Always cleared by this instruction.
+- C - Not affected.
 
 Description: A byte is read from a memory address as specified by the
 operand field. That byte is ANDed with the contents of the A or B (ANDA or
 ANDB) register and the resulting byte is routed back to the same A or B
 register. Here is an example using indexed addressing: a byte of $77 is
-
 stored at address $2280 and the B register contains $DF. Then:
 
-LDY #$2280
-ANDB ,Y
+```
+    LDY #$2280
+    ANDB ,Y
+```
 
 will first load (LDY) the Y register with the address of interest. The ANDB
 instruction will read a byte from the address specified in the Y register
 and AND it with the contents of the B register. The result, $57, is then
 routed back into the B register. This can be demonstrated as:
 
-1101 1111 current contents of B
-AQII11 O11) _ byte read from memory
-0101 01121 new contents of B
+```
+          1101 1111     current contents of B
+        ∧ 0111 0111     byte read from memory
+        -----------
+          0101 0111     new contents of B
+```
 
 The CC register is also modified so the N, Z, and V bits are cleared. A
 typical use for this instruction is to clear selective bits in the A or B
 register. The bits to be cleared are those that are clear in the operand
 byte. This can be seen above.
 
-ANDCC Logical AND Immediate Byte into CC Register
-Source Form: ANDCC #xx
+#### ANDCC - Logical AND Immediate Byte into CC Register
 
-Operation: CC’ <- CCA MI Type: Logic
-Addressing Modes: Immediate.
+| | |
+|-|-|
+| Source Form: | ANDCC #xx |
+| Type: | Logic |
+| Addressing Modes: | Immediate. |
+| Operation: | CC' <- CCA MI |
 
 Condition Codes: Any or all bits may be affected. See description.
 
 Description: The immediate byte is read from memory and ANDed with the
 contents of the condition code register. The resulting byte is then routed
 back into the CC register. For example, if the CC register contains $38,
-
 the instruction: ANDCC #$F7 will result in the CC register containing $30.
 Note that this instruction can be used to clear particular bits in the CC
 register. In this example, bit 3 of the CC register was cleared since bit 3
-
 of the operand was clear.
 
-ASL Arithmetic Shift Left
-Source Forms: ASL Q; ASLA; ASLB
-Operation: C <- <- 0 Type: Arithmetic
+#### ASL - Arithmetic Shift Left
 
-Addressing Modes: Inherent; Extended; Direct; Indexed.
+| | |
+|-|-|
+| Source Forms: | ASL Q; ASLA; ASLB |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent; Extended; Direct; Indexed. |
+| Operation: | C <- <- 0 |
 
 Condition Codes:
-
-H ~ Its state is not defined after this instruction. It may change to
-some unpredicted state, therefore a branch instruction that tests
-its state should not be used after an ASL instruction.
-
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-
-Z - Set if the resulting byte is zero; cleared otherwise.
-
-V - Set if the exclusive OR of bits 7 and 6 of the original operand is
-1; cleared otherwise.
-
-C - Set if bit 7 of the original operand was set; cleared otherwise.
+- H - Its state is not defined after this instruction. It may change to some unpredicted state, therefore a branch instruction that tests its state should not be used after an ASL instruction.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if the exclusive OR of bits 7 and 6 of the original operand is 1; cleared otherwise.
+- C - Set if bit 7 of the original operand was set; cleared otherwise.
 
 Description: The bits of a byte are shifted one bit position to the left,
 depicted by the above operation, where the byte may be a byte read from
 memory (ASL Q) or the contents of the A or B (ASLA or ASLB) register. In
 the shift left process, bit O of the resulting byte is cleared and the
-
 original state of bit 7 is shifted into the C bit of the CC register. The
 resulting byte is then returned to its source - memory or the A or B
-
 register. For example, suppose $55 is stored at address $18E0. The ASL with
 extended addressing: ASL $18E0 will read the byte, $55, from address $18E0.
 The shift operation is performed as:
 
-01010101 original byte
-C<- 010410410 41<-0> shift
-c=0 101041010 resultant byte
+```
+         0101 0101      original byte
+    C <- 0101 0101      <- 0  shift
+    C=0  1010 1010      resultant byte
+```
 
 The resulting byte of $AA is stored back in memory address $18E0. Also, the
 CC register bits are modified; the C and Z bits are cleared, the N and V
 bits are set, and the H bit may be either set or clear.
 
-ASR Arithmetic Shift Right
-Source Forms: ASR Q; ASRA; ASRB
-Operation: ->C Type: Arithmetic
+#### ASR - Arithmetic Shift Right
 
-Addressing Modes: Inherent; Direct; Indexed; Extended.
+| | |
+|-|-|
+| Source Forms: | ASR Q; ASRA; ASRB |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent; Direct; Indexed; Extended. |
+
+```
+           ┌──────┐
+Operation: │7 -> 0│ -> C
+           └──────┘
+```
+
 Condition Codes:
-H - Its state:is not defined after this operation, therefore a branch
-instruction testing its state should not follow this instruction.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-indicates a negative result if using signed binary numbers.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Not affected.
-C - Set if bit 0 of the original operand was set; cleared otherwise.
+- H - Its state:is not defined after this operation, therefore a branch instruction testing its state should not follow this instruction.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set indicates a negative result if using signed binary numbers.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Not affected.
+- C - Set if bit 0 of the original operand was set; cleared otherwise.
 
-Description: A byte’s bits are shifted one bit position to the right as
-
+Description: A byte's bits are shifted one bit position to the right as
 depicted in the above operation; the byte may have been read from memory
 (ASR Q) or come from the A or B (ASRA or ASRB) register. In the right shift
 process bit 7 is unchanged and bit 0 is shifted out of the byte into the C
-
 bit. The resulting byte is returned to its source - memory or the A or B
 register. For example, suppose the B register contains $85. The ASR with
 inherent addressing: ASRB will perform the arithmetic shift right operation
 on the contents of the B register as:
 
-100001041 original contents of B
-10.000 10 1->C shift
-C=1 110000410 result
+```
+        1000 0101   original contents of B
+        1000 0101   -> C shift
+    C=1 1100 0010   result
+```
 
 The resulting byte of $C2 is now routed back to the B register. The CC
 register is modified where the C and N bits are set, the Z bit is cleared,
 and the H bit may be set or clear.
 
-BCC Branch on Carry Clear
-Source Forms: BCC DD; LBCC DDDD
+#### BCC - Branch on Carry Clear
 
-Operation: TEMP <- MI Type: Branch
-If C=0, then PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BCC DD; LBCC DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP <- MI
+           If C=0, then PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BCC will perform a branch if the C bit is clear; otherwise
 processing will continue with the instruction following the BCC. The BCC is
 equivalent to the BHS instruction.
 
-BCS Branch on Carry Set
-Source Forms::BCS DD; LBCS DDDD
+#### BCS - Branch on Carry Set
 
-Operation: TEMP. <- MI Type: Branch
-If C=1, then PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BCS DD; LBCS DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP. <- MI
+           If C=1, then PC' <- PC+TEMP
+```
+Condition Codes: Not affected.
 
 Description: The BCS will perform a branch if the C bit is set; otherwise
 processing will continue with the instruction following the BCS. The BCS is
 equivalent to the BLO instruction.
 
-BE Branch on Equal
+#### BEQ - Branch on Equal
 
-Source Forms: BEQ DD; LBEQ DDDD
+| | |
+|-|-|
+| Source Forms: | BEQ DD; LBEQ DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If Z=1, then PC’ <- PC+TEMP
-
-Addressing Modes: Relative. Condition Codes: Not affected.
+```
+Operation: TEMP <- MI
+           If Z=1, then PC' <- PC+TEMP
+```
+Condition Codes: Not affected.
 
 Description: The BEQ will perform a branch if the Z bit is set; otherwise
 processing continues with the instruction following the BEQ. The BEQ is
@@ -4677,29 +4709,40 @@ typically used after a compare instruction and will cause a branch if the
 two compared quantities were exactly the same. Used after a subtract
 instruction, it will branch if the result-is zero.
 
-BGE Branch on Greater than or Equal to Zero
-Source Forms: BGE DD; LBGE DDDD
+#### BGE - Branch on Greater than or Equal to Zero
 
-Operation: TEMP <- MI Type: Branch
-If (N+ V)=0, then PC’ <~ PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BGE DD; LBGE DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP <- MI
+           If (N ⊕ V)=0, then PC' <- PC+TEMP
+```
+Condition Codes: Not affected.
 
 Description: The BGE will perform a branch if the N and V bits are both set
 or both clear; otherwise processing continues with the instruction
-
 following the BGE. The BGE is typically used after a subtract or compare of
 signed binary quantities. After a compare it will branch if the register
 contents were greater than or equal to the memory operand. After a subtract
 it will branch if the result is greater than or equal to zero.
 
-BGT Branch on Greater Than
+#### BGT - Branch on Greater Than
 
-Source Forms: BGT DD; LBGT DDDD
+| | |
+|-|-|
+| Source Forms: | BGT DD; LBGT DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If Z v(N¥ V)=0, then PC’ <- PC+TEMP
-
-Addressing Modes: Relative. Condition Codes: Not affected.
+```
+Operation: TEMP <- MI
+           If Z ∨ (N ⊕ V)=0, then PC' <- PC+TEMP
+```
+Condition Codes: Not affected.
 
 Description: The BGT will perform a branch if the Z bit is clear and the N
 and V bits are both set or both clear; otherwise processing will continue
@@ -4707,15 +4750,22 @@ with the instruction following the BGT. The BGT is typically used after a
 compare or subtract of signed binary quantities. After a compare it will
 cause a branch if the register contents were greater than the memory
 operand. After a subtract it will branch if the result is greater than
+Zero.
 
-ZEro.
+#### BHI - Branch if Higher
 
-BHI Branch if Higher
-Source Forms: BHI DD; LBHI DDDD
+| | |
+|-|-|
+| Source Forms: | BHI DD; LBHI DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If (Cv Z)=0, then PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+```
+Operation: TEMP <- MI
+           If (C ∨ Z)=0, then PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BHI will perform a branch if the C and Z bits are both
 clear; otherwise processing will continue with the instruction following
@@ -4724,37 +4774,47 @@ binary quantities. After a compare it will branch if the register contents
 were greater, or higher, than the memory operand. After a subtract it will
 branch if the result is greater than zero.
 
-BHS Branch if Higher or Same
-Source Forms: BHS DD; LBHS DDDD
-Operation: TEMP <- MI Type: Branch
+#### BHS - Branch if Higher or Same
 
-If C=0, then PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BHS DD; LBHS DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP <- MI
+           If C=0, then PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BHS will perform a branch if the C bit is clear; otherwise
 processing will continue with the instruction following the BHS. The BHS is
 typically used after a subtract or compare of straight binary quantities.
 
 After a compare, it will branch if the register contents were higher than
-
 or the same as the memory operand. After a subtract, it will branch if the
 result is zero or greater than zero. The BHS is a duplicate of the BCC, and
 can be specified by one of two mnemonics, BHS or BCC. This assists the
 programmer by giving the instructions names conveying the operation of each
 instruction.
 
-BIT Bit Test
-Source Forms: BITA P; BITB P
-Operation: TEMP <- RAM Type: Test
+#### BIT - Bit Test
 
-Addressing Modes: Immediate; Direct; Extended; Indexed.
+| | |
+|-|-|
+| Source Forms: | BITA P; BITB P |
+| Type: | Test |
+| Addressing Modes: | Immediate; Direct; Extended; Indexed. |
+| Operation: | TEMP <- R ∧ M |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-indicates a negative number if using signed binary numbers.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Always cleared.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set indicates a negative number if using signed binary numbers.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
 
 Description: The BIT instruction causes a byte to be read from memory,
 specified by the operand field. That byte is ANDed with the contents of the
@@ -4765,28 +4825,22 @@ The BIT instruction is used to test the condition of a bit in a memory
 location. For example, suppose one wanted to know if bit 1 of the byte
 stored at address $112C is set or clear. This could be found as follows:
 
-LDA #$02
-BITA $112C
+```
+    LDA #$02
+    BITA $112C
+```
 
 LDA loads A with $02 (only bit 1 set). BITA ANDs the contents of address
 $112C with the contents of A and sets or clears the appropriate CC register
 bits. If the byte read from memory has bit 1 set, the resulting byte will
 have only bit 1 set, as seen below:
 
-010 contents of A
-x1x contents of $112C
-010 result.
-
-A
-
-Ob oO
-Ol oO
-
-00
-XX
-00
-
-CO} Oo
+```
+      0000 0010     contents of A
+    ∧ xxxx xx1x     contents of $112C
+    -----------
+      0000 0010     result.
+```
 
 The x means we do not care what state that bit is in. The Z bit would be
 cleared indicating a non-zero value and bit 1 of the operand byte is set.
@@ -4794,31 +4848,43 @@ cleared indicating a non-zero value and bit 1 of the operand byte is set.
 If bit 1 of the operand was not set, the Z bit would be set, since the
 result of ANDing would be zero.
 
-BLE Branch on Less than or Equal to Zero
-Source Forms: BLE DD: LBLE DDDD
+#### BLE - Branch on Less than or Equal to Zero
 
-Operation: TEMP <- MI Type: Branch
-If Z v(N¥ V)=1, then PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BLE DD: LBLE DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP <- MI
+           If Z ∨ (N ⊕ V)=1, then PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BLE will perform a branch if the Z bit is set or if
-
 either, but not both, the N or V bit is set; otherwise processing will
 continue with the instruction following the BLE. The BLE can be used after
 an addition or subtraction of signed binary values where it will branch if
 the result is less than or equal to zero. It can also be used after a
-
 compare of signed binary values where it will branch if the register
 contents are less than or equal to the memory operand.
 
-BLO Branch on Lower
+#### BLO - Branch on Lower
 
-Source Forms: BLO DD; LBLO DDDD
+| | |
+|-|-|
+| Source Forms: | BLO DD; LBLO DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If C=], then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If C=1, then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BLO will perform a branch if the C bit is set; otherwise
 processing will continue with the instruction following the BLO. The BLO
@@ -4826,14 +4892,20 @@ instruction is used after a subtract or compare of straight binary numbers
 and will branch if the register contents were lower, or smaller, than the
 memory operand. Note that the BLO is the same as the BCS instruction.
 
-BLS Branch on Lower or Same
+#### BLS - Branch on Lower or Same
 
-Source Forms: BLS DD; LBLS DDDD
+| | |
+|-|-|
+| Source Forms: | BLS DD; LBLS DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If (C VZ)=1 then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If (C ∨ Z)=1 then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BLS will perform a branch if the C or Z bits are set;
 otherwise processing will continue with the instruction following the BLS.
@@ -4841,45 +4913,62 @@ The BLS is used after a subtract or compare of straight binary numbers and
 will branch if the register contents were lower than or the same as the
 memory operand.
 
-BLT Branch on Less Than Zero
-Source Forms: BLT DD; LBLT DDDD
-Operation: TEMP <- MI Type: Branch
+#### BLT - Branch on Less Than Zero
 
-If (N¥YV)=1, then PC’ <- PC+TEMP
+| | |
+|-|-|
+| Source Forms: | BLT DD; LBLT DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+```
+Operation: TEMP <- MI
+           If (N ⊕ V)=1, then PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BLT will perform a branch if either, but not both, the N
 or V bit are set; otherwise processing continues with the instruction
 following the BLT. The BLT is used after a subtract or compare of signed
 binary quantities. After a subtract, it will branch if the result is less
-
 than zero. After a compare, it will branch if the register contents are
-
 less than the memory operand.
 
-BMI Branch on Minus
+#### BMI - Branch on Minus
 
-Source Forms: BMI DD; LBMI DDDD
+| | |
+|-|-|
+| Source Forms: | BMI DD; LBMI DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If N=1, then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If N=1, then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BMI will perform a branch if the N bit is set; otherwise
 processing will continue with the instruction following the BMI. Since the
 BMI does not check for the overflow condition, it is best to use the BLT
 after an operation on signed binary numbers.
 
-BNE Branch on Not Equal
+#### BNE - Branch on Not Equal
 
-Source Forms: BNE DD; LBNE DDDD
+| | |
+|-|-|
+| Source Forms: | BNE DD; LBNE DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If Z=0, then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If Z=0, then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BNE will perform a branch if the Z bit is clear; otherwise
 processing will continue will the instruction following the BNE. The BNE,
@@ -4887,189 +4976,195 @@ if used after a subtraction, will branch if the result is not zero. If used
 after a compare, it will branch if the register contents do not equal the
 memory operand.
 
-BPL Branch on Plus
+#### BPL - Branch on Plus
 
-Source Forms: BPL DD; LBPL DDDD
+| | |
+|-|-|
+| Source Forms: | BPL DD; LBPL DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If N=0, then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If N=0, then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BPL will perform a branch if the N bit is clear; otherwise
 processing will continue with the instruction following the BPL. The BPL is
 used after an operation on straight binary quantities to branch if the
-
 result is less than $80. If the quantities are signed binary, itis best to
-
 use the BGE instruction.
 
-BRA Branch Always
-Source Forms: BRA DD; LBRA DDDD
+#### BRA - Branch Always
 
-Operation: TEMP <-. MI Type: Branch
-PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BRA DD; LBRA DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP <- MI
+           PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BRA will always perform a branch, regardless of the state
 of the bits of the CC register. The BRA is also known as an unconditional
 branch.
 
-BRN Branch Never
+#### BRN - Branch Never
 
-Source Forms: BRN DD; LBRN DDDD
+| | |
+|-|-|
+| Source Forms: | BRN DD; LBRN DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+| Operation: | TEMP <- MI |
 
-Operation: TEMP <- MI Type: Branch
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BRN will never perform a branch; therefore processing
 always continues with the instruction following the BRN.
 
-BSR Branch to Subroutine
-Source Forms: BSR DD; LBSR DDDD
-Operation: TEMP <- MI Type: Branch
+#### BSR - Branch to Subroutine
 
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PCy
-PC’ <- PC+TEMP
-Addressing Modes: Relative. Condition Codes: Not affected.
+| | |
+|-|-|
+| Source Forms: | BSR DD; LBSR DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
+
+```
+Operation: TEMP <- MI
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           PC' <- PC+TEMP
+```
+
+Condition Codes: Not affected.
 
 Description: The BSR will first push the contents of the PC register into
-
 the S stack by decrementing the contents of S by one, and storing the lower
 half of the PC register at the address now contained in S. Then the
-
 contents of S are decremented again by one and the upper half of the PC
 register contents stored at the new address in S. The BSR instruction
-
 always branches to, normally, a subroutine. The last instruction of the
 subroutine should be an RTS, which will pull the PC register value from the
 S stack and cause the MPU to return to the program that called the
 subroutine. There processing will resume with the instruction immediately
 following the BSR.
 
-BVC Branch on Overflow Clear
+#### BVC - Branch on Overflow Clear
 
-Source Forms: BVC DD; LBVC DDDD
+| | |
+|-|-|
+| Source Forms: | BVC DD; LBVC DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If V=0, then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If V=0, then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BVC will perform a branch if the V bit is clear; otherwise
 processing will continue with the instruction following the BVC. The BYVC,
-
 used after an operation on signed binary quantities, will branch if no
 overflow occurred.
 
-BVS Branch on Overflow Set
+#### BVS - Branch on Overflow Set
 
-Source Forms: BVS DD; LBVS DDDD
+| | |
+|-|-|
+| Source Forms: | BVS DD; LBVS DDDD |
+| Type: | Branch |
+| Addressing Modes: | Relative. |
 
-Operation: TEMP <- MI Type: Branch
-If V=1, then PC’ <- PC+TEMP
+```
+Operation: TEMP <- MI
+           If V=1, then PC' <- PC+TEMP
+```
 
-Addressing Modes: Relative. Condition Codes: Not affected.
+Condition Codes: Not affected.
 
 Description: The BVS will perform a branch if the V bit is set; otherwise
 processing will continue with the instruction following the BVS. The BYS is
 used after an operation on signed binary numbers and will branch if an
 overflow condition was generated.
 
-CLR Clear Accumulator or Memory Location
-Source Forms: CLR Q; CLRA; CLRB
-Operation: TEMP <- xx Type: Arithmetic
-M <- 00 or R <- 00
-Addressing Modes: Inherent; Direct; Indexed; Extended.
+#### CLR - Clear Accumulator or Memory Location
+
+| | |
+|-|-|
+| Source Forms: | CLR Q; CLRA; CLRB |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent; Direct; Indexed; Extended. |
+
+```
+Operation: TEMP <- xx
+           M <- 00 or R <- 00
+```
+
 Condition Codes:
-H - Not afftected.
-N - Always cleared.
-Z - Always set.
-V - Always cleared.
-C - Always set.
+- H - Not afftected.
+- N - Always cleared.
+- Z - Always set.
+- V - Always cleared.
+- C - Always set.
 
 Description: The contents of the A or B (CLRA or CLRB) register or of a
 memory location (CLR Q) are cleared so it now contains 00.
 
-CMP (8 Bit) Compare Memory from Register
-Source Forms: CMPA P; CMPB P
-Operation: TEMP <- R-M Type: Test
+#### CMP (8 Bit) - Compare Memory from Register
 
-Addressing Modes: Immediate; Extended; Direct; Indexed.
+| | |
+|-|-|
+| Source Forms: | CMPA P; CMPB P |
+| Type: | Test |
+| Addressing Modes: | Immediate; Extended; Direct; Indexed. |
+| Operation: | TEMP <- R-M |
+
 Condition Codes:
+- H - Its state is undefined therefore its state should not be tested with a branch instruction.
+- N - Set if bit 7 of the byte resulting from the subtraction process is set; cleared otherwise. N set indicates that the contents of M are greater than the contents of the accumulator in use, if comparing signed binary numbers.
+- Z - Set if the byte resulting from the subtraction process is zero; cleared otherwise. Z set indicates that the a contents of the memory location exactly equal the contents of the accumulator in use.
+- V - Set if an overflow condition was generated by the subtraction process; cleared otherwise. This bit is applicable only to signed binary numbers.
+- C - Set if a borrow from bit 7 of the ALU is generated by the subtraction process; cleared otherwise. When comparing straight binary values, C set indicates the accumulator contents are lower than the memory location contents.
 
-H - Its state is undefined therefore its state should not be tested
-with a branch instruction.
+Description: The CMP compares the contents of accumulator A or B (CMPA or CMPB) to the contents of a memory location by subtracting the memory contents from the accumulator contents. The resulting byte is not used and the contents of the accumulator and memory location are not changed. Only the bits of the CC register are modified to indicate the result. For example, the A register contains $A3 and memory location $3F22 contains $11. The CMP instruction with extended addressing: CMPA $3F22 will subtract $11 from $A3 clearing the Z, V, and C bits, setting the N bit, and leave the H bit in an undetermined state. The subtraction process is demonstrated as:
 
-N - Set if bit 7 of the byte resulting from the subtraction process is
-set; cleared otherwise. N set indicates that the contents of M are
-greater than the contents of the accumulator in use, if comparing
-signed binary numbers.
+```
+        b
+      1010 0011     contents of A
+    - 0001 0001     contents of memory
+    -----------
+      1001 0010     unused result
+```
 
-Z - Set if the byte resulting from the subtraction process is zero;
-cleared otherwise. Z set indicates that the a contents of the
-memory location exactly equal the contents of the accumulator in
-use.
+#### CMP (16 Bit) - Compare Memory from Register
 
-V - Set if an overflow condition was generated by the subtraction
-process; cleared otherwise. This bit is applicable only to signed
-binary numbers.
+| | |
+|-|-|
+| Source Forms: | CMPD P; CMPX P; CMPY P; CMPU P; CMPS P |
+| Type: | Test |
+| Addressing Modes: | Immediate; Extended; Direct; Indexed. |
+| Operation: | TEMP <- R-M:M+1 |
 
-C - Set if a borrow from bit 7 of the ALU is generated by the
-subtraction process; cleared otherwise. When comparing straight
-binary values, C set indicates the accumulator contents are lower
-than the memory location contents.
-
-Description: The CMP compares the contents of accumulator A or B (CMPA or
-CMPB) to the contents of a memory location by subtracting the memory
-contents from the accumulator contents. The resulting byte is not used and
-
-the contents of the accumulator and memory location are not changed. Only
-the bits of the CC register are modified to indicate the result. For
-
-example, the A register contains $A3 and memory location $3F22 contains
-
-$11. The CMP instruction with extended addressing: CMPA $3F22 will subtract
-$11 from $A3 clearing the Z, V, and C bits, setting the N bit, and leave
-
-the H bit in an undetermined state. The subtraction process is demonstrated
-
-as:
-
-b
-1010 0011 contents of A
--0001 0001 contents of memory
-1001:°001.0 unused result
-CMP (16 Bit Compare Memory from Register
-Source Forms: CMPD P; CMPX P; CMPY P; CMPU P; CMPS P
-Operation: TEMP <- R-M:M+1 Type: Test
-
-Addressing Modes: Immediate; Extended; Direct; Indexed.
 Condition Codes:
-
-H - Not affected.
-
-N - Set if bit 15 of the word resulting from the subtraction process is
-set; otherwise cleared. N set indicates the memory operand is
-greater than the register contents if comparing signed binary
-numbers.
-
-Z. - Set if the word resulting from the subtraction process is zero;
-otherwise cleared. Z set indicates the memory operand is exactly
-equal to the register contents.
-
-V_ - Set if the subtraction process resulted in a 16-bit overflow or
-underflow; cleared otherwise. This applies only to signed binary.
-
-C - Set if a borrow is generated out of bit position 15 during the
-subtraction process; otherwise cleared. If comparing straight
-binary numbers, C set indicates the register contents are lower
-than the memory operand.
+- H - Not affected.
+- N - Set if bit 15 of the word resulting from the subtraction process is set; otherwise cleared. N set indicates the memory operand is greater than the register contents if comparing signed binary numbers.
+- Z - Set if the word resulting from the subtraction process is zero; otherwise cleared. Z set indicates the memory operand is exactly equal to the register contents.
+- V - Set if the subtraction process resulted in a 16-bit overflow or underflow; cleared otherwise. This applies only to signed binary.
+- C - Set if a borrow is generated out of bit position 15 during the subtraction process; otherwise cleared. If comparing straight binary numbers, C set indicates the register contents are lower than the memory operand.
 
 Description: The CMP compares the contents of a 16-bit register with the
 contents of two consecutive memory addresses; the operand field specifies
-
 the first address. The compare is performed by subtracting the 16-bit word,
 read from two memory locations, from the contents of the selected 16-bit
 register. As a result, the memory locations and the 16-bit register are
@@ -5078,64 +5173,71 @@ the result. For an example of comparing signed binary numbers, the Y
 register contains $021A and memory locations $1705 and $1706 contain $072E
 as seen below:
 
-1705 07 2E
+```
+    1705   07 2E
+```
 
 The instruction to compare the Y register with the two-byte memory operand
 using extended addressing is: CMPY $1705. The compare is performed by
 reading the two bytes from addresses $1705 and $1706, and concatenating
 them to form the number 072E. That number is then subtracted from the value
 in the Y register and the CC register bits are set or cleared accordingly.
-
 The subtraction process in hexadecimal is:
 
-b bbb
-O21A contents of Y
--O72E memory operand
-FAEC unused result
+```
+      b b b b
+      0 2 1 A   contents of Y
+    - 0 7 2 E   memory operand
+    ---------
+      F A E C   unused result
+```
 
 As a result, the C and N bits are set and the Z and V bits cleared.
 
-COM Complement
-Source Forms: COM Q; COMA; COMB
-Operation: M <- xx or R <- R Type: Logic
+#### COM - Complement
 
-Addressing Modes:Extended; Indexed; Inherent; Direct.
+| | |
+|-|-|
+| Source Forms: | COM Q; COMA; COMB |
+| Type: | Logic |
+| Addressing Modes: | Extended; Indexed; Inherent; Direct. |
+| Operation: | M <- ¬xx or R <- ¬R |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Always cleared.
-C - Always set.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Always cleared.
+- C - Always set.
 
-Description: The COM instruction will replace the contents of a memory
-location (COM Q) or the A or B (COMA or COMB) register with its logical
-complement. The contents will be read, the state of each bit reversed, and
-then stored where the original was taken. For example, the A register
-contains $E6. The instruction: COMA results in the A register containing
-$19, In the CC register, the C bit is set and the N, V, and Z bits are
-cleared.
+Description: The COM instruction will replace the contents of a memory location (COM Q) or the A or B (COMA or COMB) register with its logical complement. The contents will be read, the state of each bit reversed, and then stored where the original was taken. For example, the A register contains $E6. The instruction: COMA results in the A register containing $19, In the CC register, the C bit is set and the N, V, and Z bits are cleared.
 
-CWAI Clear CC bits and Wait for Interrupt
-Source Forms: CWAI #$xx
+#### CWAI - Clear CC bits and Wait for Interrupt
 
-Operation: CC’ <- CC A MI Type: Miscellaneous
-Set E bit
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- Pou
+| | |
+|-|-|
+| Source Forms: | CWAI #$xx |
+| Type: | Miscellaneous |
+| Addressing Modes: | Immediate. |
 
-S’ <- S-I, (S) <- U
-S’ <- §-1, (S) <- Uy
-S’ <- S- 1, (S) <-
-S’ <- S-1, (S) <- Y,
-S’ <- S-1, (S) <- X
-S’ <- 8-1, (S) <- X
-S’ <- S-1, (S) <- DP
-S’ <- S-1, (S) <- B
+```
+Operation: CC' <- CC ∧ MI
+           Set E bit
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           S' <- S-I, (S) <- U<sub>L</sub>
+           S' <- S-1, (S) <- U<sub>U</sub>
+           S' <- S-1, (S) <- Y<sub>L</sub>
+           S' <- S-1, (S) <- Y<sub>U</sub>
+           S' <- S-1, (S) <- X<sub>L</sub>
+           S' <- 8-1, (S) <- X<sub>U</sub>
+           S' <- S-1, (S) <- DP
+           S' <- S-1, (S) <- B
+           S' <- S-1, (S) <- A
+           S' <- S-1, (S) <- CC
+           Wait for interrupt
+```
 
-S’ <- S-1, (S) <- A
-S’ <- S-1, (S) <- CC
-Wait for interrupt
-Addressing Modes: Immediate.
 Condition Codes: All bits may be affected; see description.
 
 Description: The CWAI will AND the contents of the CC register with the
@@ -5161,64 +5263,73 @@ address of an interrupt handler which, when finished, executes an RTI
 instruction. The RTI pulls all the MPU registers from the S stack and
 causes the MPU to resume processing at the instruction following the CWAL
 
-DAA Decimal Addition Adjust
-Source Forms: DAA
-Operation: A’ <- A+CF(MSN):CF(LSN) Type: Arithmetic
-CF is a correction factor for each BCD digit (nibble). CF, for each
-nibble, will be either a 0 or a 6 as determined below.
-CF(LSN)=6 if 1)the H bit from the previous operation was set
-or 2)the value of the LSN is greater than 9
-CF(MSN)=6 if 1)the C bit from the previous operation was set
-or 2)the value of the MSN is greater than 9
-or 3)the MSN>8 and the LSN>9
-Addressing Modes: Inherent.
+#### DAA - Decimal Addition Adjust
+
+| | |
+|-|-|
+| Source Forms: | DAA |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent. |
+
+```
+Operation: A' <- A+CF(MSN):CF(LSN)
+CF is a correction factor for each BCD digit (nibble). CF, for each nibble, will be either a 0 or a 6 as determined below.
+    CF(LSN)=6 if 1) the H bit from the previous operation was set 
+              or 2) the value of the LSN is greater than 9
+    CF(MSN)=6 if 1) the C bit from the previous operation was set 
+              or 2) the value of the MSN is greater than 9 
+              or 3) the MSN>8 and the LSN>9
+```
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Not defined (could be any state).
-C - Set if a carry from bit 7 is generated or if the previous operation
-set the C bit; cleared otherwise.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Not defined (could be any state).
+- C - Set if a carry from bit 7 is generated or if the previous operation set the C bit; cleared otherwise.
 
 Description: After adding BCD numbers with the ADDA or ADCA, the total may
 contain nonvalid BCD codes. The DAA is normally used immediately after an
 ADDA or ADCA because it uses the condition codes generated by them and
 operates only on the contents of the A register. The DAA performs the
 adjustment of the result of binary addition by adding a correction factor
-
 (0 or 6) to each nibble to make each nibble a valid BCD code. For example,
-
 the BCD numbers 55 and 17 can be added and adjusted with these two
 instructions (in this case the A register contains $55):
 
-ADDA #$17
-DAA
+```
+    ADDA #$17
+    DAA
+```
 
-The ADDA will adds, in binary, $55 and $17 to yield $6C, which is routed
-back to the A register. The DAA inspects the contents of A and the CC
-register, that in this case will determine a CF(MSN) of 0 and a CF(LSN) of
-6. The DAA adds the correction factors into the A register as:
+The ADDA will adds, in binary, $55 and $17 to yield $6C, which is routed back to the A register. The DAA inspects the contents of A and the CC register, that in this case will determine a CF(MSN) of 0 and a CF(LSN) of 6. The DAA adds the correction factors into the A register as:
 
-6B contents of A
-+06 correction factors
-72 valid BCD result in A
+```
+      6 B   contents of A
+    + 0 6   correction factors
+    -----
+      7 2   valid BCD result in A
+```
 
 Now the A register contains $72, the correct result of adding the two BCD
 numbers. When adding BCD numbers composed of multiple bytes, the ADCA must
 be used to propagate any carries throughout the bytes being added.
 
-DEC Decrement
-Source Forms: DEC Q; DECA; DECB
-Operation: M’ <- M-1 or R’ <- R-1 Type: Arithmetic
-Addressing Modes: Inherent; Indexed; Extended; Direct.
+#### DEC - Decrement
+
+| | |
+|-|-|
+| Source Forms: | DEC Q; DECA; DECB |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent; Indexed; Extended; Direct. |
+| Operation: | M' <- M-1 or R' <- R-1 |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-indicates a negative result if using signed binary numbers.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set indicates a negative result if using signed binary numbers.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary.
+- C - Not affected.
 
 Description: The DEC instruction will decrement the contents of a memory
 location (DEC Q) or the A or B (DECA or DECB) register by one. When
@@ -5229,39 +5340,42 @@ be used. For example, the B register contains $C4. A DECB instruction will
 result in B containing $C3. In the CC register, N will be set and Z and V
 will be cleared.
 
-EOR Exclusive OR
-Source Forms: EORA P; EORB P
-Operation: R’ <- R¥™M Type: Logic
+#### EOR - Exclusive OR
 
-Addressing Modes: Immediate; Direct; Extended; Indexed.
+| | |
+|-|-|
+| Source Forms: | EORA P; EORB P |
+| Type: | Logic |
+| Addressing Modes: | Immediate; Direct; Extended; Indexed. |
+| Operation: | R' <- R ⊕ M |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Always cleared.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
 
-Description: The EOR will read a byte from a memory address as specified by
-the operand field. That byte is exclusive ORed with the contents of the A
+Description: The EOR will read a byte from a memory address as specified by the operand field. That byte is exclusive ORed with the contents of the A or B (EORA or EORA) register and the result is routed back to the A or B register, respectively. For example, the B register contains $77. The EOR with immediate addressing: EORB #$0F results in the B register containing $78. The operation is demonstrated in binary as:
 
-or B (EORA or EORA) register and the result is routed back to the A or B
-register, respectively. For example, the B register contains $77. The EOR
-with immediate addressing: EORB #$0F results in the B register containing
-$78. The operation is demonstrated in binary as:
+```
+       0111 0111    contents of B
+    ⊕ 0000 1111    immediate byte
+    ------------
+       0111 1000    new contents of B
+```
 
-O11101i11 contents of B
-¥ 0000 1111 immediate byte
-01111000 new contents of B
+A bit set in the operand will toggle, or reverse, the state of the corresponding bit in the register.
 
-A bit set in the operand will toggle, or reverse, the state of the
+#### EXG - Exchange Registers
 
-corresponding bit in the register.
+| | |
+|-|-|
+| Source Forms: | EXG R1,R2 |
+| Type: | Data Movement |
+| Addressing Modes: | Register. |
+| Operation: | R1 <-> R2 |
 
-EXG Exchange Registers
-Source Forms: EXG R1,R2
-Operation: R] <-> R2 Type: Data Movement
-
-Addressing Modes: Register.
 Condition Codes: Not affected unless the CC register is exchanged.
 
 Description: The contents of two registers, Rl and R2, are exchanged. The
@@ -5274,18 +5388,21 @@ and the PC register containing $1120. Now the MPU will start executing
 instructions address $1120. This example is a unique type of branch
 operation.
 
-INC Increment
-Source Forms: INC Q; INCA; INCB
-Operation: M’ <- M+] or R’ <- R+l Type: Arithmetic
-Addressing Modes: Inherent; Indexed; Extended; Direct.
+#### INC - Increment
+
+| | |
+|-|-|
+| Source Forms: | INC Q; INCA; INCB |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent; Indexed; Extended; Direct. |
+| Operation: | M' <- M+1 or R' <- R+l |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-indicates the result is negative if using signed binary numbers.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set indicates the result is negative if using signed binary numbers.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary.
+- C - Not affected.
 
 Description: The INC will increment the contents of a memory location (INC
 Q) or the A or B (INCA or INCB) register by one. When incrementing
@@ -5296,1107 +5413,913 @@ contains $D5. The INCA instruction will result in A containing $D6. The CC
 register will also be modified where the N bit is set and the Z and V bits
 are cleared.
 
-JMP Jump to Effective Address
-Source Forms: JMP EA
-Operation: PC’ <- EA Type: Miscellaneous
+#### JMP - Jump to Effective Address
 
-Addressing Modes: Direct; Extended; Indexed.
+| | |
+|-|-|
+| Source Forms: | JMP EA |
+| Type: | Miscellaneous |
+| Addressing Modes: | Direct; Extended; Indexed. |
+| Operation: | PC' <- EA |
+
 Condition Codes: None are affected.
 
-Description: The effective address, as specified by the operand field, is
+Description: The effective address, as specified by the operand field, is loaded into the PC register causing the MPU to start executing instructions at the effective address. For example, the JMP with extended addressing: JMP $2122 will cause the MPU to jump, or unconditionally branch, to address $2122.
 
-loaded into the PC register causing the MPU to start executing instructions
+#### JSR - Jump to Subroutine at Effective Address
 
-at the effective address. For example, the JMP with extended addressing:
+| | |
+|-|-|
+| Source Forms: | JSR EA |
+| Type: | Miscellaneous |
+| Addressing Modes: | Direct; Extended; Indexed. |
 
-JMP $2122 will cause the MPU to jump, or unconditionally branch, to address
-$2122.
+```
+Operation: S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           PC' <- EA
+```
 
-JSR Jump to Subroutine at Effective Address
-Source Forms: JSR EA
-Operation: S’ <- S-1, (S) <- PC, Type: Miscellaneous
-S’ <- S-1, (S) <- PCy
-PC’ <- EA
-Addressing Modes: Direct; Extended; Indexed.
 Condition Codes: None are affected.
 
-Description: The JSR will first push the contents of the PC register onto
+Description: The JSR will first push the contents of the PC register onto the S stack. Then the PC register is loaded with the effective address, as specified by the operand field. The MPU starts executing instructions at the effective address, usually the starting address of a subroutine. The last instruction of the subroutine should be an RTS, which will pull the PC contents from the S stack, causing the MPU to resume processing at the instruction following the JSR. For example, the Y register contains $3E20. The JSR with indexed addressing: JSR 10,Y causes the MPU to stack the PC contents in the S stack and then start executing a subroutine at address $3E2A, the sum of the contents of Y and 10, decimal.
 
-the S stack. Then the PC register is loaded with the effective address, as
-specified by the operand field. The MPU starts executing instructions at
+#### LD (8 Bit) - Load Register from Memory
 
-the effective address, usually the starting address of a subroutine. The
+| | |
+|-|-|
+| Source Forms: | LDA P; LDB P |
+| Type: | Data Movement |
+| Addressing Modes: | Immediate; Direct; Indexed; Extended. |
+| Operation: | R' <- M |
 
-last instruction of the subroutine should be an RTS, which will pull the PC
-contents from the S stack, causing the MPU to resume processing at the
-instruction following the JSR. For example, the Y register contains $3E20.
-The JSR with indexed addressing: JSR 10,Y causes the MPU to stack the PC
-contents in the S stack and then start executing a subroutine at address
-$3E2A, the sum of the contents of Y and 10, decimal.
-
-LD (8 Bit) Load Register from Memory
-Source Forms: LDA P; LDB P
-Operation: R’ <- M Type: Data Movement
-
-Addressing Modes: Immediate; Direct; Indexed; Extended.
 Condition Codes:
+- H - Not affected.
+- N - Set if bit 7 of the byte read from memory is set; cleared otherwise. N set indicates a negative signed binary number has been loaded into the register.
+- Z - Set if a value of zero is loaded into the register; cleared otherwise.
+- V - Always Cleared.
+- C - Not affected.
 
-H - Not affected.
+Description: The LD instruction reads a byte from a memory address specified by the operand field. That byte is loaded, or routed, into the A or B (LDA or LDB) register. For example, LD with immediate addressing such as LDB #$8C results in the B register containing $8C and, in the CC register, N is set and Z and V are cleared.
 
-N - Set if bit 7 of the byte read from memory is set; cleared
-otherwise. N set indicates a negative signed binary number has
-been loaded into the register.
+#### LD (16 Bit) - Load Register from Memory
 
-Z - Set if a value of zero is loaded into the register; cleared
-otherwise.
+| | |
+|-|-|
+| Source Forms: | LDD P; LDX P; LDY P; LDU P; LDS P |
+| Type: | Data Movement |
+| Addressing Modes: | Immediate; Direct; Extended; Indexed. |
+| Operation: | R' <- M:M+l |
 
-V - Always Cleared.
-
-C - Not affected.
-
-Description: The LD instruction reads a byte from a memory address
-
-specified by the operand field. That byte is loaded, or routed, into the A
-
-or B (LDA or LDB) register. For example, LD with immediate addressing such
-as LDB #$8C results in the B register containing $8C and, in the CC
-
-register, N is set and Z and V are cleared.
-
-LD (16 Bit) Load Register from Memory
-Source Forms: LDD P; LDX P; LDY P; LDU P; LDS P
-
-Operation: R’ <- M:M+l Type: Data Movement
-Addressing Modes: Immediate; Direct; Extended; Indexed.
 Condition Codes:
-H - Not affected. |
-N - Set if bit 15 of the loaded register is set; cleared otherwise. N |
-set indicates a negative 16-bit signed binary number has been |
-loaded into the selected register.
-Z ~ Set if a value of zero is loaded into the register; cleared
-otherwise.
-Vv - Always cleared.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 15 of the loaded register is set; cleared otherwise. N set indicates a negative 16-bit signed binary number has been loaded into the selected register.
+- Z - Set if a value of zero is loaded into the register; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
 
-Description: The LD instruction reads two bytes from two memory addresses;
-the operand field specifies the first address. The two bytes are
+Description: The LD instruction reads two bytes from two memory addresses; the operand field specifies the first address. The two bytes are concatenated so that the first byte is now the upper half of a 16-bit word and the second byte is the lower half, That 16-bit word is then loaded into the selected register. For example, the U register contains the value $2D04. At addresses $2D04 and $2D05 are stored two bytes such as:
 
-concatenated so that the first byte is now the upper half of a 16-bit word
-and the second byte is the lower half, That 16-bit word is then loaded into
-the selected register. For example, the U register contains the value
+```
+    2D04   SF 8A
+```
 
-$2D04. At addresses $2D04 and $2D05 are stored two bytes such as:
+The LD with indexed addressing: LDY ,U loads the Y register with the two bytes the U register points to. In this case, Y is loaded with $5F8A and, in the CC register, N, Z, and V are cleared.
 
-|
-|
+#### LEA - Load Effective Address
 
-2D04 SF 8A
+| | |
+|-|-|
+| Source Forms: | LEAX; LEAY; LEAS; LEAU |
+| Type: | Data Movement |
+| Addressing Modes: | Indexed. |
+| Operation: | R' <- EA |
 
-The LD with indexed addressing: LDY ,U loads the Y register with the two
-bytes the U register points to. In this case, Y is loaded with $5F8A and,
-in the CC register, N, Z, and V are cleared.
-
-LEA Load Effective Address
-Source Forms: LEAX; LEAY; LEAS; LEAU
-Operation: R’ <- EA Type: Data Movement
-Addressing Modes: Indexed.
 Condition Codes:
-Hi - Not affected.
-N - Not affected.
-Z - For LEAX and LEAY, set if a value of zero is loaded into the X or Y
-register; cleared otherwise. For LEAS and LEAU, Z is not affected.
-V - Not affected.
-C - Not affected.
+- H - Not affected.
+- N - Not affected.
+- Z - For LEAX and LEAY, set if a value of zero is loaded into the X or Y register; cleared otherwise. For LEAS and LEAU, Z is not affected.
+- V - Not affected.
+- C - Not affected.
 
-Description: The LEA instruction will calculate the effective address
-specified by the operand field, but only by using the indexed addressing
-mode. The effective address will be loaded into the selected index
+Description: The LEA instruction will calculate the effective address specified by the operand field, but only by using the indexed addressing mode. The effective address will be loaded into the selected index register. No data will be read from memory at the effective address. For example, the A register contains $27 and the X register contains $1A10. The
 
-register. No data will be read from memory at the effective address. For
-example, the A register contains $27 and the X register contains $1A10. The
+LEA instruction: LEAU A,X loads the effective address ($1A37), the sum of the contents of the A and X registers, into the U register. The A and X registers are not modified. Some other examples are:
 
-LEA instruction: LEAU A,X loads the effective address ($1A37), the sum of
+```
+    LEAX ,U         transfer U contents to X
+    LEAY 5,Y        increment contents of Y by 5
+    LEAU -9,U       decrement contents of U by 9
+    LEAX D,S        S plus D transfered to X
+```
 
-the contents of the A and X registers, into the U register. The A and X
-registers are not modified. Some other examples are:
+The auto increment/decrement indexed mode is not used. Due to the internal operation of the MPU, LEAY ,Y+ for example, will not result in Y being incremented.
 
-LEAX ,U transfer U contents to X
-LEAY 5,Y increment contents of Y by 5
-LEAU -9,U decrement contents of U by 9
-LEAX D,S S plus D transfered to X -
+#### LSL - Logical Shift Left
 
-The auto increment/decrement indexed mode is not used. Due to the internal
-operation of the MPU, LEAY ,Y+ for example, will not result in Y being
-incremented.
-
-LSL Logical Shift Left
+| | |
+|-|-|
 Source Forms: LSL Q; LSLA; LSLB
-Operation: C <- <- 0 Type: Logic
-
+Type: Logic
 Addressing Modes: Inherent; Extended; Indexed; Direct.
+
+```
+                ┌──────┐
+Operation: C <- │7 <- 0│ <- 0
+                └──────┘
+```
+
 Condition Codes:
-H - Undefined, therefore a branch should not be used to test its
-condition.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Cleared if the original bits 6 and 7 were both set or both clear;
-set otherwise.
-C - Set if bit 7 of the original byte was set; cleared otherwise.
+- H - Undefined, therefore a branch should not be used to test its condition.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Cleared if the original bits 6 and 7 were both set or both clear; set otherwise.
+- C - Set if bit 7 of the original byte was set; cleared otherwise.
 
-Description: The LSL shifts the contents of a memory location (LSL Q), or
-the A or B (LSLA or LSLA) register, to the left one bit position. Bit 7 of
-the original byte is shifted into the C bit and bit 0 of the result is
+Description: The LSL shifts the contents of a memory location (LSL Q), or the A or B (LSLA or LSLA) register, to the left one bit position. Bit 7 of the original byte is shifted into the C bit and bit 0 of the result is cleared. For example, address $310A contains $8A. The LSL with extended addressing: LSL $310A reads the byte, $8A, from address $310A. Then it is logically left shifted “as seen below:
 
-cleared. For example, address $310A contains $8A. The LSL with extended
-addressing: LSL $310A reads the byte, $8A, from address $310A. Then it is
-logically left shifted “as seen below:
+```
+         1000 1010       byte from memory
+    C <- 1000 1010 < -0  shift left
+    C=1  0001 0100       resultant byte
+```
 
-010 byte from memory
-010 <-0 shift left
-100 resultant byte
+The resulting byte, $14, is stored in address $310A and in the CC register C and V are set and Z and N are cleared.
 
-—
+#### LSR - Logical Shift Right
 
-100
-C<- 100
-Cel 000
+| | |
+|-|-|
+| Source Forms: | LSR Q; LSRA; LSRB |
+| Type: | Logic |
+| Addressing Modes: | Inherent; Extended; Direct; Indexed. |
 
-mm OO
+```
+                ┌──────┐
+Operation: 0 -> │7 -> 0│ -> C
+                └──────┘
+```
 
-1
-0
-The resulting byte, $14, is stored in address $310A and in the CC register
-C and V are set and Z and N are cleared.
-
-LSR Logical Shift Right
-Source Forms: LSR Q; LSRA; LSRB :
-Operation: 0 -> ->C Type: Logic
-
-Addressing Modes: Inherent; Extended; Direct; Indexed.
 Condition Codes:
-H - Not affected.
+- H - Not affected.
+- N - Always cleared.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Not affected.
+- C - Set if bit 0 of the original byte was set; cleared otherwise.
 
-N - Always cleared.
+Description: The LSR will shift the contents of a memory location (LSR Q), or the A or B (LSRA or LSRB) register, to the right one bit position. Bit 7 of the result is cleared and bit 0 of the original byte is shifted into the C bit. For example, the B register contains $9E. The LSR with inherent addressing: LSRB. results in the following binary operation:
 
-Z - Set if the resulting byte is zero; cleared otherwise.
+```
+         1001 1110       old contents of B
+    C -> 1001 1110 -> C  right shift
+    C=0  0100 1111       new contents of B
+```
 
-V - Not affected.
+The B register now contains $4F and, in the CC register, C, N, and Z are cleared.
 
-C - Set if bit 0 of the original byte was set; cleared otherwise.
+#### MUL - Multiply
 
-Description: The LSR will shift the contents of a memory location (LSR Q),
-or the A or B (LSRA or LSRB) register, to the right one bit position. Bit 7
-of the result is cleared and bit 0 of the original byte is shifted into the
+| | |
+|-|-|
+| Source Forms: | MUL |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent. |
+| Operation: | D' <- A x B |
 
-C bit. For example, the B register contains $9E. The LSR with inherent
-addressing: LSRB. results in the following binary operation:
-
-0 old contents of B
-0 ->C right shift
-] new contents of B
-
-The B register now contains $4F and, in the CC register, C, N, and Z are
-cleared.
-
-MUL Multiply
-Source Forms: MUL
-Operation: D’ <- A x B Type: Arithmetic
-
-Addressing Modes: Inherent.
 Condition Codes:
-H - Not affected.
-N - Not affected.
-Z - Set if the result, in D, is zero; cleared otherwise.
-V - Not affected.
-C - Set if the operation sets bit 7 of the D register; cleared
-- otherwise.
+- H - Not affected.
+- N - Not affected.
+- Z - Set if the result, in D, is zero; cleared otherwise.
+- V - Not affected.
+- C - Set if the operation sets bit 7 of the D register; cleared otherwise.
 
-Description: The MUL will multiply (using straight binary) the contents of
-the A register by the contents of the B register. The resulting 16-bit word
-is routed into the D register. For example, A contains $4B and B contains
-$0C. The multiply instruction: MUL calculates the product of $4B and $0C,
-and stores that result in the D register. This can be demonstrated, in
-binary, as:
+Description: The MUL will multiply (using straight binary) the contents of the A register by the contents of the B register. The resulting 16-bit word is routed into the D register. For example, A contains $4B and B contains $0C. The multiply instruction: MUL calculates the product of $4B and $0C, and stores that result in the D register. This can be demonstrated, in binary, as:
 
-O1001011 contents of A
-x OODODIIOO contents of B
-01001011
-01001011
-0000001110000100 new contents of D
+```
+        01001011    contents of A
+      x 00001100    contents of B
+      ----------
+      01001011
+     01001011
+----------------
+0000001110000100    new contents of D
+```
 
-As a result, D contains $0284 and, in the CC register, Z is cleared and C
-is set. The D register is composed of the A and B registers linked
+As a result, D contains $0284 and, in the CC register, Z is cleared and C is set. The D register is composed of the A and B registers linked together; therefore, the A and B contents are destroyed. The A register is the upper half and B is the lower half of the D register.
 
-together; therefore, the A and B contents are destroyed. The A register is
-the upper half and B is the lower half of the D register.
+#### NEG - Negate
 
-NEG Negate
-Source Forms: NEG Q; NEGA; NEGB
-Operation: M’ <- 0-M or R’ <- 0-R Type: Arithmetic
+| | |
+|-|-|
+| Source Forms: | NEG Q; NEGA; NEGB |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent; Indexed; Extended; Direct. |
+| Operation: | M' <- 0-M or R' <- 0-R |
 
-Addressing Modes: Inherent; Indexed; Extended; Direct.
 Condition Codes:
-H - Undefined, therefore a branch should not be used to test its
-condition.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Set if the original byte was $80; cleared otherwise.
-C - Set if a borrow out of bit 7 of the ALU was generated during the
-subtraction process; cleared otherwise.
+- H - Undefined, therefore a branch should not be used to test its condition.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if the original byte was $80; cleared otherwise.
+- C - Set if a borrow out of bit 7 of the ALU was generated during the subtraction process; cleared otherwise.
 
-Description: A byte is read from a memory (NEG Q) location or the A or B
-(NEGA or NEGB) register. The two’s complement of that byte is generated by
-subtracting it from zero and the resulting byte is routed back to its
-source. This instruction will reverse the sign of a signed binary number in
-a byte. There are two exceptions to this process, however: If the original
-byte contains $80, the result is $80 with the V bit set. If the original
-byte contains a zero, the result is zero and, only in this case is the C
-bit cleared.
+Description: A byte is read from a memory (NEG Q) location or the A or B (NEGA or NEGB) register. The two's complement of that byte is generated by subtracting it from zero and the resulting byte is routed back to its source. This instruction will reverse the sign of a signed binary number in a byte. There are two exceptions to this process, however: If the original byte contains $80, the result is $80 with the V bit set. If the original byte contains a zero, the result is zero and, only in this case is the C bit cleared.
 
-For example, the B register contains $FC, the signed binary equivalent
-of decimal -4. The negate instruction: NEGB loads the B register with the
-two’s complement of its original contents as seen below.
+For example, the B register contains $FC, the signed binary equivalent of decimal -4. The negate instruction: NEGB loads the B register with the two's complement of its original contents as seen below.
 
-000 zero value
-100 contents of B
-100 new contents of B
+```
+     bbbbb b
+      0000 0000     zero value
+    - 1111 1100     contents of B
+    -----------
+C=1   0000 0100     new contents of B
+```
 
-The B register now contains $04, the signed binary representation of
-decimal +4. In the CC register, C is set and N,V, and Z are cleared.
+The B register now contains $04, the signed binary representation of decimal +4. In the CC register, C is set and N,V, and Z are cleared.
 
-NOP No Operation
-Source Forms: NOP
-Operation: None Type: Miscellaneous
+#### NOP - No Operation
 
-Addressing Modes: Inherent. Condition Codes: None are affected.
+| | |
+|-|-|
+| Source Forms: | NOP |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
+| Operation: | None |
 
-Description: The NOP, or no-op, instruction does nothing. The MPU will
-fetch the NOP op code, decode it, and then fetch the following instruction.
+Condition Codes: None are affected.
 
-OR Inclusive OR Memory into Register
-Source Forms: ORA P; ORB P
+Description: The NOP, or no-op, instruction does nothing. The MPU will fetch the NOP op code, decode it, and then fetch the following instruction.
 
-Operation: R’ <- RVM Type: Logic
-Adresing Modes: Immediate; Indexed; Extended; Direct.
+#### OR - Inclusive OR Memory into Register
+
+| | |
+|-|-|
+| Source Forms: | ORA P; ORB P |
+| Type: | Logic |
+| Addressing Modes: | Immediate; Indexed; Extended; Direct. |
+| Operation: | R' <- R ∨ M |
+
 Condition Codes:
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resuling byte is zero; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
 
-H - Not affected.
+Description: The OR instruction reads a byte from a memory location specified by the operand field. That byte is ORed with the contents of the A or B (ORA or ORB) register and the result is routed back to the respective A or B register. This instruction can be used to selectively set bits in the A or B registers. Any bit set in the operand byte will result in the corresponding bit being set in the register. For example, the A register contains $40 and the immediate operand is $11. The following OR instruction: ORA #$11 results in bits 0 and 4 of the A register being set as seen below:
 
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+```
+      0100 0000     contents of A
+    ∨ 0001 0001     operand byte
+    -----------
+      0101 0001     new contents of A
+```
 
-Z - Set if the resuling byte is zero; cleared otherwise.
+Now A contains $51 and, in the CC register, the N, Z, and V bits are cleared.
 
-V - Always cleared.
+#### ORCC - Inclusive OR Memory into the CC Register
 
-C - Not affected.
+| | |
+|-|-|
+| Source Forms: | ORCC #xx |
+| Type: | Logic |
+| Addressing Modes: | Immediate. |
+| Operation: | CC' <- CC ∨ MI |
 
-Description: The OR instruction reads a byte from a memory location
-specified by the operand field. That byte is ORed with the contents of the
-A or B (ORA or ORB) register and the result is routed back to the
-respective A or B register. This instruction can be used to selectively set
-bits in the A or B registers. Any bit set in the operand byte will result
-
-in the corresponding bit being set in the register. For example, the A
-register contains $40 and the immediate operand is $11. The following OR
-instruction: ORA #$11 results in bits 0 and 4 of the A register being set
-as seen below:
-
-0100 0000 contents of A
-Vv 0001 0001 operand byte
-01010001 new contents of A
-
-Now A contains $51 and, in the CC register, the N, Z, and V bits are
-cleared.
-
-ORCC Inclusive OR Memory into the CC Register
-Source Forms: ORCC #xx
-
-Operation: CC’ <- CC v MI Type: Logic
-Addressing Modes: Immediate.
 Condition Codes: Any bits may be set; see description.
 
-Description: The ORCC instruction will inclusive OR the immediate byte with
-the contents of the CC register. The resulting byte is routed back to the
+Description: The ORCC instruction will inclusive OR the immediate byte with the contents of the CC register. The resulting byte is routed back to the CC register. This instruction lets one set selective bits in the CC register. Bits set in the operand byte will set corresponding bits in the CC register. For example, the CC register contains $22. The instruction: ORCC #$50 sets bits 6 and 4 in the CC register as seen below:
 
-CC register. This instruction lets one set selective bits in the CC
+```
+      0010 0010     contents of CC
+    ∨ 0101 0000     operand byte
+    -----------
+      0111 0010     new contents of CC
+```
 
-register. Bits set in the operand byte will set corresponding bits in the
+#### PSHS - Push Registers on the Hardware Stack
 
-CC register. For example, the CC register contains $22. The instruction:
-ORCC #950 sets bits 6 and 4 in the CC register as seen below:
+| | |
+|-|-|
+| Source Forms: | PSHS register list |
+| Type: | Data Movement |
+| Addressing Modes: | Register. |
 
-00100010 contents of CC
-V0101 0000 operand byte
-01110010 new contents of CC
+```
+          ┌──────────────────┐
+Postbyte: │7  push order ─► 0│ 
+          └──────────────────┘
 
-PSHS Push Registers on the Hardware Stack
-Source Forms: PSHS register list
-Postbyte: Type: Data Movement
-Operation: If bit 7 of postbyte is set; S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PCy
-If bit 6 of postbyte is set; S’ <- S-1, (S) <- U,
-S’ <- 8-1, (S) <- Uy
-If bit 5 of postbyte is set; S’ <- S-1, (S) <- Yy,
-S’ <- S-1, (8) <- Yy
-If bit 4 of postbyte is set; S’ <- S-1, (S) <- X,
-S’ <- 8-1, (S) <- Xy
-If bit 3 of postbyte is set; S’ <- S-1, (S) <- DP
-If bit 2 of postbyte is set; S’ <- S-1, (S) <- B
-If bit 1 of postbyte is set; S’ <- S-1, (S) <- A
-If bit 0 of postbyte is set; S’ <- S-1, (S) <- CC
-Addressing Modes: Register.
+Operation: If bit 7 of postbyte is set; S' <- S-1, (S) <- PC<sub>L</sub>
+                                        S' <- S-1, (S) <- PC<sub>U</sub>
+           If bit 6 of postbyte is set; S' <- S-1, (S) <- U<sub>L</sub>
+                                        S' <- S-1, (S) <- U<sub>U</sub>
+           If bit 5 of postbyte is set; S' <- S-1, (S) <- Y<sub>L</sub>
+                                        S' <- S-1, (S) <- Y<sub>U</sub>
+           If bit 4 of postbyte is set; S' <- S-1, (S) <- X<sub>L</sub>
+                                        S' <- S-1, (S) <- X<sub>U</sub>
+           If bit 3 of postbyte is set; S' <- S-1, (S) <- DP
+           If bit 2 of postbyte is set; S' <- S-1, (S) <- B
+           If bit 1 of postbyte is set; S' <- S-1, (S) <- A
+           If bit 0 of postbyte is set; S' <- S-1, (S) <- CC
+```
+
 Condition Codes: None are affected.
 
-Description: The PSHS can push any, all, or none of the MPU registers onto
-the S (hardware) stack, but not the S register. The registers to be pushed
-are determined by the bits set in the postbyte, and the order of pushing is
-always the same (see Fig. 4-2). That order is: bit 7 first to bit 0 last,
+Description: The PSHS can push any, all, or none of the MPU registers onto the S (hardware) stack, but not the S register. The registers to be pushed are determined by the bits set in the postbyte, and the order of pushing is always the same (see Fig. 4-2). That order is: bit 7 first to bit 0 last, as seen in operation diagram. A byte is stored in the stack by decrementing the pointer, S, by one and then storing the byte at the address now contained in S. In a statement the registers to be pushed are contained in the operand field and are represented by these abbreviations: PC, U, Y, X, D, DP, B, A, and CC. Each abbreviation must be separated by a comma. The registers may be presented in any order in the operand field but the actual pushing order is always the same, as determined by the postbyte.
 
-as seen in operation diagram. A byte is stored in the stack by decrementing
-the pointer, S, by one and then storing the byte at the address now
-contained in S. In a statement the registers to be pushed are contained in
-the operand field and are represented by these abbreviations: PC, U, Y, X,
-D, DP, B, A, and CC. Each abbreviation must be separated by a comma. The
-registers may be presented in any order in the operand field but the actual
-pushing order is always the same, as determined by the postbyte.
+For example, the contents of the U, A, and B registers can be pushed onto the S stack, where S contains $380A, the current address of the top of the stack. The push instruction: PSHS A,B,U will store the contents of U at $3808 and $3809, B at $3807, and A at $3806. The S register now contains $3806, the new top of stack address.
 
-For example, the contents of the U, A, and B registers can be pushed
-onto the S stack, where S contains $380A, the current address of the top of
-the stack. The push instruction: PSHS A,B,U will store the contents of U
-at $3808 and $3809, B at $3807, and A at $3806. The S register now contains
-$3806, the new top of stack address.
+#### PSHU - Push Registers on the User Stack
 
-PSHU Push Registers on the User Stack
-Source Forms: PSHU register list
-Postbyte: Type: Data Movement
-Operation: If bit 7 of postbyte is set; U’ <- U-1, (U) <- PC,
-U’ <- U-1, (U) <- PC,
-If bit 6 of postbyte is set; U’ <- U-1, (U) <- S,
-U’ <- U-1, (U) <- Sy
-If bit 5 of postbyte is set; U’ <- U-1, (U) <- Yy,
-U? <- U-1, (U) <- Yy
-If bit 4 of postbyte is set; U’ <- U-1, (U) <- X,
+| | |
+|-|-|
+| Source Forms: | PSHU register list |
+| Type: | Data Movement |
+| Addressing Modes: | Register. |
 
-U’ <- U-1, (U) <- Xy
-If bit 3 of postbyte is set; U’ <- U-1, (U) <- DP
-If bit 2 of postbyte is set; U’ <- U-i, (U) <- B
-If bit 1 of postbyte is set; U’ <- U-1, (U) <- A
-If bit 0 of postbyte is set; U’ <- U-1, (U) <- CC
-Addressing Modes: Register.
+```
+          ┌──────────────────┐
+Postbyte: │7  push order ─► 0│ 
+          └──────────────────┘
+
+Operation: If bit 7 of postbyte is set; U' <- U-1, (U) <- PC<sub>L</sub>
+                                        U' <- U-1, (U) <- PC<sub>U</sub>
+           If bit 6 of postbyte is set; U' <- U-1, (U) <- S<sub>L</sub>
+                                        U' <- U-1, (U) <- S<sub>U</sub>
+           If bit 5 of postbyte is set; U' <- U-1, (U) <- Y<sub>L</sub>
+                                        U' <- U-1, (U) <- Y<sub>U</sub>
+           If bit 4 of postbyte is set; U' <- U-1, (U) <- X<sub>L</sub>
+                                        U' <- U-1, (U) <- X<sub>U</sub>
+           If bit 3 of postbyte is set; U' <- U-1, (U) <- DP
+           If bit 2 of postbyte is set; U' <- U-1, (U) <- B
+           If bit 1 of postbyte is set; U' <- U-1, (U) <- A
+           If bit 0 of postbyte is set; U' <- U-1, (U) <- CC
+```
+
 Condition Codes: None are affected.
 
-Description: The PSHU can push any, all, or none of the MPU registers onto
-the U (user) stack, but not the U register. The registers to be pushed are
-determined by the bits set in the postbyte, and the order of pushing is
-always the same (see Fig. 4-2). That order is: bit 7 first to bit 0 last,
-as in the operation diagram. A byte is stored in the stack by first
-decrementing the pointer (U) by one, and then storing the byte at the
-address now contained in U. In a statement, the registers to be pushed are
-contained in the operand field and are represneted by these abbreviations:
-PC, S, Y, X, D, DP, B, A, and CC. Each abbreviation must be separated by a
-comma. The registers may be presented in any order in the operand field but
-the actual pushing order is always the same, as determined by the postbyte.
-For example, the contents of the X, A, and CC registers can be pushed
-on the U stack, where U contains $2216, the current address of the top of
-the stack. The push instruction: PPHU A,X,CC_ will store the contents of X
-at $2214 and $2215, A at $2213, and CC at $2212. The U register now
-contains $2212, the new top of stack address.
+Description: The PSHU can push any, all, or none of the MPU registers onto the U (user) stack, but not the U register. The registers to be pushed are determined by the bits set in the postbyte, and the order of pushing is always the same (see Fig. 4-2). That order is: bit 7 first to bit 0 last, as in the operation diagram. A byte is stored in the stack by first decrementing the pointer (U) by one, and then storing the byte at the address now contained in U. In a statement, the registers to be pushed are contained in the operand field and are represneted by these abbreviations: PC, S, Y, X, D, DP, B, A, and CC. Each abbreviation must be separated by a comma. The registers may be presented in any order in the operand field but the actual pushing order is always the same, as determined by the postbyte. For example, the contents of the X, A, and CC registers can be pushed on the U stack, where U contains $2216, the current address of the top of the stack. The push instruction: PPHU A,X,CC_ will store the contents of X at $2214 and $2215, A at $2213, and CC at $2212. The U register now contains $2212, the new top of stack address.
 
-PULS Pull Registers from the Hardware Stack
+#### PULS - Pull Registers from the Hardware Stack
 
-Source Forms: PULS register list
-Postbyte: Type: Data Movement
-Operation: If bit 0 of postbyte is set; CC’ <- (S), S’ <- S+]
-If bit 1 of postbyte is set; A’ <- (S), S’ <- S+l
-If bit 2 of postbyte is set; B’ <- (S), S’ <- S+l
-If bit 3 of postbyte is set; DP’ <- (S), S’ <- S+1
-If bit 4 of postbyte is set; Xy’ <- (S), 8’ <- S+l
-X,’ <- (S), S’ <- S+l
-If bit 5 of postbyte is set; Yy’ <- (S), S’ <- S+1
-Y,, <- (8S), S <- Stl
-If bit 6 of postbyte is set; U,’ <- GS), 8’ <- S+1
-U,,” <- (S), S’ <- S+l1
-If bit 7 of postbyte is set; PC, <- (S), 8S’ <- S+1
-PC,” <- (S), S’ <- S+1
-Addressing Modes: Register.
-Condition Codes: The CC register may be pulled from the stack and
-therefore possibly change its contents. If the CC register is not pulled
-from the stack, there is no change to the CC register.
+| | |
+|-|-|
+| Source Forms: | PULS register list |
+| Type: | Data Movement |
+| Addressing Modes: | Register. |
 
-Description: The PULS can pull any, all, or none of the MPU registers from
-the S (hardware) stack, but not the S register. The registers to be pulled
-are determined by the bits set in the postbyte and the order of pulling is
-always the same (see Fig. 4-2). That order is: bit 0 first to bit 7 last,
+```
+          ┌──────────────────┐
+Postbyte: │7 ◄─ pull order  0│ 
+          └──────────────────┘
 
-seen in the operation diagram. A byte is pulled from the stack by first
-reading the byte from the address contained in the S register and then
-incrementing the contents of S by one. In a statement, the registers to be
-pulled are contained in the operand field and are represented by these
-abbreviations: PC, U; Y, X, D, DP, B, A, and CC. The registers may be
-presented in any order in the operand field but the actual pulling order is
-always the same, as determined by the postbyte.
+Operation: If bit 0 of postbyte is set; CC'             <- (S), S' <- S+1
+           If bit 1 of postbyte is set; A'              <- (S), S' <- S+1
+           If bit 2 of postbyte is set; B'              <- (S), S' <- S+1
+           If bit 3 of postbyte is set; DP'             <- (S), S' <- S+1
+           If bit 4 of postbyte is set; X<sub>U</sub>'  <- (S), S' <- S+1
+                                        X<sub>L</sub>'  <- (S), S' <- S+1
+           If bit 5 of postbyte is set; Y<sub>U</sub>'  <- (S), S' <- S+1
+                                        Y<sub>L</sub>'  <- (S), S' <- S+1
+           If bit 6 of postbyte is set; U<sub>U</sub>'  <- (S), S' <- S+1
+                                        U<sub>L</sub>'  <- (S), S' <- S+1
+           If bit 7 of postbyte is set; PC<sub>U</sub>' <- (S), S' <- S+1
+                                        PC<sub>L</sub>' <- (S), S' <- S+1
+```
 
-For example, the U, B, and DP registers can be loaded, or pulled from, .
-the S stack where S contains $3938, the current address of the top of the
-stack. The pull instruction: PULS U,B,DP fetches the bytes from addresses
-$3938 - $393B and puts them in the U, DP, and B registers, in that order.
-The S register will have been incremented to $393C, the new top of stack
-address.
+Condition Codes: The CC register may be pulled from the stack and therefore possibly change its contents. If the CC register is not pulled from the stack, there is no change to the CC register.
 
-PULU Pull Registers from the User Stack
-Source Forms: PULU register list
+Description: The PULS can pull any, all, or none of the MPU registers from the S (hardware) stack, but not the S register. The registers to be pulled are determined by the bits set in the postbyte and the order of pulling is always the same (see Fig. 4-2). That order is: bit 0 first to bit 7 last, seen in the operation diagram. A byte is pulled from the stack by first reading the byte from the address contained in the S register and then incrementing the contents of S by one. In a statement, the registers to be pulled are contained in the operand field and are represented by these abbreviations: PC, U; Y, X, D, DP, B, A, and CC. The registers may be presented in any order in the operand field but the actual pulling order is always the same, as determined by the postbyte.
 
-Postbyte: Type: Data Movement
-Operation: If bit 0 of postbyte is set; CC’ <- (U), U’ <- U+l
-If bit 1 of postbyte is set; A’ <- (U), U’ <- U+l
-If bit 2 of postbyte is set; B’.<- (U), U’ <- U+l
-If bit 3 of postbyte is set; DP’ <- (U), U’ <- U+l
-If bit 4 of postbyte is set; X,” <- (U), U’ <- U+l
-X,’ <- (U), U’ <- U+l
-If bit 5 of postbyte is set; Y,, <- (U), U’ <- U+l
-Y,) <- (U), U? <- U+l
-If bit 6 of postbyte is set; S,,’ <- (U), U’ <- U+l
-S,? <- (U), U’ <- U+l
-If bit 7 of postbyte is set; PC,’ <- (U), U’ <- U+l
-PC,” <- (U), U’ <- Utl
-Addressing Modes: Register.
-Condition Codes: The CC register may be pulled from the stack and possibly
-change its contents. If the CC register is not pulled from the stack, there
-is no change to the CC register.
+For example, the U, B, and DP registers can be loaded, or pulled from,  the S stack where S contains $3938, the current address of the top of the stack. The pull instruction: PULS U,B,DP fetches the bytes from addresses $3938 - $393B and puts them in the U, DP, and B registers, in that order. The S register will have been incremented to $393C, the new top of stack address.
 
-Description: The PULU can pull any, all, or none of the MPU registers from
-the U (hardware) stack, but not the U register. The registers to be pulled
-are determined by the bits set in the postbyte and the order of pulling is
-always the same (see Fig. 4-2). That order is: bit 0 first to bit 7 last,
+#### PULU - Pull Registers from the User Stack
 
-as in the operation diagram. A byte is pulled from the stack by first
+| | |
+|-|-|
+| Source Forms: | PULU register list |
+| Type: | Data Movement |
+| Addressing Modes: | Register. |
 
-reading a byte from the address contained in the U register and then
-incrementing the contents of U by one. In a statement, the registers to be
+```
+          ┌──────────────────┐
+Postbyte: │7 ◄─ pull order  0│ 
+          └──────────────────┘
 
-pulled are contained in the operand field and are represented by these
-abbreviations: PC, S Y, X, D, DP, B, A, and CC. The registers may be
-presented in any order in the operand field, but the actual pulling order
-is always the same, as determined by the postbyte.
+Operation: If bit 0 of postbyte is set; CC'             <- (U), U' <- U+1
+           If bit 1 of postbyte is set; A'              <- (U), U' <- U+1
+           If bit 2 of postbyte is set; B'              <- (U), U' <- U+1
+           If bit 3 of postbyte is set; DP'             <- (U), U' <- U+1
+           If bit 4 of postbyte is set; X<sub>U</sub>'  <- (U), U' <- U+1
+                                        X<sub>L</sub>'  <- (U), U' <- U+1
+           If bit 5 of postbyte is set; Y<sub>U</sub>'  <- (U), U' <- U+1
+                                        Y<sub>L</sub>'  <- (U), U' <- U+1
+           If bit 6 of postbyte is set; S<sub>U</sub>'  <- (U), U' <- U+1
+                                        S<sub>L</sub>'  <- (U), U' <- U+1
+           If bit 7 of postbyte is set; PC<sub>U</sub>' <- (U), U' <- U+1
+                                        PC<sub>L</sub>' <- (U), U' <- U+1
+```
 
-For example, the X, B, and DP registers can be loaded from the U stack
-where U contains $1770, the current address of the top of the stack. The
-pull instruction: PULU X,B,DP will fetch the bytes from addresses $1770 -
-$1773 and put them in the X, DP, and B registers, in that order. The U
-register will have been incremented to $1774, the new top of stack address.
+Condition Codes: The CC register may be pulled from the stack and possibly change its contents. If the CC register is not pulled from the stack, there is no change to the CC register.
 
-ROL Rotate Left
-Source Forms: ROL Q; ROLA; ROLB
+Description: The PULU can pull any, all, or none of the MPU registers from the U (hardware) stack, but not the U register. The registers to be pulled are determined by the bits set in the postbyte and the order of pulling is always the same (see Fig. 4-2). That order is: bit 0 first to bit 7 last, as in the operation diagram. A byte is pulled from the stack by first reading a byte from the address contained in the U register and then incrementing the contents of U by one. In a statement, the registers to be pulled are contained in the operand field and are represented by these abbreviations: PC, S Y, X, D, DP, B, A, and CC. The registers may be presented in any order in the operand field, but the actual pulling order is always the same, as determined by the postbyte.
 
-Addressing Modes: Inherent, Extended; Direct; Indexed.
+For example, the X, B, and DP registers can be loaded from the U stack where U contains $1770, the current address of the top of the stack. The pull instruction: PULU X,B,DP will fetch the bytes from addresses $1770 - $1773 and put them in the X, DP, and B registers, in that order. The U register will have been incremented to $1774, the new top of stack address.
+
+#### ROL - Rotate Left
+
+| | |
+|-|-|
+| Source Forms: | ROL Q; ROLA; ROLB |
+| Type: | Logic |
+| Addressing Modes: | Inherent, Extended; Direct; Indexed. |
+
+```
+                ┌──────────────────┐
+Operation: C ◄─ │7       ◄─       0│◄┐
+           │    └──────────────────┘ │ 
+           └─────────────────────────┘
+```
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Cleared if bits 6 and 7 of the original byte were either both set
-or both clear; set otherwise.
-C - Set if bit 7 of the original byte was set; cleared otherwise.
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Cleared if bits 6 and 7 of the original byte were either both set or both clear; set otherwise.
+- C - Set if bit 7 of the original byte was set; cleared otherwise.
 
-Description: A byte is read from a memory location (ROL Q) or the A or B
-(ROLA or ROLB) register and is shifted one bit position to the left. The
-original C bit is shifted into bit 0 of the result and bit 7 is shifted
+Description: A byte is read from a memory location (ROL Q) or the A or B (ROLA or ROLB) register and is shifted one bit position to the left. The original C bit is shifted into bit 0 of the result and bit 7 is shifted into the C bit. The resulting byte is routed back into its source. This is a left rotation of nine bits. For example, the A register contains $85 and the C bit is clear. The instruction: ROLA results in the A register conatining $0A and the C bit set. This operation can be seen, in binary, below:
 
-into the C bit. The resulting byte is routed back into its source. This is
+```
+    C=0     1000 0101       contents of A and C
+         ┌─►───0─────►─┐
+         └─ 1000 0101 ─┘    left rotate
+    C=1     0000 1010       new contents of A and C
+```
 
-a left rotation of nine bits. For example, the A register contains $85 and
-the C bit is clear. The instruction: ROLA results in the A register
-conatining $0A and the C bit set. This operation can be seen, in binary,
+#### ROR - Rotate Right
 
-below:
+| | |
+|-|-|
+| Source Forms: | ROR Q; RORA; RORB |
+| Type: | Logic |
+| Addressing Modes: | Inherent, Indexed; Direct; Extended. |
 
-C=0 1000 0101 contents of A and C
-Coa 0 —>7>
-1000 0101 left rotate
+```
+             ┌──────────────────┐
+Operation: ┌►│7       ─►       0│ ─► C
+           │ └──────────────────┘    │ 
+           └─────────────────────────┘
+```
 
-C=] 0000 1010 new contents of A and Cc
-ROR Rotate Right
-Source Forms: ROR Q; RORA; RORB
-Operation: 7 -> 90 Type: Logic
-
-Cc
-
-Addressing Modes: Inherent, Indexed; Direct; Extended.
 Condition Codes:
+- H - Not affected.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Not affected.
+- C - Set if bit 0 of the original byte was set; cleared otherwise.
 
-H - Not affected.
+Description: A byte is read from a memory location (ROR Q) or the A or:B (RORA or RORB) register and is shifted one bit position to the right. The original C bit is shifted to bit 7 and the original bit 0 is shifted to the C bit. The resulting byte is then routed back to its source. This is a right rotation of nine bits. For example, the B register contains $28 and the C bit is set. The instruction: RORB will result in the B register containing $94 and the C bit clear. This can be seen as:
 
-N - Set if bit 7 of the resulting byte is set; cleared otherwise.
+```
+    C=1     0010 1000       contents of B and C
+         ┌─◄───1─────◄─┐
+         └─ 0010 1000 ─┘    right rotate
+    C=0     1001 0100       new contents of B and C
+```
 
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Not affected.
-C - Set if bit 0 of the original byte was set; cleared otherwise.
+#### RTI - Return from Interrupt
 
-Description: A byte is read from a memory location (ROR Q) or the A or:B
-(RORA or RORB) register and is shifted one bit position to the right. The
-original C bit is shifted to bit 7 and the original bit 0 is shifted to the
+| | |
+|-|-|
+| Source Forms: | RTI |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
 
-C bit. The resulting byte is then routed back to its source. This is a
+```
+Operation: CC' <- (S), S' <- S+1, then,
+  If bit E is set;  A'              <- (S), S' <- S+1
+                    B'              <- (S), S' <- S+1
+                    DP'             <- (S), S' <- S+1
+                    X<sub>U</sub>'  <- (S), S' <- S+1
+                    X<sub>L</sub>'  <- (S), S' <- S+1
+                    Y<sub>U</sub>'  <- (S), S' <- S+1
+                    Y<sub>L</sub>'  <- (S), S' <- S+1
+                    U<sub>U</sub>'  <- (S), S' <- S+1
+                    U<sub>L</sub>'  <- (S), S' <- S+1
+                    PC<sub>U</sub>' <- (S), S' <- S+1
+                    PC<sub>L</sub>' <- (S), S' <- S+1
+  or if E is clear; PC<sub>U</sub>' <- (S), S' <- S+1
+                    PC<sub>L</sub>' <- (S), S' <- S+1
+```
 
-right rotation of nine bits. For example, the B register contains $28 and
+Condition Codes: The CC register is loaded from the stack, so any or all bits may be changed.
 
-the C bit is set. The instruction: RORB will result in the B register
-containing $94 and the C bit clear. This can be seen as:
+Description: First the CC register is pulled from the S stack. If the E bit is set, the rest of the MPU registers will be pulled from the S stack, except for S. If the E bit is clear, the PC register will be pulled from the S stack. A byte is pulled from a stack by first reading the byte from the memory location contained in the pointer, S, and then S is incremented by one.
 
-C=1 0010 1000 contents of B and C
-| ] ———<
-0010 1000 right rotate
-C=0 1001 0100 new contents of B and C
-RTI . Return from Interrupt
-Source Forms: RTI
-Operation: CC’ <- (S), S’ <- S+1, then, Type: Miscellaneous
+The RTI is usually the last instruction to be executed in an interrupt handler program. Normally an interrupt will cause the E bit to be set or cleared and then all (E=1) or just the PC and CC (E=0) registers are pushed on the stack. Then the MPU executes the interrupt handler which, upon completion, can return to the interrupted program by executing the RTI. The RTI causes the MPU to resume processing at the point of interruption. All the MPU's registers will contain their original contents, if E was set by the interrupt.
 
-If bit E is set; A’ <- (S), S’ <- S+1
-B’ <- (S), 8S’ <- S+l
-DP’ <- (S), S’ <- S+l
-Xy’ <- (S), S’ <- S+1
-X,’ <- (S), S’ <- S+1
-Yy’ <- (S), S <- S+l
-Y,) <- (S), S <- S+l1
-Uy’ <- (S), 8’ <- St]
-U,’ <- (S), 8’ <- S+
-PC, <- (S), S <- S+1
-PC,” <- (S), 8’ <- S+1
+#### RTS - Return from Subroutine
 
-or if E is clear; PC,,’ <- (S), S’ <- S+l
-PC, <- (S), S’ <- S+1
+| | |
+|-|-|
+| Source Forms: | RTS |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
 
-Addressing Modes: Inherent.
+```
+Operation: PC<sub>U</sub>' <- (S), S' <- S+1
+           PC<sub>L</sub>' <- (S), S' <- S+1
+```
 
-Condition Codes: The CC register is loaded from the stack, so any or all
-
-bits may be changed.
-
-Description: First the CC register is pulled from the S stack. If the E bit
-is set, the rest of the MPU registers will be pulled from the S stack,
-except for S. If the E bit is clear, the PC register will be pulled from
-the S stack. A byte is pulled from a stack by first reading the byte from
-the memory location contained in the pointer, S, and then S is incremented
-by one.
-
-The RTI is usually the last instruction to be executed in an interrupt
-handler program. Normally an interrupt will cause the E bit to be set or
-
-cleared and then all (E=1) or just the PC and CC (E=0) registers are pushed
-on the stack. Then the MPU executes the interrupt handler which, upon
-completion, can return to the interrupted program by executing the RTI. The
-RTI causes the MPU to resume processing at the point of interruption. All
-the MPU’s registers will contain their original contents, if E was set by
-
-the interrupt.
-
-RTS Return from Subroutine
-Source Forms: RTS
-Operation: PC,,’ <- (S), S’ <- S+1 Type: Miscellaneous
-
-PC,” <- (S), S <- S41
-Addressing Modes: Inherent.
 Condition Codes: Not affected.
 
-Description: The RTS will pull the PC register from the S stack, causing
+Description: The RTS will pull the PC register from the S stack, causing the MPU to start executing instructions at the new address in the PC register. The RTS is typically the last instruction in a subroutine to be executed. The MPU is directed to a subroutine with a BSR or JSR, which stores the current PC contents in the S stack. The subroutine returns to the main program by executing the RTS, which loads the PC register with the return address from the S stack.
 
-the MPU to start executing instructions at the new address in the PC
+#### SBC - Subtract with Borrow
 
-register. The RTS is typically the last instruction in a subroutine to be
-executed. The MPU is directed to a subroutine with a BSR or JSR, which
-stores the current PC contents in the S stack. The subroutine returns to
-
-the main program by executing the RTS, which loads the PC register with the
-return address from the S stack.
-
-SBC Subtract with Borrow
-Source Forms: SBCA; SBCB
-Operation: R’ <- R-M-C Type: Arithmetic
-
-Addressing Modes: Immediate; Direct; Extended; Indexed.
-Condition Codes:
-H - Undefined, therefore it could be in any state.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-indicates a negative signed binary number.
-Z, - Set if the resulting byte is zero; cleared otherwise.
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary numbers.
-C - Set if a borrow is generated from bit 7 of the ALU; cleared
-otherwise.
-
-Description: A byte is read from a memory location, specified by the
-operand field. That byte and the C bit, a borrow if set, are subtracted
-
-from the contents of the A or B (SBCA or SBCB) register. The resulting byte
-is routed back to its originating register. For example, address $1A07
-contains $24, the A register contains $67 and the C bit is set. The
-instruction: SBCA $1A07 performs the following subtraction:
-
-b -C is set
-0110 0111 contents of A
--0010 0100 operand byte
-Cc=0 0100 0010 new contents of A and C
-
-The results: A contains $42 and C, N, Z, and V are cleared in the CC
-register.
-
-SEX Sign Extend
-Source Forms: SEX
-Operation: Type: Arithmetic
-
-If bit 7 of B is set, then A’ <- FF
-If bit 7 of B is clear, then A’ <- 00
-Addressing Modes: Inherent.
-Condition Codes:
-H - Not affected.
-N - Set if bit 7 of the B register is set; cleared otherwise. N set
-indicates a negative signed binary number resulted.
-Z. - Set if the result is zero; cleared otherwise.
-V - Not affected.
-C - Not affected.
-
-Description: All the bits of the A register are set equal to bit 7. of the B
-register. This instruction will cause the 8-bit signed binary number in the
-
-B register to be expanded into an equivalent 16-bit signed binary number in
-the D register. For example, the B register contains $E8, the signed binary
-equivalent of decimal -24. The instruction: SEX results in the D register
-containing $FFE8, the 16-bit signed binary equivalent of decimal -24.
-Remember that the D register is made up of the A and B registers; where the
-A register is the upper half of the D register. In the CC register, the N
-
-bit is set and the Z bit is cleared.
-
-ST (8 Bit Store Register into Memor
-Source Forms: STA P; STB P
-Operation: M’ <-.R Type: Data Movement
-
-Addressing Modes: Direct; Extended; Indexed.
+| | |
+|-|-|
+| Source Forms: | SBCA; SBCB |
+| Type: | Arithmetic |
+| Addressing Modes: | Immediate; Direct; Extended; Indexed. |
+| Operation: | R' <- R-M-C |
 
 Condition Codes:
-H - Not affected. =.
-N - Set if bit 7 of the selected register is set; cleared otherwise.
-Z - Set if the selected register contains zero; cleared otherwise.
-V - Always cleared.
-C - Not affected.
+- H - Undefined, therefore it could be in any state.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set indicates a negative signed binary number.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary numbers.
+- C - Set if a borrow is generated from bit 7 of the ALU; cleared otherwise.
 
-Description: The contents of the A or B (STA or STB) register are stored in
-the memory location specified in the operand field. For example, the B
+Description: A byte is read from a memory location, specified by the operand field. That byte and the C bit, a borrow if set, are subtracted from the contents of the A or B (SBCA or SBCB) register. The resulting byte is routed back to its originating register. For example, address $1A07 contains $24, the A register contains $67 and the C bit is set. The instruction: SBCA $1A07 performs the following subtraction:
 
-register contains $01. The instruction: STB $220A stores $01 at address
-$220A and, in the CC register, the N, Z, and V bits are cleared.
+```
+              b     C is set
+      0110 0111     contents of A
+    - 0010 0100     operand byte
+    -----------
+C=0   0100 0010     new contents of A and C
+```
 
-ST (16 Bit Store Register into Memor
-Source Forms: STD P; STX P; STY P; STU P; STS P
-Operation: M’:M+l’ <- R Type: Data Movement
+The results: A contains $42 and C, N, Z, and V are cleared in the CC register.
 
-Addressing Modes: Direct; Extended; Indexed.
+#### SEX - Sign Extend
+
+| | |
+|-|-|
+| Source Forms: | SEX |
+| Type: | Arithmetic |
+| Addressing Modes: | Inherent. |
+
+```
+Operation:
+    If bit 7 of B is set, then A' <- FF
+    If bit 7 of B is clear, then A' <- 00
+```
 
 Condition Codes:
-H - Not affected.
-N - Set if bit 15 of the selected register is set; cleared otherwise.
-Z ~ Set if the selected register contains zero; cleared otherwise.
-V - Always cleared.
-C - Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the B register is set; cleared otherwise. N set indicates a negative signed binary number resulted.
+- Z - Set if the result is zero; cleared otherwise.
+- V - Not affected.
+- C - Not affected.
 
-Description: The contents of a selected 16-bit register are stored in two
-consecutive memory locations; the operand field specifies the first
+Description: All the bits of the A register are set equal to bit 7. of the B register. This instruction will cause the 8-bit signed binary number in the  B register to be expanded into an equivalent 16-bit signed binary number in the D register. For example, the B register contains $E8, the signed binary equivalent of decimal -24. The instruction: SEX results in the D register containing $FFE8, the 16-bit signed binary equivalent of decimal -24. Remember that the D register is made up of the A and B registers; where the A register is the upper half of the D register. In the CC register, the N  bit is set and the Z bit is cleared.
 
-location. For example, U contains $7D08. The instruction: STU $1A02 -stores
-the upper half of U, $7D, at address $1A02 and the lower half, $08, at
-address $1A03. In the CC register, the N, Z, and V bits are cleared.
+#### ST (8 Bit) - Store Register into Memor
 
-SUB (8 Bit Subtract Memory from Register
-Source Forms: SUBA P; SUBB P
-Operation: R’ <- R-M Type: Arithmetic
+| | |
+|-|-|
+| Source Forms: | STA P; STB P |
+| Type: | Data Movement |
+| Addressing Modes: | Direct; Extended; Indexed. |
+| Operation: | M' <-.R |
 
-Addressing Modes: Direct; Extended; Immediate; Indexed.
 Condition Codes:
-H - Undefined, so it may be in any state.
-N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set
-indicates a negative signed binary number.
-Z - Set if the resulting byte is zero; cleared otherwise.
-V - Set if an overflow or underflow occurred; cleared otherwise. This
-applies only to signed binary numbers.
-C - Set if a borrow is generated by bit 7 of the ALU; cleared
-otherwise.
+- H - Not affected.
+- N - Set if bit 7 of the selected register is set; cleared otherwise.
+- Z - Set if the selected register contains zero; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
 
-Description: A byte is ‘read from a memory location specified by the operand
-field. That byte is subtracted from the contents of the A or B (SUBA or
-SUBB) register and the result is routed to the selected register. For
+Description: The contents of the A or B (STA or STB) register are stored in the memory location specified in the operand field. For example, the B register contains $01. The instruction: STB $220A stores $01 at address $220A and, in the CC register, the N, Z, and V bits are cleared.
 
-example, the A register contains $6A. The instruction with immediate
-addressing: SUBA #$27 results in A containsing $43. This subtraction
-process can be seen as:
+#### ST (16 Bit) - Store Register into Memor
 
-bbb
-01101010 contents of A
-- 0010 0111 immediate byte
-0100 0011 new contents of A
+| | |
+|-|-|
+| Source Forms: | STD P; STX P; STY P; STU P; STS P |
+| Type: | Data Movement |
+| Addressing Modes: | Direct; Extended; Indexed. |
+| Operation: | M':M+l' <- R |
+
+Condition Codes:
+- H - Not affected.
+- N - Set if bit 15 of the selected register is set; cleared otherwise.
+- Z - Set if the selected register contains zero; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
+
+Description: The contents of a selected 16-bit register are stored in two consecutive memory locations; the operand field specifies the first location. For example, U contains $7D08. The instruction: STU $1A02 -stores the upper half of U, $7D, at address $1A02 and the lower half, $08, at address $1A03. In the CC register, the N, Z, and V bits are cleared.
+
+#### SUB (8 Bit) - Subtract Memory from Register
+
+| | |
+|-|-|
+| Source Forms: | SUBA P; SUBB P |
+| Type: | Arithmetic |
+| Addressing Modes: | Direct; Extended; Immediate; Indexed. |
+| Operation: | R' <- R-M |
+
+Condition Codes:
+- H - Undefined, so it may be in any state.
+- N - Set if bit 7 of the resulting byte is set; cleared otherwise. N set indicates a negative signed binary number.
+- Z - Set if the resulting byte is zero; cleared otherwise.
+- V - Set if an overflow or underflow occurred; cleared otherwise. This applies only to signed binary numbers.
+- C - Set if a borrow is generated by bit 7 of the ALU; cleared otherwise.
+
+Description: A byte is ‘read from a memory location specified by the operand field. That byte is subtracted from the contents of the A or B (SUBA or SUBB) register and the result is routed to the selected register. For example, the A register contains $6A. The instruction with immediate addressing: SUBA #$27 results in A containsing $43. This subtraction process can be seen as:
+
+```
+           bbb
+      0110 1010     contents of A
+    - 0010 0111     immediate byte
+    -----------
+      0100 0011     new contents of A
+```
 
 In the CC register, the N, Z, and V bits are cleared.
 
-SUB (16 Bit Subtract Memory from Register
-Source Forms: SUBD P
-Operation: D’ <- D-M:M+1 Type: Arithmetic
+#### SUB (16 Bit) - Subtract Memory from Register
 
-Addressing Modes: Direct; Extended; Immediate; Indexed.
+| | |
+|-|-|
+| Source Forms: | SUBD P |
+| Type: | Arithmetic |
+| Addressing Modes: | Direct; Extended; Immediate; Indexed. |
+| Operation: | D' <- D-M:M+1 |
+
 Condition Codes:
-H - Not affected.
-N - Set if bit 15 of the result in the D register is set; cleared
-otherwise. N set indicates a negative signed binary number.
-Z - Set if the result in D is zero; cleared otherwise.
-V - Set if a 16-bit overflow or underflow occurred; cleared otherwise.
-This applies only to signed binary numbers.
-C - Set if a borrow was generated by bit 15; cleared otherwise.
+- H - Not affected.
+- N - Set if bit 15 of the result in the D register is set; cleared otherwise. N set indicates a negative signed binary number.
+- Z - Set if the result in D is zero; cleared otherwise.
+- V - Set if a 16-bit overflow or underflow occurred; cleared otherwise. This applies only to signed binary numbers.
+- C - Set if a borrow was generated by bit 15; cleared otherwise.
 
-Description: Two bytes are read from two consecutive memory locations and
-concatenated to form a 16-bit word. That 16-bit word is subtracted from the
-contents of the D register and the result is routed back to the D register.
+Description: Two bytes are read from two consecutive memory locations and concatenated to form a 16-bit word. That 16-bit word is subtracted from the contents of the D register and the result is routed back to the D register. For example, the D register contains $072F, and bytes $04 and $16 are stored at addresses $1500 and $1501. The instruction with extended addressing: SUBD $1500 results in the D register containing $0319. This operation can be seen as:
 
-For example, the D register contains $072F, and bytes $04 and $16 are
-stored at addresses $1500 and $1501. The instruction with extended
-addressing: SUBD $1500 results in the D register containing $0319. This
-operation can be seen as:
-
-b
-0000 0111 0010 1111 contents of D
-- 0000 0100 0001 0110 memory operand
-0000 00110001 1001 new contents of D
+```
+                 b
+      0000 0111 0010 1111   contents of D
+    - 0000 0100 0001 0110   memory operand
+    ---------------------
+      0000 0011 0001 1001   new contents of D
+```
 
 In the CC register, the C, N, Z, and V bits are cleared.
 
-SWI Software Interrupt
-Source Forms: SWI
-Operation: Set the E bit then; Type: Miscellaneous
+#### SWI - Software Interrupt
 
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PCY
+| | |
+|-|-|
+| Source Forms: | SWI |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
 
-S’ <- S-1, (S) <- U,
-S’ <- S-1, (S) <- Uy
-S’ <- S-1, (S) <- Y,
-S’ <- S-1, (S) <- Yy
-S’ <- S-1, (S) <- X,
-S’ <- S-1, (S) <- Xy
-S’ <- §-1, (8S) <- DP
-S’ <-.§-1, (S) <- B
+```
+Operation: Set the E bit then;
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           S' <- S-1, (S) <- U<sub>L</sub>
+           S' <- S-1, (S) <- U<sub>U</sub>
+           S' <- S-1, (S) <- Y<sub>L</sub>
+           S' <- S-1, (S) <- Y<sub>U</sub>
+           S' <- S-1, (S) <- X<sub>L</sub>
+           S' <- S-1, (S) <- X<sub>U</sub>
+           S' <- S-1, (S) <- DP
+           S' <- S-1, (S) <- B
+           S' <- S-1, (S) <- A
+           S' <- S-1, (S) <- CC
+           PC' <- ($FFFA):($FFFB)
+```
 
-S’ <- S-1, (S) <- A
+Condition Codes. The I and F bits of the CC register are set to mask out any IRQ and FIRQ interrupts. The E bit is also set.
 
-S’ <- 8-1, (S) <- CC
+Description: First the E bit is set to indicate that all the registers except S are stored in the stack. Then all the registers are pushed onto the S stack, as in the operation diagram. Each byte is pushed onto the stack by first decrementing the contents of S by one, then storing the byte at the new address in S. After stacking the registers, the I and F bits are set and the SWI vector address is read from addresses $FFFA and $FFFB. This vector address is in put into the PC register, causing the MPU to start executing an instruction at that address.
 
-PC’ <~ (SFFFA):($FFFB)
-Addressing Modes: Inherent.
-Condition Codes. The I:and F bits of the CC register are set to mask out
-any IRQ and FIRQ interrupts. The E bit is also set.
+#### SWI12 - Software Interrupt 2
 
-Description: First the E bit is set to indicate that all the registers
+| | |
+|-|-|
+| Source Forms: | SWI2 |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
 
-except S are stored in the stack. Then all the registers are pushed onto
+```
+Operation: Set the E bit then;
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           S' <- S-1, (S) <- U<sub>L</sub>
+           S' <- S-1, (S) <- U<sub>U</sub>
+           S' <- S-1, (S) <- Y<sub>L</sub>
+           S' <- S-1, (S) <- Y<sub>U</sub>
+           S' <- S-1, (S) <- X<sub>L</sub>
+           S' <- S-1, (S) <- X<sub>U</sub>
+           S' <- S-1, (S) <- DP
+           S' <- S-1, (S) <- B
+           S' <- S-1, (S) <- A
+           S' <- S-1, (S) <- CC
+           PC' <- ($FFF4):($FFF5)
+```
 
-the S stack, as in the operation diagram. Each byte is pushed onto the
-
-stack by first decrementing the contents of S by one, then storing the byte
-
-at the new address in S. After stacking the registers, the I and F bits are
-
-set and the SWI vector address is read from addresses $FFFA and $FFFB. This
-vector address is in put into the PC register, causing the MPU to start
-executing an instruction at that address.
-
-SWI12 Software Interrupt 2
-Source Forms: SWI2
-Operation: Set the E bit then; Type: Miscellaneous
-
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PC,
-
-S’ <- S-1, (S) <- U,
-S’ <- S-1, (8) <- Uy
-S’ <- S-1, (S) <- Y;
-S’ <- S-1, (S) <- Yy
-S’ <- S-1, (S) <- X,
-S’ <- S-1, (S) <- Xy
-S’ <- S-1, (S) <- DP
-S’ <- S-1, (S) <- B
-
-S’ <- 8-1, (S) <- A
-
-S’ <- S-1, (S) <- CC
-
-PC’ <- ($FFF4):($FFF5)
-Addressing Modes: Inherent.
 Condition Codes: Only the E bit is set.
 
-Description: First the E bit is set to indicate that all the registers
+Description: First the E bit is set to indicate that all the registers except S are stored in the stack. Then all the registers are pushed onto the S stack, as in the operation diagram. Each byte is pushed onto the stack by first decrementing the contents of S by one, then storing the byte at the new address in S. After stacking the registers, the SWI vector address is read from addresses $FFF4 and $FFF5. This vector address is put into the PC register, causing the MPU to start executing an instruction at that address. Note that the I and F bits are not affected, the IRQ and FIRQ interrupts may or may not be masked out, depending on their previous state.
 
-except S are stored in the stack. Then all the registers are pushed onto
+#### SWI3 - Software Interrupt 3
 
-the S stack, as in the operation diagram. Each byte is pushed onto the
+| | |
+|-|-|
+| Source Forms: | SWI3 |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
 
-stack by first decrementing the contents of S by one, then storing the byte
-at the new address in S. After stacking the registers, the SWI vector
-address is read from addresses $FFF4 and $FFF5. This vector address is put
-into the PC register, causing the MPU to start executing an instruction at
-that address. Note that the I and F bits are not affected, the IRQ and FIRQ
-interrupts may or may not be masked out, depending on their previous state.
+```
+Operation: Set the E bit then;
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           S' <- S-1, (S) <- U<sub>L</sub>
+           S' <- S-1, (S) <- U<sub>U</sub>
+           S' <- S-1, (S) <- Y<sub>L</sub>
+           S' <- S-1, (S) <- Y<sub>U</sub>
+           S' <- S-1, (S) <- X<sub>L</sub>
+           S' <- S-1, (S) <- X<sub>U</sub>
+           S' <- S-1, (S) <- DP
+           S' <- S-1, (S) <- B
+           S' <- S-1, (S) <- A
+           S' <- S-1, (S) <- CC
+           PC' <- ($FFF2):($FFF3)
+```
 
-SWI3 Software Interrupt 3
-Source Forms: SWI3
-
-Operation: Set the E bit then; Type: Miscellaneous
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PCy
-Ss’ <- S-1, (S) <- U,
-
-S’ <- S-1, (8S) <- Uy
-S’ <- 8-1, (S) <- Y,
-S’ <- S-1, (S) <- Yy
-S’ <- S-1, (S) <- X,
-S’ <- S-1, (S) <- Xy
-S’ <- §-1, (S) <- DP
-S’ <- 8-1, (S) <- B
-
-S’ <- 8-1, (8S) <- A
-
-S’ <- §-1, (S) <- CC
-
-PC’ <- ($FFF2):($FFF3)
-Addressing Modes: Inherent.
 Condition Codes: Only the E bit is set.
 
-Description: First the E bit is set to indicate that all the registers
+Description: First the E bit is set to indicate that all the registers except S are stored in the stack. Then all the registers are pushed onto the S stack as in the operation diagram. Each byte is pushed onto the stack by first decrementing the contents of S by one, then storing the byte at the new address in S. After stacking the registers, the SWI vector address is read from addresses $FFF2 and $FFF3. This vector address in put into the PC register, causing the MPU to start executing an instruction at that address. The I and F bits are not affected, so the IRQ and FIRQ interrupts may or may not be masked out, depending on their previous state.
 
-except S are stored in the stack. Then all the registers are pushed onto
+#### SYNC - Synchronize to External Event
 
-the S stack as in the operation diagram. Each byte is pushed onto the stack
-by first decrementing the contents of S by one, then storing the byte at
-
-the new address in S. After stacking the registers, the SWI vector address
-
-is read from addresses $FFF2 and $FFF3. This vector address in put into the
-PC register, causing the MPU to start executing an instruction at that
-address. The I and F bits are not affected, so the IRQ and FIRQ interrupts
-may or may not be masked out, depending on their previous state.
-
-SYNC Synchronize to External Event
-
-Source Forms: SYNC
-
-Operation: The MPU stops and waits Type: Miscellaneous
-until an interrupt occurs.
-
-Addressing Modes: Inherent.
+| | |
+|-|-|
+| Source Forms: | SYNC |
+| Type: | Miscellaneous |
+| Addressing Modes: | Inherent. |
+| Operation: | The MPU stops and waits until an interrupt occurs. |
 
 Condition Codes: May be affected by unmasked interrupt.
 
-Description: This instruction causes the MPU to stop executing instructions
-and wait for an interrupt. Upon receiving an interrupt, if it is masked out
-or the interrupt signal is low for less than three cycles, the MPU resumes
-processing with the next instruction. A cycle refers to how often the
+Description: This instruction causes the MPU to stop executing instructions and wait for an interrupt. Upon receiving an interrupt, if it is masked out or the interrupt signal is low for less than three cycles, the MPU resumes processing with the next instruction. A cycle refers to how often the pulses occur on the E and Q clock pins. In the Color Computer, a cycle is about 1.12 microseconds, or 1.12 millionths of a second. Upon receiving an unmasked interrupt that lasts more than three cycles, the MPU will perform the interrupt sequence, causing the MPU to execute the interrupt handler program. When the MPU is in the stopped state, the address and data bus signals from the MPU are electrically disconnected from the address and data buses so some other device can use the buses.
 
-pulses occur on the E and Q clock pins. In the Color Computer, a cycle is
-about 1.12 microseconds, or 1.12 millionths of a second. Upon receiving an
-unmasked interrupt that lasts more than three cycles, the MPU will perform
-the interrupt sequence, causing the MPU to execute the interrupt handler
-program. When the MPU is in the stopped state, the address and data bus
+For example, if one wanted to increment a counter every time an IRQ interrupt occurred and the interrupts occurred in very rapid succession, the following program could be used.
 
-signals from the MPU are electrically disconnected from the address and
-data buses so some other device can use the buses.
+```
+         ORCC #$10
+    WAIT SYNC
+         INC COUNT
+         BRA WAIT
+```
 
-For example, if one wanted to increment a counter every time an IRQ
-interrupt occurred and the interrupts occurred in very rapid succession,
-the following program could be used.
+The ORCC sets the I bit, masking out the IRQ interrupt. The SYNC instruction causes the MPU to wait until an interrupt occurs. Upon detecting the interrupt, processing continues by incrementing the COUNT and branching back to the SYNC to wait for another interupt.
 
-ORCC #$10
-WAIT SYNC
+#### TER - Transfer Register to Register
 
-INC COUNT
+| | |
+|-|-|
+| Source Forms: | TFR R<sub>1</sub>,R<sub>2</sub> |
+| Type: | Data Movement |
+| Addressing Modes: | Register. |
+| Operation: | R<sub>2</sub> <- R<sub>1</sub> |
 
-BRA WAIT
+Condition Codes: Not affected unless R,, the destination register, is the CC register. In that case, any bits can be set or cleared in the CC register.
 
-The ORCC sets the I bit, masking out the IRQ interrupt. The SYNC
-instruction causes the MPU to wait until an interrupt occurs. Upon
+Description: The contents of the source register, R,, are transferred into the destination register, R,. Both registers must be of the same length, both eight or 16 bits long. The registers to be used are designated by their abbreviation in the operand field. The abbreviations are: A, B, CC, DP, D, X, Y, U, 8S, and PC. For example, the A register contains $8C and the DP register is clear. The instruction: TFR A,DP results in the A and DP registers containing $8C.
 
-detecting the interrupt, processing continues by incrementing the COUNT and
-branching back to the SYNC to wait for another interupt.
+#### TST - Test
 
-TER Transfer Register to Register
-Source Forms: TFR R,.R,
-Operation: R, <- R, Type: Data Movement
+| | |
+|-|-|
+| Source Forms: | TST Q; TSTA; TSTB |
+| Type: | Test |
+| Addressing Modes: | Inherent; Extended; Indexed; Direct. |
+| Operation: | TEMP <- M-0 or TEMP <- R-0 |
 
-Addressing Modes: Register.
-
-Condition Codes: Not affected unless R,, the destination register, is the
-CC register. In that case, any bits can be set or cleared in the CC
-register.
-
-Description: The contents of the source register, R,, are transferred
-
-into the destination register, R,. Both registers must be of the same
-
-length, both eight or 16 bits long. The registers to be used are designated
-
-by their abbreviation in the operand field. The abbreviations are: A, B,
-
-CC, DP, D, X, Y, U, 8S, and PC. For example, the A register contains $8C and
-the DP register is clear. The instruction: TFR A,DP results in the A and DP
-registers containing $8C.
-
-TST Test
-Source Forms: TST Q; TSTA; TSTB
-Operation: TEMP <- M-0 or TEMP <- R-0 Type: Test
-
-Addressing Modes: Inherent; Extended; Indexed; Direct.
 Condition Codes:
-H - Not affected.
-N ~ Set if bit 7 of the byte being tested is set; cleared otherwise.
-Z - Set if the byte being tested is zero; cleared otherwise.
-V - Always cleared.
-C.- Not affected.
+- H - Not affected.
+- N - Set if bit 7 of the byte being tested is set; cleared otherwise.
+- Z - Set if the byte being tested is zero; cleared otherwise.
+- V - Always cleared.
+- C - Not affected.
 
-Description: A byte is read from memory (TST Q) or the A or B (TSTA or
-TSTB) register and a value of zero is subtracted from it so the ALU can set
+Description: A byte is read from memory (TST Q) or the A or B (TSTA or TSTB) register and a value of zero is subtracted from it so the ALU can set or clear bits in the CC register. Neither the memory nor accumulator contents are changed. All this instruction really tells us is whether the byte has bit 7 set (N=1) or any bits set (Z=0). For example, The A register contains $80. The instruction: TSTA results in the N bit set and the Z bit cleared.
 
-or clear bits in the CC register. Neither the memory nor accumulator
-contents are changed. All this instruction really tells us is whether the
-byte has bit 7 set (N=1) or any bits set (Z=0). For example, The A register
-contains $80. The instruction: TSTA results in the N bit set and the Z bit
-cleared.
+#### FIRQ - Fast Interrupt Request
 
-FIR Fast Interrupt Request
-Operation: If F bit clear, then: Type: Hardware Interrupt
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PCy
-Clear E bit
-S’ <- S-1, (S) <- CC
-Set F and I bits
-PC’ <- ($FFF6):($FFEF7)
-Addressing Modes: Inherent.
+| | |
+|-|-|
+| Type: | Hardware Interrupt |
+| Addressing Modes: | Inherent. |
+
+```
+Operation: If F bit clear, then:
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           Clear E bit
+           S' <- S-1, (S) <- CC
+           Set F and I bits
+           PC' <- ($FFF6):($FFF7)
+```
+
 Condition Codes: The E bit is cleared and the F and I bits are set.
 
-Description: The occurrence of an FIRQ interrupt, if the F bit is clear,
+Description: The occurrence of an FIRQ interrupt, if the F bit is clear, will cause the MPU to start the FIRQ interrupt sequence upon completion of the currently executing instruction. In the interrupt sequence, first the contents of the PC register are pushed on the S stack. Then the E bit is cleared and the CC register is pushed on the S stack. The F and I bits are set to prevent any further FIRQ and IRQ interrupts. Finally, the FIRQ vector address, read from addresses $FFF6 and $FFF7, is loaded into the PC register, causing the MPU to start executing the instruction at that address. Since only the PC and CC registers are pushed on the stack, this interrupt sequence is the fastest.
 
-will cause the MPU to start the FIRQ interrupt sequence upon completion of
-the currently executing instruction. In the interrupt sequence, first the
-contents of the PC register are pushed on the S stack. Then the E bit is
-cleared and the CC register is pushed on the S stack. The F and I bits are
-set to prevent any further FIRQ and IRQ interrupts. Finally, the FIRQ
-vector address, read from addresses $FFF6 and $FFF7, is loaded into the PC
-register, causing the MPU to start executing the instruction at that
+#### IRQ - Interrupt Request
 
-address. Since only the PC and CC registers are pushed on the stack, this
-interrupt sequence is the fastest.
+| | |
+|-|-|
+| Type: | Hardware Interrupt |
+| Addressing Modes: | Inherent. |
 
-IR Interrupt Request
-Opeation: If I bit clear, then: Type: Hardware Interrupt
-S’ <- S-1, (S) <- PC,
-S’ <- S-1, (S) <- PCy
-S’ <- $- 1. (S) <- U,
+```
+Operation: If I bit clear, then:
+           S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           S' <- S-1, (S) <- U<sub>L</sub>
+           S' <- S-1, (S) <- U<sub>U</sub>
+           S' <- S-1, (S) <- Y<sub>L</sub>
+           S' <- S-1, (S) <- Y<sub>U</sub>
+           S' <- S-1, (S) <- X<sub>L</sub>
+           S' <- S-1, (S) <- X<sub>U</sub>
+           S' <- S-1, (S) <- DP
+           S' <- S-1, (S) <- B
+           S' <- S-1, (S) <- A
+           Set E bit
+           S' <- S-1, (S) <- CC
+           Set I bit
+           PC' <- ($FFF8):($FFF9)
+```
 
-Ss’ <- S-1, (S) <- Uy
-S’ <- S-1, (S) <- Y,
-S’ <- S-1, (S) <- Y
-S’ <- S-1, (S) <- X
-S’ <- S-1, (S) <-
-S’-<- S-1,-(S) <- DP
-S’ <- S-1, (S) <- B
-S’ <- 8-1, (S)<- A
-Set E bit
-
-S’. <- §-1, (S) <- CC
-Set I bit
-
-PC’ <- ($FFF8):($FFF9)
-
-Addressing Modes: Inherent.
 Condition Codes: The E and I bits are set.
 
-Description: The occurrence of an IRQ interrupt (if the I bit is clear)
+Description: The occurrence of an IRQ interrupt (if the I bit is clear) will cause the MPU to start the IRQ interrupt sequence upon completion of the currently executing instruction. In the interrupt sequence, first the contents of all the MPU registers, except the S and CC, are pushed ont the S stack. Then the E bit is set and the CC register is pushed on the S stack. The I bit is set to prevent any further IRQ interrupts. Finally, the IRQ vector address, read from addresses $FFF8 and $FFF9, is loaded into the PC register, causing the MPU to start executing the instruction at that address.
 
-will cause the MPU to start the IRQ interrupt sequence upon completion of
-the currently executing instruction. In the interrupt sequence, first the
-contents of all the MPU registers, except the S and CC, are pushed ont the
+#### NMI - Non Maskable Interrupt
 
-S stack. Then the E bit is set and the CC register is pushed on the S
+| | |
+|-|-|
+| Type: | Hardware Interrupt |
+| Addressing Modes: | Inherent. |
 
-stack. The I bit is set to prevent any further IRQ interrupts. Finally, the
+```
+Operation: S' <- S-1, (S) <- PC<sub>L</sub>
+           S' <- S-1, (S) <- PC<sub>U</sub>
+           S' <- S-1, (S) <- U<sub>L</sub>
+           S' <- S-1, (S) <- U<sub>U</sub>
+           S' <- S-1, (S) <- Y<sub>L</sub>
+           S' <- S-1, (S) <- Y<sub>U</sub>
+           S' <- S-1, (S) <- X<sub>L</sub>
+           S' <- S-1, (S) <- X<sub>U</sub>
+           S' <- S-1, (S) <- DP
+           S' <- S-1, (S) <- B
+           S' <- S-1, (S) <- A
+           Set E bit
+           S' <- S-1, (S) <- CC
+           Set I and F bits
+           PC' <- ($FFFC):($FFFD)
+```
 
-IRQ vector address, read from addresses $FFF8 and $FFF9, is loaded into the
-PC register, causing the MPU to start executing the instruction at that
-address.
-
-NMI Non Maskable Interrupt
-Operation: S’ <- S-1, (S) <- PC, Type: Hardware Interrupt
-
-S’ <- S-1, (S) <- PC,
-
-S’ <- S-1, (S) <- U,
-
-S’ <- S-1, (S) <- Uy
-
-Ss’ <- S-1, (S) <- Y,
-
-S’ <- S-1, (SS) <- Yy
-
-S’ <- S-1, (S) <- X,
-
-S’ <- S-1, (S) <- Xy
-
-S’ <- 8-1, (S) <- DP
-
-S’ <- S-1, (S) <- B
-
-S’ <- S-1, (S) <-A
-
-Set E bit
-
-S’ <- S-1, (S) <- CC
-
-Set I and F bits
-
-PC’ <- ($FFFC):($FFFD)
-Addressing Modes: Inherent.
 Condition Codes: The E, F, and I bits are set.
 
-Description: The occurrence of an NMI interrupt will cause the MPU to start
-the NMI interrupt sequence upon completion of the currently executing
-instruction. In the interrupt sequence, first the contents of all the MPU
-registers, except S and CC, are pushed on the S stack. Then the E bit is
+Description: The occurrence of an NMI interrupt will cause the MPU to start the NMI interrupt sequence upon completion of the currently executing instruction. In the interrupt sequence, first the contents of all the MPU registers, except S and CC, are pushed on the S stack. Then the E bit is set and the CC register is pushed on the S stack. The I and F bits are set to prevent any further IRQ or FIRQ interrupts. Finally, the NMI vector address, read from addresses $FFFC and $FFFD, is loaded into the PC register, causing the MPU to start executing the instruction at that address.
 
-set and the CC register is pushed on the S stack. The I and F bits are set
+The NMI interrupt can not be masked out by setting any of the CC register bits. The only time it is prevented is after a RESET operation before the S register has been loaded. However, if an NMI occurs during this time, its occurence is remembered. When the S register is finally loaded, the NMI interrupt sequence will begin.
 
-to prevent any further IRQ or FIRQ interrupts. Finally, the NMI vector
-address, read from addresses $FFFC and $FFFD, is loaded into the PC
-register, causing the MPU to start executing the instruction at that
+#### RESET - Hardware Reset
 
-address.
+| | |
+|-|-|
+| Type: | Hardware Interrupt |
+| Addressing Modes: | Inherent. |
 
-The NMI interrupt can not be masked out by setting any of the CC
-register bits. The only time it is prevented is after a RESET operation
-before the S register has been loaded. However, if an NMI occurs during
-this time, its occurence is remembered. When the S register is finally
+```
+Operation: SET I and F bits
+           DP' <- 00
+           PC' <- ($FFFE):($FFFF)
+```
 
-loaded, the NMI interrupt sequence will begin.
-
-RESET Hardware Reset
-Operation: SET I and F bits Type: Hardware Interrupt
-DP’ <- 00
-PC’ <- (SFFFE):($FFFF)
-Addressing Modes: Inherent.
 Condition Codes: Only the F and I bits are set.
 
-Description: A RESET will cause the MPU to start the RESET sequence. In the
-sequence, first the F and I bits are set. The DP register is cleared and
-
-the PC register is loaded with the RESET vector address, read from
-
-addresses $F FFE and $FFFF. Then the MPU starts executing the instruction at
-the vector address. The RESET is normally the first operation performed
-
-when a microcomputer is turned on. It is also initiated by pressing the
-
-RESET button on the Color Computer.
+Description: A RESET will cause the MPU to start the RESET sequence. In the sequence, first the F and I bits are set. The DP register is cleared and the PC register is loaded with the RESET vector address, read from addresses $F FFE and $FFFF. Then the MPU starts executing the instruction at the vector address. The RESET is normally the first operation performed when a microcomputer is turned on. It is also initiated by pressing the RESET button on the Color Computer.
 
 ## CHAPTER 6
 
@@ -6426,11 +6349,11 @@ time.
 Debugging aids help the programmer determine why a program does not
 work as desired. It is inevitable that a program of any size will initially
 contain errors or bugs. Debugging aids provide ways to check or monitor a
-program’s operation. Debugging aids often are able to display or change the
+program's operation. Debugging aids often are able to display or change the
 contents of memory, control program execution, and store or read the object
 code to or from tape or disk.
 
-Throughout this book we will use Radio Shack’s EDTASM+ ROM pack to
+Throughout this book we will use Radio Shack's EDTASM+ ROM pack to
 demonstrate editing, assembling, and debugging. It is similar to most other
 packages that provide for editing, assembling, and debugging, but supports
 
@@ -6518,7 +6441,7 @@ assembler to generate the the machine instruction operand field. The
 operand field may also contain abbreviations of registers used in indexed
 or register addressing.
 
-In the comment field is the programmer’s comment or reminder of what
+In the comment field is the programmer's comment or reminder of what
 this particular instruction accomplishes.
 
 When in the editor, start entering statements by using the insert (I)
@@ -6558,7 +6481,7 @@ assembled. Upon completion of entering text, hitting the BREAK key will
 exit the insert command. When fields are to be skipped, as in statement
 110, the right arrow key is pressed repeatedly until the cursor is at the
 desired field. Since only 32 characters can be displayed on one line with
-EDTASM+’s editor, statements will wrap around on the screen.
+EDTASM+'s editor, statements will wrap around on the screen.
 
 A statement which is all comment can also be entered by beginning it
 with an asterisk (*). After the asterisk any text can be entered. These
@@ -6590,7 +6513,7 @@ separate the descriptive text from the command statements.
 
 The entered source code can be written to cassette tape using the
 write (W) command. This will record the text buffer contents using the
-Color Computer’s ASCII code for each character. The W command can contain
+Color Computer's ASCII code for each character. The W command can contain
 a name for the recording or file; the name must begin with an alphabetic
 character and may be up to eight characters long. If a name is not
 
@@ -6617,7 +6540,7 @@ V <ENTER> ;
 READY CASSETTE <ENTER>
 
 This causes the next file on tape to be checked for a valid recording. This
-is similar to BASIC’s SKIPF command. If the recording is good, no message
+is similar to BASIC's SKIPF command. If the recording is good, no message
 is printed. If the recording is faulty, a message will be printed on the
 screen. If that happens, try recording at a different place on the tape or
 on another tape.
@@ -6639,16 +6562,16 @@ READY CASSETTE <ENTER>
 The next file from tape will be read into the buffer area. The print
 command can be used to list what was just read in.
 
-An interesting point is that files recorded with the editor’s write
-command can be read using BASIC’s CLOAD command. Also, files written
-with BASIC’s CSAVE "XXX",A command can be read with the editor’s
+An interesting point is that files recorded with the editor's write
+command can be read using BASIC's CLOAD command. Also, files written
+with BASIC's CSAVE "XXX",A command can be read with the editor's
 load command.
 
 Text Editor Commands
 
 The following section will describe all EDTASM+ text editor commands,
 presented in alphabetical order. Special symbols will also be described.
-EDTASM+’s text editor is versatile in its wide array of commands and can be
+EDTASM+'s text editor is versatile in its wide array of commands and can be
 used for other purposes, such as entering and/or editing BASIC program
 statements, or as a line-oriented word processor.
 
@@ -6677,7 +6600,7 @@ uw Going to BASIC
 
 One can get to BASIC from the text editor by typing Q and the ENTER
 key. This initializes BASIC and displays its header on the screen. In the
-process, any text in the editor’s buffer is deleted, but object code in
+process, any text in the editor's buffer is deleted, but object code in
 areas of memory that BASIC does not use will not be deleted. From BASIC,
 control can be returned to the editor by entering:
 
@@ -6981,8 +6904,8 @@ READY CASSETTE. <ENTER>
 
 will cause the assembly process to be performed. The object code is
 recorded on cassette with the name TESTI, and the listing is put on the
-screen. The object code can later be loaded into memory using BASIC’s
-CLOADM command or ZBUG’s load (L) command. Using the previous
+screen. The object code can later be loaded into memory using BASIC's
+CLOADM command or ZBUG's load (L) command. Using the previous
 assembly language example, the listing would appear as:
 
 00070 *THIS IS AN EXAMPLE OF
@@ -7160,7 +7083,7 @@ specify the address of the first instruction to be executed. This address
 
 will be stored in the object code file with the ORG address. The two
 
-addresses are used by BASIC’s CLOADM and EXEC commands. For example:
+addresses are used by BASIC's CLOADM and EXEC commands. For example:
 
 00100
 00110 BEG
@@ -7249,7 +7172,7 @@ used, it is defined.
 
 00290 JMP $201B
 
-00300 LINE FCC !ENTER TODAY’S DATE!
+00300 LINE FCC !ENTER TODAY'S DATE!
 00310 END
 
 When assembled, the ASCII codes of the characters in the text string will
@@ -7300,8 +7223,8 @@ code for statements 130 and 140 is stored starting at address $1700.
 
 When assembling on cassette tape the ORG command will put the starting
 address, specified by the expression, at the beginning of the object code
-file. Then that object code file can be loaded with ZBUG’s load (L) command
-or BASIC’s CLOADM command without specifying the load address. The listing
+file. Then that object code file can be loaded with ZBUG's load (L) command
+or BASIC's CLOADM command without specifying the load address. The listing
 generated by the assembler will have absolute addresses in the address
 column. For example:
 
@@ -7447,7 +7370,7 @@ source code are identified, assigned a value, and put in a symbol table.
 The symbol table is stored in memory immediately after the last source code
 statement. The symbol table comprises items composed of a string of ASCII
 characters corresponding to the symbol name followed by two bytes
-containing the symbol’s value in straight binary. On the second pass the
+containing the symbol's value in straight binary. On the second pass the
 assembler generates the object code, directed by the mnemonic, operand, and
 any symbols in each statement. The object code is put in memory immediately
 after the symbol table, if assembling in memory and not using the AO option
@@ -7527,7 +7450,7 @@ ZBUG all numbers typed are assumed to be hexadecimal unless specified
 otherwise. While in ZBUG, hitting E then ENTER will return you to the
 editor mode.
 
-During a program’s development and testing, one will spend a lot of
+During a program's development and testing, one will spend a lot of
 time in ZBUG. Its facilities include many commands that assist in debugging
 a program. They can also be used to see how other programs work. The
 commands have been grouped into four general categories; inspect and
@@ -7537,7 +7460,7 @@ Inspect and change commands display and change the contents of specific
 memory locations. The program control commands provide for executing and
 controlling the execution of a program. Also included are commands that
 
-display and change the values in the MPU’s registers. The data movement
+display and change the values in the MPU's registers. The data movement
 commands let one move data from place to place in memory and use a printer,
 tape, or the screen for viewing or saving areas of memory. The calculations
 section performs arithmetic and logical operations.
@@ -7549,7 +7472,7 @@ modes. After its content has been displayed one may change it to a
 different value.
 
 « Mnemonic Display - The default display mode is mnemonic (M); the
-contents of a series of memory locations are displayed as an instruction’s
+contents of a series of memory locations are displayed as an instruction's
 mnemonic and operand field. ZBUG assumes that the display address typed is
 the starting address of an instruction and attempts to disassemble it and
 display the results. If the address does not point to an instruction the
@@ -7557,7 +7480,7 @@ displayed results can be misleading. This display mode is activated by
 
 typing the M then ENTER keys, but this only need be done if another display
 mode had been previously specified. The contents of memory is displayed by
-typing the address followed by a slash. For example, let’s display the
+typing the address followed by a slash. For example, let's display the
 
 contents of BASIC ROM:
 
@@ -7656,7 +7579,7 @@ hexadecimal, decimal, or octal. Octal numbers use base eight. The
 hexadecimal format is the default display format. This is done with the
 output (O) command followed by a 16, 10 or 8 to specify hexadecimal,
 decimal, or octal, respectively. For example: O10 <ENTER> results in all
-numbers displayed in decimal. The displayed number’s base is indicated by a
+numbers displayed in decimal. The displayed number's base is indicated by a
 suffix; T indicates decimal, Q indicates octal, and no suffix indicates
 hexadecimal. Similarly, one can specify the base of all operator entered
 numbers with the input (I) command followed by 16, 10, or 8. The default
@@ -7675,7 +7598,7 @@ following source code into memory.
 00110 ST1 LDA ,Y GET CONTENTS
 
 00120 BPL ST2 BRANCH IF NOT NEGATIVE
-00130 NEGA FORM TWO’S COMPLEMENT
+00130 NEGA FORM TWO'S COMPLEMENT
 00140 STA ,Y PUT BACK IN TABLE
 
 00150 ST2 LEAY 1,Y INC TABLE POINTER
@@ -7742,7 +7665,7 @@ key will cause that instruction to be displayed again in the numeric
 display submode. Pressing the equals key will cause the first byte of the
 displayed instruction to be displayed as a hexadecimal value. When
 displaying in any mode, pressing the colon key will cause ZBUG to interpret
-a byte’s contents as if they were the contents of the CC register, and
+a byte's contents as if they were the contents of the CC register, and
 
 display one of the characters, EFHINZVC, for each corresponding bit that is
 set. :
@@ -7753,7 +7676,7 @@ The commands presented here are those one would use to test or execute
 a new program. During the following explanations the previous sample
 program will be used. This program will read the contents of each location
 in a table of 20 (decimal) bytes. If the value in a location is a negative
-signed binary number, it is negated or its two’s complement is taken and
+signed binary number, it is negated or its two's complement is taken and
 that is stored in TABLE. Upon completion, the SWI instruction returns
 control to ZBUG. After this program is assembled into memory with no
 errors, one can go into ZBUG to run it.
@@ -7797,7 +7720,7 @@ register abbreviation of one register. For example:
 R/ (display all MPU registers)
 DP/ xx (display contents of DP register)
 
-When a register’s contents are displayed one can enter a new value to be
+When a register's contents are displayed one can enter a new value to be
 put in, just like changing the contents of memory. However, when all the
 registers are displayed, none of their contents can be changed. The ability
 to view the contents of the registers is very useful when debugging a
@@ -7867,8 +7790,8 @@ Examples of using the put command are:
 P TESTA STR TABLE+20 STR
 P TESTB 0123 423 2A2
 
-An object code file can be loaded into address XXXX with BASIC’s
-CLOADM or ‘ZBUG’s load command without specifying that address at load
+An object code file can be loaded into address XXXX with BASIC's
+CLOADM or ‘ZBUG's load command without specifying that address at load
 time. In BASIC the program can be run without specifying the start address.
 For example: CLOADM and EXEC will load and execute a properly
 recorded object code file made with the put command.
@@ -7890,7 +7813,7 @@ file and loads it. If the name is omitted, the next file on tape is loaded.
 The object code or data will be loaded into memory at the starting address
 specified in the file. When loading a file created with the put command,
 the data will be loaded into memory at the starting address specified by
-the put command’s XXXX field. When loading a file created by assembling on
+the put command's XXXX field. When loading a file created by assembling on
 tape, the object code will be loaded in memory starting at address 0000
 unless an ORG command was used. In that case the load address will be that
 specified by the ORG command.
@@ -7948,7 +7871,7 @@ straight binary numbers. The results of any expression are also represented
 in two bytes. Thus, only integers are allowed. This allows values 0 - $FFFF
 
 which correspond to the maximum memory address range of the MC6809E. The
-two-byte size also exactly matches the number of bytes in which a symbol’s
+two-byte size also exactly matches the number of bytes in which a symbol's
 value is represented. This allows expressions to be used in program
 statements where the calculated value will be assigned to a symbol or
 operand field.
@@ -8053,7 +7976,7 @@ the largest number of parentheses will be performed first. For example:
 
 Characters can also be in expressions where their ASCII code is the
 numeric value used to calculate the resulting value. The ASCII code is
-specified by preceding a character with an apostrophe. For example: ’B =
+specified by preceding a character with an apostrophe. For example: 'B =
 prints the ASCII code for B, $42. The following expression:
 
 *B+25= 67
@@ -8167,7 +8090,7 @@ START EXECUTION ADDR
 Listing 7-1 The CLRPRN program.
 
 The comments in this program help immensely in understanding the
-program and don’t cost anything in memory use or MPU time after the source
+program and don't cost anything in memory use or MPU time after the source
 code is assembled. The object code is exactly the same whether or not there
 are any comments; the assembler completely ignores comments.
 
@@ -8249,7 +8172,7 @@ A sample program (PHEX) follows; its tasks are to clear the screen and
 display the hexadecimal digits contained in a byte in memory. The program
 is to be executed from ZBUG and on completion will return to ZBUG. The
 program is divided into sections with clearly defined tasks. The first
-section’s task is to clear the screen. Its source code would look like
+section's task is to clear the screen. Its source code would look like
 Listing 7-2.
 
 100 *CLEAR THE SCREEN
@@ -8286,7 +8209,7 @@ coded, tested and debugged, and its source code saved on cassette tape.
 
 The source code for each section should use different line numbers so
 
-they won’t overlap those of another section. For example, the first
+they won't overlap those of another section. For example, the first
 section uses lines 100 - 190. The second section should start with line
 200.
 
@@ -8314,7 +8237,7 @@ Store code
 Fig. 7-1 Generating Video Codes of Hexadecimal Digits.
 
 The source code for each section should use different line numbers so
-they won’t overlap those of another section. For example, the first section
+they won't overlap those of another section. For example, the first section
 uses lines 100 - 190. The second section should start with line 200.
 
 The third section moves the video display codes, generated by the
@@ -8406,10 +8329,10 @@ Listing 7-3 The PHEX Program.
 
 After each section is written and debugged, their source codes can be
 merged together to form the total program. The three source code files can
-be successively loaded by the editor’s load (L) command. If the source code
+be successively loaded by the editor's load (L) command. If the source code
 
 statement numbers of each file do not overlap, the files will be appended
-to each other in the editor’s text buffer. For example, the first section
+to each other in the editor's text buffer. For example, the first section
 
 used lines 100 - 190, the second 200 - 500, and the third 600 - 700. Now
 the SWI and END statements must be removed from all but the last section.
@@ -8581,7 +8504,7 @@ Listing 7-4 THE CSCREN Subroutine.
 Line 1030 provides an important piece of information: how many stack
 bytes the subroutine will use. This amount js in addition to the two bytes
 used to store the PC register. The source code of this subroutine, and
-others, is started at high line numbers to allow the main program’s source
+others, is started at high line numbers to allow the main program's source
 code to be put in low numbered lines starting at 100. Line 1050 stores the
 
 A, X, and CC registers in the stack because this subroutine uses them. At
@@ -8780,7 +8703,7 @@ table, completely controls the subroutine. The calling program is the
 master and the subroutine is the slave. An example of a subroutine
 controlled with a descriptive table can be seen in Listing 7-6.
 
-The subroutine performs a task similar to that of BASIC’s VAL command.
+The subroutine performs a task similar to that of BASIC's VAL command.
 It generates the positive binary value of a string of text hexadecimal
 digits. For example, the hexadecimal value of $0A5C is generated given the
 text string "ASC" in ASCII code. The resulting value is right justified.
@@ -8832,7 +8755,7 @@ A) in a register... B) in a table. C) in a stack.
 Subroutine Responsibilities
 
 A subroutine has responsibilities that must be done before it can work
-properly with the calling program. Let’s look at these responsibilities in
+properly with the calling program. Let's look at these responsibilities in
 the order a subroutine would perform them.
 
 The first responsibility is to save the contents of any registers it
@@ -8881,7 +8804,7 @@ indicate a find or no-find result in the CC register.
 
 A subroutine may not need to save any registers if the main program
 
-doesn’t require its registers to be the same after the subroutine returns.
+doesn't require its registers to be the same after the subroutine returns.
 In this case the main program must be designed to use memory instead or
 registers to hold data at the time a subroutine is called. This arrangement
 simplfies subroutine design and reduces stack requirements, but makes the
@@ -9093,7 +9016,7 @@ regs
 
 XXXKX storage of
 
-SUBB’s regs
+SUBB's regs
 
 yyyy
 Fig. 7-8 A Subroutine Establishing Its Own S Stack.
@@ -9109,7 +9032,7 @@ any program to use. However, a problem arises if a program is temporarily
 suspended while it is executing a shared subroutine. If that subroutine has
 its own data area for manipulating data, data may be there when it is
 suspended. If another program uses that same subroutine, the data in the
-subroutine’s data area will be modified. When the first program is resumed,
+subroutine's data area will be modified. When the first program is resumed,
 that subroutine will resume without the original data. This problem is
 solved by making the subroutines re-entrant and having a supervisor that
 saves and restores registers when switching from one program to another. A
@@ -9303,7 +9226,7 @@ type. For example, if one were going to use the SWI2 software interrupt,
 the vector jump should be put in memory at address $0103 as 7E xx xx. $7E
 is the JMP op code and xxxx is the absolute address of the SWI2 interrupt
 handler. The interrupt handler should exist in memory along with the main
-program and its subroutines. It is a programmer’s responsibility to have
+program and its subroutines. It is a programmer's responsibility to have
 assembled the interrupt handler and to know where it resides in memory.
 
 An S stack must be established because all the interrupts cause MPU
@@ -9710,7 +9633,7 @@ back to its normal value.
 
 BASIC, because it exists in internal ROM, is always available and
 serves as a starting point for many programs, including assembly language
-programs. Programs assembled on tape can be loaded into memory via BASIC’s
+programs. Programs assembled on tape can be loaded into memory via BASIC's
 CLOADM command and executed with the EXEC command. One may also
 construct subroutines for BASIC programs to use, and assemble them on tape.
 BASIC can load the subroutines from tape into memory and call them with the
@@ -9728,7 +9651,7 @@ avoided.
 Assembly language programs and subroutines to be used by a BASIC
 program must share available memory with BASIC. BASIC uses certain areas of
 memory for its own purposes. One should ensure that assembly language
-programs to work in concert with a BASIC program do not use BASIC’s
+programs to work in concert with a BASIC program do not use BASIC's
 designated areas in a conflicting manner. It is best to put an assembled
 program into an area of memory BASIC does not-use.
 
@@ -9772,7 +9695,7 @@ are required for each element of a numeric array. The unused area in the
 middle of RAM is the area not used by BASIC programs which do not use all
 of RAM. The area at the highest address of RAM is reserved for string
 variables. This area is initialized to 200 decimal bytes but can be changed
-with the CLEAR command. Below the string variable area is BASIC’s S stack.
+with the CLEAR command. Below the string variable area is BASIC's S stack.
 The stack area is about 100 decimal locations long.
 
 Memory For Assembled Programs
@@ -9801,7 +9724,7 @@ sets the top of RAM available to BASIC at the address YYYY. Memory above
 YYYY is reserved for other uses such as assembled programs and subroutines.
 For example: CLEAR 100,&H3000 reserves 100 decimal bytes for string
 variable storage and tells BASIC that RAM is available only up to address
-$3000. After using this command a BASIC program’s memory use would be
+$3000. After using this command a BASIC program's memory use would be
 similar to that in Fig. 8-1. However, addresses $3001 and up would not be
 available to BASIC; the string variable and S stack areas would start at
 
@@ -9837,7 +9760,7 @@ When the BASIC interpreter is running, it is using its S stack. An
 executing assembled program or subroutine must take care to preserve and
 not destroy the contents of that stack and to return the S register to its
 original contents before returning to BASIC. There are about 30 decimal
-bytes available for use in BASIC’s S stack into which a program can push
+bytes available for use in BASIC's S stack into which a program can push
 the MPU registers. Before returning to BASIC the same registers must be
 pulled from the S stack to return S to its original value.
 
@@ -9860,12 +9783,12 @@ Fig. 8-2 A Subroutine That Does Not Use the S Register.
 
 A program executed from BASIC may establish its own S stack for use by
 a subroutine it calls. Perhaps the program needs a stack area larger than
-the 30 bytes available in BASIC’s stack; the program should establish its
+the 30 bytes available in BASIC's stack; the program should establish its
 own §S stack area. If that program is to later return to BASIC, it must load
 S with its original value, which should have been saved earlier. Fig. 8-3
 shows a skeleton of a subroutine that establishes its own stack. This shows
-the sequence of a subroutine saving BASIC’s S register, setting up its own
-stack pointer, performing its task, restoring BASIC’s stack pointer, and
+the sequence of a subroutine saving BASIC's S register, setting up its own
+stack pointer, performing its task, restoring BASIC's stack pointer, and
 returning to BASIC. Notice that a subroutine called by BASIC does not have
 to save any MPU registers.
 
@@ -9896,7 +9819,7 @@ Fig. 8-3 A Subroutine Establishing an S Stack.
 
 An example of using the EXEC command to call an assembled subroutine is
 presented in Listing 8-1. The BASIC program asks the operator to enter a
-decimal number. It then displays BASIC’s binary floating point
+decimal number. It then displays BASIC's binary floating point
 representation of that value as it exists in five bytes in memory. The
 assembled subroutine has the task of displaying the hexadecimal contents of
 the five bytes on the screen.
@@ -10130,7 +10053,7 @@ the receiving variable type. For instance, in the second example above the
 subroutine receives a string and must return a numeric value.
 
 u Passing a Numeric Argument to a Subroutine
-When control is given to the subroutine, the A and X registers’
+When control is given to the subroutine, the A and X registers'
 contents describe the data passed to it. If the passed argument is numeric,
 
 the A register will be clear and the X register will contain the pointer to
@@ -10160,7 +10083,7 @@ The mantissa is stored in a normalized format in the remaining five
 bytes. However, the MSB of the last byte is not used to calculate the
 magnitude of the mantissa. That bit indicates the sign of the mantissa; the
 sign is positive if clear or negative if set. A value of zero is
-represented by a 00 exponent byte, and the mantissa is ignored. Here’s an
+represented by a 00 exponent byte, and the mantissa is ignored. Here's an
 example of a number in the FAC:
 
 FAC = 7F CO 00 00 00 80
@@ -10170,7 +10093,7 @@ To summarize: when passing a numeric variable to a subroutine the A
 register will be clear, indicating a numeric argument has been passed to
 it, and the X register will point to the FAC which contains the value.
 
-If you don’t want to deal with floating point numbers, the INTCNV
+If you don't want to deal with floating point numbers, the INTCNV
 subroutine can be called by the assembled subroutine. This is a subroutine
 in BASIC ROM at address $B3ED that will convert the contents of FAC to a
 fixed point integer and pass that back to the assembled subroutine in the D
@@ -10204,7 +10127,7 @@ JSR $B3ED
 
 This results in the pointer to variable X being in the D register. Now the
 assembled subroutine can work with variable X as it exists in memory in
-BASIC’s normal five-byte binary floating point format.
+BASIC's normal five-byte binary floating point format.
 
 m Passing a String to a Subroutine
 When a string is passed to a subroutine, the A register contains a
@@ -10237,11 +10160,11 @@ m Returning a Numeric Value to BASIC
 
 A numeric value can be returned to a BASIC program from an assembled
 subroutine in any of three ways. The three techniques are: returning a
-value in the FAC, putting a new value in a numeric variable’s storage area,
+value in the FAC, putting a new value in a numeric variable's storage area,
 and using the GIVABF ROM routine.
 
 The first technique is to put the binary floating point representation
-of the subroutine’s result into the FAC, the area to which the X register
+of the subroutine's result into the FAC, the area to which the X register
 points. The data format is as described previously. Then the RTS
 instruction is executed to return to the BASIC program where the receiving
 BASIC variable will take on that value. If FAC is not changed, the
@@ -10251,7 +10174,7 @@ subroutine when the BASIC program resumes.
 The second technique is used when the pointer to a numeric variable is
 passed to a subroutine. The pointer tells the subroutine where the numeric
 variable is located in the numeric variable storage area. Then the newly
-calculated value can be put into memory at that address using BASIC’s
+calculated value can be put into memory at that address using BASIC's
 normal five-byte binary floating point format. Upon returning to the BASIC
 program via an RTS instruction, the variable whose pointer was passed will
 be the value generated by the subroutine and the receiving variable will
@@ -10440,7 +10363,7 @@ pointer to $0400. The display pointer is the content of addresses $88
 and $89, which points to the display position on the screen at which the
 next character will be displayed. The value of the display pointer can
 range from $0400 - $05FF, the addresses of the text display buffer.
-BASIC’s CLS command is similar to CLSCRN; the screen is cleared and the
+BASIC's CLS command is similar to CLSCRN; the screen is cleared and the
 
 next text displayed with the PRINT command starts at the top left corner of
 the screen.
@@ -10537,7 +10460,7 @@ serial I/O port at the baud specified by the contents of addresses $95 and
 $96. The baud can be set to the desired rate by putting the selected value
 from Table 8-1 into locations $95 and $96 before calling CHROUT. BASIC and
 EDTASM+ initially set the baud to 600 bits per second. It is the
-programmer’s responsibility to set the baud to match the rate at which the
+programmer's responsibility to set the baud to match the rate at which the
 device accepts data.
 
 Table 8-1 Baud Control Values.
@@ -10942,7 +10865,7 @@ Cassette Tape I/O
 
 Four subroutines in BASIC ROM are used to write and read data to and
 from tape. They are WRTLDR (write leader), BLKOUT (write block out),
-CSRDON (start to read), and BLKIN (read block in). First let’s make sure
+CSRDON (start to read), and BLKIN (read block in). First let's make sure
 you understand the conventions established for tape I/O.
 
 Data is recorded on tape in a series of blocks or groups of bytes along
@@ -11117,10 +11040,10 @@ blank | leader | header | blank | leader | data | blank j leader | data
 space block block block
 Fig. 8-12 A Tape File with Gaps.
 
-Tape files created with BASIC’s CSAVE "xxx",A command and EDTASM+’s
+Tape files created with BASIC's CSAVE "xxx",A command and EDTASM+'s
 assemble onto tape (A) and write source code to tape (W) commands are
-written with gaps. Tape files created with BASIC’s CSAVE "xxx" and CSAVEM
-commands and EDTASM+’s write memory to tape (P) command are written
+written with gaps. Tape files created with BASIC's CSAVE "xxx" and CSAVEM
+commands and EDTASM+'s write memory to tape (P) command are written
 without gaps.
 
 a WRTLDR
@@ -11435,7 +11358,7 @@ CLRA CLEAR A
 LDX #BKBUF GET BUF ADDR
 BK1 STA ,X+ PUT A IN BUFFER
 
-INCA INC’ A REG
+INCA INC' A REG
 
 CMPA #$64 DONE?
 
@@ -11615,7 +11538,7 @@ reside in ROM from address $C000 to SDFFF. EDTASM+ and disks can not be
 used at the same time, because only one can be plugged in to the Color
 Computer at a time. You can use EDTASM+ to generate object code on tape,
 and then connect the disk drives and load the object code from tape. First
-let’s look at the manner in which data is organized on disk.
+let's look at the manner in which data is organized on disk.
 
 The disks are coated with a film of magnetic material so data can be
 recorded on it much like the way data is recorded on magnetic tape. Data is
@@ -11760,8 +11683,8 @@ access a non-existant sector.
 Bit 3 - CRC error. Indicates data was not read correctly from the
 disk.
 
-Bit 2 - Lost data during a read or write because the MPU didn’t
-respond to the disk’s data request soon enough.
+Bit 2 - Lost data during a read or write because the MPU didn't
+respond to the disk's data request soon enough.
 
 Any of the above errors can also occur if something is wrong with the disk
 or disk drive.
@@ -12112,7 +12035,7 @@ The SAM is the general controller of all the components in the Color
 Computer. It is a large scale integrated circuit: a Motorola MC6883. It
 synchronizes the operation of the various components so they work together,
 decodes addresses, and controls the operating modes of other components.
-Synchronizing the major components isn’t covered because it is primarily a
+Synchronizing the major components isn't covered because it is primarily a
 hardware function and not related to programming; this operation is
 transparent to a programmer.
 
@@ -12786,7 +12709,7 @@ output and bit 2 of the CRB is set. (See Table 9-8 to verify this.) One can
 simply write the VDG operating mode code into the DRB. Remember that SAM
 control bits V2 - VO and F6 - FO must also be set up. Listing 9-2 is a
 program that selects the G2C display mode with color set zero: C = 0. The
-display buffer starts at address $0600. This is equivalent to BASIC’s PMODE
+display buffer starts at address $0600. This is equivalent to BASIC's PMODE
 1,0 and SCREEN 1,0 display mode.
 
 100 *PROGRAM NAME: PM1
@@ -12859,7 +12782,7 @@ C=1: Black characters on an orange background.
 
 Description: The VDG generates a dot matrix character if its video display
 code is in a byte in the buffer. The characters that may be displayed are:
-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 !"#$%&’()*,./<>?;4:*-=
+ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 !"#$%&'()*,./<>?;4:*-=
 < t []. (See Appendix C for their video display codes.)
 
 Semigraphics 4 (SG4)
@@ -13591,7 +13514,7 @@ interrupt handler clears the flag bit and returns.
 The program responsibilities required for using interrupts from a PIA
 are in addition to other program duties, such as establishing an S stack,
 setting up the vector jump instructions, and enabling or disabling, via the
-I and F bits of the CC register, the MPU’s reception of the interrupt
+I and F bits of the CC register, the MPU's reception of the interrupt
 signals. All the duties involved in using interrupts from CB1-PIA 1 are
 shown in a skeleton program in Fig. 9-7. To use interrupts from the other
 side of PIA | or from PIA 2, the dedicated address must be changed to
@@ -13635,12 +13558,12 @@ in the cartridge.
 
 ### Technical Details
 
-This chapter will describe the rest of the Color Computer’s internal
+This chapter will describe the rest of the Color Computer's internal
 devices and cartridge connector. The internal devices are used to input
 and/or output data to cassette, any device connected to the serial I/O
 port, or joysticks, and to generate sound. Knowing how to control and use
 the internal devices lets one write subroutines to input or output data or
-perform functions with non-standard peripheral equipment connected to the’
+perform functions with non-standard peripheral equipment connected to the'
 computer.
 
 The cartridge connector provides access to the main buses: the data
@@ -13658,7 +13581,7 @@ that can be used or controlled is connected by wiring:to PIA signals: the
 data path bits PA(B)O - 7, CA(B)1, and/or CA(B)2 signals. A PIA that sends
 data or a control code to a device must have those bits configured for
 output. A PIA that receives data or signals from a device must have those
-bits configured for input. A data register’s bits are configured with the
+bits configured for input. A data register's bits are configured with the
 respective. data direction register. A PIA that sends a CA2 or CB2 signal to
 a device must have configured that signal to output by setting up bits 3,
 4, and 5 of the respective control register. No devices in the Color
@@ -13677,15 +13600,15 @@ signal line has an arrow on it to indicate the normal flow of data. The
 connectors (jacks) shown in the diagrams are drawn as they appear when
 viewed from the rear of the computer, except for the cartridge connector
 which is drawn as viewed from the right side. One may purchase Radio
-Shack’s TRS-80 Color Computer Technical Reference Manual, catalog number
+Shack's TRS-80 Color Computer Technical Reference Manual, catalog number
 26-3193 (or the Color Computer 2 service manual), for more detailed
 electronic schematics.
 
 ~ In the diagrams and descriptions, signals are described as a voltage. A
 volt is a unit of measurement of electric potential, in the same way a foot
 is a unit of measurement of distance. Both measure a difference between two
-points. In the descriptions of signals, a signal’s voltage is defined as
-the voltage difference between that signal and the computer’s frame or
+points. In the descriptions of signals, a signal's voltage is defined as
+the voltage difference between that signal and the computer's frame or
 chassis. An electrical connection to the chassis, or ground as it is also
 called, is represented by the + symbol. A high signal has a voltage of
 four to five volts. A low signal has a voltage of approximately zero volts.
@@ -13802,7 +13725,7 @@ non-ready, CA1 will see a low-to-high transition.
 The subroutine in BASIC ROM that uses the serial I/O port accommodates
 only printers and assumes a different signal assignment than just
 described. That signal assignment is: pin 1 is not used, pin 2 (RS232IN) is
-connected to the printer’ s ready signal, pin 3 is ground, and the data to
+connected to the printer' s ready signal, pin 3 is ground, and the data to
 be printed is sent on pin 4 (RS2320UT).
 
 The NOT components are one-way devices. The signal can flow only into
@@ -14228,7 +14151,7 @@ should consult an introductory physics book to learn about the
 characteristics of various sounds. The output, through selector switch A
 and the master switch, is sent to the TV and heard from its loudspeaker.
 
-One shouldn’t forget to turn up the volume on the TV.
+One shouldn't forget to turn up the volume on the TV.
 
 With selector switch A in position 1 and the master switch on, the
 playback signal from the cassette is routed to the TV loudspeaker. Thus you
@@ -14753,13 +14676,13 @@ sepoy Buissaippy
 “19S Sl 2g ji yes Aueg — ase jeloads
 ‘pauyapun si Bel} Aueo-sjey yo anep
 “UOONAISU! BY} JO 1jNSaJ JOaJIP @ Se jas Sapo suOliIpuoD
-‘d pue | 158}je JOU OP EIMS pue ZIMAS ’Siiq 4 pue | Sias [AAS
+‘d pue | 158}je JOU OP EIMS pue ZIMAS 'Siiq 4 pue | Sias [AAS
 “(SUONONAISU! YOUeIG) Uaxe} {1 SB9AD g ‘Uaxe] JOU YOU |! SajDAD G :sueaW (g)G
 “palind Jo paysnd.ajAq-yoea 10} ajaAo | snjd-sajdAo g auinbas SUONONSUl IAG pue HSq auL
 “SSBIPPe AAINSjja OY} SI Wa
 Od ‘C'S 'N'A'X sae suaisiBai yq 9g) ayL
 
-dq ‘00-8 "Vv. :ge siajsiBa! liq’ g ay,
+dq ‘00-8 "Vv. :ge siajsiBa! liq' g ay,
 “sajsiBas }1q 9] 40 wed Aue Jo 419.8 Jo Jed Aue aq Aew zy pue Ly -Z
 
 “eaiqeL
