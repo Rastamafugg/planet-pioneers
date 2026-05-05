@@ -3400,7 +3400,7 @@ only one addressing mode. In general, the addressing mode is specified by
 the form of the operand in the operand field. These two fields of a
 statement can appear as:
 
-LDA $2302
+    LDA $2302
 
 A space separates the command field (LDA) from the operand field ($2302).
 The different addressing modes and instruction types will be illustrated by
@@ -3425,8 +3425,10 @@ decoded by the MPU, indicates the addressing mode and any particulars of
 how the operand is to be treated. An instruction, in memory at address
 2000, with a postbyte, would appear as:
 
-op post operand
-2000 code byte byte
+```
+            op      post    operand
+    2000    code    byte    byte
+```
 
 ### INHERENT ADDRESSING
 
@@ -3449,19 +3451,21 @@ instructions also execute very quickly, as they use few bytes of memory and
 work with the internal registers of the MPU.
 
 ### IMMEDIATE ADDRESSING
-When immediate addressing addressing is specified, the data to be
 
+When immediate addressing addressing is specified, the data to be
 worked with will immediately follow the op code in memory. Immediate
 addressing is specified in an assembly language statement with the # sign
 in the operand field. An example would be:
 
-LDA #$4C
+    LDA #$4C
 
 The Load A (LDA) instruction will load the hexadecimal value of 4C into the
 A register. This machine instruction would reside in memory at address 1000
 as:
 
-1000 86 4C
+```
+    1000   86 4C
+```
 
 $86 is the op code of the LDA instruction with immediate addressing and the
 following byte is the immediate operand. Some more examples of immediate
@@ -3473,18 +3477,16 @@ X register is loaded with the address of the symbol, DEBIT. If DEBIT was at
 address $2102, these machine instructions would appear in memory starting
 at address 1000 as:
 
-1000 CB IF
-
-1002 8E 21 02
+```
+    1000   CB IF
+    1002   8E 21 02
+```
 
 $CB is the op code of ADDB with immediate addressing specified, followed by
 the immediate byte. At 1002 is the op code of LDX with immediate
 addressing, followed by the two immediate bytes. If the register being used
-
 is one byte long, the immediate operand is one byte long, and if the
-
 register is two bytes long, the operand is two bytes long. A point to
-
 remember is that the data to be used is part of the instruction.
 
 ### EXTENDED ADDRESSING
@@ -3496,30 +3498,30 @@ sign, that extended addressing is to be used. With extended addressing the
 operand field contains the address of the data to be manipulated. A
 statement can appear as:
 
-STB >$0445
+```
+    STB >$0445
+```
 
 This instruction will store the contents of the B register in location
 $0445. This machine instruction would be organized in memory at address
 1000 as:
 
-1000 F7 04 45
+```
+    1000   F7 04 45
+```
 
 $F7 is the op code of STB with extended addressing. This is followed by two
-
 bytes that contain the effective address where the upper, or most
 significant, byte of the addresss immediately follows the op code, and the
 lower, or least significant, byte of the address is last. An instruction
-
 using extended addressing can access any memory address from 0 - FFFF (64K)
 with its two-byte operand address. Machine instructions using extended
 addressing are made up of the op code (one or two bytes) and the operand
 address (two bytes) so the instruction will be three or four bytes long.
-
 Other examples are: LDU $2123 and DEC COUNT. Extended addressing is
 implied because no other addressing mode is specified. The LDU instruction
 will load the upper half (bits 15-8) of the U register with the byte read
 from address $2123 and load the lower half (bits 7-0) of the U register
-
 with the byte read from address $2124. The DEC instruction will decrement
 the value stored at COUNT.
 
@@ -3532,7 +3534,9 @@ the operand field points to the address of the operand. Thus, the effective
 address, that is, the address to be finally used, is found indirectly. An
 example of a statement specifying extended indirect addressing is:
 
-STA [$1022]
+```
+    STA [$1022]
+```
 
 The bracketed operand indicates the effective address is to be found
 indirectly. Before this instruction is executed the effective address
@@ -3549,8 +3553,10 @@ postbyte will contain $9F to specify indirect addressing. Following the
 postbyte is the two-byte operand field. The STA instruction would appear in
 memory at address 1000 as:
 
-1000 A7 9F 10 22
-1022. 31 F2
+```
+    1000   A7 9F 10 22
+    1022   31 F2
+```
 
 $A7 is the STA with indexed addressing op code. The effective address would
 be in memory at address $1022.
@@ -3562,14 +3568,15 @@ register addressing to specify which registers will be acted upon. The
 operand field of a statement representing one of these instructions would
 contain the registers to be used. Examples are:
 
-TFR A,B
-EXG D,X
+```
+    TFR A,B
+    EXG D,X
+```
 
 For example, the Transfer (TFR) instruction will cause the contents of the
 A register to be transfered to the B register. The Exchange (EXG)
 instruction will cause the contents of the D and X registers to be
 exchanged. In these examples a register pair is in the operand field, but
-
 at the machine instruction level the register pair is contained in a
 postbyte.
 
@@ -3581,29 +3588,30 @@ instruction, where the contents of the source register is transfered to the
 destination register. The format of the postbyte and register codes can be
 seen in Fig. 4-1.
 
-Postbyte
+```
+             Postbyte
+┌───┬───┬───┬───┬───┬───┬───┬───┐
+│     Source    │  Destination  │
+└───┴───┴───┴───┴───┴───┴───┴───┘
 
-| Source 1; Destination |
-
-Register codes:
-
-0000 = D 0101 = PC
-0001 = X 1000 = A
-0010 = Y 1001 = B
-0011 =U 1010 = CCR
-0100 =S 1011 = DPR
-
+         Register codes:
+     0000 = D      0101 = PC
+     0001 = X      1000 = A
+     0010 = Y      1001 = B
+     0011 = U      1010 = CCR
+     0100 = S      1011 = DPR
+```
 Fig. 4-1 The Transfer/Exchange Postbyte
-Courtesy of Motorola, Inc.
 
 The example TFR and EXG machine instructions. would be organized in
 memory starting at address 3000 as:
 
-3000 1F 89
-3002 1E 01
+```
+    3000   1F 89
+    3002   1E 01
+```
 
 Each instruction is two bytes long. At address 3000 is $1F, the op code of
-
 the TFR instruction, followed by $89, its postbyte. At address 3002 is $1E,
 the EXG op code, followed by $01, its postbyte.
 
@@ -3628,23 +3636,24 @@ pulling registers from a stack, the order is determined by scanning the
 postbyte from right to left, and if a bit is set, the corresponding
 register is pulled. Where all the registers will be pulled, the first
 register to be pulled is the CC register and the last is the PC register.
-
 This technique is used to ensure that the contents of the various registers
 are not mixed. The order is also exactly the same order as when an
 interrupt or interrupt return causes the registers to be pushed on or
 pulled from the S stack.
 
-Postbyte
+```
+             Postbyte
+        ┌───────────────┐
+        │7 6 5 4 3 2 1 0│
+        └───────────────┘
+          push order ->
+          pull order <-
 
-[7654321 0|
-push order ->
-pull order <-
-
-bit 0 - CCR bit 4 - X
-bit 1- A bit 5 - Y
-bit 2 - B bit 6 - S/U
-bit 3 - DPR bit 7 - PC
-
+    bit 0 - CCR     bit 4 - X
+    bit 1 - A       bit 5 - Y
+    bit 2 - B       bit 6 - S/U
+    bit 3 - DPR     bit 7 - PC
+```
 Fig. 4-2 The Push/Pull Postbyte (Courtesy of Motorola, Inc.)
 
 The only bit of the postbyte that needs further explanation is bit 6.
@@ -3655,26 +3664,26 @@ on or pulled from its own stack.
 
 The PSHU A,X,Y instruction in machine language would appear in memory
 at address 1000 as:
-1000 36 32
+
+```
+    1000   36 32
+```
 
 $36 is the PSHU op code and $32 is the postbyte directing that the Y, X,
 and A registers are to be pushed on the U stack, in that order. The
 contents of these registers would be stored in memory on the U stack, as
 depicted in Fig. 4-3.
 
-Address Contents
+```
+        Address     Contents
 
-5 A new top of stack
-4 x
--3 x
-2 Y
-1 Y
-
-U
-
-eae
-
-co old top of stack
+          U-5          A          new top of stack
+          U-4          Xu
+          U-3          Xl
+          U-2          Yu
+          U-1          Yl
+          U            ▭         old top of stack
+```
 Fig. 4-3 The Y, X, and A Registers Stored in the U Stack
 
 ### INDEXED ADDRESSING
@@ -3686,24 +3695,28 @@ index register, either X, Y, U, or S, will be specified in the operand
 field of a statement and used to calculate the effective address. The
 indexed addressing mode also makes the most extensive use of the postbyte.
 
-Zero Offset Indexed Addressing
+#### Zero Offset Indexed Addressing
+
 The simplest submode of indexed addressing is zero offset indexed
 addressing. The index register in the operand field of a statement contains
 the address of the data to be accessed by that instruction. In the
 following example:
-LDY #$1908
-STA ,Y
+
+```
+    LDY #$1908
+    STA ,Y
+```
 
 The Y index register is first loaded with an address, or pointer, of $1908.
-
 Then the Store A (STA) instruction stores the contents of the A register at
 the address contained in the Y register. The STA instruction statement can
 also be in the form of STA 0,Y. The effective address is the contents of
-
 the Y register plus zero. Another example is:
 
-LDU #$2200
-LDX ,U
+```
+    LDU #$2200
+    LDX ,U
+```
 
 The U register points to the data at address $2200. The Load X (LDX)
 instruction will load the upper half of the X register with the byte read
@@ -3715,28 +3728,32 @@ implemented with an op code specifying indexed addressing and an
 appropriate postbyte. The postbyte formats of the various submodes of
 indexed addressing can be found in Table 4-1.
 
-FORMS ASSEMBLER POST
-FORM BYTE
+```
+┌───────────────────┬───────────────────┬───────────┬───────────┐
+│       TYPE        │       FORMS       │ ASSEMBLER │   POST    │
+│                   │                   │   FORM    │   BYTE    │
+├───────────────────┼───────────────────┼───────────┼───────────┤
+│ Constant Offset   │ Zero Offset       │   ,R      │ 1RR00100  │
+│ From R            │ 5-Bit Offset      │   n,R     │ 0RRnnnnn  │
+│ (signed binary)   │ 8-Bit Offset      │   n,R     │ 1RR01000  │
+│                   │ 16-Bit Offset     │   n,R     │ 1RR01001  │
+├───────────────────┼───────────────────┼───────────┼───────────┤
+│ Accumulator       │ A Register Offset │   A,R     │ 1RR00110  │
+│ Offset From R     │ B Register Offset │   B,R     │ 1RR00101  │
+│ (signed binary)   │ D Register Offset │   D,R     │ 1RR01011  │
+├───────────────────┼───────────────────┼───────────┼───────────┤
+│ Autoincrement/    │ Increment By 1    │   ,R+     │ 1RR00000  │
+│ Autodecrement R   │ Increment By 2    │   ,R++    │ 1RR00001  │
+│                   │ Decrement By 1    │   ,-R     │ 1RR00010  │
+│                   │ Decrement By 2    │   ,--R    │ 1RR00011  │
+├───────────────────┼───────────────────┼───────────┼───────────┤
+│ Extended Indirect │ 16-bit address    │   [n]     │ 10011111  │
+└───────────────────┴───────────────────┴───────────┴───────────┘
 
-Constant Offset Zero Offset 1RRO00100
-From R 5-Bit Offset ORRnnonnn
-(signed binary) 8-Bit Offset n,R 1RRO1000
-16-Bit Offset n,R 1RRO1001
-Accumulator Offset | A Register Offset A,R 1RRO00110
-From R B Register Offset BR 1RROO101
-(signed binary) D Register Offset DR IRROI1011
-Autoincrement/ Increment By 1 I1RROO0000
-Autodecrement R Increment By 2 IRRO0001
-Decrement By 1 1RRO00010
-Decrement By 2 1RROO0011
-
-Extended Indirect | 16-bit address 10011111
-
-where R = X, Y, U, or S RR code: 00 - X 10- U
-Ol- Y 11-8
-
+  where R = X, Y, U, or S    RR code:  00 - X    10 - U
+                                       01 - Y    11 - S
+```
 Table 4-1 The Postbytes of the Indexed Addressing Mode
-Courtesy of Motorola, Inc.
 
 The postbyte of the STA and LDX examples can be constructed using Table
 4-1. The only bits of the postbyte that can be varied when using zero
@@ -3744,15 +3761,17 @@ offset are bits 5 and 6, which indicate the index register to use to obtain
 the effective address. Now the machine instructions can be assembled in
 memory at address 2000 as:
 
-2000 A7 A4
-2002 AE C4
+```
+    2000   A7 A4
+    2002   AE C4
+```
 
 The op codes were obtained from Appendix B. At address 2000 is the STA with
 indexed addressing op code, followed by the zero offset postbyte specifying
 index register Y. At 2002 is the LDX with indexed addressing op code,
 followed by the zero offset postbyte specifying index register U.
 
-Constant Offset Indexed Addressing
+#### Constant Offset Indexed Addressing
 
 The next submode is constant offset indexed addressing. In this case
 the effective address is the sum of the contents of the index register and
@@ -3768,8 +3787,10 @@ of -16 - +15 decimal and not equal to zero. You can check to see that a
 five-bit signed binary number has the same range. Two statements that
 specfy this form are:
 
-LDA 7,8
-STB -3,X
+```
+    LDA 7,8
+    STB -3,X
+```
 
 Each of the index registers used was previously loaded with an appropriate
 value, such as the starting address of a table. You should recognize that
@@ -3780,8 +3801,8 @@ instruction stores the contents of the B register in the effective address,
 calculated as the sum of the contents of the X register plus -3. After
 executing these instructions, neither the S nor X registers’ contents will
 have changed.
-The machine instructions for these examples will be composed of: the op
 
+The machine instructions for these examples will be composed of: the op
 code and a postbyte, where the five-bit offset field is contained within
 the postbyte. The postbyte format can be determined from Table 4-1. The RR
 bits of the postbyte specify the index register to use to calculate the
@@ -3789,9 +3810,10 @@ effective address. The nnnnn bits are the five-bit field which contains the
 signed binary offset. Therefore, the two instructions will appear in memory
 at address 1000 as:
 
-1000 A6 67
-
-1002 E71D
+```
+    1000   A6 67
+    1002   E7 1D
+```
 
 The LDA instruction is at address 1000 and the STB instruction is at
 address 1002.
@@ -3801,8 +3823,10 @@ field to contain the signed binary equivalent of the offset. This form will
 be invoked when the offset ranges from decimal -128 - +127 and is outside
 the range of decimal -16 - +15. Two examples are:
 
-INC $3E,U
-STD -53,xX
+```
+    INC $3E,U
+    STD -53,xX
+```
 
 The U and X registers were previously loaded with appropriate addresses.
 In the first example the INC instruction will increment the contents of the
@@ -3819,21 +3843,21 @@ postbyte can be found in Table 4-1. The offset byte will contain just the
 signed binary representation of the offset. Therefore, the two examples
 would appear in memory at address as:
 
-1000 6C 3E 60
-1003 ED 88 CB
+```
+    1000   6C 3E 60
+    1003   ED 88 CB
+```
 
 Each instruction is three bytes long. The INC instruction is at address
 1000 and the STD instruction is at address 1003.
 
 The last form of constant offset indexed addressing uses a 16-bit
 (two-byte) field to contain the signed binary equivalent of the offset.
-
 This form is used if the offset ranges from decimal -32768 - +32767 and is
 outside the range of decimal -128 - +127. An example is COM 1725,S. The S
 register was previously loaded with an appropriate address. This Complement
 (COM) instruction will complement all the bits stored at the effective
 address. In this example the effective address is the sum of the contents
-
 of the S register and decimal 1725.
 
 The machine instruction exists as an op code, post byte, and two bytes
@@ -3841,19 +3865,25 @@ containing the signed binary. offset. The op code can be found in Appendix B
 and the 16-bit offset post byte format can be found in Table 4-1. The
 instruction would be organized in memory at address 1000 as:
 
-1000 63 E9 06 BD
+```
+    1000   63 E9 06 BD
+```
 
 The $63 is the COM with indexing op code and $E9 is the post byte. $06BD is
 the signed binary equivalent of the offset, 1725.
 
-Accumulator Offset Indexed Addressing
+#### Accumulator Offset Indexed Addressing
+
 The accumulator offset indexed addressing submode adds the contents of
 an accumulator (A, B, or D register) to the contents of the index register
 to calculate the effective address. The offset value in the accumulator is
 in signed binary so the offset can be either negative or positive. An
 example is:
-ADDB #$04
-LDA B,Y
+
+```
+    ADDB #$04
+    LDA B,Y
+```
 
 The Y register was previously loaded with an appropriate value. The ADDB
 instruction will add the immediate value of 4 to the contents of the B
@@ -3868,12 +3898,14 @@ The machine instruction is composed of the op code and an appropriate
 postbyte determined from Table 4-1. The above LDA instruction would appear
 in memory at address 3400 as:
 
-3400 A6 AS
+```
+    3400   A6 AS
+```
 
 $A6 is the op code of the LDA with indexed addressing, and $A5 is the
 postbyte.
 
-Auto-increment/Auto-decrement
+#### Auto-increment/Auto-decrement
 
 The auto-increment and auto-decrement forms of indexed addressing allow
 automatic incrementing or decrementing of the index register to easily
@@ -3887,9 +3919,11 @@ Auto-incrementing by one is specified by a plus (+) sign after the index
 register in the operand field. Auto-incrementing by two is specified by two
 plus signs. Two examples are:
 
-LDX #92400
-STA ,X+
-STU  ,X++
+```
+    LDX #92400
+    STA ,X+
+    STU  ,X++
+```
 
 The X register is first loaded, by the LDX instruction, with an address of
 $2400. The STA instruction stores the contents of the A register at the
@@ -3901,7 +3935,6 @@ register is incremented by one. Then the upper half of the U register is
 stored in address $2402 and the X register is again incremented by one
 resulting in the X register containing $2403. As you can see, this relieves
 us of having to increment a pointer or offset to point to the next item in
-
 a table.
 
 An instruction with auto-decrementing specified will first decrement
@@ -3911,9 +3944,11 @@ index register. Auto-decrementing by one is specified by a minus (-) sign
 before the index register in the operand field. Auto-decrementing by two is
 specified by two minus signs. Two examples are:
 
-LDU #$3110
-STB. ,-U
-LDX ,--U
+```
+    LDU #$3110
+    STB. ,-U
+    LDX ,--U
+```
 
 The LDU instruction loads the U register with the address $3110. The STB
 instruction starts by decrementing the U register by one, as specified by
@@ -3935,7 +3970,9 @@ the S register so it points to the next lower byte in the stack.
 At the machine instruction level this LDA instruction would appear in
 memory at address 1000 as:
 
-1000 A6 EO
+```
+    1000   A6 EO
+```
 
 $A6 is the op code of the LDA with indexed addressing. The $E0 postbyte
 specifies auto-incrementing by one of the S index register.
@@ -3953,11 +3990,13 @@ assemble the machine instruction accordingly. Indexed indirect addressing
 is specified in a statement by enclosing the operand in brackets, [ ].
 Examples of all legal addressing modes are:
 
-LDB [,Y]
-STA [12,X]
-LDX [B,Y]
-STX [,--S]
-LDD [,U+4]
+```
+    LDB [,Y]
+    STA [12,X]
+    LDX [B,Y]
+    STX [,--S]
+    LDD [,U+4]
+```
 
 Each operand points to a memory location where the effective address is
 stored. That effective address is read from memory by the MPU and used to
@@ -3975,30 +4014,35 @@ addressing, a postbyte specifying indirect addressing, and an offset of one
 or two bytes. The formats of the postbytes of the various types of indexed
 indirect addressing can be found in Table 4-2.
 
-TYPE FORM ASSEMBLER POST
-FORM BYTE
+```
+┌──────────────────┬───────────────────┬───────────┬───────────┐
+│       TYPE       │       FORM        │ ASSEMBLER │   POST    │
+│                  │                   │   FORM    │   BYTE    │
+├──────────────────┼───────────────────┼───────────┼───────────┤
+│ Constant Offset  │ Zero Offset       │   [,R]    │ 1RR10100  │
+│ From R           │ 8-Bit Offset      │   [n,R]   │ 1RR11000  │
+│                  │ 16-Bit Offset     │   [n,R]   │ 1RR11001  │
+├──────────────────┼───────────────────┼───────────┼───────────┤
+│ Accumulator      │ A Register Offset │   [A,R]   │ 1RR10110  │
+│ Offset From R    │ B Register Offset │   [B,R]   │ 1RR10101  │
+│                  │ D Register Offset │   [D,R]   │ 1RR11011  │
+├──────────────────┼───────────────────┼───────────┼───────────┤
+│ Auto-increment/  │ Increment by 2    │   [,R++]  │ 1RR10001  │
+│ Auto-decrement   │ Decrement by 2    │   [,--R]  │ 1RR10011  │
+└──────────────────┴───────────────────┴───────────┴───────────┘
 
-Constant Offset Zero Offset [,R] 1RR10100
-From R 8-Bit Offset [n,R] 1RR11000
-16-Bit Offset n,R 1RR11001
-
-Accumulator Offset | A Register Offset [A,R] IRR10110
-From R B Register Offset [B,R] 1RR10101
-D Register Offset [D,R] IRR11011
-Auto-increment/ Increment by 2 [,R++] 1RRI10001
-ie
-U
-
-where R= X, Y, U, orS RR code: 00 - X 10 -
-01- Y 11-S
-
+  where R = X, Y, U, or S       RR code:  00 - X    10 - U
+                                          01 - Y    11 - S
+```
 Table 4-2 The Postbytes of Indexed Indirect Addressing Modes
-Courtesy of Motorola, Inc.
 
 The STA example instruction would appear in memory at address 1000 as:
-1000 A798 10
-The indexed addressing mode is 8-bit offset. $A7 is the STA with indexed
 
+```
+    1000   A7 98 10
+```
+
+The indexed addressing mode is 8-bit offset. $A7 is the STA with indexed
 addressing op code obtained from Appendix B. The $98 is the indirect 8-bit
 offset postbyte obtained from Table 4-2. The $10 is the offset byte.
 
@@ -4030,7 +4074,9 @@ bits long, the short branch can branch forward only 127 memory addresses,
 or backward 128 addresses. An example of a BCS instruction at address 1000
 with an offset of decimal +36 is:
 
-1000 25 24
+```
+    1000   25 24
+```
 
 The $25 is the BCS op code from Appendix B and the $24 is the offset byte
 representing a decimal +36. After fetching this instruction, the PC
@@ -4039,11 +4085,13 @@ carry bit is set, the branch operation will be performed by adding the
 offset byte, $24, to the PC register, $1002, with the result that the PC
 register will contain $1026. The MPU then fetches and starts executing the
 instruction at address $1026.
+
 The long branch instruction exists as an op code two bytes long and a
 two-byte offset. In this case the offset value can range from
 decimal -32768 - +32767. Essentially, the long branches perform the same as
 the short branches, except they can branch further forward and backward.
 The short branch consumes fewer memory locations and executes faster.
+
 When composing assembly language statements, normally one is not much
 concerned about relative addressing since the assembler will calculate the
 offset values. To decide which branch to use, use the short form because of
@@ -4052,17 +4100,18 @@ its speed and memory savings. A branch beyond the limits of 127 forward or
 change just the required branches to the long form.
 
 ### DIRECT ADDRESSING
-In direct addressing the op code is followed by one byte, the lower
 
+In direct addressing the op code is followed by one byte, the lower
 byte of the effective address. The upper byte is in the direct page (DP)
 register. During a RESET operation, the DP register is cleared to 00. To
 use this addressing mode the DP register must be loaded with the
 appropriate value. Unfortunately, there is no Load DP instruction; it is
 loaded as follows:
 
-LDA #$20
-
-TFR A,DP
+```
+    LDA #$20
+    TFR A,DP
+```
 
 The LDA instruction loads the A register with the desired value, $20 in
 this example. Then the TFR instruction transfers the contents of the A
@@ -4071,8 +4120,10 @@ register into the DP register.
 The direct addressing mode is invoked by prefixing the operand with a <
 sign. Two examples are:
 
-LDA <$DE
-STU <$2082
+```
+    LDA <$DE
+    STU <$2082
+```
 
 The DP register was previously loaded with $20. The LDA instruction’s
 effective address is 20DE, the combination of the DP register and the
@@ -4086,8 +4137,10 @@ The machine instructions will exist as op codes specifying direct
 addressing, followed by the lower address byte. They would appear at
 address 1000 as:
 
-1000 96 DE
-1002 DF 82
+```
+    1000   96 DE
+    1002   DF 82
+```
 
 The LDA with direct addressing op code is the $96 at address 1000, followed
 by the lower address byte of $DE. The STU with direct addressing op code is
@@ -4100,10 +4153,10 @@ of effective addresses is 256, the range of the lower address byte. If you
 want to access a location outside this range, the DP register must be
 loaded with a new value.
 
-PROGRAM COUNTER RELATIVE ADDRESSING
+### PROGRAM COUNTER RELATIVE ADDRESSING
+
 Program counter, or PC, relative addressing is a type of indexed
 addressing wherein the PC register is used as an index register. It allows
-
 one to easily write a program that is position independent if the
 instructions accessing memory locations within that program use this
 addressing mode. A program that is position independent can be located at
@@ -4116,14 +4169,18 @@ Symbol, label, and name are equivalent terms and represent the address of
 the item in the command and operand fields of that statement. The label
 relieves us of having to work with absolute addresses within a program.
 
-### PC Relative Addressing
+#### PC Relative Addressing
+
 The PC relative addressing mode is specified in a statement by
 appending ,PCR to the operand. This can be seen as:
 
-STA TABLE,PCR
-LDX TABLE
-
+```
+        STA TABLE,PCR
+        LDX TABLE
+         .
+         .
 TABLE = RMB 20
+```
 
 The STA statement is using PC relative addressing. The bottom statement
 uses the mnemonic of RMB, a command to tell the assembler to reserve memory
@@ -4151,15 +4208,18 @@ labeled operand is detected. The op code will be an op code specifying
 indexed addressing, as this is a type of indexed addressing. The postbyte
 can be found in Table 4-3.
 
-TYPE FORM | ASSEMBLER POST
-FORM BYTE
-Constant Offset 8-Bit Offset n,PCR 1xx01100
-From PC 16-Bit Offset n,PCR 1xx01101
+```
+┌──────────────────┬───────────────────┬───────────┬───────────┐
+│       TYPE       │       FORM        │ ASSEMBLER │   POST    │
+│                  │                   │   FORM    │   BYTE    │
+├──────────────────┼───────────────────┼───────────┼───────────┤
+│ Constant Offset  │ 8-Bit Offset      │   n,PCR   │ 1xx01100  │
+│ From PC          │ 16-Bit Offset     │   n,PCR   │ 1xx01101  │
+└──────────────────┴───────────────────┴───────────┴───────────┘
 
-where xx = don’t care
-
+  where xx = don't care
+```
 Table 4-3 The Postbytes of PC Relative Addressing
-Courtesy of Motorola, Inc.
 
 Following the postbyte will be one or two bytes containing the offset.
 The effective address will be the sum of the offset and the contents of the
@@ -4173,8 +4233,10 @@ offset byte contains $19, the signed binary equivalent of decimal +25.
 If an absolute address outside the program is accessed, the position
 independency is lost. Two examples are:
 
-STA $1700,PCR
-LDX 1000,PCR
+```
+    STA $1700,PCR
+    LDX 1000,PCR
+```
 
 In the first example the STA instruction will store the contents of the A
 register in address $1700. In the second example the X register will be
@@ -4182,7 +4244,6 @@ loaded with the two bytes read from the decimal addresses of 1000 and 1001.
 The assembler constructs the instructions at some address in memory, and
 the offset to the absolute address will be calculated and put in the offset
 byte(s). If we later moved those instructions to another address, they
-
 would not access the desired memory locations because their offsets would
 not have changed, but the contents of the PC register would have.
 
@@ -4194,11 +4255,12 @@ addressing mode the operand field points to where the effective address is
 stored in memory. This addressing mode is specified in a statement by
 enclosing the operand in brackets as seen below.
 
-STB [TABLE,PCR]
+```
+    STB [TABLE,PCR]
+```
 
 In this case the effective address is located in the first two bytes,
 starting at TABLE. The MPU will read the effective address from memory and
-
 use it to direct where the contents of the B register will be stored.
 
 The machine instruction exists as an op code specifying indexed
@@ -4210,15 +4272,18 @@ decimal -202 would appear in memory as: E7 9D FF 36. $E7 is the STB with
 indexed addressing op code followed by the $9D postbyte, as found in Table
 4-4. The $FF36 is the signed binary offset representation of decimal -202.
 
-TYPE FORM ASSEMBLER POST
-FORM BYTE
-Constant Offset | 8-Bit Offset [n,PCR] 1xx11100
-From PC 16-Bit Offset [n,PCR] 1xx11101
+```
+┌──────────────────┬───────────────────┬───────────┬───────────┐
+│       TYPE       │       FORM        │ ASSEMBLER │   POST    │
+│                  │                   │   FORM    │   BYTE    │
+├──────────────────┼───────────────────┼───────────┼───────────┤
+│ Constant Offset  │ 8-Bit Offset      │  [n,PCR]  │ 1xx11100  │
+│ From PC          │ 16-Bit Offset     │  [n,PCR]  │ 1xx11101  │
+└──────────────────┴───────────────────┴───────────┴───────────┘
 
-where xx = don’t care
-
+  where xx = don't care
+```
 Table 4-4 The Postbytes of Indirect PC Relative Addressing
-Coutesy of Motorola, Inc.
 
 This completes the descriptions of the various addressing modes. If you
 are already familiar with assembly language and have an assembler, try
