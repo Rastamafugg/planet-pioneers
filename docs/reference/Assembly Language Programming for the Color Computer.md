@@ -6356,38 +6356,31 @@ code to or from tape or disk.
 Throughout this book we will use Radio Shack's EDTASM+ ROM pack to
 demonstrate editing, assembling, and debugging. It is similar to most other
 packages that provide for editing, assembling, and debugging, but supports
-
 storing and reading data to and from cassette tape only. When the EDTASM+
 ROM pack is plugged in, it and Extended Color BASIC are structured as seen
 in Fig. 6-1. Each block represents a functional mode of operation; the
-
 arrows show how to get from one mode to another. The command that must be
 entered to cause transition to another mode appears on each arrow. Note
-
 that the assembler, upon completion of the assembly, automatically returns
-
 to the editor.
 
-ee es ~ aa Te
-
-EDTASM+
-
-ZBUG
-(debugging
-aids)
-
-i
-|
-|
-1
-|
-|
-1
-\
-}
-i
-1
-
+```
+                    ┌ - - - - - - - - - - - - - - - - - - - - - - - - -┐
+                    ¦                                         EDTASM+  ¦
+┌──────────┐        ¦  ┌──────────┐                ┌──────────────┐    ¦
+│ Extended │◄────Q──┼──┤          ├──────Z────────►│              │    ¦
+│  Color   │        ¦  │   Text   │                │     ZBUG     │    ¦
+│  BASIC   │──EXEC──┼─►│  Editor  │◄──────E────────┤ (debugging   │    ¦
+│          │ &HC000 ¦  │          │                │    aids)     │    ¦
+└──────────┘        ¦  └────┬─▲───┘                └──────────────┘    ¦
+                    ¦       │ │                                        ¦
+                    ¦       A │                                        ¦
+                    ¦       │ │                                        ¦
+                    ¦  ┌────▼─┴────┐                                   ¦
+                    ¦  │ Assembler │                                   ¦
+                    ¦  └───────────┘                                   ¦
+                    └ - - - - - - - - - - - - - - - - - - - - - - - - -┘
+```
 Fig. 6-1 Block Diagram of BASIC and EDTASM+ Functions.
 
 Before writing any program one must have determined the sequence of
@@ -6409,11 +6402,12 @@ lefthand edge of the screen. Source code is made up of.a number of
 statements; each statement or line may contain up to five fields as
 follows:
 
-Stmt No Symbol ..Cnd Operand ~- Comment
+```
+    Stmt No     Symbol      Cnd     Operand     Comment
+```
 
 The statement number is a whole number that can range from 0 - 63999. A
 series of statements are numbered so that the first statement has the
-
 lowest number and each suceeding statement has a higher number. Statement
 numbers do not have to be incremented by one for each consecutive
 statement. A series of statement numbers can be 10, 20, 30. When entering
@@ -6464,14 +6458,14 @@ results in the presentation of the next statement number. Each field must
 be separated by a space or tab and the statement must be ended by the ENTER
 key. An example of this is:
 
-I <ENTER> (invoke insert command)
-00100 BEG LDA #$20 LOAD CODE <ENTER>
-
-00110 CLRB CLEAR COUNTER <ENTER>
-00120 STA $1203 STORE CODE <ENTER>
-00130 END <ENTER>
-
-00140 <BREAK> (exit insert command)
+```
+I <ENTER>   (invoke insert command)
+00100   BEG     LDA #$20    LOAD CODE <ENTER>
+00110           CLRB        CLEAR COUNTER <ENTER>
+00120           STA $1203   STORE CODE <ENTER>
+00130           END <ENTER>
+00140   <BREAK> (exit insert command)
+```
 
 These statements are now in the buffer, an area of memory reserved
 for holding entered text lines. The maximum allowable length of a statement
@@ -6489,11 +6483,12 @@ comment lines usually serve to describe the program and are ignored by the
 assembler. For example, the following comment lines can be appended to the
 above statements:
 
+```
 170 <ENTER>
-
 00070 *THIS IS AN EXAMPLE OF <ENTER>
 00080 *USING THE TEXT EDITOR <ENTER>
-00090 FFFEEEHEEEREREEEREESES — CENTERD
+00090 ****************** <ENTER>
+```
 
 At this point a NO ROOM BETWEEN LINES message would be displayed,
 meaning that the next statement, 100, has already been entered. The 70
@@ -6506,7 +6501,9 @@ with it.
 The total listing can be displayed on the screen with the print (P)
 command:
 
+```
 P70:130 <ENTER>
+```
 
 This will list lines 70 - 130. Notice line 90; its purpose is to visually
 separate the descriptive text from the command statements.
@@ -6516,12 +6513,13 @@ write (W) command. This will record the text buffer contents using the
 Color Computer's ASCII code for each character. The W command can contain
 a name for the recording or file; the name must begin with an alphabetic
 character and may be up to eight characters long. If a name is not
-
 provided, it will be assigned the name NONAME. For example, make the
 cassette ready for recording and enter:
 
+```
 W EDITEST <ENTER>
 READY CASSETTE <ENTER>
+```
 
 This will cause the statements in the buffer to be written to cassette tape
 with the name of EDITEST.
@@ -6536,8 +6534,10 @@ on cassette can be successfully read back. Position the cassette tape to
 the beginning point of the recording and ready it for playback. The verify
 command is initiated by typing:
 
+```
 V <ENTER> ;
 READY CASSETTE <ENTER>
+```
 
 This causes the next file on tape to be checked for a valid recording. This
 is similar to BASIC's SKIPF command. If the recording is good, no message
@@ -6547,7 +6547,9 @@ on another tape.
 
 The delete (D) command will delete selected statements from memory:
 
-D70:130 .. <ENTER>
+```
+D70:130  <ENTER>
+```
 
 This causes our previously entered listing, statements 70 - 130, to be
 completely deleted.
@@ -6556,8 +6558,10 @@ The load (L) command is used to read a previously stored source code
 from cassette. First position the tape to the starting point of the
 recording and make it ready for playback. Then enter:
 
+```
 L <ENTER>
 READY CASSETTE <ENTER>
+```
 
 The next file from tape will be read into the buffer area. The print
 command can be used to list what was just read in.
@@ -6567,7 +6571,7 @@ command can be read using BASIC's CLOAD command. Also, files written
 with BASIC's CSAVE "XXX",A command can be read with the editor's
 load command.
 
-Text Editor Commands
+#### Text Editor Commands
 
 The following section will describe all EDTASM+ text editor commands,
 presented in alphabetical order. Special symbols will also be described.
@@ -6575,7 +6579,7 @@ EDTASM+'s text editor is versatile in its wide array of commands and can be
 used for other purposes, such as entering and/or editing BASIC program
 statements, or as a line-oriented word processor.
 
-H Special Symbols
+##### Special Symbols
 
 A colon is used to separate the beginning line number from the ending
 line number in a command that designates a range of lines to be acted upon.
@@ -6596,7 +6600,7 @@ An exclaimation point indicates that the following number states how
 many lines are to be acted upon. For example: P100!3 will list three lines
 starting with line number 100.
 
-uw Going to BASIC
+##### Going to BASIC
 
 One can get to BASIC from the text editor by typing Q and the ENTER
 key. This initializes BASIC and displays its header on the screen. In the
@@ -6604,13 +6608,15 @@ process, any text in the editor's buffer is deleted, but object code in
 areas of memory that BASIC does not use will not be deleted. From BASIC,
 control can be returned to the editor by entering:
 
+```
 EXEC &HC000 or EXEC 49152
+```
 
 Either command causes the MC6809E to start executing instructions at
 address $C000, the starting address of EDTASM+. During transitioning from
 BASIC to EDTASM+, any BASIC statements in memory will be deleted.
 
-m Copy - Form: CXXX,YYY:ZZZ,TTT
+##### Copy - Form: CXXX,YYY:ZZZ,TTT
 
 The copy command will copy a range (YYY - ZZZ) of lines to a starting
 line number (XXX) with an increment of TTT. For example: C600,100:200,5
@@ -6619,75 +6625,47 @@ increment will be five. The original lines 100 - 200 are unchanged. An
 attempt to copy lines over others will not be executed, and an error
 message will be displayed.
 
-w Delete - Forms: DYYY:ZZZ or DYYY or DYYY!TT
+##### Delete - Forms: DYYY:ZZZ or DYYY or DYYY!TT
 
 The delete command will delete a statement or a series of statements
 from the buffer. For example: D210 will delete line number 210; D200:310
 will delete lines 200 - 310; D100!5 will delete 5 lines, starting with 100.
 
-m Edit - Form: EYYY
+##### Edit - Form: EYYY
 
 The edit command will allow you to edit statement or line number YYY.
 For example: E120 causes line 120 to be displayed with the cursor
 positioned below it. Any editing subcommand can now be initiated to start
 editing that line. The editing subcommands are:
 
-A Restarts the edit with the original unchanged line.
-nCxxx.. Changes n characters to string xxx.. starting at the cursored
-position. If n is omitted, only the cursored character is
+| | |
+|-|-|
+| A | Restarts the edit with the original unchanged line. |
+| nCxxx.. | Changes n characters to string xxx.. starting at the cursored position. If n is omitted, only the cursored character is changed. |
+| nD | Deletes n characters starting at the cursored position. If n is omitted, only the character at the cursored position is deleted. |
+| E | Ends the editing process and enters any changes, but does not display the rest of the line. |
+| ENTER | Ends the editing process and enters any changes, and displays the rest of the line. |
+| H | Deletes rest of line from cursored position to the right and allows the addition of any new text. |
+| Ixxx.. | Inserts the string xxx.. starting at the cursored position. Pressing the ← key will delete the character at a cursored position when in this subcommand. |
+| nKx | Deletes all text from the cursored position to but not including the nth occurrence of character x. |
+| L | Displays line being edited in its current form. |
+| Q | Exits the edit mode and leaves the line in its original form. |
+| X | Moves the cursor to the end of the line where more text can be entered. |
+| Shift ↑ | Exits from edit subcommand. |
+| n [space] | Moves cursor n positions to the right. If n is omitted, each  depression of the spacebar will move the cursor one position to the right. |
+| n ← | Moves the cursor n positions to the left. If n is omitted the cursor will move one position to the left for each depression of the ← key. |
 
-changed.
-
-nD Deletes n characters starting at the cursored position. If n is
-omitted, only the character at the cursored position is
-deleted.
-
-E Ends the editing process and enters any changes, but does not
-
-display the rest of the line.
-
-ENTER Ends the editing process and enters any changes, and displays
-the rest of the line.
-
-H Deletes rest of line from cursored position to the right and
-allows the addition of any new text.
-
-Ixxx.. Inserts the string xxx.. starting at the cursored position.
-Pressing the <- key will delete the character at a cursored
-position when in this subcommand.
-
-nKx Deletes all text from the cursored position to but not
-including the nth occurrence of character x.
-
-L Displays line being edited in its current form.
-
-Q Exits the edit mode and leaves the line in its original form.
-
-x Moves the cursor to the end of the line where more text can be
-entered.
-
-Shift # | Exits from edit subcommand.
-n space Moves cursor n positions to the right. If n is omitted, each
-
-bar depression of the spacebar will move the cursor one position
-to the right.
-n<- Moves the cursor n positions to the left. If n is omitted the
-cursor will move one position to the left for each depression
-of the <- key.
-
-mu Find - Form: Fxxx... or F
+##### Find - Form: Fxxx... or F
 
 The find command will initiate a search for the text string xxx...
 starting with the line after the current line. It will stop each time the
 string is found and display the line containing the string. The search can
-
 be initiated again by entering F, which will use the last defined search
 string. If a search does not find the string, a message so indicating will
-
 be displayed. For example: FANDA will search for the string ANDA starting
 with the line after the current line.
 
-mw Insert - Forms: I-or IXXX or IXXX,TTT
+##### Insert - Forms: I-or IXXX or IXXX,TTT
 
 The insert command opens the text buffer allowing text lines to be
 added or inserted. XXX specifies the starting line number, but if it is
@@ -6695,7 +6673,7 @@ omitted, the editor will present 100 or the next available line number. TTT
 specifies the line increment, but if it is omitted, the editor will use 10
 or the last specified increment.
 
-mw Load - Forms: L or Lxxxxxxxx
+##### Load - Forms: L or Lxxxxxxxx
 
 The load command will read a text file named xxxxxxxx from cassette
 tape into the buffer. If a name is not provided it will read the next file
@@ -6707,7 +6685,7 @@ This is useful for programs written in sections. A limitation is that the
 line numbers of the text read in must be different than the line numbers
 currently in the buffer.
 
-w Print - Forms: PXXX or PXXX:YYY or PXXX:TTT
+##### Print - Forms: PXXX or PXXX:YYY or PXXX:TTT
 
 The print command will list a line or series of lines in numerical
 order on the screen. A long listing can be temporarily halted by typing
@@ -6717,8 +6695,8 @@ BREAK (which will cancel the print command). Examples of. the print
 command are: P180 lists line 180; P160:330 lists lines 160. -.330; P205!62
 lists 62 lines starting with line 205.
 
-mw Printer Commands - Forms: TXXX or TXXX:YYY or TXXX!ITTT and
-HXXX or HXXX:YYY or HXXXITTT
+##### Printer Commands - Forms: TXXX or TXXX:YYY or TXXX!ITTT and HXXX or HXXX:YYY or HXXXITTT
+
 These commands will print the text in the buffer to a printer. The
 lines to be printed are specified the same as for the print (P) command.
 The print (H) command will list specified: lines in their entirety to
@@ -6726,17 +6704,16 @@ the printer. The print (T) command will list specified lines without their
 line numbers to the printer. This command would be used if the text editor
 were being used as a word processor.
 
-mw Renumber - Forms: N or NXXX or NXXX,TTT
+##### Renumber - Forms: N or NXXX or NXXX,TTT
 
 The renumber command will assign new numbers and increments to all the
 lines in the buffer. XXX specifies the new starting line number and TIT
 specifies the new increment. If XXX is omitted, 100 or the current line
-
 number is used. If TTT is omitted, 10 or the current increment it used. For
 example: N300,20 will renumber all the lines so the first is 300 and the
 increment is 20.
 
-m Replace - Forms: R or RX XX or RXXX,TTT
+##### Replace - Forms: R or RX XX or RXXX,TTT
 
 The replace command allows one to replace line XXX and insert new lines
 with an increment of TTT. If the line number is omitted the replacement
@@ -6745,7 +6722,7 @@ replacement will use the last specified increment. For example: R120,2
 allows one to reenter line 120 and insert new lines starting with number
 122.
 
-mw Verify - Forms: V or Vxxxxxxxx
+##### Verify - Forms: V or Vxxxxxxxx
 
 The verify command will read the cassette text file named xxxxxxxx,
 checking to see that it was recorded without errors. If the file name is
@@ -6753,14 +6730,14 @@ omitted it will verify the next text file on tape. If no errors are
 detected, no message is displayed. If errors are detected, a message so
 indicating is displayed.
 
-mw Write - Forms: W or Wxxxxxxxx
+##### Write - Forms: W or Wxxxxxxxx
 
 The write command will record the text buffer contents on cassette tape
 with the file name xxxxxxxx. The name may be up to eight characters long
 and the first character must be alphabetic. If a file name is not provided,
 the editor will give it the name NONAME.
 
-= Going To ZBUG
+##### Going To ZBUG
 
 Typing Z and the ENTER key will cause a transition from the editor mode
 to ZBUG, the debugging mode. The # prompt at the left hand edge of the
@@ -6768,7 +6745,7 @@ screen indicates that ZBUG is in control. Typing E and ENTER, while in
 ZBUG, causes a transition to the editor mode. The contents of the text
 buffer will not be affected by either transition.
 
-= Scroll Up and Down
+##### Scroll Up and Down
 
 The scroll command will cause the previous or next text line to be
 displayed. Successive depressions of the up arrow key will cause the
@@ -6783,26 +6760,25 @@ The assembler can only be activated from the editor by the assemble (A)
 command. Upon activation, the assembler will read through the statements in
 the buffer, starting with the first or lowest numbered and stopping at the
 first encounter of a statement with an END command. The output of the
-
 assembler will be a listing of the source code, object code, and symbol
 table, and the object code in memory or on cassette tape.
 
-Assembling Into Memory
+#### Assembling Into Memory
 
 Before assembling the source code must be in the text buffer. It can be
 put there by typing it in or by loading it from tape. In this case the
 previous example of source code will be used to demonstrate the assembler.
 The source code is:
 
+```
 00070 *THIS IS AN EXAMPLE OF
 00080 *USING THE TEXT EDITOR
-00090 2 aH see kok kk
-
-00100 BEG LDA #$20 LOAD CODE
-
-00110 CLRB CLEAR COUNTER
-00120 STA $1203 STORE CODE
-00130 END
+00090 ******************
+00100 BEG   LDA #$20    LOAD CODE
+00110       CLRB        CLEAR COUNTER
+00120       STA $1203   STORE CODE
+00130       END
+```
 
 Note that statement 130 contains the END command, telling the assembler to
 stop there.
@@ -6813,7 +6789,9 @@ assembly process. The options are presented in Table 6-1. To have the
 assembler put the generated object code in memory, the in-memory (IM)
 option is used:
 
+```
 A/IM <ENTER>
+```
 
 The assembly process will be performed, a symbol table is built, a listing
 is displayed, and the object code put in memory.
@@ -6822,25 +6800,22 @@ The listing generated by the assembler provides much information about
 the assembled program. The listing resulting from assembling the above
 source code in memory is:
 
-00070 *THIS IS AN EXAMPLE OF
-00080 *USING THE TEXT EDITOR
-
-00090 KRKEKKEKEAKEREKEKEKKEK
-
-08A6 86 20 00100 BEG LDA #$20 LOAD CODE
-O8A8 5F 00110 CLRB CLEAR COUNTER
-08A9 B7:1203 00120 STA $1203 STORE CODE
-
-0000 00130 END
-
+```
+                00070 *THIS IS AN EXAMPLE OF
+                00080 *USING THE TEXT EDITOR
+                00090 *****************
+08A6 86   20    00100 BEG   LDA #$20    LOAD CODE
+08A8 5F         00110       CLRB        CLEAR COUNTER
+08A9 B7 1203    00120       STA $1203   STORE CODE
+     0000       00130       END
 00000 TOTAL ERRORS
+
 BEG 08A6
+```
 
 Unfortunately, the listing on the screen will not appear exactly like
 this because of wrap-around. The middle and right sides of the listing are
-
 just a repeat of the original source code, lines 70 - 130. To the left of
-
 each statement that contains a valid command mnemonic and operand is its
 object code. In the leftmost column is the exact hexadecimal address, or
 absolute address, where that machine instruction has been placed. At
@@ -6849,7 +6824,6 @@ the LDA instruction is stored. In the next column is the op code of the LDA
 instruction; $86. The following column is the operand field of the
 instruction, $20, located at the absolute address $08A7. The next line down
 shows the single byte $5F, which is the CLRB instruction located at
-
 absolute address $08A8. The last instruction, STA, is located in addresses
 $08A9 - $08AB. The final END statement generates no object code, but does
 terminate the assembly process. This type of listing, with the source and
@@ -6891,7 +6865,7 @@ The assembler does not change the source code. One can initiate the
 assembler a number of times to see the screen listing. One can also edit
 source code mistakes and then assemble it again.
 
-Assembling To Cassette Tape
+#### Assembling To Cassette Tape
 
 The assembler is directed to put the object code on tape by not using
 the in-memory (IM) option. A file name up to eight charcters long can be
@@ -6899,8 +6873,10 @@ specified for the object code recording; the first character must be
 alphabetic. If a name is not specified, the assembler defaults to the name
 NONAME. For example:
 
+```
 A TEST! <ENTER>
 READY CASSETTE. <ENTER>
+```
 
 will cause the assembly process to be performed. The object code is
 recorded on cassette with the name TESTI, and the listing is put on the
@@ -6908,20 +6884,18 @@ screen. The object code can later be loaded into memory using BASIC's
 CLOADM command or ZBUG's load (L) command. Using the previous
 assembly language example, the listing would appear as:
 
-00070 *THIS IS AN EXAMPLE OF
-00080 *USING THE TEXT EDITOR
-
-00090 KEKEEKEKKAKE KEKE AEEEE SK
-
-0000 86. 20 00100 BEG LDA #$20 LOAD CODE
-
-0002 5F 00110 CLRB CLEAR COUNTER
-
-0003 B7 1203 00120 STA $1203 STORE CODE
-0000 00130 END
-
+```
+                00070 *THIS IS AN EXAMPLE OF
+                00080 *USING THE TEXT EDITOR
+                00090 ******************
+0000 86   20    00100 BEG   LDA #$20    LOAD CODE
+0002 5F         00110       CLRB        CLEAR COUNTER
+0003 B7   1203  00120       STA $1203   STORE CODE
+        0000    00130       END
 00000 TOTAL ERRORS
+
 BEG 0000
+```
 
 Except for the address column at the extreme left, this listing is
 identical to that generated when assembling into memory. When assembling on
@@ -6941,61 +6915,69 @@ Other options can be used, such as the wait on error (WE): A TEST1/WE.
 This will stop the assembly at an erroneous statement. Again, an erroneous
 statement will not be assembled.
 
-The Assembler Options
+#### The Assembler Options
 
 There are nine assembler options. We have discussed two of them, IM and
 WE. The LP, NL, NS, and SS options affect only the assembly listing, but
 the total errors will always be displayed or printed.
 
-Put assembly listing on printer.
-Suppress listing except for symbol table.
-Delete symbol table from listing.
-
-Use short screen format for listing.
-
-Do not generate any object code.
-Assemble object code into memory.
-
-Wait on errors.
-
-Assemble object code at absolute address.
-Use manually entered addresses.
+| Option | Description|
+|-|-|
+| LP | Put assembly listing on printer. |
+| NL | Suppress listing except for symbol table. |
+| NS | Delete symbol table from listing. |
+| SS | Use short screen format for listing. |
+| NO | Do not generate any object code. |
+| IM | Assemble object code into memory. |
+| WE | Wait on errors. |
+| AO | Assemble object code at absolute address. |
+| MO | Use manually entered addresses. |
 
 Table 6-1 Assembler Options and Descriptions.
 
 The LP option causes the listing to be printed on a printer connected
 to the serial port. Examples of using the LP option are:
 
+```
 A TEST/LP
 A/IM/LP
+```
 
 The NL option suppresses the source code and object code sections of
 the listing so only the total errors and symbol table are displayed or
 printed. Examples are:
 
+```
 A/IM/WE/NL
 A TEST2/NL
+```
 
 The NS option keeps the symbol table from being printed or displayed at
 the end of the listing. Examples are:
 
+```
 A/IM/NS
 A TEST/NS
+```
 
 The short screen (SS) option causes the listing to be printed or
 displayed in a way that wrap-around is less likely to occur. The listing
 lines are formated so that the object code is put on one line and its
 associated source code is put on the next line. Examples are:
 
+```
 A TEST1/WE/SS
 A/IM/WE/SS
+```
 
 The NO option causes the assembler to produce no object code. This
 option could be used to perform an initial check for source code errors. It
 can also be used to generate a spare listing on the printer. Examples are:
 
+```
 A TEST1/NO/WE
 A/IM/NO
+```
 
 The IM option directs the assembler to put the generated object code in
 memory. That program can then be easily executed from ZBUG to see how it
@@ -7014,10 +6996,12 @@ assembling to tape. The AO option causes the object code generated from the
 statements following the ORG statement to be put in memory starting at the
 address in the operand field of the ORG statement. An example is:
 
-00100 ORG $2B1A
-00110 START CLRA
-00120 STA $3001
-00130 END
+```
+        00100           ORG $2B1A
+        00110 START     CLRA
+        00120           STA $3001
+        00130           END
+```
 
 The ORG statement can not have a symbol. Now the following command
 can be entered: A/IM/AO. This causes the object code to be put in
@@ -7037,7 +7021,7 @@ graphics capabilities, which require the memory area in which the source
 code and symbol table normally reside. (This is discussed in more detail in
 the Technical Details section of this chapter.)
 
-Pseudo-Commands
+#### Pseudo-Commands
 
 The pseudo-commands direct the assembler to perform operations beyond
 generating machine instructions. The pseudo-commands are represented by
@@ -7052,58 +7036,40 @@ or items involving calculations. The calculations that can be performed and
 their formats are the same as those in ZBUG. (For more information about
 the possible calculations, see the ZBUG section of this chapter.) A
 description of each pseudo-command and its mnemonic follows in alphabetical
-
 order.
 
-uw END - Form:
+##### END - Form:
 
 END EXPRESSION
 
 The END command indicates that no more statements are to be assembled.
 This command is put at the end of a series of statements to be assembled.
-
 For example:
 
-00100 START LDX #$400
-
-00110 ST1
-00120
-00130
-00140
-
-STA ,X+
-END
-
-CMPX #$600
-BLO ST1
+```
+00100 START     LDX #$400
+00110 ST1       STA ,X+
+00120           END
+00130           CMPX #$600
+00140           BLO ST1
+```
 
 This causes only statements 100 - 120 to be assembled. When assembling on
 tape with an ORG command an expression can be put into the operand field to
 specify the address of the first instruction to be executed. This address
-
 will be stored in the object code file with the ORG address. The two
-
 addresses are used by BASIC's CLOADM and EXEC commands. For example:
 
-00100
-00110 BEG
-00120
-00130 BE]
-00140
-00150
-00160
-00170
-
-ORG $3010
-LDX #9400
-LDA #$20
-STA ,X+
-CMPX #$5FF
-BLS BE]
-
-‘RTS
-
-END $3015
+```
+00100       ORG $3010
+00110 BEG   LDX #$400
+00120       LDA #$20
+00130 BE1   STA ,X+
+00140       CMPX #$5FF
+00150       BLS BE1
+00160       RTS
+00170       END $3015
+```
 
 The object code file generated with A NAME can be loaded and executed
 in BASIC with the following commands: CLOADM and EXEC. These will cause
@@ -7111,84 +7077,85 @@ the program to be loaded at address $3010 and execution to start at the
 instruction in address $3015. No addresses have to be specified with the
 BASIC commands since they are read from tape.
 
-mw EQU - Form: SYMBOL EQU EXPRESSION
-The equate command defines a symbol by assigning to the symbol the
+##### EQU - Form: SYMBOL EQU EXPRESSION
 
+The equate command defines a symbol by assigning to the symbol the
 value of the expression. All symbol values are made up of two bytes. The
 expression must be or result in a value that can be represented in two
 bytes. If the value is too large, the most significant bytes will be
 dropped until what is remaining will fit in two bytes. Sample statements
 are:
 
-00100 AGE EQU 88
-
-00110 NUMI —=EQU $7F2E
-
-00120 PAGE = EQU 7*$0A
-
-00130 LDA >AGE
-
-00140 END
+```
+00100 AGE       EQU 88
+00110 NUM1      EQU $7F2E
+00120 PAGE      EQU 7*$0A
+00130           LDA >AGE
+00140           END
+```
 
 Assembling the example will result in a symbol table in which the symbol
 AGE equals $0058 (the equivalent of decimal 88), NUM1 equals $7F2E, and
 PAGE equals $0046 (the equivalent of the product of decimal seven and $A).
 Statement 130 is an example of referencing a symbol. The LDA with extended
 addressing will be assembled with an operand address which points to the
-
 two byte symbol AGE.
 
-# FCB - Form: SYMBOL FCB EXPRESSION
+##### FCB - Form: SYMBOL FCB EXPRESSION
+
 The FCB (fix contents of a byte) command stores the value of the
 expression in a memory location at the current address.. The symbol is
 optional. If a symbol is provided, it is defined (put in the symbol table
 and assigned the value of the current address). A sample source code using
 the FCB command is:
-00100 STR CLRA
 
-00110 STA $2E01
-00120 CNT FCB $1F
-00130 FCB 73
-00140 END
+```
+00100 STR       CLRA
+00110           STA $2E01
+00120 CNT       FCB $1F
+00130           FCB 73
+00140           END
+```
 
 When assembled, statement 120 will put $1F in memory immediately following
 the STA instruction, and the symbol CNT will be put in the symbol table
 with the value of that memory address. Statement 130 will result in $49 in
-
 the memory location after $1F. This is a poor program example since the
 MPU, upon completing the STA instruction, will try to execute the data $1F
 and $48.
 
-mw FCC - Form: SYMBOL FCC DELIMITER STRING DELIMITER
+##### FCC - Form: SYMBOL FCC DELIMITER STRING DELIMITER
+
 The FCC (fix contents with characters) command stores characters
 between the delimiters, using ASCII, in memory starting at the current
 address. The delimiters identify the text string and can be any character
 not used in that text string. FCC can be used to store messages in memory
 to be displayed on the screen by the program. The symbol is optional. If
-
 used, it is defined.
 
-00280 LDB >LINE
-
-00290 JMP $201B
-
-00300 LINE FCC !ENTER TODAY'S DATE!
-00310 END
+```
+00280           LDB >LINE
+00290           JMP $201B
+00300 LINE      FCC !ENTER TODAY'S DATE!
+00310           END
+```
 
 When assembled, the ASCII codes of the characters in the text string will
 be put in memory immediately after the JMP instruction. Also, the symbol
 LINE will be put in the symbol table with the value of the starting address
 of the text string in memory.
 
-a FDB - Form: SYMBOL FDB EXPRESSION
+##### FDB - Form: SYMBOL FDB EXPRESSION
 
 The FDB (fix double byte) command stores the value of the expression in
 two consecutive bytes, starting at the current address. If a symbol is
 provided, it is defined. Examples are:
 
-00210 YEAR ~FDB 1983
-00220 DAT FDB YEAR.DIV.4
-00230 END
+```
+00210 YEAR      FDB 1983
+00220 DAT       FDB YEAR.DIV.4
+00230           END
+```
 
 Statement 210 results in $07BF, the equivalent of decimal 1983, stored in
 two memory locations immediately after the preceding instruction. Statement
@@ -7197,7 +7164,7 @@ equals divided by four with no remainder stored in the next two memory
 locations. Also the symbols YEAR and DAT will be assigned the addresses of
 their respective two-byte fields.
 
-m ORG - Form: ORG EXPRESSION
+##### ORG - Form: ORG EXPRESSION
 
 The ORG (originate) command indicates to the assembler where to
 originate the object code. The originating address is the value of the
@@ -7208,14 +7175,15 @@ than one ORG statement can be in the source code. An ORG command must be
 the first statement or the assembler will try to put the object code in
 memory starting at address zero, which is used by EDTASM+. For example:
 
-00090 ORG $1000
-00100 ORCC #$50
-00110 LDX #$2000
-00120 ORG $1700
-00130 STA $3F02
-00140 LDD ,X++
-
-00150 END
+```
+00090           ORG $1000
+00100           ORCC #$50
+00110           LDX #$2000
+00120           ORG $1700
+00130           STA $3F02
+00140           LDD ,X++
+00150           END
+```
 
 This is assembled in memory with the A/IM/AO command; the object code of
 statements 100 and 110 is stored starting at address $1000 and the object
@@ -7228,15 +7196,16 @@ or BASIC's CLOADM command without specifying the load address. The listing
 generated by the assembler will have absolute addresses in the address
 column. For example:
 
-00100 ORG $1200
-00110 LDA #$41
-00120 LDX #9400
-00130 ST1 STA ,X+
-00140 CMPX #5440
-00150 BLO ST1
-00160 RTS
-
-00170 END
+```
+00100           ORG $1200
+00110           LDA #$41
+00120           LDX #$400
+00130 ST1       STA ,X+
+00140           CMPX #$440
+00150           BLO ST1
+00160           RTS
+00170           END
+```
 
 This can be assembled on tape with the A NAME command; the AO option is
 not necessary. Then go to BASIC by hitting the Q and ENTER keys, and ready
@@ -7244,7 +7213,7 @@ the cassette for reading the recorded file. The BASIC command: CLOADM will
 load the program into memory, starting at address $1200. It can be executed
 by using the command: EXEC &H1200.
 
-= RMB - Form: SYMBOL RMB EXPRESSION
+##### RMB - Form: SYMBOL RMB EXPRESSION
 
 The RMB (reserve memory bytes) command reserves a number of memory
 locations starting at the current address. The number of locations to
@@ -7252,39 +7221,39 @@ reserve is specified by the expression. If a symbol is provided it will be
 defined. The RMB can be used to reserve an area of memory in the program
 where a table might be stored and/or manipulated. For example:
 
-00300 LDX #TABL
-00310 RTS
-
-00320 TABL RMB 22
-00330 STA ,X
-00340 END
+```
+00300           LDX #TABL
+00310           RTS
+00320 TABL      RMB 22
+00330           STA ,X
+00340           END
+```
 
 In this example, 22 decimal locations between the RTS and STA machine
 instructions will be reserved. The symbol TABL will be the starting address
 of that area.
 
-w SET - Form: SYMBOL SET EXPRESSION
+##### SET - Form: SYMBOL SET EXPRESSION
 
 The SET command is similar to EQU except that a symbol can be set to a
 new value a number of times in one program. It also prints an S to the
 right of that symbol in the symbol table listing. This setting and
-
 resetting of the value only happens during the assembly process, not during
 the execution of the object code. For example:
 
-00100 CNT SET $1234
-
-00110 TABL  EQU CNT.DIV.3
-00120 CNT SET $7200
-
-00130 STA >CNT-$3000
-00140 END
+```
+00100 CNT       SET $1234
+00110 TABL      EQU CNT.DIV.3
+00120 CNT       SET $7200
+00130           STA >CNT-$3000
+00140           END
+```
 
 The symbol CNT is set to a value in statements 100 and 120. In statement
 110, TABL is equated to $0611 ($1234 divided by decimal 3). In statement
 130, the operand address is $4200 ($7200 minus $3000).
 
-# SETDP - Form: SETDP EXPRESSION
+##### SETDP - Form: SETDP EXPRESSION
 
 The SETDP command informs the assembler that any instructions using
 default extended addressing and whose most significant byte of the operand
@@ -7296,22 +7265,23 @@ that the effect of the SETDP command can be overridden by preceding the
 operand with a greater than sign to force extended addressing. For
 example:
 
-00100 LDB #$15
-
-00110 TFR B,DP
-00120 SETDP $15
-00130 LDA $1566
-00140 STX PAGE
-00150 INC $2022
-00160 STD >15FA
-00170 PAGE EQU $15F2
-00180 END
+```
+00100           LDB #$15
+00110           TFR B,DP
+00120           SETDP $15
+00130           LDA $1566
+00140           STX PAGE
+00150           INC $2022
+00160           STD >15FA
+00170 PAGE      EQU $15F2
+00180           END
+```
 
 Statements 100 and 110 prepare to use the direct addressing mode by loading
 the DP register with $15. Statement 130 will be assembled with direct
 addressing. The rest will not.
 
-Technical Details
+#### Technical Details
 
 To get the most from EDTASM+ you must know how it works. EDTASM+
 always uses the memory area extending from address 0000 - O5FF for its
@@ -7320,15 +7290,11 @@ modifying any. Within this area is the text screen buffer, extending
 from address $0400 - $05FF. In the screen buffer 512 decimal locations each
 correspond to a unique print position on the screen. Locations $0400 -
 $041F correspond to the 32 decimal print positions of the top-most line of
-
 the screen. A character code in location $0400 will cause that character
-
 to appear in the upper left corner of the screen. Locations $05E0 - $05FF
 correspond to the 32 decimal print positions of the bottom-most line of the
 screen. A character is displayed on the screen, if the video display
-
 generater (VDG) is in the text mode, by putting its video display code
-
 in a particular location of the screen buffer. The video display codes are
 another set of codes. Each code comprises one byte and corresponds to one
 printable character. Their only purpose is to display characters on the
@@ -7341,32 +7307,55 @@ when the Color Computer is turned on, if the EDTASM+ ROM pack is plugged
 in. The MPU can also be directed to this address from BASIC, ZBUG, or an
 assembled program.
 
-0000 Internal
-Operations
-Buffer
-Operations
-
-Extended Color
-BASIC ROM
-C000 EDTASM+
-
-R
-FFOO Dedicated
-FFFF Addresses
-
+```
+┌─────────┬─────────────────┐
+│ Address │       Use       │
+├─────────┼─────────────────┤
+│  0000   │    Internal     │
+│         │   Operations    │
+├─────────┼─────────────────┤
+│  0400   │     Screen      │
+│         │     Buffer      │
+├─────────┼─────────────────┤
+│  0600   │    Internal     │
+│         │   Operations    │
+├─────────┼─────────────────┤
+│  0800   │      Text       │
+│         │     Buffer      │
+├─────────┼─────────────────┤
+│         │     Symbol      │
+│         │     Table       │
+├─────────┼─────────────────┤
+│         │     Object      │
+│         │      Code       │
+├─────────┼─────────────────┤
+│         │     Unused      │
+│         │                 │
+├─────────┼─────────────────┤
+│  8000   │ Extended Color  │
+│         │   BASIC ROM     │
+├─────────┼─────────────────┤
+│  C000   │    EDTASM+      │
+│         │      ROM        │
+├─────────┼─────────────────┤
+│  E000   │     Unused      │
+│         │                 │
+├─────────┼─────────────────┤
+│  FF00   │   Dedicated     │
+│  FFFF   │   Addresses     │
+└─────────┴─────────────────┘
+```
 Fig. 6-2 Memory map with EDTASM+.
 
 When source code is entered and assembled in memory, EDTASM+ must use
 more RAM to store this information. This working area normally starts at
 $0600. The area from $0600 - $0800 is used for internal operations.
-
 Normally the source code text is stored starting at address $0800 using
 ASCII codes to represent each character.
 
 The EDTASM+ assembler is a two pass assembler: it scans or passes
 through the source code twice. On the first pass all the symbols in the
 source code are identified, assigned a value, and put in a symbol table.
-
 The symbol table is stored in memory immediately after the last source code
 statement. The symbol table comprises items composed of a string of ASCII
 characters corresponding to the symbol name followed by two bytes
@@ -7392,9 +7381,11 @@ in memory. The following operations are performed using ZBUG; you may want
 to read the ZBUG section of this chapter first. To set BEGTEMP to $1E00,
 enter the following commands.
 
-B <ENTER> select byte display mode
-W <ENTER> select word mode
-FF/ 600 1E00 <ENTER> change BEGTEMP
+```
+B <ENTER>                   select byte display mode
+W <ENTER>                   select word mode
+FF/  600   1E00 <ENTER>     change BEGTEMP
+```
 
 EDTASM+ must now be reinitialized with the ZBUG command: GC006. The
 Go (G) command tells the MPU to start executing at the following address.
@@ -7431,24 +7422,20 @@ the object code assembled in memory starting at $3000. First ZBUG is
 activated with the Z command, and the word display mode enabled with the W
 command. USRORG and BEGTEMP can be modified as seen below:
 
-FD/ XXXX 3000 <ENTER> change USRORG
-FF/ 600 1E00 <ENTER> change BEGTEMP
+```
+FD/     XXXX    3000 <ENTER>    change USRORG
+FF/     600     1E00 <ENTER>    change BEGTEMP
+```
 
 Now EDTASM+ is reinitialized with GC006. At this time the EDTASM+ initial
 display is on the screen and the source code can be entered and assembled
-
 in memory using the MO and IM options: A/IM/MO/WE. This places the object
 code in memory starting at address $3000 and the working area starting at
 address $1E00. This has all been done without using the AO option.
 
 ### ZBUG DEBUGGING AIDS
 
-ZBUG is the functional mode of EDTASM+ in which exist the debugging
-aids. One goes to ZBUG from the editor by hitting the Z and ENTER keys. The
-# prompt at the left edge of the screen indicates ZBUG is active. While in
-ZBUG all numbers typed are assumed to be hexadecimal unless specified
-otherwise. While in ZBUG, hitting E then ENTER will return you to the
-editor mode.
+ZBUG is the functional mode of EDTASM+ in which exist the debugging aids. One goes to ZBUG from the editor by hitting the Z and ENTER keys. The # prompt at the left edge of the screen indicates ZBUG is active. While in ZBUG all numbers typed are assumed to be hexadecimal unless specified otherwise. While in ZBUG, hitting E then ENTER will return you to the editor mode.
 
 During a program's development and testing, one will spend a lot of
 time in ZBUG. Its facilities include many commands that assist in debugging
@@ -7459,37 +7446,37 @@ change, program control, data movement, and calculations.
 Inspect and change commands display and change the contents of specific
 memory locations. The program control commands provide for executing and
 controlling the execution of a program. Also included are commands that
-
 display and change the values in the MPU's registers. The data movement
 commands let one move data from place to place in memory and use a printer,
 tape, or the screen for viewing or saving areas of memory. The calculations
 section performs arithmetic and logical operations.
 
-Inspect And Change
+#### Inspect And Change
 
 Memory contents can be displayed in one of four different display
 modes. After its content has been displayed one may change it to a
 different value.
 
-« Mnemonic Display - The default display mode is mnemonic (M); the
+##### Mnemonic Display
+
+The default display mode is mnemonic (M); the
 contents of a series of memory locations are displayed as an instruction's
 mnemonic and operand field. ZBUG assumes that the display address typed is
 the starting address of an instruction and attempts to disassemble it and
 display the results. If the address does not point to an instruction the
 displayed results can be misleading. This display mode is activated by
-
 typing the M then ENTER keys, but this only need be done if another display
 mode had been previously specified. The contents of memory is displayed by
 typing the address followed by a slash. For example, let's display the
-
 contents of BASIC ROM:
 
-8000/° 29?) < >
-
-8001/.. ASLB < >
-8002/ LDX #80DE < >
-8005/. LDU #12A <«< >
-8008/.. LDB #0A
+```
+8000/   ?? < >
+8001/   ASLB < >
+8002/   LDX #80DE < >
+8005/   LDU #12A < >
+8008/   LDB #0A
+```
 
 Notice that depressing the down arrow key (scroll down) causes the next
 instruction to be displayed. At address $8000 the contents do not match any
@@ -7506,25 +7493,25 @@ different instructions because the pointer is specifying a different, and
 possibly nonvalid, instruction address.
 
 If the displayed instruction is a branch or jump, hitting the right
-arrow (->) key will cause the display pointer to follow the branch or take
+arrow (→) key will cause the display pointer to follow the branch or take
 on the value of the operand address and display its contents. This lets one
 follow the flow of a program.
 
-m Byte Display - The second display mode is the byte mode (B). It is
+##### Byte Display 
+
+The second display mode is the byte mode (B). It is
 activated by typing B then ENTER. Now the contents of a memory location
 will be displayed as a hexadecimal byte. Inspecting BASIC ROM again is done
 as follows:
 
-B <ENTER> (select byte display mode)
-8000/ 45 < >
-
-8001/ 58 < >
-
-8002/ 8E «< >
-
-8003/ 80 < >
-
-8004/ ODE
+```
+B <ENTER>       (select byte display mode)
+8000/   45 < >
+8001/   58 < >
+8002/   8E < >
+8003/   80 < >
+8004/   ODE
+```
 
 Here one sees the contents of the individual memory locations. At each
 line, when the cursor is to the right, one can enter a one-byte value to
@@ -7533,48 +7520,55 @@ value to be stored at the displayed location. Depressing the down arrow key
 instead of ENTER will store the new value in memory and display the
 contents of the next location.
 
-m Word Display - The third display mode is the word mode (W). It is
+##### Word Display 
+
+The third display mode is the word mode (W). It is
 activated by typing the W then ENTER keys. A pair of memory locations will
 be displayed on each line. For example:
 
-W <ENTER> (select word mode)
-8000/° 4558 < >
-
-8002/ 8E80 < >
-
-8004. ODECE
+```
+W <ENTER>       (select word mode)
+8000/   4558 < >
+8002/   8E80 < >
+8004    0DECE
+```
 
 displays two bytes beginning with the specified display address. At each
 line, when the cursor is to the right, one can enter a two-byte value
 followed by the ENTER or key that will put the value into the two
 displayed address.
 
-m ASCII Display - The fourth display mode is the ASCII mode (A),
+##### ASCII Display 
+
+The fourth display mode is the ASCII mode (A),
 activated by typing the A then ENTER keys. This causes ZBUG to interpret
 the contents of a location as an ASCII code and display the character it
 represents. If the contents are not a valid ASCII code, nothing will be
 displayed. For example:
 
-A <ENTER> (select ASCII mode)
-8000/. E < >
-
-8001/ X < >
-
+```
+A <ENTER>       (select ASCII mode)
+8000/   E < >
+8001/   X < >
 8002/
+```
 
 displays the contents of the ROM addresses as if their contents were ASCII
 codes. As in the other display modes, one can change the contents of the
-
 displayed memory location. The contents of a location can also be changed
 to the ASCII code of a character by entering that character preceded with
 an apostrophe. This is applicable to all four display modes. For example:
 
-B  <ENTER> (select byte mode)
-2000/ xx "E <ENTER>
+```
+B  <ENTER>      (select byte mode)
+2000/   xx  'E <ENTER>
+```
 
 will store $45, the ASCII code of E, in location $2000.
 
-a Numeric Base - One can direct displayed numbers to be displayed in
+##### Numeric Base 
+
+One can direct displayed numbers to be displayed in
 hexadecimal, decimal, or octal. Octal numbers use base eight. The
 hexadecimal format is the default display format. This is done with the
 output (O) command followed by a 16, 10 or 8 to specify hexadecimal,
@@ -7593,34 +7587,32 @@ If a program has just been assembled in memory, ZBUG can display data
 using the values of symbols in the symbol table. For example, assemble the
 following source code into memory.
 
-00100 STR LDY #TABLE GET TABLE POINTER
-
-00110 ST1 LDA ,Y GET CONTENTS
-
-00120 BPL ST2 BRANCH IF NOT NEGATIVE
-00130 NEGA FORM TWO'S COMPLEMENT
-00140 STA ,Y PUT BACK IN TABLE
-
-00150 ST2 LEAY 1,Y INC TABLE POINTER
-
-00160 CMPY #20+TABLE END OF TABLE?
-
-00170 BLO ST1 IF NOT, GET NEXT CONTENTS
-00180 SWI RETURN TO ZBUG
-
-00190 TABLE RMB 20 TABLE AREA
-
-00200 END
+```
+00100 STR       LDY #TABLE      GET TABLE POINTER
+00110 ST1       LDA ,Y          GET CONTENTS
+00120           BPL ST2         BRANCH IF NOT NEGATIVE
+00130           NEGA            FORM TWO'S COMPLEMENT
+00140           STA ,Y          PUT BACK IN TABLE
+00150 ST2       LEAY 1,Y        INC TABLE POINTER
+00160           CMPY #20+TABLE  END OF TABLE?
+00170           BLO ST1         IF NOT, GET NEXT CONTENTS
+00180           SWI             RETURN TO ZBUG
+00190 TABLE     RMB 20          TABLE AREA
+00200           END
+```
 
 After assembling the above, go to ZBUG. Now the object code can be
 displayed using a symbol instead of an absolute address. Display examples
 are:
 
-STR/ LDY #TABLE
+```
+STR/    LDY #TABLE
+ST2/    LEAY 1,Y
+```
 
-ST2/. LEAY 1,Y
+##### Symbolic, Half Symbolic, and Numeric Submodes 
 
-m Symbolic, Half Symbolic, and Numeric Submodes - When displaying object
+When displaying object
 code with its symbol table in memory, there are three submodes of the
 mnemonic display mode. They are symbolic (S), half symbolic (H), and
 numeric (N); symbolic is the default display submode. The display example
@@ -7630,47 +7622,49 @@ selected by typing the H and ENTER keys. Subsequent display of the object
 code will put the display addresses in symbolic form and the operand
 addresses in numeric form. For example:
 
-H «<ENTER> (select half symbolic)
-STR/ LDY #8B5 < >
-
-ST1/ LDA ,Y < >
-
-ST1+2/. BPL 8AC
+```
+H <ENTER>           (select half symbolic)
+STR/    LDY #8B5 < >
+ST1/    LDA ,Y < >
+ST1+2/  BPL 8AC
+```
 
 The numeric display submode is selected by typing the N and ENTER keys.
 Subsequent display of the object code will put all numbers and addresses in
 the numeric form. For example:
 
-N  <ENTER> (select numeric)
-STR/ LDY #8B5 < >
-
-8A5/ STA ,Y < >
-
-8A7/ BPL 8AC
+```
+N  <ENTER>          (select numeric)
+STR/    LDY #8B5 < >
+8A5/    STA ,Y < >
+8A7/    BPL 8AC
+```
 
 Now the importance of labeling the first instruction of a program becomes
 obvious; the symbol can be used to find the start of the object code. The -
 value of a symbol can be displayed by typing the symbol followed by an
 equal sign:
 
-STR= XxXxx
+```
+STR= xxxx
+```
 
 where xxxx is its assigned numeric value (that will be displayed).
 
-nu Alternate Displays - Three special display subcommands are activated with
+##### Alternate Displays 
+
+Three special display subcommands are activated with
 the semicolon, equals, and colon keys. The semicolon and equals keys are
 used when displaying object code in symbolic format. Pressing the semicolon
 key will cause that instruction to be displayed again in the numeric
-
 display submode. Pressing the equals key will cause the first byte of the
 displayed instruction to be displayed as a hexadecimal value. When
 displaying in any mode, pressing the colon key will cause ZBUG to interpret
 a byte's contents as if they were the contents of the CC register, and
-
 display one of the characters, EFHINZVC, for each corresponding bit that is
-set. :
+set.
 
-Program Control
+#### Program Control
 
 The commands presented here are those one would use to test or execute
 a new program. During the following explanations the previous sample
@@ -7681,10 +7675,13 @@ that is stored in TABLE. Upon completion, the SWI instruction returns
 control to ZBUG. After this program is assembled into memory with no
 errors, one can go into ZBUG to run it.
 
-= Go Command - A program is executed from ZBUG with the Go (G)
-command. Its formats are:
+##### Go Command 
 
+A program is executed from ZBUG with the Go (G) command. Its formats are:
+
+```
 Gxxxx <ENTER> and GSYMBOL <ENTER>
+```
 
 The xxxx is the starting address the MPU will be directed to. If the symbol
 table is in memory, the symbol of the instruction .to be executed can be
@@ -7692,16 +7689,20 @@ used. The sample program can be executed by entering GSTR. It will run very
 quickly and the SWI instruction will return control to ZBUG resulting in
 the display:
 
+```
 8 BREAK @ ST2+8
+```
 
 If desired, one can use ZBUG to inspect the locations in TABLE to see that
 they all contain positive numbers.
 
-mw Single Step - One can make the MPU step through the program one
-instruction at a time with the single instruction (,) command. Its
-formats are:
+##### Single Step 
 
-XXXX, and SYMBOL,
+One can make the MPU step through the program one instruction at a time with the single instruction (,) command. Its formats are:
+
+```
+xxxx,   and     SYMBOL,
+```
 
 The xxxx is an absolute address of an instruction. A symbol can be used if
 the symbol table is in memory. This will cause that one instruction to be
@@ -7710,15 +7711,18 @@ repeatedly hitting the coma key. During this process one can view the .
 sequence of instructions of a particular program. However, this feature
 does not work. with instructions in ROM.
 
-uw Register Display - At any time the execution of a test program is stopped
+##### Register Display 
+
+At any time the execution of a test program is stopped
 and ZBUG is in control, the contents of all or any of the MC6809E internal
 registers can be displayed and/or altered. This is done with the display
 register (/) command prefixed with an R for all registers or a valid
-
 register abbreviation of one register. For example:
 
-R/ (display all MPU registers)
-DP/ xx (display contents of DP register)
+```
+R/              (display all MPU registers)
+DP/ xx          (display contents of DP register)
+```
 
 When a register's contents are displayed one can enter a new value to be
 put in, just like changing the contents of memory. However, when all the
@@ -7726,13 +7730,17 @@ registers are displayed, none of their contents can be changed. The ability
 to view the contents of the registers is very useful when debugging a
 program.
 
-= Breakpoints - A breakpoint is a point in a program where one would like
+##### Breakpoints 
+
+A breakpoint is a point in a program where one would like
 execution to stop so that interim results can be checked. However, a
 breakpoint can not be set for an instruction in ROM. A breakpoint is set or
 enabled with the X command. The X is entered with the address or symbol of
 the stopping point after it. Its formats are:
 
-XXXXX and XSYMBOL
+```
+Xxxxx   and     XSYMBOL
+```
 
 A specific example is: XST1, which will set a breakpoint at the LDA ,Y
 instruction. Each time that instruction is encountered, the program will
@@ -7740,10 +7748,11 @@ stop. One can then display memory or registers to see how the program is
 working. A maximun of eight breakpoints can be entered. They are numbered
 0 - 7 in the order in which they were entered. An SWI instruction will
 cause a return to ZBUG at breakpoint number eight. When a breakpoint is
-encountered, ZBUG displays the breakpoint number and its address or symbol
-as:
+encountered, ZBUG displays the breakpoint number and its address or symbol as:
 
-0 BREAK @ ST]
+```
+0 BREAK @ ST1
+```
 
 After a breakpoint, the program can be single-stepped through the following
 instructions by hitting the coma key. Breakpoints that have been set can be
@@ -7756,26 +7765,25 @@ breakpoint is encountered again. Entering a Cxx such as: C5 will cause the
 program to continue executing up to the fifth (decimal) detection of a
 breakpoint, then stop.
 
-Data Movement
+#### Data Movement
 
 Six ZBUG commands move data or object code within, to, or from memory.
 These commands work with blocks of memory. After typing a command,
 depress the ENTER key to perform it.
 
-mu Move - Format: U XXXXK YYYY NNNN
+##### Move - Format: U XXXXK YYYY NNNN
 
 The move command copies the contents of a series of memory locations to
 another series of locations. The starting address of the area to be copied
 is specified by the XXXX field. The starting address of the destination
 area is specified by the YYYY field. NNNN specifies how many bytes to copy.
 The numbers entered in the fields are hexadecimal unless specified
-
 otherwise. If you are copying a program whose symbol table is in memory, a
 symbol can be used as an address. For example: U STR 3100 35 will copy $35
 bytes of the sample program to an area of memory starting at address $3100.
 The program now resides in two places in memory.
 
-ge Put - Format: P nnn... XXXXK YYYY ZZZZ
+##### Put - Format: P nnn... XXXXK YYYY ZZZZ
 
 This command saves the contents of an area of memory on cassette tape.
 What is saved may be object code or data. The file name, up to eight
@@ -7787,8 +7795,10 @@ fields are put in the file and used when loading it back in memory. If the
 symbol table is in memory a symbol can be used to specify an address.
 Examples of using the put command are:
 
-P TESTA STR TABLE+20 STR
+```
+P TESTA STR  TABLE+20 STR
 P TESTB 0123 423 2A2
+```
 
 An object code file can be loaded into address XXXX with BASIC's
 CLOADM or ‘ZBUG's load command without specifying that address at load
@@ -7796,7 +7806,7 @@ time. In BASIC the program can be run without specifying the start address.
 For example: CLOADM and EXEC will load and execute a properly
 recorded object code file made with the put command.
 
-w Verify - Format: Vnnn...
+##### Verify - Format: Vnnn...
 
 The verify command reads over an object code file generated with the
 put command or assembled onto tape to see that it was recorded without
@@ -7805,7 +7815,7 @@ field, it searches for that object code file, then verifies it. If the name
 is omitted, it will verify the next object code file on tape. This command
 can be used to ensure that a recording is good.
 
-m Load - Format: Lnnn...
+##### Load - Format: Lnnn...
 
 The load command reads an object code file created with the put command
 or assembled onto tape. When a file name is provided, it searches for that
@@ -7818,7 +7828,7 @@ tape, the object code will be loaded in memory starting at address 0000
 unless an ORG command was used. In that case the load address will be that
 specified by the ORG command.
 
-m Display - Format: T XXXX YYYY
+##### Display - Format: T XXXX YYYY
 
 The display command lists the contents of the range of memory addresses
 XXXX - YYYY on the screen. The contents are displayed in the format
@@ -7827,7 +7837,7 @@ previously selected (word, byte, mnemonic, or ASCII). For example: T 800
 hexadecimal, decimal, or octal. If a symbol table is in memory, a symbol
 can be used to specify an address.
 
-m Print - Format: TH XXXX YYYY
+##### Print - Format: TH XXXX YYYY
 
 The print command lists the contents of the range of memory addresses
 XXXX - YYYY to a printer. The contents are displayed in the format
@@ -7836,7 +7846,7 @@ previously selected (word, byte, mnemonic, or ASCII). For example: T 800
 hexadecimal, decimal, or octal. If a symbol table is in memory, a symbol
 can be used to specify an address.
 
-Calculations
+#### Calculations
 
 ZBUG is capable of calculating the value of an expression composed of
 numbers, characters, parentheses, and operators. If there is a symbol table
@@ -7845,31 +7855,34 @@ classified in three categories; arithmetic, logic, and relational. The
 arithmetic and logic operators and their actions are listed in Table 6-2.
 The relational operators are shown in Table 6-3.
 
-Arithmetic
-
-Addition
-Subtraction
-Multiplication
-Division
-Modulus
-
-Inclusive Or
-Exclusive Or
-Complement
-Shift
-
+```
+┌───────────────────────────┬─────────────────────────┐
+│      Arithmetic           │        Logic            │
+├──────────┬────────────────┼──────────┬──────────────┤
+│ Operator │     Action     │ Operator │    Action    │
+├──────────┼────────────────┼──────────┼──────────────┤
+│    +     │ Addition       │  .AND.   │ And          │
+│    -     │ Subtraction    │  .OR.    │ Inclusive Or │
+│    *     │ Multiplication │  .XOR.   │ Exclusive Or │
+│  .DIV.   │ Division       │  .NOT.   │ Complement   │
+│  .MOD.   │ Modulus        │    <     │ Shift        │
+└──────────┴────────────────┴──────────┴──────────────┘
+```
 Table 6-2 Arithmetic and Logic Operators.
 
--EQU Test for Equality
-. Test for Inequality
-
-NEQ
+```
+┌──────────┬─────────────────────┐
+│ Operator │     Action          │
+├──────────┼─────────────────────┤
+│  .EQU.   │ Test for Equality   │
+│  .NEQ.   │ Test for Inequality │
+└──────────┴─────────────────────┘
+```
 Table 6-3 Relational Operators.
 
 Values to be operated on are internally represented by two bytes of
 straight binary numbers. The results of any expression are also represented
 in two bytes. Thus, only integers are allowed. This allows values 0 - $FFFF
-
 which correspond to the maximum memory address range of the MC6809E. The
 two-byte size also exactly matches the number of bytes in which a symbol's
 value is represented. This allows expressions to be used in program
@@ -7879,21 +7892,27 @@ operand field.
 From ZBUG the calculated value of an expression can be displayed by
 pressing the equal (=) key. For example:
 
+```
 2A+41= 6B
+```
 
 The base of numbers entered and displayed is controlled by the input and
 output commands. Base 16 is the default base for input and output. The base
 of inputted numbers can be set to ten as seen below.
 
+```
 110 <ENTER>
 98-35= 3F
+```
 
 Decimal 35 is subtracted from decimal 98 resulting in $3F. The input
 command can be overridden by adding a suffix to a number to specify its
 base. An H suffix indicates hexadecimal, T indicates decimal and Q
 indicates octal. For example:
 
+```
 98T-35H= 2D
+```
 
 demonstrates an expression with numbers of different bases.
 
@@ -7901,12 +7920,16 @@ If a calculation generates a number outside the range of 0 - $FFFF, the
 overflow bits are dropped and there is no indication of this condition. For
 example:
 
+```
 FF014+123= 24
+```
 
 If a result is negative, ZBUG attempts to represent it in two bytes. For
-
 example:
-4-7= OFFFD
+
+```
+4-7= 0FFFD
+```
 
 However, any function that uses this value will interpret it as a positive
 number ($FFFD). This phenomenum is a type of wrap-around of the values
@@ -7917,69 +7940,80 @@ numbers. Addition, subtraction, and multiplication are straightforward.
 Just be sure the result will fit in two bytes of straight binary. Examples
 are:
 
+```
 A234+112= 0B35
 E78-432= 0A46
 3*104= 30C
-1B*¥4A= 7CE
+1B*4A= 7CE
+```
 
 Leading zeros are not displayed. Numbers beginning with the hexadecimal
 digits of A - F are prefixed with a 0 to indicate it is a number and not a
 symbol or register.
+
 Division is done normally, except, that remainders are discarded and
 not displayed:
-F.DIV.5= 3 ($F divided by $5)
-14A.DIV.2C= 7 ($14A divided by $2C)
+
+```
+F.DIV.5= 3      ($F divided by $5)
+14A.DIV.2C= 7   ($14A divided by $2C)
+```
 
 The modulus is the remainder resulting from dividing the number before
 (.MOD.) by the number after (.MOD.):
 
+```
 F.MOD.5= 0
 1E54.MOD.C5= 51
+```
 
 Logic operators are demonstrated using hexadecimal numbers. All entered
 numbers are represented in two bytes, even if they fit in one byte:
 
-1234.AND.0FOF= 204
-
-1234,.OR.0FOF= 1F3F
-
-1234.XOR.0FOF= 1D3B
-
+```
+1234.AND.0F0F= 204
+1234.OR.0F0F= 1F3F
+1234.XOR.0F0F= 1D3B
 .NOT.1234= EDCB
-
-1234<2= 48C (shift left two bit positions)
-1234<-I= 91 (shift right one bit position)
+1234<2= 48C         (shift left two bit positions)
+1234<-I= 91         (shift right one bit position)
 
 The relational operators indicate whether an expression is true. If
 true, the resulting double byte is set to SFFFF. If false, the resulting
 double byte is set to 0000:
 
-17.EQU.17= O0FFFF
-23,EQU.123= 0
+```
+17.EQU.17= 00FFFF
+23.EQU.123= 0
 8A.NEQ.8A= 0
-
-8A.NEQ.10A= OFFFF
+8A.NEQ.10A= 0FFFF
+```
 
 More than one operator can be in an expression. For example:
 
+```
 4*10A+7= 42F
 1023.DIV.0C.EQU.211= 0
+```
 
 When two or more operators are in an expression they are performed in a
 specific order. That order, from first to last is: *, .DIV., .MOD. <,
-
 .AND., .OR., .XOR., +, -, .EQU., .NEQ. The order in which the operations
 are performed can be changed by using parentheses. The operator enclosed in
 the largest number of parentheses will be performed first. For example:
 
-((7E+1C).OR.2525)<3= 2DF8 _— (add first, shift last)
+```
+((7E+1C).OR.2525)<3= 2DF8       (add first, shift last)
+```
 
 Characters can also be in expressions where their ASCII code is the
 numeric value used to calculate the resulting value. The ASCII code is
 specified by preceding a character with an apostrophe. For example: 'B =
 prints the ASCII code for B, $42. The following expression:
 
+```
 *B+25= 67
+```
 
 adds $25 to the ASCII code for B.
 
