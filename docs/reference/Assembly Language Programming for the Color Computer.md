@@ -2441,20 +2441,23 @@ code. The operation code is a binary coded command that directs the MPU to
 perform a certain operation. Immediately following the op code is the
 operand field. The operand field may contain the data or the address of
 the data to be operated upon. The data to be operated on is the operand.
-
 The general format of an instruction with a one-byte op code and a two-byte
 operand field can be shown in memory starting at address $2000 as:
 
-2000 XX YY YY
+```
+    2000   XX YY YY
+```
+
 XX is the op code and YYYY occupy the operand field.
 
 An example of an MC6809E instruction is the Increment instruction, with
 an op code of $7C. This op code will direct the MPU to increment (add one
-
 to) the binary value stored at the two-byte address immediately following
 the op code. This instruction would appear in memory as seen below.
 
-$2000 7C 05 CD
+```
+    $2000   7C 05 CD
+```
 
 After executing the instruction, the byte stored at address $05CD will have
 been incremented by one.
@@ -2477,8 +2480,9 @@ INC. One can also give a particular group or field of bytes a label, or
 name, that will represent its starting address. Thus an assembly language
 statement could appear as:
 
-INC COUNT
-
+```
+    INC COUNT
+```
 where COUNT is the label of the byte to be incremented. The assembler
 would, on receiving this statement, assemble the op code and operand to
 construct an increment machine instruction.
@@ -2498,12 +2502,13 @@ collectively known as the system bus. Each path or bus is no more than a
 group of wires that conduct or transmit the state of a bit, one bit per
 wire, along its length.
 
-Address Bus (16 bits)
-
-Data Bus (8 bits) MEMORY
-
-Control Bus
-
+```
+┌─────────┐──── Address Bus (16 bits) ────►┌──────────┐
+│         │                                │          │
+│   MPU   │◄─── Data Bus (8 bits) ────────►│  MEMORY  │
+│         │                                │          │
+└─────────┘◄──── Control Bus ─────────────►└──────────┘
+```
 Fig. 3-1 The Interconnection of MPU and Memory.
 
 The address bus is composed of 16 wires to transmit a 16-bit address
@@ -2535,7 +2540,7 @@ MC6809E instructions will be casually introduced to clarify the use of the
 internal components. A detailed description of each instruction can be
 found in Chapter Five.
 
-Controller
+#### Controller
 
 The controller block is the device that orchestrates the internal
 operations to accomplish some particular task. Tasks can include reading an
@@ -2549,19 +2554,41 @@ the op code are the length of the instruction and whether the bytes
 immediately following the op code are data or the address of the data to be
 manipulated.
 
-Control
-Bus
-
-Addr Bus Data Bus
-bits bits
-AO - Al5
-
-Controller
-
+```
+   Addr Bus           Data Bus ▲           Control ▲
+    bits               bits    │            Bus    │
+   A0 - A15           D0 - D7  │                   │
+      ▲                        │                   │
+      │                        ├────────────┐      │
+      │                        │            │      │
+      │                        ▼            ▼      ▼
+   ┌──┴──┐   ┌─────────┐   ┌───────┐    ┌───┬────────┐
+   │     │◄─►│   PC    │◄─►│       │    │ I │        │
+   │  d  │   ├─────────┤   │   d   │    ├───┘        │
+   │  a  │◄──│   U     │◄─►│   a   │    │            │
+   │  t  │   ├─────────┤   │   t   │    │            │
+   │  a  │◄─►│   S     │◄─►│   a   │    │            │
+   │     │   ├─────────┤   │       │    │ Controller │
+   │  p  │◄──│   Y     │◄─►│   p   │    └────────────┘
+   │  a  │   ├─────────┤   │   a   │
+   │  t  │◄──│   X     │◄─►│   t   │
+   │  h  │   └────┬────┤   │   h   │
+   │     │     ┌─ │ A  │◄─►│       │
+   │     │◄─ D ┤  ├────┤   │       │
+   └─────┘     └─ │ B  │◄─►│       │
+      ▲      ┌────┼────┤   │       │
+      └──────│ DP │ CC │◄─►│       │
+             └────┴────┘   │       │
+                    ▲      │       │
+                    │      │       │
+                    ▼      │       │
+                 ┌─────┐   │       │
+                 │ ALU │◄─►│       │
+                 └─────┘   └───────┘
+```
 Fig. 3-2 A Block Diagram of the MC6809E MPU.
-Courtesy Motorola,Inc.
 
-Program Counter
+### Program Counter
 
 The program counter (or PC) register is a 16-bit register
 containing the address of the next instruction to be executed. For
@@ -2573,17 +2600,15 @@ content of the program counter register out on the address bus and telling
 the memory it wants to read a byte from that address. Shortly thereafter
 the first byte of the instruction, the op code, would be transferred from
 memory to the MPU on the data bus and directed into the instruction
-
 register in the controller. Then the controller would direct the program
 counter register to be incremented by one. This process is repeated until
 the entire instruction, the op code and operand field, has been read out of
 memory and into the MPU. After reading one complete instruction, the PC
 register would have been incremented to point to the first byte of the next
 instruction. This is why it is important that instructions reside
-
 sequentially in memory.
 
-Arithmetic Logic Unit
+### Arithmetic Logic Unit
 
 The arithmetic logic unit, or ALU, is a collection of electronic
 circuits that perform the arithmetic and logic operations. The ALU can be
@@ -2596,37 +2621,37 @@ subtraction, incrementing, decrementing, decimal adjust, multiplication,
 and sign extension. The logic operations that can be performed are AND, OR,
 XOR, shift, rotate, and complement.
 
-byte #1
-
-output byte
-
-byte #2
-
+```
+   byte #1
+   ─────────►┌─────────┐
+             │         │
+             │   ALU   ├─────── output byte
+   byte #2   │         │
+   ─────────►└─────────┘
+```
 Fig. 3-3 The Arithmetic Logic Unit (ALU).
 
 An example of using the ALU is demonstrated with the Complement
 instruction. In this case the instruction will exist in memory as:
 
-$1000 73 2F 02
+```
+    $1000   73 2F 02
+```
 
 where the content of $2F02 is $FA. $73 is the op code of the Complement
 instruction, and the byte to be complemented is at address $2F02. First the
 instruction will be fetched from memory; then the controller will direct a
-
 read operation from memory address $2F02. The byte read is routed to the
 ALU and the controller directs the ALU to perform the complement operation.
 The resulting byte, the complement of the original byte, is then routed
-
 from the ALU in the MPU on the data bus to the memory. Finally, a write
 operation is initiated to store the byte on the data bus at address $2F02.
-
 The instruction is now complete and address $2F02 contains $05, the
 complement of $FA. Also, the PC register has been incremented to point to
-
 the next instruction and the instruction fetch operation is beginning
 again.
 
-Condition Code Register
+#### Condition Code Register
 
 The ALU performs another very important function; setting or clearing
 certain bits, or flags, in the condition code, or CC, register. The
@@ -2636,9 +2661,12 @@ register is an eight-bit register; each bit, or flag, is an indicator of
 some previous event or condition. The condition code register is organized
 and each bit labeled as shown below.
 
-7 6 5.4.3 2 1 =«0 bit positions
-
-EF H I NZ.VC bit labels
+```
+    ┌───┬───┬───┬───┬───┬───┬───┬───┐
+    │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │    bit positions
+    └───┴───┴───┴───┴───┴───┴───┴───┘
+      E   F   H   I   N   Z   V   C      bit labels
+```
 
 The C, V, Z, N, and H bits are set or cleared by the ALU to serve as a
 record of the general outcome of the operation. The E, F, and I bits are
@@ -2652,26 +2680,13 @@ positions. If a carry is generated from the ALU during binary addition, the
 C bit is set; otherwise it is cleared. Two examples of binary addition are
 below.
 
-Cc
-110 0
-101 + 0
-011 C=0 ]
-
-me IO mw
-
-0
-]
-1
-
-me I1O pe
-Be jO me
-
-0
-]
-1
-
-oye
-mi ©
+```
+       c  c c c c  c                            c
+          1 0 1 1  0 1 1 0           1 0 1 1  0 0 1 0
+        + 0 1 1 0  1 1 0 1         + 0 1 0 0  1 0 1 1
+        ------------------         ------------------
+    C=1   0 0 1 0  0 0 1 1    C=0    1 1 1 1  1 1 0 1
+```
 
 In the lefthand example a carry was generated from the most significant bit
 position, so the C bit is set. In the second example no carry from the MSB
@@ -2680,28 +2695,14 @@ position was generated, so the C bit is cleared.
 After a subtract operation, the C bit will be set if a borrow was
 generated from the ALU. This process can be seen as:
 
-b
+```
+                b                  b              b
+          1 0 1 1  0 1 1 0           0 0 1 1  0 1 1 0
+        - 0 0 1 0  1 0 1 0         - 1 0 0 1  0 1 0 1
+        ------------------         ------------------
+    C=0   1 0 0 0  1 1 0 0    C=1    1 0 1 0  0 0 0 1
+```
 
-b
-]
-0)
-0
-
-ojore
-
-0011 0
-- 1001 0
-1010 0
-
-er ©
-
-1011 0110
-- 001] 1010
-1000 1100
-
-ore
-
-C=0 C=1
 In the lefthand example, a borrow was not generated from the ALU, so the C
 bit is cleared. In the righthand example, 1 a borrow was generated from the
 ALU, so the C bit is set.
@@ -2712,12 +2713,14 @@ the V bit is cleared if the two leftmost bit positions either do or do not
 both generated a carry. The V bit is set if only one of the two leftmost
 bit positions generate a carry. Two examples of this are:
 
-ek #*
-cc c cece cc
-11000110 0101 0011
-+1iljlj1 0100 +0011 0110
-
-v=0 1011 1010 =1 1000 1001
+```
+          * *                        * *
+       c  c        c                 c c c    c c
+          1 1 0 0  0 1 1 0           0 1 0 1  0 0 1 1
+        + 1 1 1 1  0 1 0 0         + 0 0 1 1  0 1 1 0
+        ------------------         ------------------
+    V=0   1 0 1 1  1 0 1 0    V=1    1 0 0 0  1 0 0 1
+```
 
 where the asterisks mark the positions of the two leftmost bits. In the
 lefthand example, a carry was generated by bit 6 and bit 7, so there is no
@@ -2740,49 +2743,15 @@ bit will be set if there was a carry and it will be clear of there was no
 carry. The H bit essentially indicates if there was a carry from the least
 significant nibble to the most significant nibble. Two examples of this
 are:
-c *
-0
-1
 
-ee
+```
+                   *   c             c     c  *
+          0 1 1 1  1 0 0 1           0 1 0 0  1 0 1 0
+        + 1 0 0 0  0 1 0 1         + 0 1 1 0  1 1 0 0
+        ------------------         ------------------
+    H=0   1 1 1 1  1 1 1 1    H=1    1 0 1 1  0 1 1 0
+```
 
-+
-H=0
-
-+
-
-“la Oo
-
-c
-0
-0
-1
-
-olog
-
-*
-1 1
-0 0
-1 1
-
-1 ©
-
-11
-0.0
-11
-
-Ol wo
-Hho
-
-0
-0
-1
-
-Ole we
-
-01
-10
-111 H=1 11
 where the asterisk marks the position of bit 3, or the source of the
 half-carry. In the lefthand example no carry was generated by bit
 position three so the H bit equals zero. In the righthand example there is
@@ -2790,10 +2759,10 @@ a carry from bit position three so the H bit equals one. After a
 subtraction, the value of the H bit is not defined; that is, it is not set
 to any particular state. The H bit is used by the MPU when performing a
 decimal adjust on binary coded decimal numbers.
+
 Not all of the MC6809E instructions have an effect on all the condition
 code bits described so far. The conditions that the bits of the condition
 code register represent are just not possible or applicable to some
-
 instructions. A detailed description of the instructions in Chapter Five
 will indicate which condition code bits are modified by each instruction.
 The condition code register is probably the most important register in
@@ -2809,7 +2778,7 @@ for a match, or tests the N bit of the condition code register is the
 Branch on Minus (BMI mnemonic) instruction. This instruction would appear
 in symbolic notation as:
 
-BMI $172E
+    BMI $172E
 
 If the N bit is set, the MPU will be directed to start executing
 instructions starting at address $172E. If the N bit is not set the MPU
@@ -2822,7 +2791,7 @@ is similar to the BASIC IF... THEN command. There are 16 different
 conditional branch instructions that test the various combinations of the
 C, V, Z, N, and H bits being on of off.
 
-A, B, and D Registers
+#### A, B, and D Registers
 
 The A and B registers are two identical eight-bit registers that can
 each hold one byte. Each of the registers is also known as an accumulator
@@ -2841,16 +2810,17 @@ instruction could be used. This instruction will read a byte from memory,
 perform the exclusive or operation between that byte and the byte in the A
 register, and then route the resulting byte into the A register, destroying
 the register’s previous contents. This instruction will appear as: EORA
-
 $3104 .We now have the answer we want, but it is in the A register. It can
 be stored in memory with the Store A (STA) instruction as: STA $3108. The
 Store A instruction will store the contents of the A register at memory
 address $3108. This program would collectively reside in memory as shown
 below.
 
-LDA $3100
+```
+LDA  $3100
 EORA $3104
-STA $3108
+STA  $3108
+```
 
 The same, or a similar sequence of operations, can also be performed using
 the B register:
@@ -2860,7 +2830,11 @@ register. The D register is 16 bits long; the upper eight bits are the A
 register and the lower eight bits are the B register. This relationship is
 illustrated below.
 
-D reg. -| A reg. B reg.
+```  
+         ┌────────┬───────┐
+D reg. = │ A reg. │ B reg.│
+         └────────┴───────┘
+```
 
 A use of the D register is the Store D (STD) instruction. This instruction
 stores the most significant byte of the D register in memory at address N
@@ -2868,7 +2842,7 @@ and the least significant byte at address N+1. For example: STD $2000 will
 store the contents of the A register at $2000 and the contents of the B
 register at $2001.
 
-X and Y Registers
+#### X and Y Registers
 
 The X and Y registers are two identical 16-bit registers. Each register
 is primarily used to hold an address, but can also be used to hold a double
@@ -2890,15 +2864,11 @@ contents of an index register to generate an effective address. The
 effective address is the actual address sent on the address bus to the
 memory to specify a particular byte to be accessed. These operations will
 not alter the contents of the index register; they only generate the
-
 effective address. One operation is to add to the value in an index
-
 register a signed constant number whose value can be from -32768 - +32767
 decimal. The other operation is to add to the value in an index register
-
 the contents, in signed binary format, of the A, B, or D register. These
 operations let us preserve the starting address loaded into the index
-
 register.
 
 When using an index register as a pointer, that index register will be
@@ -2909,19 +2879,18 @@ the address contained in the Y register. If the Y register contains the
 starting address of a table, the effective address of a particular byte can
 be calculated within the operand. Examples are:
 
+```
 LDA 10,Y
 LDA B,Y
+```
 
 The first example will load the A register with the byte from the effective
 address, calculated as the sum of the contents of the Y register and 10,
 decimal. The second example will load the A register with the byte from the
 effective address, calculated by adding the contents of the Y register to
-
 the contents of the B register. In neither example will the Y or B
-
 registers be changed. If the Y register points to the end of a table, the
 following instruction can be used to read a byte from that table:
-
 LDA -42,Y. In this case the effective address will be the contents of the Y
 register minus a decimal 42.
 
@@ -2931,7 +2900,7 @@ address of an element in a table. Also, since the index registers are 16
 bits long, any location within a 64K memory may be accessed. This is one
 feature that makes the MC6809E MPU a powerful microprocessor.
 
-U and S Registers
+#### U and S Registers
 
 The U and S registers are two identical 16-bit registers used as index
 registers or stack pointers. When used as index registers, the U and S
@@ -2946,16 +2915,23 @@ at the top (the newest byte) of the stack is at the lowest memory address
 of the stack. The stack pointer in use, U or S, will contain that address.
 The byte at the bottom, the oldest byte, is at the highest memory address
 of the stack. Fig. 3-4 shows the U stack as five bytes in memory; the top
-
 of the stack is at address $3FFC and the U register contains $3FFC. The S
 stack uses the S register as its pointer.
 
-U reg. = 3FFC C3 top of stack
-3FFD co
-3FFE C4
-3FFF
-4000 C—) bottom of stack
+```
+         ┌────┐
+U reg. = │3FFC│ top of stack
+         ├────┤
+         │3FFD│   
+         ├────┤
+         │3FFE│   
+         ├────┤
+         │3FFF│   
+         ├────┤
+         │4000│ bottom of stack      
+         └────┘
 
+```
 Fig. 3-4 A Stack in the MC6809E
 
 When a byte is pulled from a stack, the top byte is read and then the
@@ -2990,21 +2966,18 @@ times when the MPU itself will push or pull data to or from this stack in
 response to certain stimuli. One should not use the S register until more
 is known about the hardware stack.
 
-Direct Page Register
+#### Direct Page Register
 
 The direct page, or DP, register is an eight-bit register that
 holds a byte representing the upper eight bits of the operand address. This
 capability is used when direct addressing is specified. First the page
 register must be loaded with an appropriate value. Then instructions using
-
 direct addressing may be used. Assume the DP register has been loaded with
 $23. An instruction using direct addressing will appear as STA <$7C. This
 instruction will store the contents of the A register in address $237C. You
 can see the content of the DP register is linked, or concatenated, with
-
 the single byte after the op code to form the effective address. This
 technique allows for shorter instructions so more instructions will fit in
-
 a given amount of memory, and the instructions will execute faster since
 fewer bytes must be read from memory.
 
@@ -3017,28 +2990,35 @@ as a programming aid is the simplified version of a block diagram shown in
 Fig. 3-5. The programming model in Fig. 3-5 depicts all the controllable
 registers and labels the bits of the condition code register.
 
-15 0
+```
+ 15                        0
+┌───────────────────────────┐
+│  X - index register       │ ──┐
+├───────────────────────────┤   │
+│  Y - index register       │   │
+├───────────────────────────┤   ├─ Pointer Registers
+│  U - user stack ptr.      │   │
+├───────────────────────────┤   │
+│  S - hardware stack ptr.  │ ──┘
+├───────────────────────────┤
+│             PC            │      Program Counter
+├─────────────┬─────────────┤
+│      A      │      B      │      Accumulators
+└─────────────┴─────────────┘
+ └────────────┬────────────┘
+              D
 
-X - index register
-
-Y - index register
-a Pointer Registers
-U - user stack ptr.
-
-S - hardware stack ptr.
-
-Program Counter
-
-Accumulators
-
-7 . 0 Direct
-| DP Page Register
-7 0 Condition
-
-tEFHINZVC Code Register
-
+             7             0       Direct
+            ┌───────────────┐
+            │       DP      │      Page Register
+            └───────────────┘
+            
+             7             0       Condition
+            ┌───────────────┐
+            │E F H I N Z V C│      Code Register
+            └───────────────┘
+```
 Fig. 3-5 A Programming Model of the MC6809E
-Courtesy of Motorola,Inc.
 
 ### MC6809E EXTERNAL CONNECTIONS
 
@@ -3049,13 +3029,36 @@ circuit and the connecting pins is illustrated in Fig. 3-6. The arrangement
 shown is the view as seen when looking down on the top of the dual-in-line
 package.
 
+```
+     ┌───────⏝───────┐
+ Vss │ 1 *         40│ HALT
+ NMI │ 2           39│ TSC
+ IRQ │ 3           38│ LIC
+FIRQ │ 4           37│ RESET
+  BS │ 5           36│ AVMA
+  BA │ 6           35│ Q
+ Vcc │ 7           34│ E
+  A0 │ 8           33│ BUSY
+  A1 │ 9           32│ R/W
+  A2 │10           31│ D0
+  A3 │11           30│ D1
+  A4 │12           29│ D2
+  A5 │13           28│ D3
+  A6 │14           27│ D4
+  A7 │15           26│ D5
+  A8 │16           25│ D6
+  A9 │17           24│ D7
+ A10 │18           23│ A15
+ A11 │19           22│ A14
+ A12 │20           21│ A13
+     └───────────────┘
+```
 Fig. 3-6 The Pin Assignments of the MC6809E (top view).
-Courtesy of Motorola, Inc.
 
 You can see where the address bus (AO-A15) and the data bus (D0-D7)
 bits enter or leave the MPU as electrical signals. The electrical power is
-supplied via pins 1 and 7 where pin 1, Vgg, is connected to ground or a
-reference and pin 7, Voo: is connected to a power source providing +5
+supplied via pins 1 and 7 where pin 1, Vss, is connected to ground or a
+reference and pin 7, Vcc: is connected to a power source providing +5
 volts. The state of a bit is represented by the level of the voltage at its
 respective pin. A zero bit is electrically defined as being a low voltage
 of between zero and +0.4 volts. A one bit is a high voltage of between +2
@@ -3066,7 +3069,6 @@ high. If $82 were on the data bus, pins 24 and 30 would be high and pins
 The R/W (read/write) output, pin 32, is the control signal that
 initiates a memory read or write operation. A write operation is started by
 the MPU setting pin 32 low. The byte the MPU put on the data bus is then
-
 written in the address the MPU put on the address bus. A read operation is
 initiated by the MPU setting pin 32 high. A byte is then read from the
 address the MPU put on the address bus. This byte is sent from the memory
@@ -3095,7 +3097,6 @@ of the Color Computer is pressed. While the reset signal is held low the DP
 register is cleared and the F and I bits of the CC register are set. The F
 and I bits will be described later in this chapter. When the reset signal
 is set back high, or deactivated, a sequence of operations is initiated.
-
 First a byte is read from address $FFFE and loaded into the upper half
 (bits 8-15) of the PC register. Then a byte is read from address $FFFF and
 loaded into the lower half (bits 0-7) of the PC register. Then the MPU
@@ -3108,7 +3109,6 @@ The TSC, BUSY, LIC, BS, BA, and AVMA control signals are not used in
 the Color Computer. These signals can be used to control sharing the system
 bus with other devices or MPU’s that could be connected to the system bus.
 A hardware interrupt is initiated by IRQ, NMI, or
-
 FIRQ being set active.
 
 ### INTERRUPTS
@@ -3119,7 +3119,6 @@ instructions causing the MPU to jump from one section of the program to
 another or cause the MPU to repeatedly execute a certain program section,
 as in a loop. All operations take place internally with no regard for the
 outside world. Eventually the MPU must be notified of some external event
-
 so it can directed to perform another task. An external event can notify
 the MPU of its existence by an interrupt. As the name implies, an interrupt
 can interrupt an MPU that is doggedly executing a program.
@@ -3140,14 +3139,15 @@ their contents, and the function that will use that vector, as set up by
 Color BASIC 1.1. Table 3-1 is a small part of the memory map of the Color
 Computer.
 
-FFFE and FFFF
-FFFC and FFFD
-
-FFFA and FFFB
-FFF8 and. FFF9
-FFF6 and FFF7
-FFF4 and FFF5
-FFF2 and FFF3
+| Location of Vector | Vector | Initiator |
+|-|-|-|
+| FFFE and FFFF | A027 | RESET |
+| FFFC and FFFD | 0109 | NMI |
+| FFFA and FFFB | 0106 | SWI |
+| FFF8 and FFF9 | 010C | IRQ |
+| FFF6 and FFF7 | 010F | FIRQ |
+| FFF4 and FFF5 | 0103 | SWI2 |
+| FFF2 and FFF3 | 0100 | SWI3 |
 
 Table 3-1 The Color Computer Vector Table
 
@@ -3155,31 +3155,25 @@ If your computer has a different version of BASIC, the vectors may be
 different than those in Table 3-1. The contents of addresses $FFF2 through
 $FFFF can be found with the following BASIC program.
 
+```
 10 CLS
-
 20 X=0:Y=&HFFFE
-
-30 PRINT" INTERRUPT VECTOR TABLE"
-
+30 PRINT"    INTERRUPT VECTOR TABLE"
 40 PRINT
-
-50 PRINT" ADDRESS CONTENTS"
-
+50 PRINT"    ADDRESS    CONTENTS"
 60 K=256*PEEK(Y-X)+PEEK(Y-X+1)
-
-70 PRINT" "= HEX$(Y-X);"+"sHEX$(Y-X+1);" "SHEXS$(K)
-80 X=X42
-
+70 PRINT"    ";HEX$(Y-X);"+";HEX$(Y-X+1);"    ";HEX$(K)
+80 X=X+2
 90 IF X<14 THEN 60
-
 100 END
+```
 
 The program the MPU is vectored to by an interrupt is known as an
 interrupt handler or interrupt service routine. After the interrupt
 handler has completed its task, it may return control, or jump back, to the
 interrupted program so the program may continue.
 
-IRQ Interrupt
+#### IRQ Interrupt
 
 The IRQ (interrupt request) sequence is initiated if the MPU is
 running, the I bit of the CC register is not set, and the IRQ pin is
@@ -3202,19 +3196,36 @@ address $FFF9. Then the BS pin is set low. Now the MPU will start to
 execute the instruction whose starting address was just loaded into the PC
 register. The Color Computer IRQ sequence of events can be simplified
 because the BA and BS signals are not used. Its flowchart is shown in Fig.
-3-7,
+3-7.
 
-Set E bit in CC reg.
-
-Push all regs. onto S stack |
-Set I bit in CC reg.
-
-Load PC reg. with IRQ vector
-from addr $FFF8 and $FFF9
-
-Start executing instruction
-at vector address
-
+```
+            ╭───────╮
+            │ Start │
+            ╰───┬───╯
+                │
+                ▼
+    ┌───────────────────────┐
+    │  Set E bit in CC reg. │
+    └───────────┬───────────┘
+                ▼
+ ┌─────────────────────────────┐
+ │ Push all regs. onto S stack │
+ └──────────────┬──────────────┘
+                ▼
+    ┌───────────────────────┐
+    │  Set I bit in CC reg. │
+    └───────────┬───────────┘
+                ▼
+┌─────────────────────────────────┐
+│ Load PC reg. with IRQ vector    │
+│ from addr $FFF8 and $FFF9       │
+└───────────────┬─────────────────┘
+                ▼
+┌─────────────────────────────────┐
+│ Start executing instruction     │
+│ at vector address               │
+└─────────────────────────────────┘
+```
 Fig. 3-7 Color Computer IRQ Sequence.
 
 Fig. 3-8 shows the registers in the S stack as the IRQ sequence has
@@ -3225,17 +3236,19 @@ should have previously been loaded with an address at which the stack
 should start. This is one of the responsibilities of a programmer who will
 be using interrupts.
 
-after interrupt sequence S-> CC
-
-DP
-
-UL
-
-PCy
-PC,
-
-before interrupt sequence S-> (7)
-
+```
+after interrupt sequence  S->  CC
+                               A
+                               B
+                               DP
+                               Xu
+                               Xl
+                               Uu
+                               Ul
+                               PCu
+                               PCl
+before interrupt sequence S->  ▭
+```
 Fig: 3-8 The S Stack after an IRQ Sequence
 
 The interrupt handler program could be a program to interrogate the
@@ -3252,7 +3265,7 @@ rest of the registers, ic. A, B, DP, X, Y, U, and PC, from the S stack.
 The MPU will now resume its operation at the point of interruption with all
 its registers containing their original values.
 
-FIRQ Interrupt
+#### FIRQ Interrupt
 
 The FIRQ (fast interrupt request) sequence is initiated if the MPU is
 running, the F bit of the CC register is not set, and the FIRQ pin
@@ -3263,39 +3276,47 @@ The FIRQ interrupt sequence is very similar to the IRQ sequence. The
 FIRQ interrupt sequence is faster because only the PC and CC registers are
 pushed onto the S stack, in that order. During the FIRQ sequence the F and
 I bits of the CC register are set to prevent another FIRQ or IRQ interrupt
-
 before the MPU is ready for one. Also, the E bit of the CC register is
 cleared to indicate to the RTI instruction that the entire set of registers
-
 was not put in the stack. A FIRQ interrupt can interrupt an IRQ interrupt
 handler program because the IRQ sequence did not set the F bit. In this
 sense the FIRQ interrupt is of higher priority than the IRQ interrupt. The
 Color Computer FIRQ interrupt sequence (BA and BS signals not shown) and
 the resulting stack can be seen in Fig. 3-9. Also note that the FIRQ vector
-
 is read from addresses $FFF6 and $FFF7.
 
-| Clear E bit of CC reg. |
-
-Push PC and CC
-
-onto S stack post-FIRQ S-> CC
-
-SetIlandF | PC,
-bits of CC reg. pre-FIRQ S-> C7
-——__l|
-
-Load PC reg. with FIRQ vector
-
-from addr. $FFF6 and $FFF7
-
-Start executing instruction
-
-at vector address
-
+```
+        ╭───────╮
+        │ Start │
+        ╰───┬───╯
+            ▼
+┌───────────────────────────┐
+│  Clear E bit of CC reg.   │
+└─────────────┬─────────────┘
+              ▼
+┌───────────────────────────┐
+│  Push PC and CC           │            post-FIRQ  S ─►  CC
+│  onto S stack             │                             PCu
+└─────────────┬─────────────┘                             PCl
+              ▼                          pre-FIRQ   S ─►  ▭
+┌───────────────────────────┐
+│  Set I and F              │
+│  bits of CC reg.          │
+└─────────────┬─────────────┘
+              ▼
+┌─────────────────────────────────┐
+│  Load PC reg. with FIRQ vector  │
+│  from addr. $FFF6 and $FFF7     │
+└───────────────┬─────────────────┘
+                ▼
+┌─────────────────────────────────┐
+│  Start executing instruction    │
+│  at vector address              │
+└─────────────────────────────────┘
+```
 Fig. 3-9 Color Computer FIRQ Interrupt Sequence
 
-NMI Interrupt
+#### NMI Interrupt
 
 The NMI (non maskable interrupt) is the highest priority interrupt; it
 can not be masked out or inhibited. The MPU is designed so that after a
@@ -3306,33 +3327,46 @@ the NMI pin. The NMI sequence (without BS and BA signals) can be seen
 in Fig. 3-10. The NMI sequence stacks all the registers, as can be seen in
 Fig. 3-8.
 
-Software Interrupts
+#### Software Interrupts
 
 A software interrupt can be generated by any of the three software
 interrupt instructions. Their mnemonics are SWI, SWI2, and SWI3. The
 software interrupt instructions initiate a sequence very similar to the IRQ
 sequence. The main difference is that they can not be inhibited. Other
 differences are: the SWI sequence sets both the F and I bits of the CC
-
 register and gets its vector from addresses $FFFA and $FFFB; the SWI2
 sequence does not set the I bit of the CC register and gets its vector from
 addresses $FFF4 and $FFF5; the SWI3 sequence does not set the I bit of the
 CC register and gets its vector from addresses $FFF2 and $FFF3. You can use
-
 Fig. 3-7 to trace their events.
 
-Set E bit of CC reg.
-
-| Stack all regs. except S
-
-Set F and I bits of CC reg. |
-
-Load PC reg. with vector
-from addr $FFFC and $FFFD
-
-Start executing instruction
-at vector address
-
+```
+        ╭───────╮
+        │ Start │
+        ╰───┬───╯
+            ▼
+┌───────────────────────────┐
+│  Set E bit of CC reg.     │
+└─────────────┬─────────────┘
+              ▼
+┌───────────────────────────┐
+│  Stack all regs. except S │
+└─────────────┬─────────────┘
+              ▼
+┌──────────────────────────────┐
+│  Set F and I bits of CC reg. │
+└─────────────┬────────────────┘
+              ▼
+┌─────────────────────────────────┐
+│  Load PC reg. with vector       │
+│  from addr $FFFC and $FFFD      │
+└───────────────┬─────────────────┘
+                ▼
+┌─────────────────────────────────┐
+│  Start executing instruction    │
+│  at vector address              │
+└─────────────────────────────────┘
+```
 Fig. 3-10 Color Computer NMI Interrupt Sequence
 
 ## CHAPTER 4
