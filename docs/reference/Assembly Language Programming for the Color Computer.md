@@ -7977,6 +7977,7 @@ numbers are represented in two bytes, even if they fit in one byte:
 .NOT.1234= EDCB
 1234<2= 48C         (shift left two bit positions)
 1234<-I= 91         (shift right one bit position)
+```
 
 The relational operators indicate whether an expression is true. If
 true, the resulting double byte is set to SFFFF. If false, the resulting
@@ -8070,57 +8071,37 @@ line 310. If it is not valid, it is converted to one at line 300, by adding
 $40 to it and then placing it in the screen buffer at line 310. Line 320
 branches to the beginning of this loop to act on the next character.
 
-00100 KEKE EREREREEER EERE EREREERERERERRRERERERERE
-
+```
+00100 **********************************************
 00110 *PROGRAM NAME: CLRPRN
 00120 *BY SAM FASTCODE AUG 2,1985
 00130 *THIS PROGRAM WILL CLEAR THE SCREEN AND DISPLAY
-
 00140 *AN UPPER CASE TEXT LINE. IT IS TO BE EXECUTED FROM
 00150 *BASIC TO WHICH IT WILL RETURN UPON COMPLETION.
-00160 Fos T I TI IT I
-00170 ORG $2A00 LOADING ADDRESS
-
-00180 CLRPRN LDX #$400 GET SCREEN POINTER
-00190 LDA #%60 GET SPACE CODE
-
-00200 CL1 STA ,X+ PUT CODE ON SCREEN
-00210 CMPX. #55FF END OF SCREEN?
-
-00220 BLS CL1 IF NOT, DO AGAIN
-
-00230 LDX #$4C0 GET DISPLAY POINTER
-00240 LDY #CLTEXT GET TEXT POINTER
-
-00250 CL2 LDA ,Y+ GET TEXT CODE
-
-00260 CMPA #$04 END OF TEXT?
-
-00270 BEQ CL4 IF SO, GO TO END
-
-00280 CMPA #540 GOOD VIDEO CODE?
-
-00290 BHS..CL3 IF SO, USE IT
-
-00300 ADDA #$40 CHANGE TO VID CODE
-00310 CL3 STA ,X+ PUT ON SCREEN
-
-00320 BRA CL2 DO AGAIN
-
-00330 CL4 RTS RETURN TO BASIC
-
-00340 essere III III I IRR IIR IRI IR IIT I
-00350 CLTEXT FCC /TESTING LINE 0123456789 1"#3/
-00360 FCB $04 END OF TEXT CODE
-
-003 70 Hess rare III III IRR IIR I RR II IR.
-
-00380
-
-END $2A00
-
-START EXECUTION ADDR
-
+00160 **********************************************
+00170           ORG $2A00       LOADING ADDRESS
+00180 CLRPRN    LDX #$400       GET SCREEN POINTER
+00190           LDA #$60        GET SPACE CODE
+00200 CL1       STA ,X+         PUT CODE ON SCREEN
+00210           CMPX #$5FF      END OF SCREEN?
+00220           BLS CL1         IF NOT, DO AGAIN
+00230           LDX #$4C0       GET DISPLAY POINTER
+00240           LDY #CLTEXT     GET TEXT POINTER
+00250 CL2       LDA ,Y+         GET TEXT CODE
+00260           CMPA #$04       END OF TEXT?
+00270           BEQ CL4         IF SO, GO TO END
+00280           CMPA #$40       GOOD VIDEO CODE?
+00290           BHS CL3         IF SO, USE IT
+00300           ADDA #$40       CHANGE TO VID CODE
+00310 CL3       STA ,X+         PUT ON SCREEN
+00320           BRA CL2         DO AGAIN
+00330 CL4       RTS             RETURN TO BASIC
+00340 **********************************************
+00350 CLTEXT    FCC /TESTING LINE 0123456789 !"#$/
+00360           FCB $04         END OF TEXT CODE
+00370 **********************************************
+00380           END $2A00       START EXECUTION ADDR
+```
 Listing 7-1 The CLRPRN program.
 
 The comments in this program help immensely in understanding the
@@ -8131,7 +8112,6 @@ are any comments; the assembler completely ignores comments.
 There is more to documenting a source code than just commenting each
 statement. Lines 110 - 150 are the descriptive header, bracketed by lines
 100 and 160 to set it off from the instruction statements. Line 110 gives
-
 the program name, CLRPRN (clear and print). The name is limited to six
 characters because it will be used as the name or label of the first
 instruction in the program. The name also specifies the starting address.
@@ -8166,8 +8146,10 @@ executing. This makes using the program much easier. After the object code
 is assembled onto tape, it can be easily loaded and executed with the
 following BASIC commands:
 
+```
 CLOADM "CLRPRNO"
 EXEC
+```
 
 Lines 170 through 380 are all commented. You may not feel this is
 needed with shorter programs, but they may be combined together to yield a
@@ -8182,21 +8164,19 @@ The symbols used in this program are derived by a technique to keep one
 from defining a symbol twice. The multiply-defined symbol problem is most
 likely to arise in large programs composed of many sections. One may
 mistakenly define a symbol in one section and then again in another
-
 section. When the sections are assembled the assembler detects the error,
 which must then be corrected. The technique used here requires that each
 small program or program section be given a unique name, and the first two
 characters of each name must be different from the first two characters of
 any other name. All the symbols defined within a section are composed of
 the same two first letters plus up to four more characters. Thus, the
-
 sample program CLRPRN would define the symbols CLRPRN, CL1, CL2, CL3,
 CL4, and CLTEXT. The only labels that can be the same in. a group of
 subprograms are those in the operand fields; the different sections may use
 or reference any data area created by any other section. Remember, the
 potential problem is defining a symbol twice, not using it twice.
 
-Segmented Programs
+#### Segmented Programs
 
 A program can be built in segments that are assembled and tested
 separately before put together. Smaller sections are much easier to debug
@@ -8209,23 +8189,18 @@ program is divided into sections with clearly defined tasks. The first
 section's task is to clear the screen. Its source code would look like
 Listing 7-2.
 
+```
 100 *CLEAR THE SCREEN
-1710 JHE EEE IID ICI IOI III IR IR IT IR TR TR TR TRI IR
-
-120 PHEX LDX #$400 START OF DISPL BUFFER
-130 LDA #%60 SPACE CODE
-
-140 PHCL STA ,X+ PUT IN DISPL BUFFER
-
-150 CMPX #$5FF END OF BUFFER?
-
-160 BLS PHCL IF NOT,DO AGAIN
-
-170 SWI RETURN TO ZBUG
-
-1B FOE IC IDI TO III II IIR IAT IT IT IR TIT RR I
-190 END
-
+110 **********************************************
+120 PHEX    LDX #$400       START OF DISPL BUFFER
+130         LDA #$60        SPACE CODE
+140 PHCL    STA ,X+         PUT IN DISPL BUFFER
+150         CMPX #$5FF      END OF BUFFER?
+160         BLS PHCL        IF NOT,DO AGAIN
+170         SWI             RETURN TO ZBUG
+180 **********************************************
+190         END
+```
 Listing 7-2 Clearing the screen.
 
 The first instruction is labeled PHEX, the name (print hex) of the
@@ -8242,32 +8217,70 @@ hexadecimal digits 0 - 9 and A - F, found in Appendix D. This task would be
 coded, tested and debugged, and its source code saved on cassette tape.
 
 The source code for each section should use different line numbers so
-
 they won't overlap those of another section. For example, the first
-section uses lines 100 - 190. The second section should start with line
-200.
+section uses lines 100 - 190. The second section should start with line 200.
 
-Get MS nibble
-
-Calc video
-code (A-F)
-
-Calc video
-code (0-9)
-
-Store code
-
-in memory
-
-Get LS nibble
-
-Calc video Calc video
-code (0-9) code (A-F)
-
-Store code
-
-1n memory
-
+```
+                          ╭───────╮
+                          │ Start │
+                          ╰───┬───╯
+                              ▼
+                    ┌──────────────────┐
+                    │     Get byte     │
+                    └─────────┬────────┘
+                              ▼
+                    ┌──────────────────┐
+                    │  Get MS nibble   │
+                    └─────────┬────────┘
+                              ▼
+                          ╱───────╲
+                         ╱  Nibble ╲
+                  ┌─No──╳   > 9 ?   ╳──Yes─┐
+                  │      ╲         ╱       │
+                  │       ╲───────╱        │
+                  ▼                        ▼
+        ┌──────────────────┐     ┌──────────────────┐
+        │   Calc video     │     │   Calc video     │
+        │   code (0-9)     │     │   code (A-F)     │
+        └────────┬─────────┘     └─────────┬────────┘
+                 │                         │
+                 └────────────┬────────────┘
+                              ▼
+                    ┌──────────────────┐
+                    │   Store code     │
+                    │   in memory      │
+                    └─────────┬────────┘
+                              ▼
+                    ┌──────────────────┐
+                    │     Get byte     │
+                    └─────────┬────────┘
+                              ▼
+                    ┌──────────────────┐
+                    │  Get LS nibble   │
+                    └─────────┬────────┘
+                              ▼
+                          ╱───────╲
+                         ╱  Nibble ╲
+                  ┌─No──╳   > 9 ?   ╳──Yes─┐
+                  │      ╲         ╱       │
+                  │       ╲───────╱        │
+                  ▼                        ▼
+        ┌──────────────────┐     ┌──────────────────┐
+        │   Calc video     │     │   Calc video     │
+        │   code (0-9)     │     │   code (A-F)     │
+        └────────┬─────────┘     └─────────┬────────┘
+                 │                         │
+                 └────────────┬────────────┘
+                              ▼
+                    ┌──────────────────┐
+                    │   Store code     │
+                    │   in memory      │
+                    └─────────┬────────┘
+                              ▼
+                          ╭───────╮
+                          │  End  │
+                          ╰───────╯
+```
 Fig. 7-1 Generating Video Codes of Hexadecimal Digits.
 
 The source code for each section should use different line numbers so
@@ -8276,98 +8289,66 @@ uses lines 100 - 190. The second section should start with line 200.
 
 The third section moves the video display codes, generated by the
 previous section, into the display buffer. In this case they are displayed
-
 on the fifth line, toward the right side of the screen.
 
-100 HIKE KEKE REK RE RE RRERERERER ER ERE EREEERERERER
-
+```
+100 **********************************************
 110 *PROGRAM NAME: PHEX
-
 120 *BY AUTHOR - DATE
-
 130 *THIS PROGRAM IS TO BE EXECUTED FROM ZBUG TO
 440 *WHICH IT WILL RETURN UPON COMPLETION. IT WILL
 150 *CLEAR THE SCREEN, GENERATE THE VIDEO CODES OF
 160 *THE HEX DIGITS IN A BYTE, AND DISPLAY THEM.
-170 HARRI RRR RRR IRI IRR RRR RRR RIAA RRR IR,
-
-180 ORG $2000 LOAD ADDR
-190 RII IIR A IRR IIR RR IRR RRR REITER I RTE III
-
+170 **********************************************
+180         ORG $2000       LOAD ADDR
+190 **********************************************
 200 *CLEAR THE SCREEN
-210 FIR RI IIR I IIHR III IR RR IRR IRR RITE FRIAR ET
-
-220 PHEX LDX #$400 START OF DISPL BUFFER
-230 LDA #$60 SPACE CODE
-
-240 PHCL STA ,X+ PUT IN DISPL BUFFER
-250 CMPX #$5FF END OF BUFFER?
-
-260 BLS PHCL IF NOT,DO AGAIN
-
-270 FREI IKI IKKIK EEE RIERA RRR E EE EREREREREER
-
+210 **********************************************
+220 PHEX    LDX #$400       START OF DISPL BUFFER
+230         LDA #$60        SPACE CODE
+240 PHCL    STA ,X+         PUT IN DISPL BUFFER
+250         CMPX #$5FF      END OF BUFFER?
+260         BLS PHCL        IF NOT,DO AGAIN
+270 **********************************************
 280 *GENERATE THE VIDEO CODES OF THE HEX DIGITS
 290 *IN A BYTE AT PHBYTE AND STORE THEM AT PHBYDS
-
-300 KKK RRR ER RIKER REE ERE EREREERRERERERERE
-
-310 LDX #PHBYDS STORAGE ADDR
-
-320 LDB PHBYTE GET BYTE
-
-330 LDA #$10 MULTIPLIER VALUE
-340 MUL SHIFT MS NIBBLE INTO A
-350 CMPA #09 GREATER THAN 9?
-
-360 BHI PHCVA IF SO,CONV TO ALPHA
-370 ORA #$70 CONV TO NUM CODE
-380 BRA PHCVB GO STORE IT
-
-390 PHCVA ADDA #$37 CONV TO ALPHA CODE
-400 PHCVB STA ,X+ STORE CODE
-
-410 LDA PHBYTE GET BYTE
-
-420 ANDA #S0F GET.LS NIBBLE
-
-430 CMPA #309 GREATER THAN 9?
-
-440 BHI PHCVC IF SO,CONV ALPHA
-450 ORA #$70 CONV TO NUM CODE
-460 BRA PHCVD GO STORE IT
-
-470 PHCVC ADDA #837 CONV TO ALPHA CODE
-480 PHCVD... STA. ,X+ STORE CODE
-
-490 KIKIKIIK RIKKI EIA EER EERIE ERE ERIE ERER
-
+300 **********************************************
+310         LDX #PHBYDS     STORAGE ADDR
+320         LDB PHBYTE      GET BYTE
+330         LDA #$10        MULTIPLIER VALUE
+340         MUL             SHIFT MS NIBBLE INTO A
+350         CMPA #09        GREATER THAN 9?
+360         BHI PHCVA       IF SO,CONV TO ALPHA
+370         ORA #$70        CONV TO NUM CODE
+380         BRA PHCVB       GO STORE IT
+390 PHCVA   ADDA #$37       CONV TO ALPHA CODE
+400 PHCVB   STA ,X+         STORE CODE
+410         LDA PHBYTE      GET BYTE
+420         ANDA #S0F       GET LS NIBBLE
+430         CMPA #$09       GREATER THAN 9?
+440         BHI PHCVC       IF SO,CONV ALPHA
+450         ORA #$70        CONV TO NUM CODE
+460         BRA PHCVD       GO STORE IT
+470 PHCVC   ADDA #$37       CONV TO ALPHA CODE
+480 PHCVD   STA ,X+         STORE CODE
+490 **********************************************
 500 *PUT TWO VIDEO CODES AT PHBYDS INTO DISP BUFF
-
-510 HKAAKKKKAIKIKRIKEREEEEERERREEEEREREREREREERERER
-
-520 LDD PHBYDS GET VIDEO CODES
-
-530 STD $498 PUT INTO BUFFER
-
-540 SWI RETURN TO ZBUG
-
-550 Farr oS aE ISTIC II IRI IRR IR IR IR TT EIR TR
-560 PHBYTE FCB $7C TEST BYTE
-
-570 PHBYDS RMB 2 STORAGE AREA
-
-580 END $2000 EXEC ADDR
-
+510 **********************************************
+520         LDD PHBYDS      GET VIDEO CODES
+530         STD $498        PUT INTO BUFFER
+540         SWI             RETURN TO ZBUG
+550 **********************************************
+560 PHBYTE  FCB $7C         TEST BYTE
+570 PHBYDS  RMB 2           STORAGE AREA
+580         END $2000       EXEC ADDR
+```
 Listing 7-3 The PHEX Program.
 
 After each section is written and debugged, their source codes can be
 merged together to form the total program. The three source code files can
 be successively loaded by the editor's load (L) command. If the source code
-
 statement numbers of each file do not overlap, the files will be appended
 to each other in the editor's text buffer. For example, the first section
-
 used lines 100 - 190, the second 200 - 500, and the third 600 - 700. Now
 the SWI and END statements must be removed from all but the last section.
 Any source code data areas of any section are then moved to follow the last
@@ -8393,22 +8374,30 @@ section the main program will resume execution. This type of a program
 section is a subroutine. Its relationship with the main, or calling,
 program can be seen in Fig. 7-2.
 
-Main Program
-
-start
-
-Subroutine
-start
-
-return
-
-end
+```
+            Main Program
+          ┌──────────────┐
+   start  │  - - - - -   │
+          │  - - - - -   │
+          │  - - - - -   │
+          │  - - - - -   │              Subroutine
+          │  - - - - -   │            ┌──────────────┐
+          │  - - - - -   │   call   ╭►│  - - - - -   │  start
+          │     JSR      │──────────╯ │  - - - - -   │
+          │  - - - - -   │◄─────────╮ │  - - - - -   │
+          │  - - - - -   │  return  │ │  - - - - -   │
+          │  - - - - -   │          │ │  - - - - -   │
+          │  - - - - -   │          │ │  - - - - -   │
+          │  - - - - -   │          ╰─│     RTS      │  end
+          │  - - - - -   │            └──────────────┘
+   end    │  - - - - -   │
+          └──────────────┘
+```
 Fig. 7-2 Concept: Main Program and Subroutine.
-The MPU is directed to a subroutine by a JSR or BSR instruction. This
 
+The MPU is directed to a subroutine by a JSR or BSR instruction. This
 is known as calling a subroutine. The JSR or BSR cause the contents of
 the PC register to be pushed onto the S stack (saved), and execution starts
-
 at the operand address, the starting address of the subroutine. A complete
 description of these instructions is in Chapter 5. When the subroutine is
 complete, it executes its last instruction: RTS. RTS pulls the contents of
@@ -8427,23 +8416,34 @@ must balance a group of conflicting requirements; memory use, execution
 speed, and programming ease. In the real world, the most important item is
 whether the final program works well, and programming ease certainly helps
 attain this.
-Main Program Responsibilities
+
+#### Main Program Responsibilities
 
 Before a subroutine is called the main program must establish the S
-stack. The § stack is an unused area of memory in which to store data. To
+stack. The S stack is an unused area of memory in which to store data. To
 use it as the S stack, the S register must be loaded with the highest
 address of that area plus one. Data can now be pushed into the stack and
 later pulled out. The S stack can be established at a memory address higher
 than the program, seen in Fig. 7-3.
 
-Program
-
-instructions
-
-stack area
-
-xxxx addr to put in S reg
-
+```
+         Program
+      ┌───────────┐  
+      │ - - - - - │  ⎫
+      │ - - - - - │  ⎪
+      │ - - - - - │  ⎪
+      │ - - - - - │  ⎪   instructions
+      │ - - - - - │  ⎬
+      │ - - - - - │  ⎪
+      │ - - - - - │  ⎪
+      │ - - - - - │  ⎪
+      ├───────────┤  ⎭
+      │           │  ⎫
+      │           │  ⎪   stack area
+      │           │  ⎬
+      └───────────┘  ⎭
+                   xxxx   addr to put in S reg
+```
 Fig. 7-3 Establishing the S Stack.
 
 A byte is pushed onto the stack by first decrementing the contents of
@@ -8473,13 +8473,27 @@ number of levels is the number of subroutines called before returning to
 the main program. This number increases as one subroutine calls another
 subroutine. Fig. 7-4 depicts a program with two levels of subroutines.
 
-Level 1 Level 2
-| SUBA |
-
-1
-Main Program !
-|
-
+```
+                         ¦ Level 1            ¦ Level 2
+                         ¦                    ¦
+                         ¦         SUBA       ¦
+                         ¦      ┌──────────┐  ¦
+    Main Program         ¦   ╭─►│ - - - -  │  ¦
+   ┌────────────┐        ¦   │  │ - - - -  │  ¦
+   │  - - - -   │        ¦   │  │ - - - -  │  ¦       SUBC
+   │  - - - -   │        ¦   │  │ JSR SUBC ├──┼────►┌──────────┐
+   │ JSR SUBA   ├────────┼───╯  │ - - - -  │◄─┼───╮ │ - - - -  │
+   │  - - - -   │◄───────┼────╮ │ - - - -  │  ¦   │ │ - - - -  │
+   │  - - - -   │        ¦    ╰─┤   RTS    │  ¦   │ │ - - - -  │
+   │  - - - -   │        ¦      └──────────┘  ¦   │ │ - - - -  │
+   │ JSR SUBB   ├────────┼─╮                  ¦   ╰─┤   RTS    │
+   │  - - - -   │◄─────╮ ¦ │       SUBB       ¦     └──────────┘
+   │  - - - -   │      │ ¦ │    ┌──────────┐  ¦
+   │  - - - -   │      │ ¦ ╰───►│ - - - -  │  ¦
+   │  - - - -   │      │ ¦      │ - - - -  │  ¦
+   └────────────┘      ╰─┼──────┤   RTS    │  ¦
+                         ¦      └──────────┘  ¦
+```
 Fig. 7-4 Multiple Levels of Subroutines.
 
 In Fig. 7-4, the main program would have to establish a stack big
@@ -8510,29 +8524,22 @@ when that subroutine clears the screen it returns to the calling program
 with no data to give it. The source code of a sample subroutine to clear
 the screen is in Listing 7-4.
 
+```
 1000 *SUBROUTINE NAME: CSCREN
-
 1010 *BY AUTHOR - DATE
-
 1020 *THIS SUBROUTINE WILL CLEAR THE TEXT
 1030 *SCREEN. IT USES 4 BYTES OF THE S STACK.
-
-1 040 HHI RI AIA IRE AAAI IAI ERR EERE
-
-1050 CSCREN PSHS A,X,CC SAVE A,X,CC REGS
-1060 LDX #$400 START OF DISPL BUF
-1070 LDA #$60 CODE OF SPACE
-
-1080 CS1 STA ,X+ PUT IN BUFFER
-
-1090 CMPX #$5FF END OF BUFFER?
-1100 BLS CS1 IF NOT,DO AGAIN
-1110 PULS A,X,CC RESTORE REGS
-
-4120 RTS RETURN
-
-1 130 HR AI AKIRA ETRE REAR RERIAKEIAEEREE ERIE
-
+1040 **********************************************
+1050 CSCREN     PSHS A,X,CC     SAVE A,X,CC REGS
+1060            LDX #$400       START OF DISPL BUF
+1070            LDA #$60        CODE OF SPACE
+1080 CS1        STA ,X+         PUT IN BUFFER
+1090            CMPX #$5FF      END OF BUFFER?
+1100            BLS CS1         IF NOT,DO AGAIN
+1110            PULS A,X,CC     RESTORE REGS
+1120            RTS             RETURN
+1130 **********************************************
+```
 Listing 7-4 THE CSCREN Subroutine.
 
 Line 1030 provides an important piece of information: how many stack
@@ -8540,17 +8547,13 @@ bytes the subroutine will use. This amount js in addition to the two bytes
 used to store the PC register. The source code of this subroutine, and
 others, is started at high line numbers to allow the main program's source
 code to be put in low numbered lines starting at 100. Line 1050 stores the
-
 A, X, and CC registers in the stack because this subroutine uses them. At
-
-line 1110, the A,
-
-X, and CC registers are pulled from the stack, restoring
-
+line 1110, the A, X, and CC registers are pulled from the stack, restoring
 them to their original contents. This lets the main program continue with
 all its registers unmodified.
 
-1200
+```
+
 1210
 1220
 1230
@@ -8566,29 +8569,22 @@ all its registers unmodified.
 1330
 1340
 
-*SUBROUTINE NAME: VIDEO
-
-*BY AUTHOR - DATE
-
-*THIS WILL CALCULATE THE VIDEO DISPLAY CODE
-*OF A CHARACTER WHOSE ASCII CODE IS IN A. THE
-*CHARACTER SET IS UPPER CASE ALPHANUMERIC AND
-
-*SYMBOLS. THE VIDEO CODE WILL BE RETURNED IN A.
-*THIS SUBROUTINE USES 1 BYTE OF THE S STACK.
-HRKKKERKR KERR EKER ERIE IIA R IAAI KRIS EIR
-VIDEO PSHS CC SAVE REGS
-
-CMPA #840 CHAR TYPE?
-
-BHS VIS IF NO CNV, GOTO
-
-ADDA #$40 CNV TO VIDEO
-VIS PULS CC RESTORE REGS
-
-RTS RETURN
-HIKER KER REE EKI KAIRIE IIIA RIK IIASA IISA SAIS
-
+1200 *SUBROUTINE NAME: VIDEO
+1210 *BY AUTHOR - DATE
+1220 *THIS WILL CALCULATE THE VIDEO DISPLAY CODE
+1230 *OF A CHARACTER WHOSE ASCII CODE IS IN A. THE
+1240 *CHARACTER SET IS UPPER CASE ALPHANUMERIC AND
+1250 *SYMBOLS. THE VIDEO CODE WILL BE RETURNED IN A.
+1260 *THIS SUBROUTINE USES 1 BYTE OF THE S STACK.
+1270 **********************************************
+1280 VIDEO      PSHS CC         SAVE REGS
+1290            CMPA #$40       CHAR TYPE?
+1300            BHS VIS         IF NO CNV, GOTO
+1310            ADDA #$40       CNV TO VIDEO
+1320 VIS        PULS CC         RESTORE REGS
+1330            RTS             RETURN
+1340 **********************************************
+```
 Listing 7-5 The VIDEO Subroutine.
 
 If one or two bytes of data is to be passed to a subroutine, the data
@@ -8599,15 +8595,29 @@ calling program in a predesignated register. Listing 7-5 is an example of a
 subroutine that receives one byte in the A register, manipulates that byte,
 and returns the result via the same register.
 
-Main Program Descriptive
-
-Table Subroutine
-
-2000
-
-Result
-Area
-
+```
+   Main Program       Descriptive
+                         Table
+  ┌────────────┐                                Subroutine
+  │  - - - -   │     1800 ┌──────┐            ┌────────────┐
+  │  - - - -   │          │ 1900 │      ╭────►│  - - - -   │
+  │  - - - -   │          ├──────┤      │     │  - - - -   │
+  │  - - - -   │          │  38  │      │     │  - - - -   │
+  │  - - - -   │          ├──────┤      │     │  - - - -   │
+  │  - - - -   │          │ 2000 │      │     │  - - - -   │
+  │            │          └──────┘      │     │  - - - -   │
+  │    JSR     │────────────────────────╯     │  - - - -   │
+  │            │           X reg = 1800       │  - - - -   │
+  │  - - - -   │                              │   RTS      │
+  │  - - - -   │     1900 ┌──────┐            └────────────┘
+  │  - - - -   │          │ Data │
+  │  - - - -   │          │Table │
+  │  - - - -   │          └──────┘
+  ├────────────┤                          2000 ┌────────┐
+  │   Stack    │                               │ Result │
+  │   Area     │                               │  Area  │
+  └────────────┘                               └────────┘
+```
 Fig. 7-5 Passing Data to a Subroutine with a Table.
 
 When large amounts of data are to be acted on by a subroutine, it is
@@ -8617,116 +8627,55 @@ describing that list should be built. The descriptive table should contain
 the starting address of the data list, the number of elements in the data
 list, and the destination address (where the subroutine should deposit the
 results). Then the calling program transfers the address of the descriptive
-table to the subroutine via a register. This concept is illustrated in Fig.
+table to the subroutine via a register. This concept is illustrated in Fig. 7-5.
 
-7-5.
-
-1400
-4410
-1420
-1430
-1440
-1450
-1460
-1470
-1480
-1490
-1500
-1510
-1520
-1530
-1540
-1550
-1560
-1570
-1580
-1590
-1600
-1610
-1620
-1630
-1640
-1650
-1660
-1670
-1680
-1690
-1700
-1710
-1720
-1730
-1740
-1750
-1760
-1770
-1780
-1790
-1800
-1810
-1820
-1830
-1840
-
-*SUBROUTINE NAME: HXVAL
-
-*BY AUTHOR - DATE
-
-*THIS SUBROUTINE WILL CONVERT A STRING OF
-
-*ASCII CODES OF HEX DIGITS TO THEIR HEX VALUE.
-
-*IT WILL RECEIVE THE ADDR OF THE DESCRIPTIVE
-*TABLE IN Y. IN THAT TABLE,THE FIRST 2 BYTES ARE
-*THE ADDR OF THE NUMERIC TEXT STRING, THE 3RD
-*BYTE CONTAINS THE NO OF CHARACTERS, AND. THE 4TH
-*AND 5TH CONTAIN THE ADDR AT WHICH TO STORE THE
-*RESULTING HEX VALUE. IT USES 7 BYTES OF THE STACK.
-
-PARKER REE EEKEREEREREREKEEEEERER
-
-HXVAL PSHS A,B,X,Y,CC SAVE REGS
-LDX ,Y++ GET ADDR OF DATA
-LDB ,Y+ GET CNT OF DATA
-STB HXCNT STORE COUNT
-LDY ,Y++ GET OUTPUT ADDR
-CLR ,Y CLR OUTPUT AREA
-BITB #$01 IS CNT ODD?
-BEQ HXA IF NOT, SET EVEN
-LDB #501 SET. ODD SWITCH
-BRA HXB CONTINUE
-
-HXA CLRB SET EVEN
-
-HXB LDA ,X+ GET CHAR CODE
-CMPA #$39 GREATER THAN 9?
-BHI HXC IF SO,ALPHA CONV
-SUBA #$30 CNV TO HEX DIGIT
-BRA HXD CONTINUE
-
-HXC SUBA #337 CNV TO HEX DIGIT
-
-HXD CMPB #$00 EVEN OR ODD?
-BEQ HXE EVEN
-ORA ,Y MERGE HEX DIGITS
-STA ,Y+ STORE THEM
-CLRB SET. EVEN
-BRA HXF CONTINUE
-
-HXE LDB #310 MULTIPLIER
-MUL SHIFT INTO UPPER NIBBLE
-STB ,Y STORE IT
-LDB #01 SET ODD
-
-HXF DEC HXCNT DECR CNT
-BNE HXB IF NOT 0,DO AGAIN
-PULS A,B,X,Y,CC RESTORE REGS
-RTS RETURN
-
-KEKE KERR EREEREREREERERRREREEEERREREREREEERE
-
-HXCNT . -RMB 1 CNT OF BYTES
-HAHA KIARA DIK ER RIKI IARI KIARA RIA IIA IAI RERERERIRER,
-
+```
+1400 *SUBROUTINE NAME: HXVAL
+1410 *BY AUTHOR - DATE
+1420 *THIS SUBROUTINE WILL CONVERT A STRING OF
+1430 *ASCII CODES OF HEX DIGITS TO THEIR HEX VALUE.
+1440 *IT WILL RECEIVE THE ADDR OF THE DESCRIPTIVE
+1450 *TABLE IN Y. IN THAT TABLE,THE FIRST 2 BYTES ARE
+1460 *THE ADDR OF THE NUMERIC TEXT STRING, THE 3RD
+1470 *BYTE CONTAINS THE NO OF CHARACTERS, AND. THE 4TH
+1480 *AND 5TH CONTAIN THE ADDR AT WHICH TO STORE THE
+1490 *RESULTING HEX VALUE. IT USES 7 BYTES OF THE STACK.
+1500 **********************************************
+1510 HXVAL      PSHS A,B,X,Y,CC SAVE REGS
+1520            LDX ,Y++        GET ADDR OF DATA
+1530            LDB ,Y+         GET CNT OF DATA
+1540            STB HXCNT       STORE COUNT
+1550            LDY ,Y++        GET OUTPUT ADDR
+1560            CLR ,Y          CLR OUTPUT AREA
+1570            BITB #$01       IS CNT ODD?
+1580            BEQ HXA         IF NOT, SET EVEN
+1590            LDB #$01        SET ODD SWITCH
+1600            BRA HXB         CONTINUE
+1610 HXA        CLRB            SET EVEN
+1620 HXB        LDA ,X+         GET CHAR CODE
+1630            CMPA #$39       GREATER THAN 9?
+1640            BHI HXC         IF SO,ALPHA CONV
+1650            SUBA #$30       CNV TO HEX DIGIT
+1660            BRA HXD         CONTINUE
+1670 HXC        SUBA #$37       CNV TO HEX DIGIT
+1680 HXD        CMPB #$00       EVEN OR ODD?
+1690            BEQ HXE         EVEN
+1700            ORA ,Y          MERGE HEX DIGITS
+1710            STA ,Y+         STORE THEM
+1720            CLRB            SET EVEN
+1730            BRA HXF         CONTINUE
+1740 HXE        LDB #$10        MULTIPLIER
+1750            MUL             SHIFT INTO UPPER NIBBLE
+1760            STB ,Y          STORE IT
+1770            LDB #01         SET ODD
+1780 HXF        DEC HXCNT       DECR CNT
+1790            BNE HXB         IF NOT 0,DO AGAIN
+1800            PULS A,B,X,Y,CC RESTORE REGS
+1810            RTS             RETURN
+1820 **********************************************
+1830 HXCNT      RMB 1           CNT OF BYTES
+1840 **********************************************
+```
 Listing 7-6 The HEXVAL Subroutine.
 
 The address, $1800, of the descriptive table in Fig. 7-5 is passed to
@@ -8747,46 +8696,59 @@ To use the HXVAL subroutine, the main or calling program builds a table
 in memory to control the subroutine. If a text string is in memory at.
 address $1800 such as:
 
-1800 31.32 46 38 (text = 12F8)
+```
+1800    31 32 46 38     (text = 12F8)
+```
 
 then a table would be constructed at address $1700, for example:
 
-1700.18 00 (addr of text string)
-1702 04 (no. of characters)
-1703 21 20 (output addr)
+```
+1700    18 00           (addr of text string)
+1702    04              (no. of characters)
+1703    21 20           (output addr)
+```
 
 Just before the subroutine is called, the X register is loaded with the
 address ($1700) of the above table:
 
+```
 LDX #$1700
 JSR HXVAL
+```
 
 LDX loads the table address and JSR calls the HXVAL subroutine. After the
 subroutine completes, the main program execution resumes with the
 instruction immediately after the JSR. The subroutine HXVAL would have
 generated and stored the hexadecimal value in memory as:
 
-2120 12 F8&
+```
+2120    12 F8
+```
 
 where the main program can use it or direct another subroutine to use it.
-Another way to transfer many bytes to a subroutine is in a stack,
 
+Another way to transfer many bytes to a subroutine is in a stack,
 preferably the U stack. In this technique the U stack is established and
 data put in it by the main or calling program. A descriptive table is built
 indicating the number of items in the stack and where to put the results.
 The address of the descriptive table is passed to the subroutine in the X
 or Y register and the U register points to the top of the U stack. Use the
 U stack instead of the S stack because the S stack is used to store
-
 registers. The S stack can be used to pass data, but be very careful about
 keeping track of where the data and registers are in it.
+
 In summary, the main or calling program has the following
 responsibilities when using subroutines:
 1) establish an S stack of appropriate size.
 2) pass data to the subroutine.
-A) in a register... B) in a table. C) in a stack.
+    
+    A) in a register... 
+    
+    B) in a table. 
+    
+    C) in a stack.
 
-Subroutine Responsibilities
+#### Subroutine Responsibilities
 
 A subroutine has responsibilities that must be done before it can work
 properly with the calling program. Let's look at these responsibilities in
@@ -8821,14 +8783,15 @@ results are to be tested. Therefore, a subroutine does not have to preserve
 the CC register for later use by the calling program. For example, in the
 following source code:
 
+```
 DEC TCNT
 BNE TAI
 JSR FIX
 STA ,Y+
+```
 
 the subroutine FIX does not have to save the CC register, which indicates
 the result of the DEC instruction, because its state has already been
-
 tested by the BNE instruction.
 
 A case where the CC register does not have to be saved is when the
@@ -8837,7 +8800,6 @@ subroutine that searches an area of memory for a particular value may
 indicate a find or no-find result in the CC register.
 
 A subroutine may not need to save any registers if the main program
-
 doesn't require its registers to be the same after the subroutine returns.
 In this case the main program must be designed to use memory instead or
 registers to hold data at the time a subroutine is called. This arrangement
@@ -8871,37 +8833,50 @@ from the S stack.
 A skeleton form of a subroutine that does not establish its own S stack
 is shown in Fig. 7-6.
 
-NAME © PSHS x,x,... save registers
-
-task instructions
-
-restore same registers
-return to calling prog
-
+```
+  ┌─────────────────────────┐
+  │ NAME   PSHS x,x,...     │   save registers
+  │                         │
+  │        - - - - -        │ ⎫
+  │        - - - - -        │ ⎪
+  │        - - - - -        │ ⎬  task instructions
+  │        - - - - -        │ ⎪
+  │        - - - - -        │ ⎭
+  │                         │
+  │        PULS x,x,...     │   restore same registers
+  │        RTS              │   return to calling prog
+  └─────────────────────────┘
+```
 Fig. 7-6 Skeleton of a Simple Subroutine.
 
 The responsibilities of the subroutine in Fig. 7-6 can be summarized
-as: 1) save registers to be used.
+as: 
+1) save registers to be used.
 2) perform task.
 3) restore same registers.
 4) return to calling program.
-The skeleton of a subroutine that establishes its own S stack is shown
-in Fig. 7-7.
 
-PSHS x,x,... save registers
-STS SAVES save old S contents
-LDS #YYY+NEWS}|. establish new stack
+The skeleton of a subroutine that establishes its own S stack is shown in Fig. 7-7.
 
-task instructions
-
-LDS SAVES restore S
-
-PULS x,x,... restore same registers
-
-RTS return to calling prog
-SAVES RMB 2 area to store S
-NEWS RMB YYY new. stack area
-
+```
+  ┌──────────────────────────────────┐
+  │ NAME    PSHS x,x,...             │   save registers
+  │         STS  SAVES               │   save old S contents
+  │         LDS  #YYY+NEWS           │   establish new stack
+  │                                  │
+  │         - - - - -                │
+  │         - - - - -                │
+  │         - - - - -                │   task instructions
+  │         - - - - -                │
+  │         - - - - -                │
+  │                                  │
+  │         LDS  SAVES               │   restore S
+  │         PULS x,x,...             │   restore same registers
+  │         RTS                      │   return to calling prog
+  │ SAVES   RMB  2                   │   area to store S
+  │ NEWS    RMB  YYY                 │   new stack area
+  └──────────────────────────────────┘
+```
 Fig. 7-7. Skeleton of Subroutine with Its Own S Stack.
 
 The responsibilities of the subroutine in Fig. 7-7 can be summarized as:
@@ -8913,9 +8888,9 @@ The responsibilities of the subroutine in Fig. 7-7 can be summarized as:
 6) restore used registers.
 7) return to calling program.
 
-Tying It Together
+#### Tying It Together
 
-Each time a subroutine is called, more registers are pushed on the §
+Each time a subroutine is called, more registers are pushed on the S
 stack. Each time a subroutine returns, the same registers are pulled from
 the stack. As a result the value in the S register after returning is the
 same as it was just before calling the subroutine. The value in the S
@@ -8927,132 +8902,105 @@ the screen with the CSCREN subroutine and then displays a line of text. The
 video display codes are generated with the VIDEO subroutine. Upon
 completion it stays in a loop at line 270.
 
+```
 100 *PROGRAM NAME: SAMPLE
 110 *BY AUTHOR - DATE
 120 *THIS PROGRAM WILL USE THE CSCREN TO CLEAR THE
 130 *SCREEN, THEN DISPLAY A LINE OF TEXT USING THE
 140 *VIDEO SUBROUTINE. UPON COMPLETION IT WILL
-
 150 *STAY IN A LOOP. PRESS RESET TO EXIT THIS PROGRAM.
-160 BARRO OIRO TOI III IR III
-
-170 SAMPLE LDS #6+NSTAK ESTABLISH STACK
-
-180 JSR CSCREN CLR SCREEN
-
-190 LDX #SATEXT GET ADDR OF TEXT
-
-200 LDY #$480 ADDR OF DISPLAY LINE
-
-210 SABG LDA ,X+ GET TEXT CHAR
-
-220 CMPA #504 END OF TEXT CODE?
-
-230 BEQ SAEND IF SO, GOTO END
-
-240 JSR VIDEO CNV TO VIDEO
-
-250 STA ,Y+ PUT ON SCREEN
-
-260 BRA SABG DO AGAIN
-
-270 SAEND BRA SAEND WAIT IN LOOP
-
-2.80 ERE ROI I II IIIT RR II IK
-290 NSTAK RMB 6 STACK AREA
-
+160 **********************************************
+170 SAMPLE  LDS #6+NSTAK    ESTABLISH STACK
+180         JSR CSCREN      CLR SCREEN
+190         LDX #SATEXT     GET ADDR OF TEXT
+200         LDY #$480       ADDR OF DISPLAY LINE
+210 SABG    LDA ,X+         GET TEXT CHAR
+220         CMPA #$04       END OF TEXT CODE?
+230         BEQ SAEND       IF SO, GOTO END
+240         JSR VIDEO       CNV TO VIDEO
+250         STA ,Y+         PUT ON SCREEN
+260         BRA SABG        DO AGAIN
+270 SAEND   BRA SAEND       WAIT IN LOOP
+280 **********************************************
+290 NSTAK   RMB 6           STACK AREA
 300 SATEXT FCC !THIS TEXT DISPLAYED WITH TWO SUBROUTINES!
-310 FCB 04 END OF TEXT CODE
-
-JO RERRARARKARAREKRKKRRKRREREKIKIKEREREEKREERER ERIK ER ERE
-
+310         FCB 04          END OF TEXT CODE
+320 **********************************************
 1000 *SUBROUTINE NAME: CSCREN
-
 1010 *BY AUTHOR - DATE
-
 1020 *THIS SUBROUTINE WILL CLEAR THE TEXT SCREEN
 1030 *IT REQUIRES 4 BYTES OF THE S STACK
-
-[OGD RRHARKIKHAA MRE IK RARER IRKKEERERARERIREREREIKEER
-
-1050 CSCREN PSHS A,X,CC
-
-SAVE A, X, CC
-
-1060 LDX #$400 START OF DISPL BUF
-1070 LDA #$60 SPACE CODE
-
-1080 cs1 STA ,X+ PUT IN BUFFER
-
-1090 CMPX #$5FF END OF BUFFER?
-1100 BLS CS1 IF NOT,DO AGAIN
-1110 PULS A,X,CC RESTORE A,X, CC
-1120 RTS RETURN
-
-1130 RRR HAHARAEER ARERR RER ERE RERERERIKRIKRERIKEEERE
-
+1040 **********************************************
+1050 CSCREN PSHS A,X,CC     SAVE A, X, CC
+1060        LDX #$400       START OF DISPL BUF
+1070        LDA #$60        SPACE CODE
+1080 CS1    STA ,X+         PUT IN BUFFER
+1090        CMPX #$5FF      END OF BUFFER?
+1100        BLS CS1         IF NOT,DO AGAIN
+1110        PULS A,X,CC     RESTORE A,X, CC
+1120        RTS             RETURN
+1130 **********************************************
 1200 *SUBROUTINE NAME: VIDEO
-
 1210 *BY AUTHOR - DATE
-
 1220 *THIS WILL CALCULATE THE VIDEO DISPLAY CODE
 1230 *OF A CHARACTER WHOSE ASCII CODE IS IN A. THE
 1240 *CHARACTER SET IS UPPER CASE ALPHANUMERIC AND
 1250 *SYMBOLS. THE VIDEO CODE IS RETURNED IN A.
-
 1260 *THIS SUBROUTINE USES 1 BYTE OF THE S STACK.
-1270 REO I ITO III II
-
-1280 VIDEO PSHS CC SAVE REGS
-
-1290 CMPA #$40 CHAR TYPE?
-
-1300 BHS VIS IF NO CNV,GOTO
-
-1310 ADDA #340 CNV TO VIDEO
-
-1320 VIS PULS CC RESTORE REGS
-
-1330 RTS RETURN
-
-[34D HERR HAHAHA ARR RI RIKER ERR RRERERIRRIRIKIR ARKIN
-1350 END
-
+1270 **********************************************
+1280 VIDEO  PSHS CC         SAVE REGS
+1290        CMPA #$40       CHAR TYPE?
+1300        BHS VIS         IF NO CNV,GOTO
+1310        ADDA #$40       CNV TO VIDEO
+1320 VIS    PULS CC         RESTORE REGS
+1330        RTS             RETURN
+1340 **********************************************
+1350        END
+```
 Listing 7-7 The SAMPLE program.
 
 The stack area is established at line 290 and the S register is loaded
 at line 170 with the address of the last location of the stack area plus
-
 one. The stack area size is determined by the subroutine that stores the
 largest number of bytes. In this case the stack area is six bytes long -
 two to store the PC register plus four needed by the CSCREN subroutine.
+
 Listing 7-7 is assembled with the A/IM/WE command without any errors.
 To run it, go to ZBUG and enter the command GSAMPLE. The screen should be
 cleared and the text line defined at line 300 displayed. To return to ZBUG,
 press the Reset button on the back of the Color Computer.
+
 A subroutine can assume the responsibility of establishing its own S
 stack for use by a subroutine it calls. A calling program establishes a
 stack for the subroutine it calls to store its registers in. This
 relationship is illustrated in Fig. 7-8.
 
-Main Prog SUBA SUBB
-
-PSHS r,r
-STS OLD
-LDS yyyy
-
-JSR SUBB
-
-LDS OLD
-storage PULS r,r
-of SUBA RTS
-regs
-
-XXXKX storage of
-
-SUBB's regs
-
-yyyy
+```
+   Main Prog              SUBA                 SUBB
+  ┌──────────┐         ┌────────────┐       ┌──────────┐
+  │ LDS xxxx │      ╭─►│ PSHS r,r   │    ╭─►│ PSHS r,r │
+  │  - - -   │      │  │ STS  OLD   │    │  │  - - -   │
+  │  - - -   │      │  │ LDS  yyyy  │    │  │  - - -   │
+  │  - - -   │      │  │  - - -     │    │  │  - - -   │
+  │ JSR SUBA │──────╯  │  - - -     │    │  │  - - -   │
+  │  - - -   │         │            │    │  │   RTS    │
+  │  - - -   │         │ JSR SUBB   │────╯  └──────────┘
+  │  - - -   │         │  - - -     │
+  │  - - -   │         │  - - -     │
+  ├──────────┤         │            │
+  │  stack   │ storage │ LDS  OLD   │
+  │          │ of SUBA │ PULS r,r   │
+  │  area    │  regs   │ RTS        │
+  └──────────┘         ├────────────┤
+              xxxx     │    OLD     │
+                       ├────────────┤
+                       │            │
+                       │  stack     │  storage of
+                       │            │  SUBB's regs
+                       │  area      │
+                       └────────────┘
+                                     yyyy
+```
 Fig. 7-8 A Subroutine Establishing Its Own S Stack.
 
 The Color Computer can be set up to perform multi-tasking or
@@ -9062,7 +9010,6 @@ time, and a supervisor program would direct the MPU to execute one program
 for a time, and then execute another program for a time. Memory can be
 saved by having just one set of currently used subroutines in memory for
 any program to use. However, a problem arises if a program is temporarily
-
 suspended while it is executing a shared subroutine. If that subroutine has
 its own data area for manipulating data, data may be there when it is
 suspended. If another program uses that same subroutine, the data in the
@@ -9095,41 +9042,48 @@ This table contains seven addresses, each occupying two consecutive
 locations. Each of six is dedicated to directing the MPU when one of six
 interrupts occurs. The seventh address directs the MPU when a RESET occurs.
 
-Program Interrupt
-Handler
-
+```
+     Program                              Interrupt
+                                           Handler
+   ┌──────────┐                          ┌──────────┐
+   │  - - -   │                  ╭──────►│  - - -   │
+   │  - - -   │      hardware    │       │  - - -   │
+   │  - - -   │      interrupt   │       │  - - -   │
+   │  - - -   │──────────────────╯       │  - - -   │
+   │  - - -   │◄────╮                    │  - - -   │
+   │  - - -   │     ╰────────────────────┤   RTI    │
+   │  - - -   │                          └──────────┘
+   │  - - -   │
+   └──────────┘
+```
 Fig. 7-9 General Concept of a Program Being Interrupted.
 
 The interrupt handler is the program section the MPU is directed to by
 an interrupt via the interrupt vector table. The interrupt handler may have
 a task to perform, and upon completion execute an RTI instruction which
 will cause the interrupted program to resume its operation. A program that
-
 is interrupted may never be returned to, however. For example, the
 interrupt may signal a condition that tells the program to quit doing its
 present task and work on another. Fig. 7-9 shows a program being
 interrupted by a hardware interrupt and the interrupt handler returning to
 the program. This looks similar to a program calling a subroutine.
 
-Interrupt Operation
+#### Interrupt Operation
 
 The operation of the various interrupts will be presented. The RESET
 will also be covered since its operation is similar to that of the hardware
 interrupts. (For more information see Chapters 3 and 5.) The interrupt
-vector table, which directs the MPU upon an interrupt, is shown in Table
+vector table, which directs the MPU upon an interrupt, is shown in Table 7-1.
 
-7-1.
-Effective Address
-
-FFFE + FFFF
-FFFC + FFFD
-FFFA + FFFB
-FFF8 + FFF9
-FFF6 + FFF7
-
-FFF4 + FFF5
-
-FFF2 + FFF3
+| User | Address | Effective Address
+|-|-|-|
+| RESET | FFFE + FFFF | $A027 |
+| NMI | FFFC + FFFD | $0109 |
+| SWI | FFFA + FFFB | $0106 |
+| IRQ | FFF8 + FFF9 | $010C |
+| FIRQ | FFF6 + FFF7 | $010F |
+| SWI2 | FFF4 + FFF5 | $0103 |
+| SWI3 | FFF2 + FFF3 | $0100 |
 
 Table 7-1 Interrupt Vector Table.
 
@@ -9142,37 +9096,43 @@ they are the only ones that it uses. If the EDTASM+ module is also plugged
 in, the vector jump for the SWI is also set up. The operands of the vector
 jumps point to their respective interrupt handlers. The complete vector
 jump table, as organized in RAM, can be seen in Table 7-2 in the mnemonic
-
 display format.
-Jump to SWI3 interrupt handler
 
-Jump to SWI2 interrupt handler
-Jump to SWI interrupt handler
-
-Jump to NMI interrupt handler
-Jump to IRQ interrupt handler
-Jump to FIRQ interrupt handler
+| Address | Instruction | Content |
+|-|-|-|
+| $0100 | JMP xxxx | Jump to SWI3 interrupt handler |
+| $0103 | JMP xxxx | Jump to SWI2 interrupt handler |
+| $0106 | JMP xxxx | Jump to SWI interrupt handler |
+| $0109 | JMP xxxx | Jump to NMI interrupt handler |
+| $010C | JMP xxxx | Jump to IRQ interrupt handler |
+| $010F | JMP xxxx | Jump to FIRQ interrupt handler |
 
 Table 7-2 Vector Jump Instruction Table.
 
 An interrupt will vector the MPU to one of the vector jump instructions
 which directs the MPU to the actual interrupt handler. Fig. 7-10
-
 illustrates this path taken by the MPU in response to an IRQ interrupt.
 Since the vector jump instructions are in RAM they can be changed to point
 to interrupt handlers written in assembly language.
 
-Vector Jump
-
-Table
-Program a
-LEP ae |JMP xxxx|
-ee Interrupt
-
-Handler
-
-XXXX
-
+```
+                          Vector Jump
+                             Table
+                          ┌────────────┐
+     Program              │            │
+   ┌──────────┐           ├────────────┤
+   │  - - -   │   IRQ  ╭─►│ JMP xxxx   │─────╮
+   │  - - -   │────────╯  ├────────────┤     │      Interrupt
+   │  - - -   │◄────╮     │            │     │       Handler
+   │  - - -   │     │     └────────────┘     │xxxx ┌──────────┐
+   │  - - -   │     │                        ╰────►│  - - -   │
+   │  - - -   │     │                              │  - - -   │
+   │  - - -   │     │                              │  - - -   │
+   │  - - -   │     │                              │  - - -   │
+   │  - - -   │     ╰──────────────────────────────┤   RTI    │
+   │  - - -   │                                    └──────────┘
+   └──────────┘
+```
 Fig. 7-10 Use of the Vector Jump Table.
 
 The software interrupts are the SWI, SWI2, and SWI3 instructions. They
@@ -9224,12 +9184,11 @@ This sequence takes about 10 microseconds, much faster than any of the
 other hardware interrupts. This interrupt is used when the program must
 respond very quickly to an external stimulus.
 
-The NMI interrupt sequence is inhibited after a RESET until the §
+The NMI interrupt sequence is inhibited after a RESET until the S
 register has been loaded. The sequence is initiated by pin 2 of the MC6809E
 dual-in-line package temporarily set low, and starts upon completion of the
 currently executing instruction. The interrupt sequence consists of first ©
 setting the E bit in the CC register, then pushing the P, U, Y, X, DP, B,
-
 A, and CC registers into the S stack. Then the I and F bits are set to mask
 out any IRQ or FIRQ interrupts that may occur while executing the NMI
 interrupt handler. Finally, the MPU executes the vector jump at address
@@ -9242,7 +9201,7 @@ cleared, and the MPU is directed to address $A027 by the interrupt vector
 table. The RESET sequence does not use a vector jump, but instead sends the
 MPU directly to BASIC ROM.
 
-Pre-Interrupt Responsibilities
+#### Pre-Interrupt Responsibilities
 
 Several operations must be performed before using an interrupt within
 an assembly language program. They are presented in the order in which they
@@ -9299,35 +9258,41 @@ them. To summarize, before using interrupts within an assembled program:
 2) set up vector jump instructions.
 3) establish S stack.
 4) if using an IRQ or FIRQ interrupt.
-A) initialize their source.
-B) clear the I and/or F bits.
+
+    A) initialize their source.
+
+    B) clear the I and/or F bits.
 
 These responsibilities are illustrated in Fig. 7-11 as a skeleton
 program preparing to use the SWI2 interrupt.
 
-Main Program
+```
+   Main Program
 
-ORCC #$50 set land F
+  ┌──────────────┐
+  │ ORCC #$50    │   set I and F
+  │ LDA  #$7E    │
+  │ STA  $0103   │   set up
+  │ LDX  #xxxx   │    vector jump
+  │ STX  $0104   │
+  │ LDS  #$yyyy  │   set up stack       Interrupt
+  │  - - - -     │                    Handler (SWI2)
+  │  - - - -     │
+  │  - - - -     │             xxxx  ┌──────────┐
+  │   SWI2       │                   │  - - -   │
+  │  - - - -     │                   │  - - -   │
+  │  - - - -     │                   │  - - -   │
+  ├──────────────┤                   │  - - -   │
+  │              │                   │   RTI    │
+  │   stack      │                   └──────────┘
+  │   area       │
+  │              │
+  └──────────────┘
+               yyyy
+```
+Fig. 7-11 Preparing for SWI2 Interrupt
 
-LDA #$7E
-
-STA $0103 set up
-
-LDX #xxxx vector jump
-
-STX $0104
-
-LDS #$yyyy set up stack Interrupt
----- Handler (SWI2)
-
---e XXXX
-
-SWI2
-
-yyyy
-Fig. 7-11 Preparing for SWI2 Interrupt.
-
-Interrupt Handlers
+#### Interrupt Handlers
 
 The interrupt handler program section has its duties to perform if it
 is to work properly with the main program. The duties are presented in the
@@ -9343,7 +9308,6 @@ start executing a different program.
 
 The interrupt handler for the IRQ and FIRQ should reinitialize the
 device that generates the external interrupts so they will occur again.
-
 (This is described in Chapter 9.) If the FIRQ interrupt handler has pushed
 some registers at its beginning, the registers must be pulled from the S
 stack.
@@ -9351,15 +9315,14 @@ stack.
 The last instruction of an interrupt handler is RTI, which returns the
 MPU to the interrupted program. The RTI will pull the CC register from the
 S stack and inspect the E bit. If the E bit is set, all the MPU registers
-
 except S will be pulled from the stack. If the E bit is clear, only the P
 register will be pulled from the stack. If there was any modification of
 the S register by the interrupt handler, the S register should be restored
 to its original contents before executing the RTI, so the RTI will work
 properly. An example of a skeleton SWI2 interrupt handler can be seen in
 Fig. 7-11.
-The responsibilities of an interrupt handler that will return to the
 
+The responsibilities of an interrupt handler that will return to the
 interrupted program can be summarized:
 
 1) if FIRQ, store registers if necesary.
@@ -9372,18 +9335,39 @@ interrupted program can be summarized:
 
 5) return with an RTI.
 
-Wrap Up
+#### Wrap Up
 
 The use of the IRQ interrupt in conjunction with subroutines is
 demonstrated in Listing 7-8, named SAMPLI. It is a modified version of the
 program SAMPLE. A block diagram of SAMPLI can be seen in Fig. 7-12.
 
-CSCREN Subr
+```
+                                  CSCREN Subr
+                                ┌────────────┐
+                                │  - - - -   │
+                                │  - - - -   │
+                                │  - - - -   │
+                                │   RTS      │
+                                └────────────┘
 
-Main Program VIDEO Subr
-
-——» ZBUG
-
+   Main Program                  VIDEO Subr
+  ┌──────────────┐              ┌────────────┐
+  │  - - - -     │              │  - - - -   │
+  │  - - - -     │              │  - - - -   │
+  │ JSR CSCREN   │              │  - - - -   │
+  │  - - - -     │              │   RTS      │
+  │  - - - -     │              └────────────┘
+  │ JSR VIDEO    │
+  │  - - - -     │              IRQ Int. Handler
+  │  - - - -     │              ┌────────────┐
+  │  - - - -     │              │  - - - -   │
+  │  - - - -     │              │  - - - -   │
+  │  - - - -     │              │  - - - -   │
+  │  - - - -     │              │   RTI      │
+  │  - - - -     │              │  - - - -   │
+  └──────────────┘              │   SWI      │──► ZBUG
+                                └────────────┘
+```
 Fig. 7-12 Block Diagram of SAMPLI1 Program.
 
 SAMPL1 uses two subroutines, CSCREN and VIDEO, to clear the screen and
@@ -9400,262 +9384,108 @@ largest amount of stack area. In this program the maximum size is 12 bytes
 for the IRQ interrupt plus another 12 bytes for the SWI, a total of 24
 bytes.
 
+```
 100 *PROGRAM NAME: SAMPL1
-
 110 *BY AUTHOR - DATE
-
 120 *THIS PROGRAM WILL USE THE CSCREN TO CLEAR THE
 130 *SCREEN, THEN DISPLAY A LINE OF TEXT USING THE
 140 *VIDEO SUBROUTINE. UPON COMPLETION IT WILL
-
 150 *STAY IN A LOOP WAITING FOR AN IRQ INTERRUPT.
-
-160 HH KKKKIKIKAEKEER ERIE REE ERERERREREREREEERERERERK
-
-170 SAMPL1 ORCC #650 SET I AND F BITS
-180 LDA #$7E JUMP OP CODE
-
-190 STA $010C STORE IT
-
-200 LDY #LSHIFT ADDR OF INT HANDLER
-210 STY $010D STORE IT
-
-220 LDS #24+NSTAK ESTABLISH STACK
-230 JSR CSCREN CLEAR SCREEN
-
-240 LDX #SATEXT GET ADDR OF TEXT
-250 LDY #480 ADDR OF. DISPL LINE
-260 SABG LDA ,X+ GET TEXT CHAR
-
-270 CMPA #$04 END OF TEXT CODE?
-280 BEQ SAEND IF SO,GOTO END
-
-290 JSR VIDEO CNV TO VIDEO
-
-300 STA ,Y+ PUT ON SCREEN
-
-310 BRA SABG DO AGAIN
-
-320 SAEND LDA SFFO3 READ CRB
-
-325 ORA #$05 SET BITS 0+2
-
-330 STA $FFO3 STORE IN CRB
-
-340 LDA $FFO2 READ DRB(CLR FLAG)
-350 ANDCC #$EF CLR I BIT
-
-360 SALOOP BRA SALOOP LOOP AND WAIT
-
-BZ RII IRR RIKI IIR R RRR IIR RRR RIP ARR II IIR
-380 NSTAK RMB 24 STACK AREA
-
-390 SATEXT FCC ! THIS TEXT DISPLAYED WITH TWO SUBROUTINES!
-400 FCB 04 END OF TEXT CODE
-
-410 KHKKAKKKKREERKEEKRIEIKEEREEREEEREEEREEREREREREEERERE
-
-{000 *SUBROUTINE NAME: CSCREN
-
+160 **********************************************
+170 SAMPL1  ORCC #$50       SET I AND F BITS
+180         LDA #$7E        JUMP OP CODE
+190         STA $010C       STORE IT
+200         LDY #LSHIFT     ADDR OF INT HANDLER
+210         STY $010D       STORE IT
+220         LDS #24+NSTAK   ESTABLISH STACK
+230         JSR CSCREN      CLEAR SCREEN
+240         LDX #SATEXT     GET ADDR OF TEXT
+250         LDY #$480       ADDR OF. DISPL LINE
+260 SABG    LDA ,X+         GET TEXT CHAR
+270         CMPA #$04       END OF TEXT CODE?
+280         BEQ SAEND       IF SO,GOTO END
+290         JSR VIDEO       CNV TO VIDEO
+300         STA ,Y+         PUT ON SCREEN
+310         BRA SABG        DO AGAIN
+320 SAEND   LDA SFFO3       READ CRB
+325         ORA #$05        SET BITS 0+2
+330         STA $FFO3       STORE IN CRB
+340         LDA $FFO2       READ DRB(CLR FLAG)
+350         ANDCC #$EF      CLR I BIT
+360 SALOOP  BRA SALOOP      LOOP AND WAIT
+370 **********************************************
+380 NSTAK   RMB 24          STACK AREA
+390 SATEXT  FCC !THIS TEXT DISPLAYED WITH TWO SUBROUTINES!
+400         FCB 04          END OF TEXT CODE
+410 **********************************************
+1000 *SUBROUTINE NAME: CSCREN
 1010 *BY AUTHOR - DATE
-
 1020 *THIS SUBROUTINE WILL CLEAR THE TEXT SCREEN
 1030 *IT REQUIRES 3 BYTES OF THE S STACK
-
-1040 HIKIKEKRA KEKE EKRAEEE ER EERRIREE REE ERR ER ERE ERRER
-
-1050 CSCREN PSHS A,X SAVE A AND X
-
-1060 LDX. #400 START OF DISPL BUF
-1070 LDA #60 SPACE CODE
-
-1080 csi STA ,X+ PUT IN BUFFER
-
-1090 CMPX. #$5FF END OF BUFFER?
-
-1100
-1110
-1120
-1130
-1200
-1210
-1220
-1230
-1240
-1250
-1260
-1270
-1280
-1290
-1300
-1310
-1400
-1410
-1420
-1430
-1440
-1450
-1460
-1470
-1480
-1490
-1500
-1510
-1520
-1530
-1540
-1550
-1560
-1570
-1580
-1590
-1600
-1610
-1620
-1622
-1624
-1630
-1640
-1650
-1660
-1670
-1680
-1690
-1700
-1710
-1720
-1730
-
-BLS CS1
-PULS A,X
-RTS
-
-IF NOT,DO AGAIN
-RESTORE A AND X
-RETURN
-
-RRREAEKAKKRK KKK IRR ERI RR EREREEIREREEREAEREEAE
-
-*SUBROUTINE NAME: VIDEO
-
-*BY AUTHOR - DATE
-
-*THIS WILL CALCULATE THE VIDEO DISPLAY CODE
-*OF A CHARACTER WHOSE ASCII CODE IS IN A. THE
-*CHARACTER SET IS UPPER CASE ALPHANUMERIC AND
-
-*SYMBOLS. THE VIDEO CODE WILL BE RETURNED IN A.
-HRAKKI KERR IKK IERIE ARIK IR IRIE IRI AI IA IIIA
-
-VIDEO CMPA #$40
-BHS VIS
-ADDA #40
-VIS RTS
-
-CHAR TYPE?
-
-IF NO CNV,GO TO
-CNV TO VIDEO
-RETURN
-
-RKRAKIRRRR RIKKI IAAI IRI IRRRII III IAAI IARI III.
-*IRQ INTERRUPT HANDLER NAME: LSHIFT
-
-*BY AUTHOR - DATE
-
-*THIS INT HANDLER WILL SHIFT WHATEVER IS ON THE
-*TEXT SCREEN ONE POSITION TO THE LEFT ON EVERY
-*10TH INTERRUPT. ON THE 2000TH INTERRUPT IT WILL
-*RETURN TO ZBUG VIA SWI. 24 BYTES OF STACK ARE USED.
-
-HRIRKKRERE KEE REREREREREKERERRRE RIKER IAI
-
-LSHIFT LDX LSCNTA
-LEAX 1,X
-STX LSCNTA
-CMPX #2000
-BEQ LSEND
-LDA LSCNTB
-INCA
-STA LSCNTB
-CMPA #10
-BNE LSRET
-LDX #$401
-LDY #400
-LSA LDA ,X+
-STA ,Y+
-CMPX #$5FF
-BLS LSA
-CLRA
-STA LSCNTB
-LDB $FFO2
-RTI
-LDD #0
-STD LSCNTA
-STA LSCNTB
-SWI
-
-LSRET
-
-LSEND
-
-GET A CNT
-
-INC A CNT
-
-STORE A CNT
-
-LAST INTERRUPT?
-IF SO,RET TO ZBUG
-GET B CNT
-
-INC B CNT
-
-STORE B CNT
-
-TIME TO SHIFT?
-
-IF NOT,RETURN
-BUFFER SOURCE
-BUFFER DESTINATION
-GET DISPL CODE
-MOVE DISPL CODE
-END OF BUFFER?
-
-IF NOT,DO AGAIN
-GET ZERO
-
-CLR B CNT
-
-READ DRB(CLR FLAG)
-RETURN TO PROGRAM
-CLR REG
-
-CLR A CNT
-
-CLR B CNT
-
-RETURN TO ZBUG
-
-KRRIKKREKERERERERKE ERE RREREREREREEERRRERRERERRER
-
-LSCNTA FDB 0000
-LSCNTB FCB 0
-
-CNT A= 0
-CNT B = 0
-
-RRAKEKRKEERERREREREKEEREREKKEEEREREEREERERERRRERE
-
-END
-
+1040 **********************************************
+1050 CSCREN PSHS A,X        SAVE A AND X
+1060        LDX #$400       START OF DISPL BUF
+1070        LDA #$60        SPACE CODE
+1080 CS1    STA ,X+         PUT IN BUFFER
+1090        CMPX #$5FF      END OF BUFFER?
+1100        BLS CS1         IF NOT,DO AGAIN
+1110        PULS A,X        RESTORE A AND X
+1120        RTS             RETURN
+1130 **********************************************
+1200 *SUBROUTINE NAME: VIDEO
+1210 *BY AUTHOR - DATE
+1220 *THIS WILL CALCULATE THE VIDEO DISPLAY CODE
+1230 *OF A CHARACTER WHOSE ASCII CODE IS IN A. THE
+1240 *CHARACTER SET IS UPPER CASE ALPHANUMERIC AND
+1250 *SYMBOLS. THE VIDEO CODE WILL BE RETURNED IN A.
+1260 **********************************************
+1270 VIDEO  CMPA #$40       CHAR TYPE?
+1280        BHS VIS         IF NO CNV,GO TO
+1290        ADDA #$40       CNV TO VIDEO
+1300 VIS    RTS             RETURN
+1310 **********************************************
+1400 *IRQ INTERRUPT HANDLER NAME: LSHIFT
+1410 *BY AUTHOR - DATE
+1420 *THIS INT HANDLER WILL SHIFT WHATEVER IS ON THE
+1430 *TEXT SCREEN ONE POSITION TO THE LEFT ON EVERY
+1440 *10TH INTERRUPT. ON THE 2000TH INTERRUPT IT WILL
+1450 *RETURN TO ZBUG VIA SWI. 24 BYTES OF STACK ARE USED.
+1460 **********************************************
+1470 LSHIFT LDX LSCNTA      GET A CNT
+1480        LEAX 1,X        INC A CNT
+1490        STX LSCNTA      STORE A CNT
+1500        CMPX #2000      LAST INTERRUPT?
+1510        BEQ LSEND       IF SO,RET TO ZBUG
+1520        LDA LSCNTB      GET B CNT
+1530        INCA            INC B CNT
+1540        STA LSCNTB      STORE B CNT
+1550        CMPA #10        TIME TO SHIFT?
+1560        BNE LSRET       IF NOT,RETURN
+1570        LDX #$401       BUFFER SOURCE
+1580        LDY #$400       BUFFER DESTINATION
+1590 LSA    LDA ,X+         GET DISPL CODE
+1600        STA ,Y+         MOVE DISPL CODE
+1610        CMPX #$5FF      END OF BUFFER?
+1620        BLS LSA         IF NOT,DO AGAIN
+1622        CLRA            GET ZERO
+1624        STA LSCNTB      CLR B CNT
+1630 LSRET  LDB $FF02       READ DRB(CLR FLAG)
+1640        RTI             RETURN TO PROGRAM
+1650 LSEND  LDD #0          CLR REG
+1660        STD LSCNTA      CLR A CNT
+1670        STA LSCNTB      CLR B CNT
+1680        SWI             RETURN TO ZBUG
+1690 **********************************************
+1700 LSCNTA FDB 0000        CNT A = 0
+1710 LSCNTB FCB 0           CNT B = 0
+1720 **********************************************        
+1730        END
+```
 Listing 7-8 The SAMPLI Program.
 
 In the Listing 7-8 are examples of setting up for subroutine and
 interrupt use. Assemble the source code into memory with the A/IM/WE
-
 command and verify that there are no errors. Then go to ZBUG and run it by
-
 typing in GSAMPLI. The vector jump for the IRQ has been modified by this
 program. Therefore, one should turn the computer off and then on after
 running and experimenting with the SAMPLI program, to set that vector jump
@@ -9818,7 +9648,7 @@ Fig. 8-2 A Subroutine That Does Not Use the S Register.
 A program executed from BASIC may establish its own S stack for use by
 a subroutine it calls. Perhaps the program needs a stack area larger than
 the 30 bytes available in BASIC's stack; the program should establish its
-own §S stack area. If that program is to later return to BASIC, it must load
+own S stack area. If that program is to later return to BASIC, it must load
 S with its original value, which should have been saved earlier. Fig. 8-3
 shows a skeleton of a subroutine that establishes its own stack. This shows
 the sequence of a subroutine saving BASIC's S register, setting up its own
@@ -9836,7 +9666,7 @@ but to simply direct the MPU to a specific program.
 Assembled
 Subroutine (SUBA)
 
-EXEC —*/SUBA — STS SAVE save § reg
+EXEC —*/SUBA — STS SAVE save S reg
 LDS #40+NEWS new stack pointer
 
 ae ee task instructions
