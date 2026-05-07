@@ -9526,21 +9526,20 @@ toward the center. This can be seen in Fig. 8-1. These addresses are for a
 16K computer, except for those in parentheses, which-are for a 32K
 computer.
 
-Use
-Buffer
-Buffer
-Statements
-Variables
-cet | ae
-3EDO (7EDO
-Ton
-3F36 (7F36
-String
-Variable Area 3FFF (7FFF)
+| Memory Use | Hexadecimal Address|
+|-|-|
+| Internal Use | 0000 |
+| Text Buffer | 0400 |
+| Graphics Buffer | 0600 |
+| BASIC Statements | 0601 + (N * 600) |
+| Numeric Variables | xxxx |
+| Unused | 3ED0 (7ED0) |
+| S Stack | 3F36 (7F36) |
+| String Variable Area | 3FFF (7FFF) |
 
 Fig. 8-1 Memory Use by Extended Color BASIC.
 
-‘Memory locations 0000 - $03FF are used by BASIC for internal
+Memory locations 0000 - $03FF are used by BASIC for internal
 operations. Locations $400 - $5FF are for the text display buffer. The
 graphics buffer is composed of N pages, and each page is $600 locations
 long. The graphics display buffer is initialized to four pages so it
@@ -9562,17 +9561,14 @@ variables. This area is initialized to 200 decimal bytes but can be changed
 with the CLEAR command. Below the string variable area is BASIC's S stack.
 The stack area is about 100 decimal locations long.
 
-Memory For Assembled Programs
+#### Memory For Assembled Programs
+
 A goal is to determine the starting and ending addresses of an unused
-
 area in which to load assembled programs that will work with BASIC
-
 programs. This is not easy to do since the numeric variable area is not
-
 established until the BASIC program is run. You may use unused area in the
 middle of RAM for assembled programs only when the BASIC programs are short
 and simple. Then it is relatively safe to load an assembled program into
-
 memory somewhere between addresses $2600 and $3E00 (16K) or $7E00 (32K)
 without performing extensive memory use calculations.
 
@@ -9581,7 +9577,9 @@ BASIC CLEAR command at the very beginning of a BASIC program or before the
 program is run. This lets the programmer control two conditions affecting
 how memory is used by BASIC. The CLEAR command has the following format:
 
+```
 CLEAR XXX,YYYY
+```
 
 This command assigns XXX number of bytes for string variable storage and
 sets the top of RAM available to BASIC at the address YYYY. Memory above
@@ -9591,15 +9589,17 @@ variable storage and tells BASIC that RAM is available only up to address
 $3000. After using this command a BASIC program's memory use would be
 similar to that in Fig. 8-1. However, addresses $3001 and up would not be
 available to BASIC; the string variable and S stack areas would start at
-
 $3000 and extend downward. The area above address $3000 is where assembled
 programs can be put.
 
-Executing (EXEC) Assembled Programs
+#### Executing (EXEC) Assembled Programs
+
 The EXEC command is used to execute assembled programs and can also be
 used to call assembled subroutines. The format of the EXEC command is:
 
+```
 EXEC expression
+```
 
 The expression can be blank, a constant, a numeric variable, or an
 arithmetic expression. When the EXEC is performed the current contents of
@@ -9613,9 +9613,11 @@ address $3100. When the expression is a constant, such as: EXEC 12000, the
 MPU is directed to start a program at decimal address 12000. Prefixing the
 constant with &H indicates the number is hexadecimal. Examples are:
 
+```
 10 X=&H1000
 20 EXEC X
-20 EXEC X*3
+30 EXEC X*3
+```
 
 Statement 20 will cause the MPU to start executing at $1000; statement 30
 will direct the MPU to address $3000.
@@ -9634,15 +9636,18 @@ subroutine which must preserve the contents of the registers used. A
 skeleton of a program to return to BASIC that does not use the S register
 is shown in Fig. 8-2.
 
-Assembled
-Program
-
-EXEC ——>
-
-instructions
-
-——> return to BASIC
-
+```
+                Assembled
+                 Program
+                ┌──────────┐  ⎫
+   EXEC ──────► │  - - -   │  ⎪
+                │  - - -   │  ⎪
+                │  - - -   │  ⎬  instructions
+                │  - - -   │  ⎪
+                │  - - -   │  ⎭
+                │   RTS    │ ──► return to BASIC
+                └──────────┘
+```
 Fig. 8-2 A Subroutine That Does Not Use the S Register.
 
 A program executed from BASIC may establish its own S stack for use by
@@ -9663,22 +9668,28 @@ subroutine must always get the data from the same predetermined address.
 Basically, the EXEC command is not meant to be used to call subroutines,
 but to simply direct the MPU to a specific program.
 
-Assembled
-Subroutine (SUBA)
-
-EXEC —*/SUBA — STS SAVE save S reg
-LDS #40+NEWS new stack pointer
-
-ae ee task instructions
-
-LDS SAVE restore S reg
-RTS return to BASIC
-
-RMB 2
-new
-stack area
-
-RMB 40
+```
+                  Assembled
+              Subroutine (SUBA)
+            ┌──────────────────────┐
+   EXEC ───►│ SUBA  STS  SAVE      │   save S reg
+            │       LDS  #40+NEWS  │   new stack pointer
+            │                      │
+            │       - - - -        │ ⎫
+            │       - - - -        │ ⎪
+            │       - - - -        │ ⎬  task instructions
+            │       - - - -        │ ⎪
+            │       - - - -        │ ⎭
+            │                      │
+            │       LDS  SAVE      │   restore S reg
+            │       RTS            │   return to BASIC
+            │ SAVE  RMB  2         │
+            │ NEWS  RMB  40        │
+            │                      │ ⎫
+            │                      │ ⎬  new
+            │                      │ ⎭  stack area
+            └──────────────────────┘
+```
 Fig. 8-3 A Subroutine Establishing an S Stack.
 
 An example of using the EXEC command to call an assembled subroutine is
@@ -9688,39 +9699,29 @@ representation of that value as it exists in five bytes in memory. The
 assembled subroutine has the task of displaying the hexadecimal contents of
 the five bytes on the screen.
 
+```
 10 CLEAR 100,&H2900
-
 20 CLOADM "PRFP", &H2A00
-
 30 Y=&H2A00:CLS
-
 40 INPUT"ENTER A NUMBER X= ";X
-
 50 P=VARPTR(X)
-
 60 PRINT"ITS BINARY FLOATING POINT"
-
-64 PRINT'REPRESENTATION AT ADDR ";HEXS(P)
+64 PRINT"REPRESENTATION AT ADDR ";HEXS(P)
 66 PRINT"IN HEX IS"
-
 68 PRINT
-
 70 PU=FIX(P/256) :PL=P-256*PU
-
 80 POKE Y,PU:POKE Y+1,PL
-
 90 EXEC Y+2
 100 PRINT"DO YOU WANT TO ENTER ANOTHER"
-110 INPUT"NUMBER - Y OR N'sNS
+110 INPUT"NUMBER - Y OR N";N$
 120 IF NS="Y" THEN 25
 130 END
-
+```
 Listing 8-1 The Use of the EXEC Command.
-Line 10 reserves memory above address $2900 for use by programs other
 
+Line 10 reserves memory above address $2900 for use by programs other
 than BASIC. At line 20 the subroutine object code is loaded into the
 reserved area. At line 30 the variable Y is set equal to the load address
-
 of the subroutine. Then the value for X is obtained, and its pointer is
 found at line 50. At line 70 is formed the upper and lower bytes of the
 pointer address which are POKEd into memory (passed to the subroutine) at
@@ -9728,100 +9729,63 @@ line 80. Line 90 calls the subroutine, which displays the hexadecimal
 contents of the five bytes whose address was POKEd into memory. The
 assembly language subroutine source listing is in Listing 8-2.
 
-100 FRIAR ERIK KERR EERIE ERIK IKI ERE ERE REERERERER
-
+```
+100 **********************************************
 110 *PROGRAM NAME: PRFP
-
-420 *BY AUTHOR - DATE
-
+120 *BY AUTHOR - DATE
 130 *THIS PROGRAM WILL RUN AS A SUBROUTINE WHEN
-
 140 *CALLED BY BASIC'S EXEC COMMAND. THE POINTER TO
-
 150 *A NUMERIC VARIABLE SHOULD BE PUT IN ITS FIRST
-
 160 *2 ADDRESSES AND THEN EXEC TO THE THIRD. THE
-
 170 *PROG WILL DISPLAY THE HEX CONTENTS OF THE 5
-
 180 *BYTES AT THE POINTER ADDR. THIS PROG IS RELOCATABLE
-
-190 HKRIKK AKIRA IK ERIK ERE ER ERE ERE ERIE RERERERERETERRE
-
-200 PRFP RMB. 02 POINTER AREA
-
-210 PR1 LDA #06 COUNT VALUE
-
-220 STA PRCNT,PCR PRESET CNT
-
-230 LDY PRFP,PCR GET DATA POINTER
-240 LDU #$484 GET DISPL ADDR
-250 PR2 DEC PRCNT,PCR DEC CNT
-
-260 BEQ PREND IF 0, GOTO END
-270 BRA PR3 GOTO CNV & DISPL
-280. PR2A LEAY 1,Y INC DATA POINTER
-290 LEAU 2,U INC DISPL POINTER
-300 BRA PR2 DO AGAIN
-
-310 PREND RTS RETURN TO BASIC
-
-320 FRICKE IKI IKI AERA REREIRAEREREREREEERERREREEERE
-
+190 **********************************************
+200 PRFP    RMB 02          POINTER AREA
+210 PR1     LDA #06         COUNT VALUE
+220         STA PRCNT,PCR   PRESET CNT
+230         LDY PRFP,PCR    GET DATA POINTER
+240         LDU #$484       GET DISPL ADDR
+250 PR2     DEC PRCNT,PCR   DEC CNT
+260         BEQ PREND       IF 0, GOTO END
+270         BRA PR3         GOTO CNV & DISPL
+280 PR2A    LEAY 1,Y        INC DATA POINTER
+290         LEAU 2,U        INC DISPL POINTER
+300         BRA PR2         DO AGAIN
+310 PREND   RTS             RETURN TO BASIC
+320 **********************************************
 330 *CONVERT HEX DIGITS OF BYTE AT ADDR IN Y TO
 340 *THEIR VIDEO CODES AND PUT THEM IN DISPLAY
 350 *BUFFER ADDR IN U REG.
-
-360 HRI AKA REE RARER RERERRERERERERER
-
-380 PR3 LDB ,Y GET BYTE
-
-390 LDA #10 MULTIPLIER
-
-400 MUL SHIFT UPER NIBBLE INTO A
-410 CMPA #309 GREATER THAN 9?
-
-420 BHI PRCVA IF SO,CONV.TO ALPHA
-430 ORA #370 CONV TO NUMERIC CODE
-440 BRA PRCVB GO STORE IT
-
-450 PRCVA ADDA #$37 CONV TO ALPHA
-
-460 PRCVB STA PRBYDS,PCR STORE IT
-
-470 LDA ,Y GET BYTE
-
-480 ANDA #$0F GET LOWER NIBBLE
-490 CMPA #509 GREATER THAN 9?
-
-500 BHI PRCVC IF SO,CNV TO ALPHA
-510 ORA #570 CNV TO NUM CODE
-
-520 BRA PRCVD GO STORE IT
-
-530 PRCVC ADDA #$37 CNV TO ALPHA CODE
-
-540 PRCVD STA 1+PRBYDS,PCR STORE IT
-
-550 Perrerrrerrrrrrr rr retest St te ct te to
-
+360 **********************************************
+380 PR3     LDB ,Y          GET BYTE
+390         LDA #10         MULTIPLIER
+400         MUL             SHIFT UPPER NIBBLE INTO A
+410         CMPA #$09       GREATER THAN 9?
+420         BHI PRCVA       IF SO,CONV TO ALPHA
+430         ORA #$70        CONV TO NUMERIC CODE
+440         BRA PRCVB       GO STORE IT
+450 PRCVA   ADDA #$37       CONV TO ALPHA
+460 PRCVB   STA PRBYDS,PCR  STORE IT
+470         LDA ,Y          GET BYTE
+480         ANDA #$0F       GET LOWER NIBBLE
+490         CMPA #$09       GREATER THAN 9?
+500         BHI PRCVC       IF SO,CNV TO ALPHA
+510         ORA #$70        CNV TO NUM CODE
+520         BRA PRCVD       GO STORE IT
+530 PRCVC   ADDA #$37       CNV TO ALPHA CODE
+540 PRCVD   STA 1+PRBYDS,PCR STORE IT
+550 **********************************************
 560 *PUT 2 VIDEO CODES AT PRBYDS INTO DISPL BUFFER
-570 RRR AIR RRR IRIE IIR REIKI RI RIKER IRR IERIE RI
-580 LDD PRBYDS,PCR GET VIDEO CODES
-
-590 STD ,U++ PUT INTO BUFFER
-
-600 BRA PR2A GO TO CONTROLLER
-
-B10 BRRRAKKKEKAREEAKHKERKAKREEKEEEKEEERERERERERERERERE
-
-620 PRBYDS RMB 2 WORKING AREA
-
-630 PRCNT RMB 1 COUNTER
-
-6G BARAK AKER AKER EKER RRKERR REI RE REI IR IIRE
-650 END
-
+570 **********************************************
+580         LDD PRBYDS,PCR  GET VIDEO CODES
+590         STD ,U++        PUT INTO BUFFER
+600         BRA PR2A        GO TO CONTROLLER
+610 **********************************************
+620 PRBYDS  RMB 2           WORKING AREA
+630 PRCNT   RMB 1           COUNTER
+640 **********************************************
+650         END
+```
 Listing 8-2 The PRFP Subroutine.
 
 This program is relocatable, since the PC relative addressing mode is
@@ -9842,24 +9806,26 @@ first byte, reading left to right, is the exponent and the other four bytes
 are the mantissa. See Chapter 2 for a refresher on binary floating point
 representation.
 
-Calling Subroutines (DEFUSRn and USRn)
+#### Calling Subroutines (DEFUSRn and USRn)
 
 Normally a subroutine is called from a BASIC program with the DEFUSRn
 and USRn functions. The starting address of the subroutine must first be
 defined by the DEFUSRn function. The format of DEFUSRn is:
 
+```
 DEFUSRn= expression
+```
 
 n indicates one of ten (0 - 9) subroutines. The value of the expression is
 taken as the starting address of subroutine n. The expression can be a
 numeric constant, numeric variable, or an arithmetic expression. Examples
 are:
 
+```
 10 DEFUSR0O=&H2A00
-
 20 DEFUSR1=K
-
 30 DEFUSR2=&H1000+2*K
+```
 
 The above statements define the starting address of three subroutines
 numbered 0, 1, and 2. Subroutine 0 is specified at line 10 as starting at
@@ -9869,10 +9835,11 @@ of K.
 
 After the starting address of a particular subroutine is defined, it is
 called with the USRn function. The n identifier must be the same as the n
+of the DEFUSRn function. The format of the USRn function in a statement is:
 
-of the DEFUSRn function. The format of the USRn function in a statement
-iS:
+```
 BV = USRn(pass arg)
+```
 
 The (pass arg) is the argument passed to the subroutine; the BASIC variable
 (BV) is assigned the value returned by the subroutine. Performing a USRn
@@ -9881,13 +9848,12 @@ to be directed to the address specified by DEFUSRn. The argument is passed
 to the subroutine in the A and X registers. The BASIC program in Listing
 8-3 demonstrates calling a subroutine.
 
+```
 10 DEFUSR3=&H3000
 20 Y=88: X=0
-
-30 X=USR3CY)
-
+30 X=USR3(Y)
 40 PRINT X
-
+```
 Listing 8-3 The Use of the DEFUSR and USR Functions.
 
 At line 10 the address of subroutine 3 is defined. At line 20 the value
@@ -9901,25 +9867,29 @@ The arguments that can be passed to a subroutine with the USRn function
 are numeric constants and variables, string constants and variables, array
 elements, and expressions. Some examples are:
 
-USR0(125.2) USR3(3+N/256)
-USRI(N$) USR2("ABCD")
+```
+USR0(125.2)     USR3(3+N/256)
+USRI(N$)        USR2("ABCD")
+```
 
 The results returned by a subroutine can be a numeric variable, string
 variable, or an array element. The allowed combinations of pass arguments
 and receive variable types are:
 
+```
 X=USRO(Y)
 N=USRI(X$)
 M$=USR2(X$)
+```
 
 The subroutine has the responsibility of returning a result that matches
 the receiving variable type. For instance, in the second example above the
 subroutine receives a string and must return a numeric value.
 
-u Passing a Numeric Argument to a Subroutine
+##### Passing a Numeric Argument to a Subroutine
+
 When control is given to the subroutine, the A and X registers'
 contents describe the data passed to it. If the passed argument is numeric,
-
 the A register will be clear and the X register will contain the pointer to
 the value. The numeric value will be in a memory area known as the
 floating point accumulator (FAC). The value is represented in a
@@ -9927,10 +9897,14 @@ slightly different form of binary floating point composed of six bytes.
 This form, as shown in Fig. 8-4, has the exponent in the most significant
 byte.
 
-mantissa sign bit(1=neg; 0=pos)
-
-XXXXXXKX XXXXXXXX XXXXXXXX XXXXXXXK XXXXXXKK  XXXXXXXX
-exponent normalized mantissa
+```
+                             mantissa sign bit (1=neg; 0=pos)
+                                                     │
+                                                     ▼
+   xxxxxxxx  xxxxxxxx  xxxxxxxx  xxxxxxxx  xxxxxxxx  xxxxxxxx
+   ╰──────╯  ╰──────────────────────────────────────────────╯
+   exponent           normalized mantissa
+```
 Fig. 8-4 Binary Floating Point Format in FAC.
 
 The exponent is represented in a type of signed binary where the
@@ -9939,9 +9913,11 @@ the byte. It can also be found by subtracting decimal 128 from the decimal
 contents of that byte. For example, if the exponent byte contained $83
 then:
 
-exponent = 8346 - 80, = 346
-or
-exponent = 131,, - 128,, = 340
+```
+exponent = 83<sub>16</sub> - 80<sub>16</sub> = 3<sub>16</sub>
+                            or
+exponent = 131<sub>10</sub> - 128<sub>10</sub> = 3<sub>10</sub>
+```
 
 The mantissa is stored in a normalized format in the remaining five
 bytes. However, the MSB of the last byte is not used to calculate the
@@ -9950,8 +9926,10 @@ sign is positive if clear or negative if set. A value of zero is
 represented by a 00 exponent byte, and the mantissa is ignored. Here's an
 example of a number in the FAC:
 
-FAC = 7F CO 00 00 00 80
-VALUE = -.11 x 27) = -.011, = -.37545
+```
+FAC = 7F C0 00 00 00 80
+VALUE = -.11 x 2<sup>-1</sup> = -.011<sub>2</sub> = -.375<sub>10</sub>
+```
 
 To summarize: when passing a numeric variable to a subroutine the A
 register will be clear, indicating a numeric argument has been passed to
@@ -9965,18 +9943,21 @@ register. The value in the D register will be in signed binary, therefore,
 the range of values is limited to -32768 - +32767 decimal. A demonstration
 of this can be seen in Fig. 8-5. Observe that the D register, after
 returning from INTCNV, contains $0081, the signed binary equivalent of
-
 decimal 129.
 
-BASIC Program Assembled Subroutine 1
+```
+   BASIC Program                          Assembled Subroutine 1
 
-10 X=129
-20 DEFUSR1=&H3000
-30 Y=USRI(X)
-
-3000 |JSR $B3ED| CALL INTCNV
-D = 0081
-
+  ┌──────────────────────┐               ┌──────────────┐
+  │ 10 X=129             │         3000  │ JSR $B3ED    │   CALL INTCNV
+  │ 20 DEFUSR1=&H3000    │           ▲   │  - - -       │   D = 0081
+  │ 30 Y=USR1(X)         │───────────╯   │  - - -       │
+  │  - - - -             │               │  - - -       │
+  │  - - - -             │               │  - - -       │
+  │  - - - -             │               │  - - -       │
+  │  - - - -             │               └──────────────┘
+  └──────────────────────┘
+```
 Fig. 8-5 An Subroutine Calling INTCNV.
 
 The pointer to a numeric variable can be passed to a subroutine. This
@@ -9984,16 +9965,21 @@ lets the subroutine work with the variable as it exists in the numeric
 variable storage area. The BASIC program can pass the pointer to variable X
 with the statement:
 
+```
 50 Y=USR1(VARPTR(X))
+```
 
 Subroutine 1 must get the pointer by using the INTCNV subroutine:
+
+```
 JSR $B3ED
+```
 
 This results in the pointer to variable X being in the D register. Now the
 assembled subroutine can work with variable X as it exists in memory in
 BASIC's normal five-byte binary floating point format.
 
-m Passing a String to a Subroutine
+##### Passing a String to a Subroutine
 When a string is passed to a subroutine, the A register contains a
 non-zero value to indicate so. The X register will point to the string
 descriptor, which is a five-byte description of the string. The format of
@@ -10002,14 +9988,17 @@ the string and the AAAA field contains the pointer to the string. The XX
 fields are used by BASIC and should not be changed. A demonstration of
 passing a string to a subroutine can be seen in Fig. 8-6.
 
-BASIC Program Assembled Subroutine 2
+```
+   BASIC Program                       Assembled Subroutine 2
 
-40 DEFUSR2=&H2800 $2800 A not = 0 and
-
-50 X$="ABCD" X = Pointer to
-60 Y$=USR2(X$) X$ String
--- eo Descriptor
-
+  ┌──────────────────────┐    $2800  ┌──────────────┐
+  │ 40 DEFUSR2=&H2800    │       ▲   │  - - - -     │   A not = 0 and
+  │ 50 X$="ABCD"         │       │   │  - - - -     │   X = Pointer to
+  │ 60 Y$=USR2(X$)       │───────╯   │  - - - -     │   X$ String
+  │  - - - -             │           │  - - - -     │   Descriptor
+  │  - - - -             │           │  - - - -     │
+  └──────────────────────┘           └──────────────┘
+```
 Fig. 8-6 Passing a String to a Subroutine.
 
 At line 50 the string X$ is simply defined. In this case that string,
@@ -10020,7 +10009,7 @@ in Fig. 8-6 must be very careful when acting upon string X$ so as to not
 disturb any other statements. If line 50 were changed to: 50 X$="AB"+"CD",
 the X$ string would reside in the string storage area.
 
-m Returning a Numeric Value to BASIC
+##### Returning a Numeric Value to BASIC
 
 A numeric value can be returned to a BASIC program from an assembled
 subroutine in any of three ways. The three techniques are: returning a
@@ -10044,12 +10033,12 @@ program via an RTS instruction, the variable whose pointer was passed will
 be the value generated by the subroutine and the receiving variable will
 take on the value of the pointer. For example:
 
+```
 10 DEFUSR1=&H2800
-
 20 Y=6544: X= -12
-
 30 X=USR1(VARPTR(Y))
 40 PRINT X,Y
+```
 
 At line 40 X equals the value of the pointer to Y, and Y equals the value
 that subroutine 1 put into memory.
@@ -10064,24 +10053,31 @@ needed because the GIVABF program performs that function. This technique is
 demonstrated in Fig. 8-7. At line 40 the variable K equals decimal 23, the
 equivalent of $0017 that was put into the D register by subroutine 3.
 
-BASIC Program Assembled Subroutine 3
+```
+   BASIC Program                          Assembled Subroutine 3
 
-20 DEFUSR3=&H2900
-30 K=USR3(Y)
-40 PRINT K
-
-LDD #50017
-JMP $B4F4
-
+  ┌──────────────────────┐       $2900  ┌──────────────┐
+  │ 20 DEFUSR3=&H2900    │          ▲   │  - - - -     │
+  │ 30 K=USR3(Y)         │──────────╯   │  - - - -     │
+  │ 40 PRINT K           │◄──────────╮  │  - - - -     │
+  │  - - - -             │           │  │  - - - -     │
+  │  - - - -             │           │  │ LDD #$0017   │
+  │  - - - -             │           ╰──┤ JMP $B4F4    │
+  └──────────────────────┘              └──────────────┘
+```
 Fig. 8-7 Returning An Integer Value Using GIVABF.
 
-u Returning a String to BASIC
+##### Returning a String to BASIC
+
 An subroutine can return a string to be assigned to a BASIC string
 variable. First, the BASIC program should establish a string area for the
 return string variable, and that area must be large enough for the largest
 string the subroutine may return. This can be done with the STRING$
 command:
+
+```
 R$=STRINGS(xxx," ")
+```
 
 This statement establishes a string made up of xxx spaces that a subroutine
 can fill with its return string. The subroutine is then called with the
@@ -10089,7 +10085,9 @@ statement: R$=USR4(R$), which passes the null string, R$, to the
 subroutine. Upon returning, R$ equals whatever the subroutine has placed in
 that string area. This process can also be done in one statement:
 
+```
 R$=USR4(STRINGS(xxx," "))
+```
 
 The receiving string is set equal to the passed string after it has been
 modified by the assembled subroutine.
@@ -10111,46 +10109,36 @@ errors were detected during assembling. Then go to BASIC by the-Q-command.
 Enter the BASIC program in Listing 8-5. This BASIC program calls the
 assembled subroutine and prints the returned string R$.
 
+```
 100 *THIS SUBROUTINE WILL FILL A BLANK STRING WITH
 110 *THE WORDS "ANY STRING WILL DO" AND SET THE
 120 *LENGTH DESCRIPTOR TO 19, THE NUMBER OF
-
-“130 *CHARACTERS IN THE STRING.
-4D BRRRRAARIRERAR IRR IR REE K RARE RAR KRRERIKIKERERRI
-
-150 ORG $3000
-
-160 STR LDY 2,X GET ADDR OF STRNG
-170 LDU #STEXT GET TEXT ADDR
-
-180 LDA #19 COUNT VALUE
-
-190 ST1 LDB ,U+ GET NEXT TEXT CHAR
-200 STB ,Y+ PUT IN STRING
-
-210 DECA DEC COUNT
-
-220 BNE ST1 DO AGAN IF NOT DONE
-230 LDA #19 STRNG LENGTH
-
-240 STA ,X PUT IN DESCRIPTOR
-250 RTS RETURN TO BASIC
-
-LED BERK RARKEKARKAAKKARRERE RRR IREKKIRAKRERRRKE RIK
-
-270 STEXT FCC /ANY STRING WILL DO/
-280 END
-
+130 *CHARACTERS IN THE STRING.
+140 **********************************************
+150         ORG $3000
+160 STR     LDY 2,X         GET ADDR OF STRNG
+170         LDU #STEXT      GET TEXT ADDR
+180         LDA #19         COUNT VALUE
+190 ST1     LDB ,U+         GET NEXT TEXT CHAR
+200         STB ,Y+         PUT IN STRING
+210         DECA            DEC COUNT
+220         BNE ST1         DO AGAIN IF NOT DONE
+230         LDA #19         STRING LENGTH
+240         STA ,X          PUT IN DESCRIPTOR
+250         RTS             RETURN TO BASIC
+260 **********************************************
+270 STEXT   FCC /ANY STRING WILL DO/
+280         END
+```
 Listing 8-4 A Subroutine to Fill a String.
 
+```
 5 CLEAR 200, &H2F00
-10 DEFUSRO=8H3000
-
-20 RS=USRO(STRING$(50," "))
+10 DEFUSR0=8H3000
+20 RS=USR0(STRING$(50," "))
 30 PRINT R$
-
 40 END
-
+```
 Listing 8-5 A BASIC Program Calling a Subroutine.
 
 The technique of assembling programs directly into memory not used by ..
@@ -10176,7 +10164,6 @@ versa. You can use ZBUG to look through ROM to try to locate them and also
 to find out how to use them.
 
 The ROM subroutines are convenient since they already exist and do not
-
 use much RAM because they reside in ROM. However, the subroutines do not
 save the MPU registers they use. This can be remedied by constructing a
 subroutine that stores the required registers, calls the ROM subroutine,
@@ -10186,7 +10173,7 @@ presented if necessary. The subroutines are presented in related groups.
 Those that deal with cassette I/O are presented in the Cassette section,
 for example.
 
-Display and Print Subroutines
+#### Display and Print Subroutines
 
 Three ROM subroutines are presented here: CLSCRN, CHROUT, and
 DISPL. They all control the text screen. The CHROUT subroutine can also
@@ -10197,7 +10184,6 @@ technique of transferring binary data from one electronic device to
 another. A byte is transmitted serially by sequentially sending out on a
 wire the state of each bit of that byte. First, the LSB of a byte is sent
 out, then the more significant bits are sent in the following order; 0, 1,
-
 2, 3, 4, 5, 6, and 7 last. This process repeats for the next byte to be
 sent out.
 
@@ -10210,13 +10196,14 @@ displayed, and you can see which version you have. The rate at which bits
 are transmitted is called baud. A baud of 600 bits per second will
 transmit about 75 bytes per second.
 
-a CLSCRN
+##### CLSCRN
 
-Function: Clear the text screen and set the display pointer to the first
-display position.
-
-Address: $A928 S Stack Use: None
-Registers Modified: B, X, and CC
+| | |
+|-|-|
+| Function: | Clear the text screen and set the display pointer to the first display position. |
+| Address: | $A928 |
+| S Stack Use: | None |
+| Registers Modified: | B, X, and CC |
 
 Pass Arguments: None
 
@@ -10228,7 +10215,6 @@ and $89, which points to the display position on the screen at which the
 next character will be displayed. The value of the display pointer can
 range from $0400 - $05FF, the addresses of the text display buffer.
 BASIC's CLS command is similar to CLSCRN; the screen is cleared and the
-
 next text displayed with the PRINT command starts at the top left corner of
 the screen.
 
@@ -10236,22 +10222,18 @@ The CLSCRN subroutine does not preserve the B, X, and CC registers.
 Listing 8-6 is a subroutine to use with an assembly language program that
 preserves the registers and calls CLSCRN.
 
+```
 5000 *SUBROUTINE NAME: CLS
-
 5010 *THIS SUBROUTINE WILL CLEAR THE TEXT SCREEN
 5020 *AND RESET THE DISPLAY POINTER. 6 BYTES OF
 5030 *THE S STACK ARE USED.
-
-504.0 Geese rae IIR RII IR IORI RI
-
-5050 CLS PSHS B,X,CC SAVE REGS
-
-5060 JSR $A928 CALL CLSCRN
-5070 PULS B,X,CC RESTORE REGS
-5080 RTS RETURN
-
-5090 RHRH HHA KAA KIKAEKK RK KEKE REREREREERREERE
-
+5040 **********************************************
+5050 CLS    PSHS B,X,CC     SAVE REGS
+5060        JSR $A928       CALL CLSCRN
+5070        PULS B,X,CC     RESTORE REGS
+5080        RTS             RETURN
+5090 **********************************************
+```
 Listing 8-6 The CLS Subroutine.
 
 The CLS subroutine uses six bytes of the S stack; four for storing the
@@ -10259,21 +10241,29 @@ B, X, and CC registers, and two for storing PC when CLSCRN is called. This
 does not include the two bytes used to store PC when this subroutine, CLS,
 is called.
 
-a CHROUT
-Function: CHROUT will output a character, specified by its ASCII code in
-the A register, to the text screen or out the serial I/O port.
-Address: [$A002] S Stack Use: 8 bytes
-Registers Modified: CC
+##### CHROUT
+
+| | |
+|-|-|
+| Function: | CHROUT will output a character, specified by its ASCII code in the A register, to the text screen or out the serial I/O port. |
+| Address: | [$A002] |
+| S Stack Use: | 8 bytes |
+| Registers Modified: |  CC |
+
+```
 Pass Parameters: The DP register must contain a 00. The contents of the A
 register is outputted. The contents of address $6F specifies output device.
-$6F = 00; output to the screen.
-$6F. = FE; output through serial I/O port.
+    $6F = 00; output to the screen.
+    $6F = FE; output through serial I/O port.
+```
+
 Return Values: If $6F = 00, the display pointer is incremented.
 
-The starting address of CHROUT is contained in addresses $A002 and
-$A003; it can be called by using extended indirect addressing.
+The starting address of CHROUT is contained in addresses $A002 and $A003; it can be called by using extended indirect addressing.
 
+```
 JSR [$A002] or JSR $A282
+```
 
 One can inspect the contents of $A002 and $A003 with ZBUG in the word
 display. mode to find the absolute starting address. That address is
@@ -10284,7 +10274,6 @@ register preserved, CHROUT should be called from within a subroutine that
 will save and then restore the CC register.
 
 If location $6F contains a 00, CHROUT will display a character whose
-
 ASCII code is in the A register on the text screen at the position
 specified by the display pointer. Each time a character is displayed, the
 display pointer is incremented by one. When the display pointer is
@@ -10295,79 +10284,75 @@ Listing 8-7 is a subroutine that displays a character on the text
 screen. It would be used in a situation where the calling program generates
 the characters one at a time. Note that line 5190 can be changed to
 extended addressing by using the starting address contained within $A002
-
 and $A003.
+
+```
 5100 *SUBROUTINE NAME: ACHRO
 5110 *THIS SUBROUTINE WILL DISPLAY THE CHARACTER
 5120 *WHOSE ASCII CODE IS IN THE A REGISTER AT THE
 5130 *POSITION SPECIFIED BY THE DISPLAY POINTER.
 5140 *THEN THE DISPLAY POINTER IS INCREMENTED.
 5150 *13 BYTES OF STACK AREA ARE REQUIRED.
-5 4 60 HKRKKEKKKEREKRKEKEKREEEK REE REREEEEERERRERERREEREERRER
-
-5170 ACHRO PSHS CC,B,DP SAVE REGS
-
-5180 CLRB GET 00
-
-5190 TFR B,DP CLEAR DP REG
-5200 CLR SO06F OUTPUT TO SCREEN
-5210 JSR [$A002] CALL CHROUT
-5220 PULS CC,B,DP RESTORE REGS
-5230 RTS RETURN
-
-52G0 BARRERA AAKIAKAEREREREKERER ER EREREREREREREREREE
-
+5160 **********************************************
+5170 ACHRO  PSHS CC,B,DP    SAVE REGS
+5180        CLRB            GET 00
+5190        TFR B,DP        CLEAR DP REG
+5200        CLR SO06F       OUTPUT TO SCREEN
+5210        JSR [$A002]     CALL CHROUT
+5220        PULS CC,B,DP    RESTORE REGS
+5230        RTS             RETURN
+5240 **********************************************
+```
 Listing 8-7 The ACHRO Subroutine.
 
-If location $6F contains $FE, the contents of A will be sent out the
-serial I/O port at the baud specified by the contents of addresses $95 and
-$96. The baud can be set to the desired rate by putting the selected value
-from Table 8-1 into locations $95 and $96 before calling CHROUT. BASIC and
-EDTASM+ initially set the baud to 600 bits per second. It is the
-programmer's responsibility to set the baud to match the rate at which the
-device accepts data.
+If location $6F contains $FE, the contents of A will be sent out the serial I/O port at the baud specified by the contents of addresses $95 and $96. The baud can be set to the desired rate by putting the selected value from Table 8-1 into locations $95 and $96 before calling CHROUT. BASIC and EDTASM+ initially set the baud to 600 bits per second. It is the programmer's responsibility to set the baud to match the rate at which the device accepts data.
+
+| Baud | Hex Value |
+|-|-|
+| 120 | 01CA |
+| 300 | 00BE |
+| 600 | 0057 |
+| 1200 | 0029 |
+| 2400 | 0012 |
+| 4800 | 0006 |
+| 9600 | 0001 |
 
 Table 8-1 Baud Control Values.
 
 If a printer is connected to the serial I/O port, it will print the
-
 character whose ASCII code is sent out. Other devices will interpret the
 byte sent according to their design.
 
 Listing 8-8 is a subroutine that preserves the CC register and calls
 CHROUT to output a byte on the serial I/O port.
 
+```
 5300 *SUBROUTINE NAME: BCHRO
-
 5310 *THIS SUBROUTINE WILL OUTPUT THE CONTENTS
 5320 *OF A TO A DEVICE ON THE SERIAL PORT. THE
 5330 *BAUD RATE SHOULD HAVE BEEN PREVIOUSLY
 5340 *DETERMINED. 13 BYTES OF STACK ARE USED.
-5350 RRRA AAR ARERR ARERR RR RER EKER ERR ERR RIKI
-
-5360 BCHRO PSHS CC,B,DP SAVE REGS
-
-5370 CLRB GET 00
-
-5380 TFR B,DP CLEAR DP REG
-5390 LDB #SFE SERIAL OUTPUT
-5400 STB $SO06F PASS PARAM
-5410 JSR [$A002] CALL CHROUT
-5420 PULS CC,B,DP RESTORE REGS
-5430 RTS RETURN
-
-5440 FREKREREREREEREREREERERERRREREREREREIREREREER
-
+5350 **********************************************
+5360 BCHRO      PSHS CC,B,DP    SAVE REGS
+5370            CLRB            GET 00
+5380            TFR B,DP        CLEAR DP REG
+5390            LDB #SFE        SERIAL OUTPUT
+5400            STB $006F       PASS PARAM
+5410            JSR [$A002]     CALL CHROUT
+5420            PULS CC,B,DP    RESTORE REGS
+5430            RTS             RETURN
+5440 **********************************************
+```
 Listing 8-8 The BCHRO Subroutine.
 
-a DISPL
+##### DISPL
 
-Function: DISPL displays a string of characters on the text screen,
-starting at the position specified by the display pointer.
-
-Address: $B99C S Stack Use: 10 bytes
-
-Registers Modified: A, B, X, U, and CC.
+| | |
+|-|-|
+| Function: | DISPL displays a string of characters on the text screen, starting at the position specified by the display pointer. |
+| Address: | $B99C |
+| S Stack Use: | 10 bytes |
+| Registers Modified: | A, B, X, U, and CC. |
 
 Pass Parameters: The DP register must contain 00. The X register points to
 the string to be displayed. The display pointer specifies starting display
@@ -10391,7 +10376,6 @@ displaying characters and returns to the calling program. Thus, quotation
 marks can not be displayed. A byte in the string, of the value $0D, causes
 DISPL to perform a carriage return and a line feed (CR/LF). The next
 display position will be at the beginning of the next line. As DISPL is
-
 displaying a string, the display pointer is incremented by one for each
 character displayed. After performing a carriage return and line feed, the
 display pointer points to the first position of the next line. If the
@@ -10402,46 +10386,39 @@ programs, since it preserves all the registers. It will decrement X by one
 before calling DISPL. Thus, X can point directly to the first character of
 the string when calling the DSPLAY subroutine.
 
+```
 5500 *SUBROUTINE NAME: DSPLAY
-
 5510 *THIS SUBROUTINE WILL DISPLAY THE TEXT
 5520 *STRING THAT THE X REGISTER .POINTS TO
-
 5530 *STARTING AT THE POSITION SPECIFIED BY
 5540 *THE DISPLAY POINTER. A CODE OF OD WILL
 5550 *CAUSE A CR/LF. A CODE OF 22 (") INDICATES
 5560 *THE END OF THE STRING TO DISPLAY. 20
-5570 .*BYTES OF STACK AREA ARE REQUIRED.
-
-5580 HAKKAR RR EEERIRERERREEREEERER EERE ER
-
-5590 DSPLAY PSHS D,X,U,CC,DP SAVE REGS
-
-5600 CLRB GET 00
-
-5610 TFR B,DP CLEAR DP REG
-5620 LEAX -1,X ADJUST POINTER
-5630 JSR $B99C CALL DISPL
-5640 PULS D,X,U,CC,DP. RESTORE REGS
-5650 RTS RETURN
-
-5660 HAIR AER REE REIKI EERE
-
+5570 *BYTES OF STACK AREA ARE REQUIRED.
+5580 **********************************************
+5590 DSPLAY     PSHS D,X,U,CC,DP    SAVE REGS
+5600            CLRB                GET 00
+5610            TFR B,DP            CLEAR DP REG
+5620            LEAX -1,X           ADJUST POINTER
+5630            JSR $B99C           CALL DISPL
+5640            PULS D,X,U,CC,DP    RESTORE REGS
+5650            RTS                 RETURN
+5660 **********************************************
+```
 Listing 8-9 The DSPLAY Subroutine.
 
-Reading The Keyboard
+#### Reading The Keyboard
 
 Interrogating the keyboard to determine if or what key has been
 depressed is often done by programs. Fortunately, there is a subroutine in
 BASIC ROM that performs this function. It is called POLCAT.
 
-= POLCAT
+##### POLCAT
 
-Function: Interrogate the keyboard to see what key is being depressed, if
-any.
-
-Address: [$A000] S Stack Use: 12 bytes
-Registers Modified: A and CC.
+| Function: | Interrogate the keyboard to see what key is being depressed, if any. |
+| Address: | [$A000] |
+| S Stack Use: | 12 bytes |
+| Registers Modified: | A and CC. |
 
 Pass Parameters: None.
 
@@ -10453,9 +10430,11 @@ The POLCAT subroutine samples the keyboard and returns the ASCII code
 of a character in A if a key was depressed. It also indicates whether a key
 was depressed with the Z bit of the CC register. The starting address of
 POLCAT is contained in locations $A000 and $A001. Thus, POLCAT can be
-
 called using extended indirect addressing.
+
+```
 JSR [$A000] or JSR - $AIC1
+```
 
 Or the absolute address ($A1CI1 in Color BASIC 1.0 or 1.1) of POLCAT can be
 found and extended addressing used.
@@ -10469,93 +10448,63 @@ its own use plus two more in which to store PC when it is called.
 Listing 8-10 uses the POLCAT, CLS, ACHRO, and DSPLAY subroutines. It
 clears the screen and displays the string: ENTER A DECIMAL NUMBER. Then
 it polls the keyboard and accepts only the digits 0 - 9, which it displays.
-
 When the ENTER key is hit, it causes the program to return to ZBUG.
 
+```
 100 *PROGRAM NAME: ADEMO
-
 110 *THIS PROGRAM WILL DEMONSTRATE THE USE OF. THE
 120 *CLS, ACHRO, DSPLAY, AND POLCAT SUBROUTINES.
 130 *IT WILL ESTABLISH ITS OWN STACK OF 22 BYTES.
-
-140 KIKIKK KEKE KKEKEKKE RE RKEREERERERERREREREERERERRER
-
-150 ORG $2500
-
-160 ADEMO STS ADOS SAVE ZBUG S REG
-170 LDS #22+ADST ESTABLISH STACK
-180 JSR CLS CLEAR SCREEN
-
-190 LDX #ADTEXT GET TEXT POINTER
-200 JSR DSPLAY DISPLAY TEXT STRING
-210 AD1 JSR [$A000] POLL KEYBOARD
-
-220 BEQ AD1 DO AGAIN IF NO KEY
-230 CMPA #$0D ENTER KEY?
-
-240 BEQ AD2 IF SO,GOTO END
-
-250 CMPA #30 LESS THAN O KEY
-260 BLO AD1 GET NEW KEY
-
-270 CMPA #539 GREATER THAN 9 KEY
-280 BHI AD1 GET NEW KEY
-
-290 JSR ACHRO DISPLAY CHARACTER
-300 BRA AD1 GET NEXT CHARACTER
-310 AD2 LDS ADOS RESTORE ZBUG S REG
-320 SWI RETURN TO ZBUG
-
-330 KXKEKKKEEKRERRERER ERE EERERREEEREEREEREEERRREEEKEE
-
-340 ADOS RMB 2
-
-350 ADST RMB 22
-
-360 ADTEXT FCC /ENTER A DECIMAL NUMBER ""/
-
-37ZQ RRR A RR RRR IIR RRR IRIE RAAT ARERR IIIT IS
+140 **********************************************
+150         ORG $2500
+160 ADEMO   STS ADOS        SAVE ZBUG S REG
+170         LDS #22+ADST    ESTABLISH STACK
+180         JSR CLS         CLEAR SCREEN
+190         LDX #ADTEXT     GET TEXT POINTER
+200         JSR DSPLAY      DISPLAY TEXT STRING
+210 AD1     JSR [$A000]     POLL KEYBOARD
+220         BEQ AD1         DO AGAIN IF NO KEY
+230         CMPA #$0D       ENTER KEY?
+240         BEQ AD2         IF SO,GOTO END
+250         CMPA #$30       LESS THAN 0 KEY
+260         BLO AD1         GET NEW KEY
+270         CMPA #$39       GREATER THAN 9 KEY
+280         BHI AD1         GET NEW KEY
+290         JSR ACHRO       DISPLAY CHARACTER
+300         BRA AD1         GET NEXT CHARACTER
+310 AD2     LDS ADOS        RESTORE ZBUG S REG
+320         SWI             RETURN TO ZBUG
+330 **********************************************
+340 ADOS    RMB 2
+350 ADST    RMB 22
+360 ADTEXT  FCC /ENTER A DECIMAL NUMBER ""/
+370 **********************************************
 5000 *SUBROUTINE NAME: CLS
-
 5010 *THIS SUBROUTINE WILL CLEAR THE TEXT SCREEN
 5020 *AND RESET THE DISPLAY POINTER. .6 BYTES OF
 5030 *THE S STACK ARE USED.
-
-5060 FARES IIII IR RR III RRR IIIT II RTI TI IIR
-
-5050 CLS PSHS B,X,CC SAVE REGS
-
-5060 JSR $A928 CALL CLSCRN
-5070 PULS B,X,CC RESTORE REGS
-5080 RTS RETURN
-
-BOG 0 AIR I IA RA AHIR IAAI RAR IA ARERR RII EKER TT TAIT
+5060 **********************************************
+5050 CLS    PSHS B,X,CC     SAVE REGS
+5060        JSR $A928       CALL CLSCRN
+5070        PULS B,X,CC     RESTORE REGS
+5080        RTS             RETURN
+5090 **********************************************
 5100 *SUBROUTINE NAME: ACHRO
-
-2170 *THIS SUBROUTINE WILL DISPLAY THE CHARACTER
+5110 *THIS SUBROUTINE WILL DISPLAY THE CHARACTER
 5120 *WHOSE ASCII CODE IS IN THE A REGISTER AT THE
 5130 *POSITION SPECIFIED BY THE DISPLAY POINTER.
 5140 *THEN THE DISPLAY POINTER IN INCREMENTED.
-
 5150 *13 BYTES OF STACK AREA ARE REQUIRED.
-
-5160 SA RRO AEA AISI IIS IIR I III I I III
-
-5170 ACHRO PSHS CC,B,DP SAVE REGS
-
-5180 CLRB GET 00
-
-5190 TFR B,DP CLEAR DP REG
-5200 CLR $006F OUTPUT TO SCREEN
-5210 “WSR E$A002] CALL CHROUT
-
-5220 PULS CC,B,DP RESTORE REGS
-5230 RTS RETURN
-
-5240 HAKKKKIKRERKREKEEERERRREREREREREREREREEEERERERERERE
-
+5160 **********************************************
+5170 ACHRO  PSHS CC,B,DP    SAVE REGS
+5180        CLRB            GET 00
+5190        TFR B,DP        CLEAR DP REG
+5200        CLR $006F       OUTPUT TO SCREEN
+5210        JSR [$A002]     CALL CHROUT
+5220        PULS CC,B,DP    RESTORE REGS
+5230        RTS             RETURN
+5240 **********************************************
 5500 *SUBROUTINE NAME: DSPLAY
-
 5510 *THIS SUBROUTINE WILL DISPLAY THE TEXT
 5520 *STRING THAT THE X REGISTER POINTS TO
 5530 *STARTING AT THE POSITION SPECIFIED BY
@@ -10563,26 +10512,17 @@ BOG 0 AIR I IA RA AHIR IAAI RAR IA ARERR RII EKER TT TAIT
 5550 *CAUSE A CR/LF. A CODE OF 22 (") INDICATES
 5560 *THE END OF THE STRING TO DISPLAY. 20
 5570 *BYTES OF STACK AREA ARE REQUIRED.
-
-B5 BD Raa a Ra R KKK KIRK IRI KHIR ERE REE IR ERE
-
-5590 DSPLAY PSHS.D,X,U,CC,DP SAVE REGS
-
-5600 CLRB GET 00
-
-5610 TFR B,DP CLEAR DP REG
-
-5620 LEAX -1,X ADJUST POINTER
-
-5630 JSR $B99C CALL DISPL
-
-5640 PULS D,X,U,CC,DP. RESTORE REGS
-
-5650 RTS RETURN
-
-5660 KIRKE KKREKRREEKREKREREEEREREREERREREEKKEERERERRERER
-5670 END
-
+5580 **********************************************
+5590 DSPLAY PSHS D,X,U,CC,DP SAVE REGS
+5600        CLRB            GET 00
+5610        TFR B,DP        CLEAR DP REG
+5620        LEAX -1,X       ADJUST POINTER
+5630        JSR $B99C       CALL DISPL
+5640        PULS D,X,U,CC,DP RESTORE REGS
+5650        RTS             RETURN
+5660 **********************************************
+5670        END
+```
 Listing 8-10 The ADEMO Program.
 
 The stack area is set to 22 bytes; 20 for DSPLAY plus 2 for storing PC when
@@ -10591,7 +10531,7 @@ A/IM/WE/AO and verify there are no errors. Then go to ZBUG and run the
 program by entering: GADEMO. Notice that only decimal numbers are accepted
 from the keyboard and displayed.
 
-Reading The Joysticks
+#### Reading The Joysticks
 
 Two joysticks can be connected to the Color Computer and their
 positions read with the JOYIN ROM subroutine. It is also possible to
@@ -10607,24 +10547,33 @@ connected to bits 0 and 1 of address $FFOO. Bit 0 reflects the state of the
 right fire button and bit 1 reflects the state of the left fire button. If
 the fire button is depressed, the bit is clear; otherwise it is set.
 
-mg JOYIN
-Function: This subroutine reads the position of both joysticks and returns
-their positions as numeric values in specific memory locations.
-Address: [SA00A] S Stack Use: 6 bytes
-Registers Modified: A,B,X,U,CC.
+##### JOYIN
+
+| | |
+|-|-|
+| Function: | This subroutine reads the position of both joysticks and returns their positions as numeric values in specific memory locations. |
+| Address: | [$A00A] |
+| S Stack Use: | 6 bytes |
+| Registers Modified: | A,B,X,U,CC. |
+
 Pass Parameters: None.
+
+```
 Return Values: In four memory locations, $15A through $15D.
-Right joystick: $015A = left/right position value.
-$015B = up/down position value.
-Left joystick: $015C = left/right position value.
-$015D = up/down position value.
+    Right joystick: $015A = left/right position value.
+                    $015B = up/down position value.
+    Left joystick:  $015C = left/right position value.
+                    $015D = up/down position value.
+```
+
 A value of 00 indicates all the way up or left, and a value of $3F
 indicates all the way down or right.
 
-The starting address of JOYIN is contained in addresses $A00A and
-$AOOB. Therefore, it can be called using extended indirect addressing.
+The starting address of JOYIN is contained in addresses $A00A and $AOOB. Therefore, it can be called using extended indirect addressing.
 
+```
 JSR [$A00A] or JSR $A9DE
+```
 
 If the contents of $AQ00A and $A00B are displayed, the absolute address
 (typically $A9DE) can be found and extended addressing can be used when
@@ -10649,83 +10598,63 @@ joysticks for proper operation; however, the fire button is not tested. The
 JDEMO program can be made to use the right joystick by changing lines 220
 and 270 to the following:
 
-220 LDB $015B
-270 LDB $015A
+```
+220     LDB $015B
+270     LDB $015A
+```
 
 Assemble the JDEMO program with the A/IM/WE/AO command and verify
 there are no errors. Then go to ZBUG and run it by entering: GIDEMO. The
 cursor on the screen will now move as the joystick is moved.
 
+```
 100 *PROGRAM NAME: JDEMO
 110 *THIS PROGRAM WILL POSITION A CURSOR ON THE
 120 *SCREEN TO MATCH THE PHYSICAL POSITION OF
-
 130 *THE LEFT JOYSTICK.
-[GQ RRR IIR RIE KK RR RK IRR RIE RIKER IIE
-
-150 ORG $2500
-
-160 JDEMO LDS #17+JDSTCK ESTABLISH STACK
-170 JSR $A928 CLEAR THE SCREEN
-180 LDX #$04E0 CENTER OF SCREEN
-190 JD1 TFR X,U STORE POINTER
-
-200 LDY #$0400 START OF SCREEN
-210 JSR JOY GET JSTICK VALUES
-220 LDB $015D GET VERTICAL POSITION
-230 LDA #$08 SHIFT VALUE
-
-240 _ MUL SHIFT
-
-250 ANDB #$E0 CALC VERT OFFSET
-260 LEAY D,Y STORE VERT OFFSET
-270 LDB $015C GET HORIZ POSITION
-280 LDA #$80 SHIFT VALUE
-
-290 MUL SHIFT
-
-300 TFR A,B PUT IN LOWER D REG
-310 CLRA CLEAR UPPER D
-
-320 LEAY D,Y STORE HORIZ OFFSET
-330 TFR Y,X SAVE NEW POSITION
-340 LDA #$60 SPACE CODE
-
-350 STA ,U DISPLAY IT
-
-360 LDA #128 CURSOR CODE
-
-370 STA ,X DISPLAY IT
-
-380 BRA JD1 DO AGAIN
-
-BQO RRA AAA RIK AAAI KIARA K KRHA TRIER IRR RIK IRR
+140 **********************************************
+150         ORG $2500
+160 JDEMO   LDS #17+JDSTCK  ESTABLISH STACK
+170         JSR $A928       CLEAR THE SCREEN
+180         LDX #$04E0      CENTER OF SCREEN
+190 JD1     TFR X,U         STORE POINTER
+200         LDY #$0400      START OF SCREEN
+210         JSR JOY         GET JSTICK VALUES
+220         LDB $015D       GET VERTICAL POSITION
+230         LDA #$08        SHIFT VALUE
+240         MUL             SHIFT
+250         ANDB #$E0       CALC VERT OFFSET
+260         LEAY D,Y        STORE VERT OFFSET
+270         LDB $015C       GET HORIZ POSITION
+280         LDA #$80        SHIFT VALUE
+290         MUL             SHIFT
+300         TFR A,B         PUT IN LOWER D REG
+310         CLRA            CLEAR UPPER D
+320         LEAY D,Y        STORE HORIZ OFFSET
+330         TFR Y,X         SAVE NEW POSITION
+340         LDA #$60        SPACE CODE
+350         STA ,U          DISPLAY IT
+360         LDA #128        CURSOR CODE
+370         STA ,X          DISPLAY IT
+380         BRA JD1         DO AGAIN
+390 **********************************************
 400 JDSTCK RMB 17 STACK AREA
-
-410 HRA KREKRIEKIRAIERREREREREREREREERERRERERERER
-
+410 **********************************************
 5700 *SUBROUTINE NAME: . JOY
-
 5710 *THIS SUBROUTINE WILL RETURN THE LEFT AND
 5720 *RIGHT JOYSTICK POSITIONS. IT CALLS JOYIN
 5730 *IN ROM. 15 BYTES OF STACK AREA ARE REQUIRED.
-
-5740 HAKKIKEKKREE KERR EREERERERERERREEEREEERERERE
-
-5750 JOY PSHS D,X,U,CC SAVE REGS
-
-5760 JSR [$AQ0A] CALL JOYIN
-
-5770 PULS D,X,U,CC RESTORE REGS
-
-5780 RTS RETURN
-
-5790 HIKER EREREREREERERERER EERE EEE ERERER REE
-5800 END
-
+5740 **********************************************
+5750 JOY    PSHS D,X,U,CC   SAVE REGS
+5760        JSR [$A00A]     CALL JOYIN
+5770        PULS D,X,U,CC   RESTORE REGS
+5780        RTS             RETURN
+5790 **********************************************
+5800        END
+```
 Listing 8-11 The JDEMO Program.
 
-Cassette Tape I/O
+#### Cassette Tape I/O
 
 Four subroutines in BASIC ROM are used to write and read data to and
 from tape. They are WRTLDR (write leader), BLKOUT (write block out),
@@ -10737,11 +10666,14 @@ the length of the tape. Extended Color BASIC and EDTASM+ use common
 conventions to determine the format of the blocks as they are recorded on
 tape. The same conventions can be used to read data from tape. A group of
 blocks on tape comprises a file, and all the blocks contain the
-
 information in that file. A typical tape file is shown in Fig. 8-8.
 
-blank | leader | header blank | leader | data data EOF
-space block space block block bloc
+```
+     ┌────────┬────────┬────────┬────────┬────────┬────────┬────────┬────────┐ 
+     ⎨ blank  │ leader │ header │ blank  │ leader │  data  │  data  │  EOF   ⎬ 
+     ⎨ space  │        │ block  │ space  │        │ block  │ block  │ block  ⎬ 
+     ⎨────────┴────────┴────────┴────────┴────────┴────────┴────────┴────────⎬
+```
 Fig. 8-8 A BASIC Cassette Tape File.
 
 The file is written and read from left to right; the leader is
@@ -10770,99 +10702,89 @@ will be able to read them.
 The header block is the most complicated because it is composed of the
 largest number of fields. The header block format can be seen in Fig. 8-9.
 
-ML
-file EXEC
-fixed length type gaps addr fixed
-t 4
-
-01 ras 67 8 9 101112 13 14 15 1617.18 19 20
-
-55 3C 00 OF xx xx xx xx xx xx xx xx TT DD GG'SSS SS BB BB CC 55
-
-f [UC ——_,—_____/ t YY 5)
-block | file name data ML check-
-
-type | type load sum
-| addr |
-| |
-| |
-|
-
-<—_—_——-to/from 15-byte buffer -_—_-___—_> |
-
+```
+                                                              ML
+                                             file            EXEC
+        fixed   length                       type  gaps      addr     fixed
+        ⎰─⎱       ↓                           ↓     ↓        ⎰─⎱       ↓
+        0  1   2  3   4  5  6  7  8  9  10 11 12 13 14 15 16 17 18  19  20
+       ┌──────────────────────────────────────────────────────────────────┐
+       │55 3C  00 0F  xx xx xx xx xx xx xx xx TT DD GG SS SS BB BB  CC  55│
+       └──────────────────────────────────────────────────────────────────┘
+               ↑    │ ╰─────────────────────╯     ↑    ⎱──⎰       │ ↑
+            block   │      file name            data    ML         │check-
+            type    │                           type   load        │sum
+                    │                                  addr        │
+                    │                                              │
+                    │◄────────── to/from 15-byte buffer ──────────►│
+```
 Fig. 8-9 Header Block Format.
 
 The bytes of a header block are described as follows:
-0,1 - Always written as $55 $3C by subroutine that creates a block.
-2 - Block type. 00 indicates a header block.
-3 - Length code. Always set to 15 ($0F) for a header block.
-4-18 - Data bytes. This data comes from a 15-byte buffer when the header
-block is written. When read, data goes into a 15-byte buffer.
-4-11 - The file name.
-12 - File type: 00=BASIC program file, 0l=data file, 02=object
-code file.
-13 - Data type: 00=binary. FF=ASCII (as with a CSAVE "xxx",A).
-14 - Gaps between data blocks indicator. 00=no gaps (as in Fig.
-8-8). FF=yes gaps (as in Fig. 8-12).
-15,16 - Address at which to load an object code file.
-17,18 - Address at which to start executing object code.
-19 - Checksum byte. It contains the binary sum of the contents of bytes
-2 - 18, with all carries from bit 7 ignored. It is used to verify
-that data read in is correct.
-20 - Always $55.
 
-check-
-fixed length sum
+| | |
+|-|-|
+| 0,1 | Always written as $55 $3C by subroutine that creates a block. |
+| 2 | Block type. 00 indicates a header block. |
+| 3 | Length code. Always set to 15 ($0F) for a header block. |
+| 4-18 | Data bytes. This data comes from a 15-byte buffer when the header block is written. When read, data goes into a 15-byte buffer. |
+| 4-11 | The file name. |
+| 12 | File type: 00=BASIC program file, 0l=data file, 02=object code file. |
+| 13 | Data type: 00=binary. FF=ASCII (as with a CSAVE "xxx",A). |
+| 14 | Gaps between data blocks indicator. 00=no gaps (as in Fig. 8-8). FF=yes gaps (as in Fig. 8-12). |
+| 15,16 | Address at which to load an object code file. |
+| 17,18 | Address at which to start executing object code. |
+| 19 | Checksum byte. It contains the binary sum of the contents of bytes 2 - 18, with all carries from bit 7 ignored. It is used to verify that data read in is correct. |
+| 20 | Always $55. |
 
-|
-Oo 1 2 =3..4 5 67 N-2 N-1 N
-55 3C 01 LL DD DD DD DD... . DD CC 55
-
-t
-block fixed
-type «———- data from/to —————_—_>
-buffer
-
+``` 
+        fixed   length                                  check-sum
+        ⎰─⎱      ↓                                         ↓       
+        0  1   2  3   4  5  6  7         . . .        N-2  N-1   N
+       ┌────────────────────────────────────────────────────────────┐
+       │55 3C  01 LL  DD DD DD DD        . . .        DD   CC   55  │
+       └────────────────────────────────────────────────────────────┘
+                ↑    │                                  │        ↑
+              block  │                                  │      fixed
+              type   │◄─────── data from/to buffer ────►│
+```
 Fig. 8-10 Data Block Format.
 
 The bytes in a data block, shown in Fig. 8-10, are described as
 follows:
 
-0,1 - Always written as $55 $3C by subroutine that creates a block.
+| | |
+|-|-|
+| 0,1 | Always written as $55 $3C by subroutine that creates a block. |
+| 2 | Block type: 01.= data block. |
+| 3 | Number of bytes of data in this block (00 - FF). |
+| 4-(N-2) | Data in the data block. This data comes from a buffer when the block is written. Upon reading, the data is read into a buffer area. |
+| N-1 | Checksum byte containing the binary sum of bytes 2 through (N-2). Used to verify that the block was read correctly. |
+| N | Always $55. |
 
-2 - Block type: 01.= data block.
-
-3 - Number of bytes of data in this block (00 - FF).
-
-4-(N-2) - Data in the data block. This data comes from a buffer when
-the block is written. Upon reading, the data is read into a
-buffer area. ,
-
-N-1 - Checksum byte containing the binary sum of bytes 2 through (N-2).
-Used to verify that the block was read correctly.
-
-N - Always $55.
-
-fixed length fixed
-4
-0 1 2 3 4.5
-
-35 3C FF 00 CC 55
-
-t ?
-block check-
-type sum
-
+```
+       fixed  length fixed
+        ⎰─⎱     ↓     ↓
+        0  1  2  3  4  5
+       ┌──────────────────┐
+       │55 3C FF 00 CC 55 │
+       └──────────────────┘
+               ↑     ↑
+             block  check-
+             type   sum
+```
 Fig. 8-11 EOF Block Format.
 
 The bytes of an EOF block, shown in Fig. 8-11, are described below.
 Notice that an EOF block contains no data bytes.
-0,1 - Always written as $55 $3C by subroutine that creates a block.
-2 - Block type; FF indicates an EOF block.
-3 - Length code. Must be 00 for an EOF block.
-4 - Checksum byte containing the binary sum of bytes 2 and 3. Used to
-verify that this block was read correctly.
-5 - Always $55.
+
+| | |
+|-|-|
+| 0,1 | Always written as $55 $3C by subroutine that creates a block. |
+| 2 | Block type; FF indicates an EOF block. |
+| 3 | Length code. Must be 00 for an EOF block. |
+| 4 | Checksum byte containing the binary sum of bytes 2 and 3. Used to verify that this block was read correctly. |
+| 5 | Always $55. |
 
 The two ROM subroutines WRTLDR and BLKOUT are used to write a tape
 file. WRTLDR turns on the cassette motor and writes a blank space followed
@@ -10884,24 +10806,29 @@ motor on and clearing it turns the motor off. Be careful not to affect any
 other bits since they control other operations in the computer. Bit 3 can
 be cleared with the following three instructions:
 
+```
 LDA $FF21
 ANDA #$F7
 STA $FF21
+```
 
 without disturbing the other bits in $FF21.
 
 The cassette motor needs to be turned off when the EOF block has been
 written, or when a data or header block has been written and it will be
 some time before the next data block will be written. This would happen in
-
 a program that generates data to be recorded at a slow rate. After stopping
 the tape and accumulating a full data buffer, the next block is written by
 writing a leader and then the data block. This is done because the cassette
 read logic goes out of sync when the tape stops. A file created by this
 process contains gaps between the data blocks as seen in Fig. 8-12.
 
-blank | leader | header | blank | leader | data | blank j leader | data
-space block block block
+```
+    ┌────────┬────────┬────────┬────────┬────────┬────────┬────────┬────────┬────────┐ 
+    ⎨ blank  │ leader │ header │ blank  │ leader │  data  │ blank  │ leader │  data  ⎬ 
+    ⎨ space  │        │ block  │        │        │ block  │        │        │ block  ⎬ 
+    ⎨────────┴────────┴────────┴────────┴────────┴────────┴────────┴────────┴────────⎬
+```
 Fig. 8-12 A Tape File with Gaps.
 
 Tape files created with BASIC's CSAVE "xxx",A command and EDTASM+'s
@@ -10910,12 +10837,17 @@ written with gaps. Tape files created with BASIC's CSAVE "xxx" and CSAVEM
 commands and EDTASM+'s write memory to tape (P) command are written
 without gaps.
 
-a WRTLDR
-Function: Turn on cassette motor and write a gap and leader.
-Address: [$A00C] S Stack Use: 4 bytes
+##### WRTLDR
 
-Registers Modified: A,B,X,Y,CC.
+| | |
+|-|-|
+| Function: | Turn on cassette motor and write a gap and leader. |
+| Address: | [$A00C] |
+| S Stack Use: | 4 bytes |
+| Registers Modified: | A,B,X,Y,CC. |
+
 Pass Parameters: The DP register must contain 00.
+
 Return Values: None.
 
 WRTLDR turns on the cassette motor, writes a blank space, and writes a
@@ -10926,46 +10858,41 @@ from a subroutine that saves the other registers. One should ensure the DP
 register is clear before calling WRTLDR or it will not work (see Listing
 8-12).
 
+```
 5800 *SUBROUTINE NAME: WLDR
-
 5810 *THIS WILL TURN ON THE CASSETTE MOTOR AND
 5820 *WRITE A GAP AND LEADER. 14 BYTES OF STACK
 5830 *AREA ARE REQUIRED.
-
-5840 KRKKKKKKRKREEREREEEREREREREREREREREREERERERE
-
-5850 WLDR ~ PSHS D,X,Y,DP,CC SAVE REGS
-
-5860 CLRB GET 00
-
-5870 TFR B,DP CLEAR DP REG
-5880 JSR  [$A00C] CALL WRTLDR
-5890 PULS D,X,Y,DP,CC RESTORE REGS
-5900 RTS RETURN
-
-5910 KKRKKKHERREEKEKREEERERERRERERREREREREERERERER
-
+5840 **********************************************
+5850 WLDR   PSHS D,X,Y,DP,CC SAVE REGS
+5860        CLRB            GET 00
+5870        TFR B,DP        CLEAR DP REG
+5880        JSR [$A00C]     CALL WRTLDR
+5890        PULS D,X,Y,DP,CC RESTORE REGS
+5900        RTS             RETURN
+5910 **********************************************
+```
 Listing 8-12 The WLDR Subroutine.
 
-uw BLKOUT
+##### BLKOUT
 
-Function: It writes a header, data, or EOF block on tape, specified by the
-pass parameters.
+| | |
+|-|-|
+| Function: | It writes a header, data, or EOF block on tape, specified by the pass parameters. |
+| Address: | [$A008] |
+| S Stack Use: | 10 bytes |
+| Registers Modified: | A,B,X,Y,CC. |
 
-Address: [$A008] S Stack Use: 10 bytes
-
-Registers Modified: A,B,X,Y,CC.
-
+```
 Pass Parameters: The cassette must be at speed and have completed writing
 a leader or block. The DP register must contain 00. The controlling
 parameters are passed in the following memory locations:
-
-$7C = block type to write; 00 = header, 01 = data, FF = EOF;
-$7D = block buffer length; range from 00 to $FF;
-$7E+$7F= starting address of buffer.
+        $7C = block type to write; 00 = header, 01 = data, FF = EOF;
+        $7D = block buffer length; range from 00 to $FF;
+        $7E+$7F = starting address of buffer.
+```
 
 Return Values: The X register contains the sum of the buffer starting
-
 address and the buffer length.
 
 Before calling BLKOUT, the parameters should be put in addresses $7C
@@ -10978,52 +10905,44 @@ written.
 
 Presented in Listing 8-13 are two subroutines, WBLOK and MOTOFF.
 WBLOK writes a block by calling BLKOUT. MOTOFF turns the cassette
-
 motor off.
+
+```
 6000 *SUBROUTINE NAME: WBLOK
 6010 *THIS WILL WRITE A HEADER, DATA, OR EOF BLOCK
-6020. *ON CASSETTE TAPE. ADDRESSES 7C=BLOCK TYPE;
+6020 *ON CASSETTE TAPE. ADDRESSES 7C=BLOCK TYPE;
 6030 *7D=BUFFER LENGTH; 7E+7F=BUFFER ADDRESS.
 6040 *20 BYTES OF STACK AREA ARE REQUIRED.
-6050 REREKEREERERRREREEREREREREREEREEEEREREREERR RIK
-
-6060 WBLOK PSHS D,X,Y,DP,CC SAVE REGS
-
-6070 CLRB GET 00
-
-6080 TFR B,DP CLEAR DP REG
-6090 JSR = [$A008] CALL BLKOUT
-6100 PULS D,X,Y,DP,CC RESTORE REGS
-6110 RTS RETURN
-
-6120 KKKIKKEREREREREREREREREKREEKREREREERRKEREREEER
-
+6050 **********************************************
+6060 WBLOK  PSHS D,X,Y,DP,CC SAVE REGS
+6070        CLRB            GET 00
+6080        TFR B,DP        CLEAR DP REG
+6090        JSR [$A008]     CALL BLKOUT
+6100        PULS D,X,Y,DP,CC RESTORE REGS
+6110        RTS             RETURN
+6120 **********************************************
 6200 *SUBROUTINE NAME: MOTOFF
 6210 *THIS SUBROUTINE WILL TURN OFF THE CASSETTE
-
 6220 *MOTOR. TWO BYTES OF STACK AREA ARE USED.
-623.0 FARRER RII RR IIR III IR IIR I
-
-6240 MOTOFF PSHS A,CC SAVE REGS
-
-6250 LDA SFF21 GET CONTROL BYTE
-6260 ANDA #$F7 CLEAR BIT 3
-
-6270 STA SFF21 STORE CONTRL BYTE
-6280 PULS-A,CC RESTORE REGS
-6290 RTS RETURN
-
-B50Q FHRKARAKAHAKAKAAKEKKEREEREREREEERERERERERERR
-
+6230 **********************************************
+6240 MOTOFF PSHS A,CC       SAVE REGS
+6250        LDA $FF21       GET CONTROL BYTE
+6260        ANDA #$F7       CLEAR BIT 3
+6270        STA $FF21       STORE CONTRL BYTE
+6280        PULS A,CC       RESTORE REGS
+6290        RTS             RETURN
+6300 **********************************************
+```
 Listing 8-13 The WBLOK and MOTOFF Subroutines.
 
-ae CSRDON
+##### CSRDON
 
-Function: Turns on cassette motor and gets cassette in sync for reading by
-reading the leader.
-
-Address: [$A004] S Stack Use: 6 bytes
-Registers Modified: A,B,X,CC.
+| | |
+|-|-|
+| Function: | Turns on cassette motor and gets cassette in sync for reading by reading the leader. |
+| Address: | [$A004] |
+| S Stack Use: | 6 bytes |
+| Registers Modified: | A,B,X,CC. |
 
 Pass Parameters: The DP register must contain 00.
 
@@ -11035,45 +10954,44 @@ that follows. CSRDON should be used when starting to read a file and when
 about to read a data block, if the cassette motor is off. Listing 8-14 is a
 subroutine that preserves the registers and calls CSRDON.
 
+```
 6400 *SUBROUTINE NAME: RLDR
-
 6410 *THIS WILL TURN ON THE CASSETTE MOTOR AND
 6420 *USE THE LEADER TO GET IN SYNC FOR READING
 6430 *THE FOLLOWING BLOCK. 14 BYTES OF STACK
 6440 *AREA ARE USED.
-
-6450 KAKKKEKKARKEERERERERERERERREEREREREREREREREERE
-
-6460 RLDR  =-PSHS D,X,CC,DP SAVE REGS
-
-6470 CLRB GET 00
-
-6480 TFR B,DP CLEAR DP REG
-6490 JSR £[$A004] CALL CSRDON
-6500 PULS D,X,CC,DP RESTORE REGS
-6510 RTS RETURN
-
-E520 KRRKRKRKAHKAKERRAKIKKEKEKKEREREREERERERREERER
-
+6450 **********************************************
+6460 RLDR   PSHS D,X,CC,DP  SAVE REGS
+6470        CLRB            GET 00
+6480        TFR B,DP        CLEAR DP REG
+6490        JSR [$A004]     CALL CSRDON
+6500        PULS D,X,CC,DP  RESTORE REGS
+6510        RTS             RETURN
+6520 **********************************************
+```
 Listing 8-14 The RLDR Subroutine.
 
-= BLKIN
-Function: Reads a header, data, or EOF block from tape if the motor is on
-and the cassette in sync.
-Address: [$A006] S Stack Use: 8 bytes
-Registers Modified: A,B,X,CC.
-Pass Parameters: The DP register must contain 00. The buffer starting
-address must be put in addresses $7E and $7F.
+##### BLKIN
+
+| Function: | Reads a header, data, or EOF block from tape if the motor is on and the cassette in sync. |
+| Address: | [$A006] |
+| S Stack Use: | 8 bytes |
+| Registers Modified: | A,B,X,CC. |
+
+Pass Parameters: The DP register must contain 00. The buffer starting address must be put in addresses $7E and $7F.
+
+```
 Return Values: The data is read from tape into the buffer. The block type
 and length of the block read is returned in memory addresses $7C and $7D:
-$7C = Block type: 00 = Header block, 01 = Data block, FF = EOF block.
-$7D = Block length.
+    $7C = Block type: 00 = Header block, 01 = Data block, FF = EOF block.
+    $7D = Block length.
 The completion status is returned in the CC and A registers:
-Z=1 and A=00: indicate a successful read.
-Z=0 and A=01: indicate a checksum error (block was read incorrectly).
-Z=0 and A=02: indicate a memory error (block read incorrectly due to
-bad memory in read buffer area or buffer area extends
-into ROM or dedicated address area).
+    Z=1 and A=00: indicate a successful read.
+    Z=0 and A=01: indicate a checksum error (block was read incorrectly).
+    Z=0 and A=02: indicate a memory error (block read incorrectly due to
+                  bad memory in read buffer area or buffer area extends
+                  into ROM or dedicated address area).
+```
 
 Before BLKIN is called the cassette must be in sync and at speed. The
 buffer starting address must also be in locations $7E and $7F. The program
@@ -11094,28 +11012,22 @@ tape to the beginning of the file for a second attempt to read the tape.
 Listing 8-15 is a subroutine that preserves the registers (except A and
 CC) and calls BLKIN. The status is returned in the A and CC registers.
 
+```
 6600 *SUBROUTINE NAME: RBLOK
-
 6610 *THIS WILL READ A BLOCK IF THE CASSETTE IS
 6620 *IN SYNC. 7E+7F=BUFFER ADDR. UPON RETURNING:
 6630 *7D=BLOCK LENGTH, 7C=BLOCK TYPE, AND THE
 6640 *A REG AND.Z BIT INDICATE READ STATUS.
-
 6650 *14 BYTES OF STACK AREA ARE REQUIRED.
-
-56660 RERRAARKAAAREAKEAEKEREREREREREIKEREREEKREERE
-
-6670 RBLOK PSHS B,X,DP SAVE REGS
-
-6680 CLRA GET 00
-
-6690 TFR A,DP CLEAR DP REG
-6700 JSR [$A006] CALL BLKIN
-6710 PULS B,X,DP RESTORE REGS
-6720 RTS RETURN
-
-6730 HRAKKHK IRR RIKER IRI IEEE KIARA ERE
-
+6660 **********************************************
+6670 RBLOK  PSHS B,X,DP     SAVE REGS
+6680        CLRA            GET 00
+6690        TFR A,DP        CLEAR DP REG
+6700        JSR [$A006]     CALL BLKIN
+6710        PULS B,X,DP     RESTORE REGS
+6720        RTS             RETURN
+6730 **********************************************
+```
 Listing 8-15 The RBLOK Subroutine.
 
 Listing 8-16 is a demonstration of writing a block to tape and then
@@ -11123,272 +11035,146 @@ reading it back, It consists of two programs; the first (BKOUT) writes the
 contents of a 100-byte buffer on tape, and the second (RDBLK) reads the
 block into a different buffer area.
 
+```
 100 *PROGRAM NAME: BKOUT
 110 *THIS WILL FILL EACH BYTE OF A 100 BYTE
 120 *BUFFER WI A NUMBER FROM 00 TO 63 HEX.
-
 130 *THEN THAT BUFFER IS RECORDED-ON TAPE.
-140 FOREGO III IIIa He
+140 **********************************************
+150         ORG $2600
+160 BKOUT   STS BKOLD       SAVE ZBUG S REG
+170         LDS #22+BKSTK   NEW STACK
+180         CLRA            CLEAR A
+190         LDX #BKBUF      GET BUF ADDR
+200 BK1     STA ,X+         PUT A IN BUFFER
+210         INCA            INC A REG
+220         CMPA #$64       DONE?
+```
 
-150 ORG $2600
-
-160 BKOUT .. STS BKOLD SAVE .ZBUG S REG
-170 LDS #22+BKSTK NEW STACK
-
-180 CLRA CLEAR A
-
-190 LDX #BKBUF GET BUF ADDR
-200 BK1 STA °,X+ PUT :-A_IN BUFFER
-210 INCA INC A REG
-
-220 CMPA #564 DONE?
-
-100
-110
-120
-130
-140
-150
-160
-170
-180
-190
-200
-210
-220
-230
-240
-250
-260
-270
-280
-290
-300
-310
-320
-330
-340
-350
-360
-370
-380
-390
-400
-410
-420
-430
-440
-450
-460
-470
-480
-490
-500
-510
-520
-530
-540
-550
-560
-570
-5800
-5810
-5820
-5830
-5840
-5850
-5860
-5870
-5880
-5890
-5900
-5910
-
-*PROGRAM NAME: BKOUT
-
-*THIS WILL FILL EACH BYTE OF A 100 BYTE
-*BUFFER WI A NUMBER FROM 00 TO 63 HEX.
-*THEN THAT BUFFER IS RECORDED ON TAPE.
-
-KIKKKKEKK KIER RERERE EKER ARERR ERE ERERERERER
-
-ORG $2600
-BKOUT STS BKOLD SAVE ZBUG S REG
-
-LDS #22+BKSTK NEW STACK
-
-CLRA CLEAR A
-
-LDX #BKBUF GET BUF ADDR
-BK1 STA ,X+ PUT A IN BUFFER
-
-INCA INC' A REG
-
-CMPA #$64 DONE?
-
-BLS BK1 IF NOT,DO AGAIN
-
-JSR WLDR WRITE LEADER
-
-LDA #501 BLOCK TYPE
-
-STA $007C PASS IT
-
-LDA #100 BLOCK LENGTH
-
-STA $007D PASS IT
-
-LDX #BKBUF GET BUF ADDR
-
-STX $007E PASS IT
-
-JSR WBLOK WRITE BLOCK
-
-JSR MOTOFF TURN MOTOR OFF
-
-LDS BKOLD GET ZBUG S
-
-SWI RETURN TO ZBUG
-FIT RII I AKIRA RK IRI IRI RII IKI REIKI REI III AR
-BKOLD.. RMB 2 ZBUG S STORAGE
-BKBUF.. RMB 100 BUFFER AREA
-BKSTK .. .RMB 22 STACK AREA
-
-KKK KKK KIRKE KR KERR ERIKA ER EERER EERE EEE
-
-*PROGRAM NAME: RDBLK
-*THIS WILL READ THE PREVIOUSLY WRITTEN
-
-*BLOCK INTO A DIFFERENT BUFFER.
-HARIKA IKI ARK ARK IRIE RAIA KIER ER IARI RII,
-
-RDBLK STS RDOLD SAVE ZBUG S
-LDS #16+RDSTK. | NEW STACK
-JSR RLDR GET IN SYNC
-LDX #RDBUF GET BUF ADDR
-STX. $007E PASS IT
-JSR RBLOK READ BLOCK
-JSR MOTOFF TURN OFF MOTOR
-LDS RDOLD GET ZBUG S
-SWI RETURN TO ZBUG
-KAKA RIKI IK IR RII RAR IRI IIIA IIA IIA IAI IIA IRE,
-RDOLD RMB 2 ZBUG S STORAGE
-RDSTK RMB 16 STACK AREA
-RDBUF RMB 100 BUFFER AREA
-
-HRI I KERR EKIK RRR REE IRREREEREEREREREEERERE
-
-*SUBROUTINE NAME: WLDR
-
-*THIS WILL TURN ON THE CASSETTE MOTOR AND
-*WRITE A GAP AND LEADER. 14 BYTES OF STACK
-*AREA ARE REQUIRED.
-
-HRA RRA IA IKKE RIAA IARI ARIA AAR ERIE IAI,
-
-WLDR PSHS D,X,Y,DP,CC SAVE REGS
-
-CLRB GET 00
-
-TFR B,DP CLEAR DP REG
-JSR [$A00C] CALL WRTLDR
-PULS D,X,Y,DP,CC RESTORE REGS
-RTS RETURN
-
-HAKKAR KERRIER REE REREREREER REE ER RERERREERR
-
+```
+100 *PROGRAM NAME: BKOUT
+110 *THIS WILL FILL EACH BYTE OF A 100 BYTE
+120 *BUFFER WI A NUMBER FROM 00 TO 63 HEX.
+130 *THEN THAT BUFFER IS RECORDED ON TAPE.
+140 **********************************************
+150         ORG $2600
+160 BKOUT   STS BKOLD       SAVE ZBUG S REG
+170         LDS #22+BKSTK   NEW STACK
+180         CLRA            CLEAR A
+190         LDX #BKBUF      GET BUF ADDR
+200 BK1     STA ,X+         PUT A IN BUFFER
+210         INCA            INC A REG
+220         CMPA #$64       DONE?
+230         BLS BK1         IF NOT,DO AGAIN
+240         JSR WLDR        WRITE LEADER
+250         LDA #$01        BLOCK TYPE
+260         STA $007C       PASS IT
+270         LDA #100        BLOCK LENGTH
+280         STA $007D       PASS IT
+290         LDX #BKBUF      GET BUF ADDR
+300         STX $007E       PASS IT
+310         JSR WBLOK       WRITE BLOCK
+320         JSR MOTOFF      TURN MOTOR OFF
+330         LDS BKOLD       GET ZBUG S
+340         SWI             RETURN TO ZBUG
+350 **********************************************
+360 BKOLD   RMB 2           ZBUG S STORAGE
+370 BKBUF   RMB 100         BUFFER AREA
+380 BKSTK   RMB 22          STACK AREA
+390 **********************************************
+400 *PROGRAM NAME: RDBLK
+410 *THIS WILL READ THE PREVIOUSLY WRITTEN
+420 *BLOCK INTO A DIFFERENT BUFFER.
+430 **********************************************
+440 RDBLK   STS RDOLD       SAVE ZBUG S
+450         LDS #16+RDSTK   NEW STACK
+460         JSR RLDR        GET IN SYNC
+470         LDX #RDBUF      GET BUF ADDR
+480         STX $007E       PASS IT
+490         JSR RBLOK       READ BLOCK
+500         JSR MOTOFF      TURN OFF MOTOR
+510         LDS RDOLD       GET ZBUG S
+520         SWI             RETURN TO ZBUG
+530 **********************************************
+540 RDOLD   RMB 2           ZBUG S STORAGE
+550 RDSTK   RMB 16          STACK AREA
+560 RDBUF   RMB 100         BUFFER AREA
+570 **********************************************
+5800 *SUBROUTINE NAME: WLDR
+5810 *THIS WILL TURN ON THE CASSETTE MOTOR AND
+5820 *WRITE A GAP AND LEADER. 14 BYTES OF STACK
+5830 *AREA ARE REQUIRED.
+5840 **********************************************
+5850 WLDR   PSHS D,X,Y,DP,CC SAVE REGS
+5860        CLRB            GET 00
+5870        TFR B,DP        CLEAR DP REG
+5880        JSR [$A00C]     CALL WRTLDR
+5890        PULS D,X,Y,DP,CC RESTORE REGS
+5900        RTS             RETURN
+5910 **********************************************
 6000 *SUBROUTINE NAME: WBLOK
-
 6010 *THIS WILL WRITE HEADER, DATA, OR EOF BLOCK
 6020 *ON CASSETTE TAPE. ADDRESSES 7C=BLOCK TYPE;
 6030 *7D=BUFFER LENGTH; 7E+7F=BUFFER ADDRESS.
-
 6040 *20 BYTES OF STACK AREA ARE REQUIRED.
-6050 FERRE EI IRR RRR RRR EK
-
-6060 WBLOK PSHS D,X,Y,DP,CC SAVE REGS
-6070 CLRB GET 00
-
-6080 TFR B,DP CLEAR DP REG
-6090 JSR [$A008] CALL BLKOUT
-6100 PULS D,X,Y,DP,CC RESTORE REGS
-6110 RTS RETURN
-
-6120 KRAKEKKKREEKEKEREREREREREREREREREREEREREREREEE
-
+6050 **********************************************
+6060 WBLOK  PSHS D,X,Y,DP,CC SAVE REGS
+6070        CLRB            GET 00
+6080        TFR B,DP        CLEAR DP REG
+6090        JSR [$A008]     CALL BLKOUT
+6100        PULS D,X,Y,DP,CC RESTORE REGS
+6110        RTS             RETURN
+6120 **********************************************
 6200 *SUBROUTINE NAME: MOTOFF
 6210 *THIS SUBROUTINE WILL TURN OFF THE CASSETTE
-
 6220 *MOTOR. TWO BYTES OF STACK AREA ARE USED.
-6230 ROR RR IRI RRR TR IIR III
-
-6240 MOTOFF PSHS A,CC SAVE REGS
-
-6250 LDA $FF21 GET CONTROL BYTE
-6260 ANDA #$F7 CLEAR BIT 3
-
-6270 STA SFF21 STORE CONTRL BYTE
-6280 PULS A,CC RESTORE REGS
-6290 RTS RETURN
-
-6300 FEHR HHAA KIA AKA R KIKI KE KIRKE ERERIERERER
-
+6230 **********************************************
+6240 MOTOFF PSHS A,CC       SAVE REGS
+6250        LDA $FF21       GET CONTROL BYTE
+6260        ANDA #$F7       CLEAR BIT 3
+6270        STA $FF21       STORE CONTRL BYTE
+6280        PULS A,CC       RESTORE REGS
+6290        RTS             RETURN
+6300 **********************************************
 6400 *SUBROUTINE NAME: RLDR
-
 6410 *THIS WILL TURN ON THE CASSETTE MOTOR AND
 6420 *USE THE LEADER TO GET IN SYNC FOR READING
 6430 *THE FOLLOWING BLOCK. 14 BYTES OF STACK
-
 6440 *AREA ARE USED.
-64.50 RII IIR RR IR IR III RII III IRIE RIOT IAI
-
-6460 RLDR  _PSHS D,X,CC,DP SAVE REGS
-6470 CLRB GET 00
-
-6480 TFR B,DP CLEAR DP REG
-6490 JSR [$A004] CALL CSRDON
-6500 PULS D,X,CC,DP RESTORE REGS
-6510 RTS RETURN
-
-6520 BERRA HKKEKKEKRERERERERE RE EEK EERE RE RKEERE
-
+6450 **********************************************
+6460 RLDR   PSHS D,X,CC,DP  SAVE REGS
+6470        CLRB            GET 00
+6480        TFR B,DP        CLEAR DP REG
+6490        JSR [$A004]     CALL CSRDON
+6500        PULS D,X,CC,DP  RESTORE REGS
+6510        RTS             RETURN
+6520 **********************************************
 6600 *SUBROUTINE NAME: RBLOK
-
 6610 *THIS WILL READ A BLOCK IF THE CASSETTE IS
 6620 *IN SYNC. 7E+7F=BUFFER ADDR. UPON RETURNING;
 6630 *7D=BLOCK LENGTH, 7C=BLOCK TYPE, AND THE
 6640 *A REG AND Z BIT INDICATE READ STATUS.
-
 6650 *14 BYTES OF STACK AREA ARE REQUIRED.
-
-E660 BRERA AKAAHKKAKERKAKIKEREREKERRERRREER EERE
-
-6670 RBLOK PSHS-B,X,DP SAVE REGS
-
-6680 CLRA GET 00
-
-6690 TFR A,DP CLEAR DP REG
-
-6700 JSR [$A006] CALL BLKIN
-
-6710 PULS B,X,DP RESTORE REGS
-
-6720 RTS RETURN
-
-6730 ORR III III II IIIT I IRI IT TATA
-6740 END
-
+6660 **********************************************
+6670 RBLOK  PSHS B,X,DP     SAVE REGS
+6680        CLRA            GET 00
+6690        TFR A,DP        CLEAR DP REG
+6700        JSR [$A006]     CALL BLKIN
+6710        PULS B,X,DP     RESTORE REGS
+6720        RTS             RETURN
+6730 **********************************************
+6740        END
+```
 Listing 8-16 The BKOUT and RDBLK Programs.
 
 Assemble the source code with the A/IM/WE/AO command and verify there
 are no errors. Both programs are now in memory. Go to ZBUG and run the
 first. program by entering GBKOUT. It writes a leader and a data block on
-
 tape. Position the tape back to the starting point and run RDBLK. This
 reads the data into the RDBUF buffer area. Use ZBUG to verify the data was
 loaded into RDBUF by observing that it is the same as the data in BK BUF.
 
-Disk I/O
+#### Disk I/O
 
 Disk drives can be connected to the Color Computer; they store and read
 data to and from 5 1/4 inch floppy disks. The following descriptions apply
@@ -11411,15 +11197,9 @@ length of a narrow circular path on one side of the disk as the disk is
 rotated by the disk drive. On each disk are 35 circular paths known as
 tracks. Each track is identified by a number, from 0 to 34. The track
 organization on a disk is illustrated in Fig. 8-13. The small hole in the
-disk, seen in Fig. 8-13, is used to identify the starting point of the
+disk is used to identify the starting point of the
 tracks. Track 0 is the outermost circular path, and higher-numbered tracks
 are positioned inward. The tracks are concentric circles, not a-spiral.
-
-track 0
-
-rotation
-
-Fig. 8-13 Tracks On a Disk.
 
 Each track is divided into 18 sectors of equal length. Each sector is
 identified by its number, from 1 to 18. Each sector contains 256 bytes of
@@ -11430,14 +11210,10 @@ read/write head. The act of moving the read/write head to a track is called
 seeking.
 
 The sectors are numbered by the DSKINI BASIC command, normally set up
-with a skip factor of four. This causes the sectors to be labelled as
-shown in Fig. 8-14. The skip factor of four causes four sectors to be
-between consecutively numbered sectors. In Fig. 8-14 sectors 12, 5, 16, and
-9 are between sectors | and 2.
+with a skip factor of four. The skip factor of four causes four sectors to be
+between consecutively numbered sectors.
 
-Fig. 8-14 Sector Numbering.
-
-Tracks 0.- 16.and 18.- 34 store data. Track 17 contains. the disk
+Tracks 0 - 16 and 18 - 34 store data. Track 17 contains the disk
 directory. The disk directory is used by BASIC to keep track of where
 data has and has not been recorded on the disk. BASIC assigns disk space to
 a data or program file-in granules of 9 sectors, one: half a track. A
@@ -11452,31 +11228,24 @@ table and the directory entries. The file allocation table is stored
 in sector 2, and the directory entries are stored in sectors 3 - 11 of
 track 17. Sectors 12 -.18 of track 17.are not used. The directory entries
 contain up to 72 entries, each 32 bytes long. Each directory entry
-
 describes a different file on the disk. The format of an entry is shown in
 Fig. 8-15. The bytes in an entry are described as follows:
 
-0-7 - File name, left justified and blank filled. If byte 0 = 00; a
-previous entry has been deleted and this entry is available for
-use. If byte 0 = FF; this entry and all following entries have
-not been used and are available for use.
+| | |
+|-|-|
+| 0-7 | File name, left justified and blank filled. If byte 0 = 00; a previous entry has been deleted and this entry is available for use. If byte 0 = FF; this entry and all following entries have not been used and are available for use. |
+| 8-10 | File name extension, left justified and blank filled. |
+| 11 | File type code: 00=BASIC program file, 01=BASIC data file, 02=object code program file, 03=text editor source code file. |
+| 12 | ASCII flag: 00 = binay format, FF = ASCII format. |
+| 13 | The number of the first granule assigned to this file. May contain from 00 to $43. |
+| 14-15 | The number of bytes stored in the last sector of this file. |
 
-8-10 - File name extension, left justified and blank filled.
-
-11 -- File type code: 00=BASIC program file, 01=BASIC data file,
-02=object code program file, 03=text editor source code file.
-
-12 - ASCII flag: 00 = binay format, FF = ASCII format.
-
-13 - The number of the first granule assigned to this file. May contain
-from 00 to $43.
-
-14-15 - The number of bytes stored in the last sector of this file.
-
-01 2 34 567 8 9 1011 12 131415 16 32
-
-nn nn nn nn nn nn nn nn xx xx xx tt aa gg bb bb unused
-
+```
+    0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16            32
+   ┌────────────────────────────────────────────────────────────────┐
+   │nn nn nn nn nn nn nn nn xx xx xx tt aa gg bb bb      unused     │
+   └────────────────────────────────────────────────────────────────┘
+```
 Fig. 8-15 Format of a Directory Entry.
 
 The file allocation table is composed of an entry for each granule.
@@ -11486,77 +11255,65 @@ contains information about granule 0, byte 1 about granule 1, up to byte
 67, which describes granule 67. The contents of each byte are interpreted
 as follows:
 
-If byte = FF, that granule is not currently part of a file and is
-
-available.
-
-If byte = 00 - $43, that granule is part of a file and the contents of
-this byte is the number of the next granule in the file.
-
-If byte = $CO - $C9, that granule is the last granule of a file.
-Represented in bits 0 - 5 is the number of sectors in this granule
-in use.
+- If byte = FF, that granule is not currently part of a file and is available.
+- If byte = 00 - $43, that granule is part of a file and the contents of this byte is the number of the next granule in the file.
+- If byte = $CO - $C9, that granule is the last granule of a file. Represented in bits 0 - 5 is the number of sectors in this granule in use.
 
 The directory entries and file allocation table are used to determine what
 sectors and/or granules are in use. For more detailed information, see
 Color Computer Disk System, the manual that comes with the Radio Shack
 disk drives.
 
-= DSKCON
+##### DSKCON
 
-Function: This subroutine provides for writing and reading data to and
-from disk.
+| | |
+|-|-|
+| Function: | This subroutine provides for writing and reading data to and from disk. |
+| Address: | [$C004] |
+| S Stack Use: | 25 bytes |
+| Registers Modified: | CC. |
 
-Address: [$C004] S Stack Use: 25 bytes
-Registers Modified: CC.
-
+```
 Pass Parameters: The DP register must contain 00. The parameters are
 passed in a-table that the contents of addresses $C006 and $C007 point to.
+    [$C006:$C007] = Operation code where:
+        00 = move read/write head to track 0;
+        01 = no operation;
+        02 = read data from sector into memory;
+        03 = write data from memory to sector;
+    [$C006:$C007] +1 = Disk drive number (00 - 03);
+    [$C006:$C007] +2 = track number (00 to 22 hex);
+    [$C006:$C007] +3 = sector number (01 to 12 hex);
+    [$C006:$C007] +4, +5 = starting address of buffer area.
+```
 
-[$C006:$C007] = Operation code where:
-
-00 = move read/write head to track 0;
-
-01 = no operation;
-
-02 = read data from sector into memory;
-
-03 = write data from memory to sector;
-[$C006:$C007] +1 = Disk drive number (00 - 03);
-[$C006:$C007] +2 = track number (00 to 22 hex);
-[$C006:$C007] +3 = sector number (01 to 12 hex);
-[$C006:$C007] +4, +5 = starting address of buffer area.
-
+```
 Return Values: A status byte is returned in memory address [$C006:C007]
 +6. Bits 2 - 7 indicate the result of attempting a disk operation. If this
 byte is OO at the end of an operation, the operation was performed
 successfully. The meanings of each bit, if set, are:
-
-Bit 7 - Disk drive is not ready. This should never occur because this
-signal is not used.
-
-Bit 6 - Write protect error. One tried to write on a write protected
-disk.
-
-Bit 5 - Write fault. An error was detected during a write operation.
-
-Bit 4 - Seek error or sector not found. Also occurs if the disk was
-not initialized with the DSKINI command or if one tries to
-access a non-existant sector.
-
-Bit 3 - CRC error. Indicates data was not read correctly from the
-disk.
-
-Bit 2 - Lost data during a read or write because the MPU didn't
-respond to the disk's data request soon enough.
-
+    Bit 7 - Disk drive is not ready. This should never occur because this
+            signal is not used.
+    Bit 6 - Write protect error. One tried to write on a write protected
+            disk.
+    Bit 5 - Write fault. An error was detected during a write operation.
+    Bit 4 - Seek error or sector not found. Also occurs if the disk was
+            not initialized with the DSKINI command or if one tries to
+            access a non-existant sector.
+    Bit 3 - CRC error. Indicates data was not read correctly from the
+            disk.
+    Bit 2 - Lost data during a read or write because the MPU didn't
+            respond to the disk's data request soon enough.
 Any of the above errors can also occur if something is wrong with the disk
 or disk drive.
+```
 
 The starting address of DSKCON is located in addresses $C004 and $C005.
 It can be called with extended indirect addressing.
 
-JSR [$C004] or JSR $D66C
+```
+JSR [$C004]     or      JSR $D66C
+```
 
 One can also read the value (typically $D66C) from $C004 and $C005 and use
 extended addressing.
@@ -11571,7 +11328,6 @@ SEE and SEF, is put the starting address of the buffer area. Now. DSKCON can
 be called. When writing, the data in the buffer area (256 bytes) is written
 on the sector of the selected track. When reading, 256 bytes are read from
 the sector of the selected track into the buffer area. When DSKCON returns,
-
 the return status is in location $FO or [C006:C007] +6. If its contents are
 00, the operation was performed successfully.
 
@@ -11589,25 +11345,19 @@ be called from within a subroutine that saves and restores the CC register.
 This subroutine in Listing 8-17 also ensures the DP register is clear
 before calling DSKCON.
 
+```
 6800 *SUBROUTINE NAME: DISK
-
 6810 *THIS SUBROUTINE WILL CALL DSKCON TO PROVIDE
 6820 *ACCESS TO A DISK. 30 BYTES STACK AREA ARE USED
-6830 KKKKKEKEKEEEKRERREREEREREKRREEREEEEREREREEREREEKRKERE
-6840 DISK  PSHS A,CC,DP — SAVE REGS
-
-6850 CLRA GET 00
-
-6860 TFR A,DP CLEAR DP REG
-
-6870 JSR [$C004] CALL -DSKCON
-
-6880 PULS A,CC,DP. RESTORE REGS
-
-6890 RTS RETURN
-
-6900 HARKER KKERKEKKEEREREEEREEREEEKEEKEREEEEEREERERERREREE
-
+6830 **********************************************
+6840 DISK   PSHS A,CC,DP    SAVE REGS
+6850        CLRA            GET 00
+6860        TFR A,DP        CLEAR DP REG
+6870        JSR [$C004]     CALL DSKCON
+6880        PULS A,CC,DP    RESTORE REGS
+6890        RTS             RETURN
+6900 **********************************************
+```
 Listing 8-17 The DISK Subroutine.
 
 Listing 8-18, DGRAN, is a demonstration of using the DISK subroutine.
@@ -11615,263 +11365,128 @@ It reads each sector of each track on drive 0 and checks the resulting
 status. When a bad status is detected, that track/sector number is
 displayed on the screen. The program continues in this fashion to the last
 track. The subroutine ASCNUM used is similar to the PHEX program of
-
 Chapter 7.
+
+```
 100 *PROGRAM NAME: DGRAN
 110 *THIS PROGRAM WILL READ EVERY SECTOR ON DRIVE
 120 * 0 AND DISPLAY TRACK/SECTORS THAT ARE
 130 *DEFECTIVE.
-140 REKKREKKEKREEKEREREREKRERREEEREREERERREERERRERKRER
-150 ORG $2800 LOAD ADDR
-160 DGRAN STS DGOS SAVES
-170 LDS #32+DGSTK NEW STACK
-180 JSR CLS CLEAR SCREEN
-190 LDY.$C006 GET TABLE ADDR
-200 LDD #$0001 TRK 0, SECT 4
-210 DG1 STD 2,Y PUT IN TABLE
-220 LDU #0200 READ, DRIVE 0
-230 STU ,Y PUT IN TABLE
-240 LDU #DGBF GET BUF ADDR
-250 STU 4,Y PUT IN TABLE
-260 JSR DISK READ DISK
-270 TST 6,Y ERRORS ?
-
-280
-290
-300
-310
-320
-330
-340
-350
-360
-370
-380
-390
-400
-410
-420
-430
-440
-450
-470
-480
-490
-500
-510
-520
-530
-540
-550
-5000
-5010
-5020
-5030
-5040
-5050
-5060
-5070
-5080
-5090
-5500
-5510
-5520
-5530
-5540
-5550
-5560
-5570
-5580
-5590
-5600
-5610
-5620
-5630
-5640
-5650
-5660
-6800
-6810
-6820
-6830
-6840
-6850
-
-BEQ DG2 BRANCH IF NONE
-LDX #DGETX GET MESS ADDR
-STA ASBYTE PASS TO ASCNUM
-JSR ASCNUM CONVERT TO ASCII
-LDU ASRES GET RESULT
-STU 10,X PUT IN MESSAGE
-STB ASBYTE PASS TO ASCNUM
-JSR ASCNUM CONVERT TO ASCII
-LDU ASRES GET RESULT
-STU 20,X PUT IN MESSAGE
-JSR DSPLAY DISPLAY MESSG
-DG2 INCB NEXT SECTOR
-CMPB #18 18 OR LESS ?
-BLS DG3 YES, BRANCH
-LDB #$01 SECTOR TO ONE
-INCA NEXT TRACK
-DG3 CMPA #34 LAST TRACK ?
-BLS DG1 NO- DO AGAIN
-DGEND LDS DGOS GET S
-RTS RETURN TO BASIC
-KR IK KIKI K AIK ERK RRR IKIKE KIA IIIA IRI RIE II IIR
-DGOS RMB 2 BASIC S STORAGE
-DGSTK RMB 32 STACK AREA
-DGETX FCC /BAD TRACK SECTOR /
-FDB $0D22 CR/LF AND END
-DGBF RMB 256 BUFFER AREA
-
-FRI KIKI R IIR IIA II AIK IIIA I AIA I IAI ARIAS,
-*SUBROUTINE NAME: CLS
-
-*THIS SUBROUTINE WILL CLEAR THE TEXT SCREEN
-*AND RESET THE DISPLAY POINTER. 6 BYTES OF
-*THE S STACK ARE USED.
-KAREKEAAAKRIKREREREEKEREREEREEREEEKEEREREREEERERE
-CLs PSHS B,X,CC SAVE REGS
-
-JSR $A928 CALL CLSCRN
-
-PULS B,X,CC RESTORE REGS
-
-RTS RETURN
-
-HARKER EREREREREREREREREREREREREREEERERERERERERE
-
-*SUBROUTINE NAME: DSPLAY
-
-*THIS SUBROUTINE WILL DISPLAY THE TEXT STRING
-*(ASCII CODES) THAT THE X REGISTER POINTS TO
-*STARTING AT THE POSITION SPECIFIED BY THE
-*DISPLAY POINTER. A CODE OF OD IN THE STRING
-WILL CAUSE A CR/LF. A CODE OF 22 (*)
-*INDICATES THE END OF A STRING TO DISPLAY. 20
-
-*BYTES OF STACK AREA ARE REQUIRED.
-KREKKEREREKEREREREREERERREEEREREEREREREERERREEEERER
-DSPLAY PSHS D,X,U,CC,DP SAVE REGS
-
-CLRB GET 00
-
-TFR B,DP CLEAR DP REG
-
-LEAX -1,X ADJUST POINTER
-
-JSR $B99C CALL DISPL
-
-PULS D,X,U,CC,DP RESTORE REGS
-
-RTS RETURN
-
-KAKKERERKEEKEKRERERREEERERERRERRERERERERERERERER
-
-*SUBROUTINE NAME: DISK
-*THIS SUBROUTINE WILL CALL DSKCON TO PROVIDE
-*ACCESS TO A DISK. 30 BYTES OF STACK ARE USED.
-HRI AKIRA E RII IRR IA ARIES RIAA III AAAI
-DISK PSHS A,CC,DP SAVE REGS
-
-CLRA GET 00
-
-6860
-6870
-6880
-6890
-6900
-7000
-7010
-7020
-7030
-7040
-7050
-7060
-7070
-7080
-7090
-7100
-7110
-7120
-7130
-7140
-7150
-7160
-7170
-7180
-7190
-7200
-7210
-7220
-7230
-7240
-7250
-7260
-7270
-7280
-
-TFR A,DP
-JSR [$C004)
-
-PULS A,CC,DP
-
-RTS
-
-CLEAR DP REG
-CALL DSKCON
-RESTORE REGS
-RETURN
-
-REKKEKRKEKEKEEKEEERREREEREREREEREEREREREREREERERERE
-
-*SUBROUTINE NAME: ASCNUM
-*THIS WILL GENERATE THE ASCII CODES OF TWO
-*HEX DIGITS IN BYTE ASBYTE. THE TWO CODES ARE
-
-*PUT IN ASRES.
-HAKKAR IIR RII IAI III IAKI III IIASA III IIIA
-
-ASCNUM PSHS D SAVE REGS
-LDB ASBYTE GET BYTE
-LDA #$10 MULTIPLIER VALUE
-MUL SHIFT.MS NIBBLE TO A
-CMPA #509 GREATER THAN 9 ?
-BHI ASC1 YES, JUMP
-ADDA #48 MAKE ASCII
-BRA ASC2 CONTINUE
-
-ASC1 ADDA #55 MAKE ASCII
-
-ASC2 STA ASRES STORE. RESULT
-LDA ASBYTE GET BYTE
-ANDA #$0F GET LS NIBBLE
-CMPA #09 GREATER THAN 9 ?
-BHI ASC3 YES, JUMP
-ADDA #48 MAKE ASCII
-BRA ASC4 CONTINUE
-
-ASC3 ADDA #55 MAKE ASCII
-
-ASC4 STA 1+ASRES STORE RESULT
-PULS D,PC RESTORE + RETURN
-
-RRIREREERIKIRERERIKR IRE EIR EER EERERRERERERRER
-
-ASBYTE RMB 1 DECODE BYTE
-
-ASRES = RMB 2 RESULTING CODE
-
-HIKARI RR III TTR RRR III RITA R IARI RIT RI I IIIS AH
-END $2800 EXEC ADDR
-
+140 **********************************************
+150         ORG $2800       LOAD ADDR
+160 DGRAN   STS DGOS        SAVES
+170         LDS #32+DGSTK   NEW STACK
+180         JSR CLS         CLEAR SCREEN
+190         LDY $C006       GET TABLE ADDR
+200         LDD #$0001      TRK 0, SECT 4
+210 DG1     STD 2,Y         PUT IN TABLE
+220         LDU #$0200      READ, DRIVE 0
+230         STU ,Y          PUT IN TABLE
+240         LDU #DGBF       GET BUF ADDR
+250         STU 4,Y         PUT IN TABLE
+260         JSR DISK        READ DISK
+270         TST 6,Y         ERRORS ?
+280         BEQ DG2         BRANCH IF NONE
+290         LDX #DGETX      GET MESS ADDR
+300         STA ASBYTE      PASS TO ASCNUM
+310         JSR ASCNUM      CONVERT TO ASCII
+320         LDU ASRES       GET RESULT
+330         STU 10,X        PUT IN MESSAGE
+340         STB ASBYTE      PASS TO ASCNUM
+350         JSR ASCNUM      CONVERT TO ASCII
+360         LDU ASRES       GET RESULT
+370         STU 20,X        PUT IN MESSAGE
+380         JSR DSPLAY      DISPLAY MESSG
+390 DG2     INCB            NEXT SECTOR
+400         CMPB #18        18 OR LESS ?
+410         BLS DG3         YES, BRANCH
+420         LDB #$01        SECTOR TO ONE
+430         INCA            NEXT TRACK
+440 DG3     CMPA #34        LAST TRACK ?
+450         BLS DG1         NO - DO AGAIN
+470 DGEND   LDS DGOS        GET S
+480         RTS             RETURN TO BASIC
+490 **********************************************
+500 DGOS    RMB 2           BASIC S STORAGE
+510 DGSTK   RMB 32          STACK AREA
+520 DGETX   FCC /BAD TRACK SECTOR /
+530         FDB $0D22       CR/LF AND END
+540 DGBF    RMB 256         BUFFER AREA
+550 **********************************************
+5000 *SUBROUTINE NAME: CLS
+5010 *THIS SUBROUTINE WILL CLEAR THE TEXT SCREEN
+5020 *AND RESET THE DISPLAY POINTER. 6 BYTES OF
+5030 *THE S STACK ARE USED.
+5040 **********************************************
+5050 CLS    PSHS B,X,CC     SAVE REGS
+5060        JSR $A928       CALL CLSCRN
+5070        PULS B,X,CC     RESTORE REGS
+5080        RTS             RETURN
+5090 **********************************************
+5500 *SUBROUTINE NAME: DSPLAY
+5510 *THIS SUBROUTINE WILL DISPLAY THE TEXT STRING
+5520 *(ASCII CODES) THAT THE X REGISTER POINTS TO
+5530 *STARTING AT THE POSITION SPECIFIED BY THE
+5540 *DISPLAY POINTER. A CODE OF OD IN THE STRING
+5550 *WILL CAUSE A CR/LF. A CODE OF 22 (*)
+5560 *INDICATES THE END OF A STRING TO DISPLAY. 20
+5570 *BYTES OF STACK AREA ARE REQUIRED.
+5580 **********************************************
+5590 DSPLAY PSHS D,X,U,CC,DP SAVE REGS
+5600        CLRB            GET 00
+5610        TFR B,DP        CLEAR DP REG
+5620        LEAX -1,X       ADJUST POINTER
+5630        JSR $B99C       CALL DISPL
+5640        PULS D,X,U,CC,DP RESTORE REGS
+5650        RTS             RETURN
+5660 **********************************************
+6800 *SUBROUTINE NAME: DISK
+6810 *THIS SUBROUTINE WILL CALL DSKCON TO PROVIDE
+6820 *ACCESS TO A DISK. 30 BYTES OF STACK ARE USED.
+6830 **********************************************
+6840 DISK   PSHS A,CC,DP    SAVE REGS
+6850        CLRA            GET 00
+6860        TFR A,DP        CLEAR DP REG
+6870        JSR [$C004]     CALL DSKCON
+6880        PULS A,CC,DP    RESTORE REGS
+6890        RTS             RETURN
+6900 **********************************************
+7000 *SUBROUTINE NAME: ASCNUM
+7010 *THIS WILL GENERATE THE ASCII CODES OF TWO
+7020 *HEX DIGITS IN BYTE ASBYTE. THE TWO CODES ARE
+7030 *PUT IN ASRES.
+7040 **********************************************
+7050 ASCNUM PSHS D          SAVE REGS
+7060        LDB ASBYTE      GET BYTE
+7070        LDA #$10        MULTIPLIER VALUE
+7080        MUL             SHIFT MS NIBBLE TO A
+7090        CMPA #$09       GREATER THAN 9 ?
+7100        BHI ASC1        YES, JUMP
+7110        ADDA #48        MAKE ASCII
+7120        BRA ASC2        CONTINUE
+7130 ASC1   ADDA #55        MAKE ASCII
+7140 ASC2   STA ASRES       STORE RESULT
+7150        LDA ASBYTE      GET BYTE
+7160        ANDA #$0F       GET LS NIBBLE
+7170        CMPA #09        GREATER THAN 9 ?
+7180        BHI ASC3        YES, JUMP
+7190        ADDA #48        MAKE ASCII
+7200        BRA ASC4        CONTINUE
+7210 ASC3   ADDA #55        MAKE ASCII
+7220 ASC4   STA 1+ASRES     STORE RESULT
+7230        PULS D,PC       RESTORE + RETURN
+7240 **********************************************
+7250 ASBYTE RMB 1           DECODE BYTE
+7260 ASRES  RMB 2           RESULTING CODE
+7270 **********************************************
+7280        END $2800       EXEC ADDR
+```
 Listing 8-18 The DRGRAN Program.
 
 Assemble the source code on tape with the command: A DGRAN/WE, and
 verify that there are no errors. Turn off the Color Computer, unplug the
 EDTASM+ module and connect the disk drives. Turn everything on.and load
 DGRAN from tape with the CLOADM command. The program is run with the
-
 EXEC command.
 
 ## CHAPTER 9
