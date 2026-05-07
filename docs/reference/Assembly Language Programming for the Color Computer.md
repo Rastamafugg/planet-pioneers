@@ -14099,7 +14099,7 @@ understandable description closely related to the actual logic the program
 follows. Save your flowcharts or state diagrams to use as a guide if you
 later need to modify a program.
 
-FLOWCHARTS
+#### FLOWCHARTS
 
 A flowchart is a graphical representation of a program or section of a
 program. Within a flowchart major computations and the order in which they
@@ -14117,14 +14117,10 @@ its symbol, or a register in the MPU. Two or more computations may be
 shown in a box where the top computation is to be performed first. An
 example is shown below.
 
-NEW <- NEW +1
-xX reg <- 0
 
 In this box above, first the value of NEW is incremented by one, then the X
 register is cleared. The computation to the right of the arrow within a
-
 box is performed and its result is directed to the variable to the left of
-
 the arrow.
 
 A decision is indicated by a diamond shaped box. Within the box is a
@@ -14132,24 +14128,12 @@ condition which, if false, will cause an exit from one corner of the
 diamond. If the condition is true, one exits via a different corner. This
 is shown below:
 
-YES
-
-NO
-
 If the value of STB is greater than nine, the YES path is taken; otherwise
 the NO path is taken. A single decision box can also have multiple exits:
-
-STB
-equals
 
 A subroutine is represented by a box with two lines on each side. The
 operation of the subroutine should be shown in a flowchart located on a
 following page... The subroutine box is shown below:
-
-Calc.
-
-Mortgage
-Rate
 
 This box can also represent an interrupt handler or any other predefined
 process.
@@ -14161,37 +14145,22 @@ The following box represents an opereation geared to the speed of a human
 operator. For example, this box represents an input operation, i.e.,
 waiting for an operator to enter the date:
 
-INPUT D$ °
-
 Outputting to a printer is represented with a shape similar to a page
 of paper with the bottom torn off:
 
-"THE DATE IS";D$ |
-
-S
-
-\
 Magnetic tape or cassette I/O is represented as below:
-
-write
-A reg.
 
 In this example the contents of the A register are written to tape.
 When a flowchart does not fit on one page, it is connected to the next
-
 page with a small circle:
-@) on page 3.
 
 Fig. A-1 shows a flowchart of a program which clears memory locations
 $1000 through $2000.
 
-Y <- $1000
-
-Address Y <- 00 |
 
 Fig, A-1 Example Flowchart.
 
-STATE DIAGRAMS
+#### STATE DIAGRAMS
 
 A state diagram represents the sequence of operations a program
 performs as paths which go from state to state. Each state is represented
@@ -14210,22 +14179,8 @@ neither a decimal digit nor the ENTER key, the read keyboard state is
 re-entered. If the depressed key is a decimal digit, the ASCII code of the
 digit is put into the buffer area. If the ENTER key is depressed, the
 final state is entered: the ENTER ASCII code is appended to the decimal
-
 integer in the buffer. The program section that follows this will read the
 digits from the buffer until the ENTER code is detected.
-
-not a
-
-read decimal digit
-keyboard
-
-and not ENTER
-
-put digit
-in buffer
-
-code at end of
-number in buffer
 
 Fig A-2 Example State Diagram.
 
@@ -14233,286 +14188,284 @@ Fig A-2 Example State Diagram.
 
 ### MC6809E Instructions
 
-Courtesy of Motorola, Inc.
-
-tyo|i w-W e ]z fee ]+z]+9le9 [2 | 9 [ eo WOd
-L fot a-8 z | €s aWOD
-Lfo|t v-W z | ep vWOd Woo
-
-28 av 36 38
-rytfr]ife A uO] b+ EW aed vp |e joleetecta fe }2]ole |store} sawo
-rtrtrlafe X Oy LEW aredweg} | e | z joa}+z[+9lov}z2]9]o6 }e |v} oe] xawo
-
-ea ev €6 £8
-ritetp~ ise A iMod | + Wr aedwog v 8 tl 7Ey+2q tl € Z ims p G ll NdWd
-
-og ov 26 28
-ryt ptpiye S wo. + WeW aedusag v 8 Ll rE Te L Pil € Ll LL i S UL SdW)O
-
-£8 ev £6 £8
-rfidtltfe GQ wor} + WW aediuo vp | sforfrefecfor Je | c] or le |s]or} awa
-ryi}ryrle q Woy Wy aedwog e}¢o]tafec}erlia fe] vfia de |zfit sano
-rityttrlte Vv wo WW aed? e |g fiafez}eofiw fz] vf lz {zie} vawo dW
-0 \ . W-0 e | z facl+z]}+ofa9 [2 ] 9] so W719
-0 L . a-0 z | 4s ay19
-0 l . v¥~-0 z | ap vH19 419
-. . '@ VW) @ 'se1 1g e 1G g9 aig
-. . iv VW) vy 1581 1g 6 |S 98 Vile 118
-! 8 Oq dq Ww € |Z uSv
-1 a) | fey ati: z [es BuSV
-! a es Vv z_| Zp VHSV usv
-ritdrtirte Oq 4q Joy —e } iz sv
-ririrfafe >TO 1} q z |e aisv
-rleliftrle —— v z | Br vis 1s
-i i JO-WWI V 99 z |@|ot| ooanv
-eloftltl. g-WVa € 1S [va ]+z}er}oa 2] rl eate }z]ro] aan
-elofifile V-WV e [Ss |val+z|+viov jz |p] ve fz | zi vel] vanv anv
-rlilafale G-l+wiwt+a e | 2 flea ]+2]+ofea }z2]oa}eaye |r}eo] aaav
-riefatada a-w+a € |S |asj+z]}+r}aa}2]r}aalz2}|z)so] saav
-ritfataga VrW+Y € 1S jas l+z|+rjav}zj}|e]a6e};z2}|2ias] vaav dav
-rie|r{ayt g-J+wW+9 els [es l+z]+rlea |z]rfea lz |zieol aoav
-rlelapada v-O+WtV e|s {sal+z]erlev }z|ov]es lz |zies| voav Dav
-
-~ re |
-olelelele (pauBisun) X-X +8 € | ve | xav
-aia(z[N[H uonduoseq ~|dol# [-]do[# |- [do |e [~[4o [# [— [do] suioy Tuononasy
-Olrizle quasayy| papuay}xq pexapu| aq ayeIpawty]
-a sapow-; Buissasppy “
-
-10 BAISNjOXy |es1B07 4 MTV wos Aueg 9 Aiduinw oe
-
-puejeofo] y JuawWa|dwod sz MOljaAQ. A SnuUIW ONeWyW | —
-
-Jo jex16o7 A NS8l 0187 7 Sid BWaWYIUY. +
-
-uoneusjeou0) (iq uBis) saneBay NN saldg weiBolg Jo saquiny #
-
-JajsiBay apog uoipuog §=99 (€ Hq Wo) Aueo-jeH oH S8[9AD NdW jo Jaquny.. ~
-
-Paloayiy 1ON oe OU Jajysuespo (J2WIDapexay}) apoDg uoNesadQ «gO
-
-ASIMJBY1O Paleajo and jl Jas pueysay =} W jo juawajdwop “ON3937
-
-|
-
-elelile | aneva] +z]+vfice |] yawn
-eleltielfe X—~eW4 +2 1+?) 0€ xvi
-elelele|s N-_v4 +Z |+b] €e L nval
-
-1 TI aa [_ 34 3V 367 38 |
-*/O];t] tle AL +tVWEW v 2] OL }/+E /+9/0L.] € 9] OL | b |.OL Aq]
-eid} ti tye X-L+IWW € 9 |48 }+2@]+G]av | z GS] F6}€ € | 48 xq
-efO];tptfe N-L+WW € 9 | 34} +2 /+9139 | 2 G$;30 Je € 7; 39 na
-
-a4 a3 3a 49
-
-*1O};tilfe S-L+WW v Z£}OL}]+E]+9]O1 Je 9] OL |b v | OL sq]
-©/O);t]t]e Q-L+WW € | 9 | 54 1+2%}+G}93 42 G]}oaq se € 1.99 aqqt
-©7107 tf tte 8-W € G |} 94 i a4 94/2 vp} oa }2 @ |.99 gqq
-
-ef/O];tl]t fe VW € S 9V {Zz v |.96 |Z Zz |. 98 val qq
-
-aSDGE sunoarsnidanr | F[Te [a [os efeefectortetefasT Pot usr
-! W-L+W e [2 x +@1/+9199 12 97} 90 ONI
-| 8-t+q @ |9g SONI
-
-! Vritw|t |2 |or | _| YONI ONI]
-
-: tatu] | | z tela) 7 iw 5x3
-
-a-WA9 | € |S |e ]+z]{+vlea fz fo fea le lzefeo|]  auoa ~ |
-
-v-WAV] | e[s feal+z|+rjev{z]viesfziziles| vuoa 4Oa
-Wo-i-W £ £ |VL}+2@}+91 09 z | 9 vo | 240
-a-1-a é {VS @230
-
-Vrl-Vv @_|ve _| {| || vo3a 23d
-
-vy lsalpy jeunsag ra Zz |6L vva
-
-L ldnaIUL JOY HeAA DO-WWIV 99 L | | z_bz=| DE IVM9
-
-46
-€ | 9] aL ALS
-é |G | 46 XLS
-é |} 4 | 40 Nis
-id
-€ | 9 |] OL Sis
-é |S jaa] - ais
-é |} b | 2a gis
-c¢ |v | 26 VLS 1S
-|__| xaS
-4 goes
-Z Vvoe8s 28s
-|| ee ee
-LY
-9¢ WOU
-SHOU
-WHOU yOu
-Ou
-€10u
-VIO 104
-YBEIS A woy suasiBay yng mind
-YOEIS S wor sualsiBay jing sind 4nd
-Weis A uo suaisiBay ysnd z AHSd
-yoeIS S uo SuajsiBay usnd | Zz SHSd HSd
-JI-WWI A 39D Z 3040
-G-WAG 2 |v jwa}2] z jvo 8HO
-VIWAY z |v i|ve |z@| z jve VHO uO
-uonesadg ON JON
-Wats W z 93N
-g-l+g a93N
-vrtty¥ VAN 93N
-(pauBisun}) d-g@ xv IAW
-(4 v0 ¥S1
-gysi
-Vust ys]
-. : lai
-=a
-uonduosag ido |v |~ [do [# | ~ [do | swioy  fuononnsyy
-
-sepoy Buissaippy
-
-“19S Sl 2g ji yes Aueg — ase jeloads
-pauyapun si Bel} Aueo-sjey yo anep
-“UOONAISU! BY} JO 1jNSaJ JOaJIP @ Se jas Sapo suOliIpuoD
-d pue | 158}je JOU OP EIMS pue ZIMAS 'Siiq 4 pue | Sias [AAS
-“(SUONONAISU! YOUeIG) Uaxe} {1 SB9AD g Uaxe] JOU YOU |! SajDAD G :sueaW (g)G
-“palind Jo paysnd.ajAq-yoea 10} ajaAo | snjd-sajdAo g auinbas SUONONSUl IAG pue HSq auL
-“SSBIPPe AAINSjja OY} SI Wa
-Od C'S 'N'A'X sae suaisiBai yq 9g) ayL
-
-dq 00-8 "Vv. :ge siajsiBa! liq' g ay,
-“sajsiBas }1q 9] 40 wed Aue Jo 419.8 Jo Jed Aue aq Aew zy pue Ly -Z
-
-“eaiqeL
-91021 JAOW ONISSSUGGV G3XICNI ay} Woy paulergo sanjen au ppe juNOd |e10} UIeEGo OJ “JUNOD aJAq pue ajoAo aseq esaniB uunjoo.siy, |
-
-SALON
-
-aot Oo OR OD
-
-W isa, i isi].
-
-@ isal @1lsi
-
-Vv sal ViSL ist
-
-zed —Lu Al cy LY ddl
-
-Idnualul 0} aztudIyDUAS ONAS
-€ Idnuajuy aemiyjos gEIMS
-Z Idndsajuy avemiyjos g@IMS
-
-L Idnuaiuy aiemyjos gIMS IMS
-Q-lL+WW-a €8 Qans
-8-W-a@ 03 gans
-
-VOW-V 08 Vans ans
-
-L=A
-youesg 6u07
-L=A youbig
-
-O=A
-ysuelg Buo7
-O=A youelg
-
-aulnosqns
-01 youelg Buoy
-auNnoigns 0) youeg
-
-Janay youerg Buoy
-Janan youelg
-
-sAemyy youesg Bu07
-sAem|y youeg
-
-sniq youesg Gu0q
-snig youeg
-0#Z
-youelg Buo7
-0=Z ysuelg
-
-snulj) youelg Bu07
-SNUlW youelg
-
-oJaz > ysuerg Bu0>
-0187 > youelg
-awes 10
-Jamo7 youelg Bu07
-awes JO
-Jamo} ysuerg
-
-Buisseippy
-
-suononijsu] youelg
-
-Jamo 7 youesg Gu0q
-Jamo] ysuelg
-
-o1az7 = youesg Buo7
-oaz 5 youelg
-WES JO
-JayBiyH youerg Bu0q
-awes JO
-JayBiy youeg
-
-JayBiy youerg 6u07
-JayBiy youerg
-
-0187 <youelg Bu07
-0487 <youelg
-
-0137 = yauelg Buo7>
-0187 =youeig
-0=Z
-youeig Buo7
-L=Z youeg
-t=9
-youesg 6u07
-L=9 yours
-0=9
-youeig Bu07
-O=9 Yyouelg
-
-Bulsseuppy.
-
-\H8
-
-038
-
-uononjsuy
-
-“Uaye} 1 SajOAO g Uayxe] JOU YOURIG |! SajoAD g :suBaW (g)G
-
-“uaye} JOU S| YUeIq AU} fj! SajDAD Gg JO UAxe} S| YOURIG By} jI SajDAD g pue sa}Aq p auinbal sayouesq BuO] jeuONIpU_d II
-
-JasjjO UOHeUNsap 11G-91 e.Buisn.pue OL YM apoodo. youesg WoYs ay} Buixijaid Ag pawwo} aie sayoueig Buo| |EUOIIPUOD |I'7
-“sajA0 € a1INbas pue sayAq Z ase. sayouesg WOUsS |IV
-
-“suoneuen Guo] pue yoys ylog aAey sayouesg |2UOIPUOD IY "|
-
-Nos wo
-
-SALON
-ve SH G¢ o18 wW>4d IA 39€ ae iid w>
-ce IH@ €¢ $1q WS ETA Loa AZ da WSJ
-92 INa Lé 0348 w= 92 IN L@ 034 Wi =4J
-GZ od ve SHd Wi dz 11a OZ 4d9¢€ / Wed
-4 s1q (44 IHd wei IA da ETA Lod w<d
-do asje4 dO anit ysaj dO ase dO andy sol
-(b-L S8A10N) SHHONVHE TVNOILIGNOD GANDISNN (pL S830N) SAHONVHE IWNOILIGNOD GANDIS
-
-€ 6 Zt y¥saq
-ve 008 G2 $04 L=9 [4 Z a8 uS¢@
-82 OA 62 SAG L=A v G LZOL NH@1
-9¢ ANd Lt 03g L=Z Z € \Z NYG
-Vv dd a2 IWd L=N € g QL vuar
-do asjey do andy sa] Z € Oz VHa
-(p-L SAQ10N) SHHONVHE TVNOILIGNOD J1dWIS # ~ dO
-
-. SAHONVHE JATdWIS
+```
+┌─────────┬────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬────────────────────────────┬───┬───┬───┬───┬───┐
+│         │        │  Immediate   │    Direct    │   Indexed    │   Extended   │    Inherent  │                            │ 5 │ 3 │ 2 │ 1 │ 0 │
+│Instruct.│ Forms  ├────┬────┬────┼────┬────┬────┼────┬────┬────┼────┬────┬────┼────┬─────┬───┤        Description         ├───┼───┼───┼───┼───┤
+│         │        │ Op │ ~  │ #  │ Op │ ~  │ #  │ Op │ ~  │ #  │ Op │ ~  │ #  │ Op │  ~  │ # │                            │ H │ N │ Z │ V │ C │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ABX    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 3A │  3  │ 1 │ B + X → X (Unsigned)       │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ADC    │ ADCA   │ 89 │ 2  │ 2  │ 99 │ 4  │ 2  │ A9 │ 4+ │ 2+ │ B9 │ 5  │ 3  │    │     │   │ A + M + C → A              │ ↕ │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ADCB   │ C9 │ 2  │ 2  │ D9 │ 4  │ 2  │ E9 │ 4+ │ 2+ │ F9 │ 5  │ 3  │    │     │   │ B + M + C → B              │ ↕ │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ADD    │ ADDA   │ 8B │ 2  │ 2  │ 9B │ 4  │ 2  │ AB │ 4+ │ 2+ │ BB │ 5  │ 3  │    │     │   │ A + M → A                  │ ↕ │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ADDB   │ CB │ 2  │ 2  │ DB │ 4  │ 2  │ EB │ 4+ │ 2+ │ FB │ 5  │ 3  │    │     │   │ B + M → B                  │ ↕ │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ADDD   │ C3 │ 4  │ 3  │ D3 │ 6  │ 2  │ E3 │ 6+ │ 2+ │ F3 │ 7  │ 3  │    │     │   │ D + M:M+1 → D              │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  AND    │ ANDA   │ 84 │ 2  │ 2  │ 94 │ 4  │ 2  │ A4 │ 4+ │ 2+ │ B4 │ 5  │ 3  │    │     │   │ A ∧ M → A                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ ANDB   │ C4 │ 2  │ 2  │ D4 │ 4  │ 2  │ E4 │ 4+ │ 2+ │ F4 │ 5  │ 3  │    │     │   │ B ∧ M → B                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ ANDCC  │ 1C │ 3  │ 3  │    │    │    │    │    │    │    │    │    │    │     │   │ CC ∧ IMM → CC              │ 7 │   │   │   │   │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ASL    │ ASLA   │    │    │    │    │    │    │    │    │    │    │    │    │ 48 │  2  │ 1 │     ┌─┐                    │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ASLB   │    │    │    │    │    │    │    │    │    │    │    │    │ 58 │  2  │ 1 │   ┌─┤c│◄─b7◄────────b0◄─0  │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ASL    │    │    │    │ 08 │ 6  │ 2  │ 68 │ 6+ │ 2+ │ 78 │ 7  │ 3  │    │     │   │     └─┘                    │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ASR    │ ASRA   │    │    │    │    │    │    │    │    │    │    │    │    │ 47 │  2  │ 1 │  ┌─►b7──────►b0─►┌─┐       │ 8 │ ↕ │ ↕ │ • │ ↕ │
+│         │ ASRB   │    │    │    │    │    │    │    │    │    │    │    │    │ 57 │  2  │ 1 │                  │c│       │ 8 │ ↕ │ ↕ │ • │ ↕ │
+│         │ ASR    │    │    │    │ 07 │ 6  │ 2  │ 67 │ 6+ │ 2+ │ 77 │ 7  │ 3  │    │     │   │                  └─┘       │ 8 │ ↕ │ ↕ │ • │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  BIT    │ BITA   │ 85 │ 2  │ 2  │ 95 │ 4  │ 2  │ A5 │ 4+ │ 2+ │ B5 │ 5  │ 3  │    │     │   │ Bit Test A (M ∧ A)         │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ BITB   │ C5 │ 2  │ 2  │ D5 │ 4  │ 2  │ E5 │ 4+ │ 2+ │ F5 │ 5  │ 3  │    │     │   │ Bit Test B (M ∧ B)         │ • │ ↕ │ ↕ │ 0 │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  CLR    │ CLRA   │    │    │    │    │    │    │    │    │    │    │    │    │ 4F │  2  │ 1 │ 0 → A                      │ • │ 0 │ 1 │ 0 │ 0 │
+│         │ CLRB   │    │    │    │    │    │    │    │    │    │    │    │    │ 5F │  2  │ 1 │ 0 → B                      │ • │ 0 │ 1 │ 0 │ 0 │
+│         │ CLR    │    │    │    │ 0F │ 6  │ 2  │ 6F │ 6+ │ 2+ │ 7F │ 7  │ 3  │    │     │   │ 0 → M                      │ • │ 0 │ 1 │ 0 │ 0 │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  CMP    │ CMPA   │ 81 │ 2  │ 2  │ 91 │ 4  │ 2  │ A1 │ 4+ │ 2+ │ B1 │ 5  │ 3  │    │     │   │ Compare M from A           │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ CMPB   │ C1 │ 2  │ 2  │ D1 │ 4  │ 2  │ E1 │ 4+ │ 2+ │ F1 │ 5  │ 3  │    │     │   │ Compare M from B           │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ CMPD   │1083│ 5  │ 4  │1093│ 7  │ 3  │10A3│ 7+ │ 3+ │10B3│ 8  │ 4  │    │     │   │ Compare M:M+1 from D       │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ CMPS   │118C│ 5  │ 4  │119C│ 7  │ 3  │11AC│ 7+ │ 3+ │11BC│ 8  │ 4  │    │     │   │ Compare M:M+1 from S       │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ CMPU   │118C│ 5  │ 4  │119C│ 7  │ 3  │11AC│ 7+ │ 3+ │11BC│ 8  │ 4  │    │     │   │ Compare M:M+1 from U       │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ CMPX   │ 8C │ 4  │ 3  │ 9C │ 6  │ 2  │ AC │ 6+ │ 2+ │ BC │ 7  │ 3  │    │     │   │ Compare M:M+1 from X       │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ CMPY   │108C│ 5  │ 4  │109C│ 7  │ 3  │10AC│ 7+ │ 3+ │10BC│ 8  │ 4  │    │     │   │ Compare M:M+1 from Y       │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  COM    │ COMA   │    │    │    │    │    │    │    │    │    │    │    │    │ 43 │  2  │ 1 │ A̅ → A                      │ • │ ↕ │ ↕ │ 0 │ 1 │
+│         │ COMB   │    │    │    │    │    │    │    │    │    │    │    │    │ 53 │  2  │ 1 │ B̅ → B                      │ • │ ↕ │ ↕ │ 0 │ 1 │
+│         │ COM    │    │    │    │ 03 │ 6  │ 2  │ 63 │ 6+ │ 2+ │ 73 │ 7  │ 3  │    │     │   │ M̅ → M                      │ • │ ↕ │ ↕ │ 0 │ 1 │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  CWAI   │        │ 3C │≥20 │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ CC ∧ IMM → CC Wait for Int.│ • │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  DAA    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 19 │  2  │ 1 │ Decimal Adjust A           │ • │ ↕ │ ↕ │ 0 │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  DEC    │ DECA   │    │    │    │    │    │    │    │    │    │    │    │    │ 4A │  2  │ 1 │ A − 1 → A                  │ • │ ↕ │ ↕ │ ↕ │ • │
+│         │ DECB   │    │    │    │    │    │    │    │    │    │    │    │    │ 5A │  2  │ 1 │ B − 1 → B                  │ • │ ↕ │ ↕ │ ↕ │ • │
+│         │ DEC    │    │    │    │ 0A │ 6  │ 2  │ 6A │ 6+ │ 2+ │ 7A │ 7  │ 3  │    │     │   │ M − 1 → M                  │ • │ ↕ │ ↕ │ ↕ │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  EOR    │ EORA   │ 88 │ 2  │ 2  │ 98 │ 4  │ 2  │ A8 │ 4+ │ 2+ │ B8 │ 5  │ 3  │    │     │   │ A ⊻ M → A                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ EORB   │ C8 │ 2  │ 2  │ D8 │ 4  │ 2  │ E8 │ 4+ │ 2+ │ F8 │ 5  │ 3  │    │     │   │ B ⊻ M → B                  │ • │ ↕ │ ↕ │ 0 │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  EXG    │ R1, R2 │ 1E │ 8  │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ R1 ↔ R2²                   │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  INC    │ INCA   │    │    │    │    │    │    │    │    │    │    │    │    │ 4C │  2  │ 1 │ A + 1 → A                  │ • │ ↕ │ ↕ │ ↕ │ • │
+│         │ INCB   │    │    │    │    │    │    │    │    │    │    │    │    │ 5C │  2  │ 1 │ B + 1 → B                  │ • │ ↕ │ ↕ │ ↕ │ • │
+│         │ INC    │    │    │    │ 0C │ 6  │ 2  │ 6C │ 6+ │ 2+ │ 7C │ 7  │ 3  │    │     │   │ M + 1 → M                  │ • │ ↕ │ ↕ │ ↕ │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  JMP    │        │    │    │    │ 0E │ 3  │ 2  │ 6E │ 3+ │ 2+ │ 7E │ 4  │ 3  │    │     │   │ EA³ → PC                   │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  JSR    │        │    │    │    │ 9D │ 7  │ 2  │ AD │ 7+ │ 2+ │ BD │ 8  │ 3  │    │     │   │ Jump to Subroutine         │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  LD     │ LDA    │ 86 │ 2  │ 2  │ 96 │ 4  │ 2  │ A6 │ 4+ │ 2+ │ B6 │ 5  │ 3  │    │     │   │ M → A                      │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ LDB    │ C6 │ 2  │ 2  │ D6 │ 4  │ 2  │ E6 │ 4+ │ 2+ │ F6 │ 5  │ 3  │    │     │   │ M → B                      │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ LDD    │ CC │ 3  │ 3  │ DC │ 5  │ 2  │ EC │ 5+ │ 2+ │ FC │ 6  │ 3  │    │     │   │ M:M+1 → D                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ LDS    │10CE│ 4  │ 4  │10DE│ 6  │ 3  │10EE│ 6+ │ 3+ │10FE│ 7  │ 4  │    │     │   │ M:M+1 → S                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ LDU    │ CE │ 3  │ 3  │ DE │ 5  │ 2  │ EE │ 5+ │ 2+ │ FE │ 6  │ 3  │    │     │   │ M:M+1 → U                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ LDX    │ 8E │ 3  │ 3  │ 9E │ 5  │ 2  │ AE │ 5+ │ 2+ │ BE │ 6  │ 3  │    │     │   │ M:M+1 → X                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ LDY    │108E│ 4  │ 4  │109E│ 6  │ 3  │10AE│ 6+ │ 3+ │10BE│ 7  │ 4  │    │     │   │ M:M+1 → Y                  │ • │ ↕ │ ↕ │ 0 │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  LEA    │ LEAS   │    │    │    │    │    │    │ 32 │ 4+ │ 2+ │    │    │    │    │     │   │ EA³ → S                    │ • │ • │ • │ • │ • │
+│         │ LEAU   │    │    │    │    │    │    │ 33 │ 4+ │ 2+ │    │    │    │    │     │   │ EA³ → U                    │ • │ • │ • │ • │ • │
+│         │ LEAX   │    │    │    │    │    │    │ 30 │ 4+ │ 2+ │    │    │    │    │     │   │ EA³ → X                    │ • │ • │ ↕ │ • │ • │
+│         │ LEAY   │    │    │    │    │    │    │ 31 │ 4+ │ 2+ │    │    │    │    │     │   │ EA³ → Y                    │ • │ • │ ↕ │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  LSL    │ LSLA   │    │    │    │    │    │    │    │    │    │    │    │    │ 48 │  2  │ 1 │     ┌─┐                    │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ LSLB   │    │    │    │    │    │    │    │    │    │    │    │    │ 58 │  2  │ 1 │   ┌─┤c│◄─b7◄────────b0◄─0  │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ LSL    │    │    │    │ 08 │ 6  │ 2  │ 68 │ 6+ │ 2+ │ 78 │ 7  │ 3  │    │     │   │     └─┘                    │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  LSR    │ LSRA   │    │    │    │    │    │    │    │    │    │    │    │    │ 44 │  2  │ 1 │  0──►b7──────►b0─►┌─┐      │ • │ 0 │ ↕ │ • │ ↕ │
+│         │ LSRB   │    │    │    │    │    │    │    │    │    │    │    │    │ 54 │  2  │ 1 │                   │c│      │ • │ 0 │ ↕ │ • │ ↕ │
+│         │ LSR    │    │    │    │ 04 │ 6  │ 2  │ 64 │ 6+ │ 2+ │ 74 │ 7  │ 3  │    │     │   │                   └─┘      │ • │ 0 │ ↕ │ • │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  MUL    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 3D │ 11  │ 1 │ A × B → D (Unsigned)       │ • │ • │ ↕ │ • │ 9 │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  NEG    │ NEGA   │    │    │    │    │    │    │    │    │    │    │    │    │ 40 │  2  │ 1 │ A̅ + 1 → A                  │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ NEGB   │    │    │    │    │    │    │    │    │    │    │    │    │ 50 │  2  │ 1 │ B̅ + 1 → B                  │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ NEG    │    │    │    │ 00 │ 6  │ 2  │ 60 │ 6+ │ 2+ │ 70 │ 7  │ 3  │    │     │   │ M̅ + 1 → M                  │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  NOP    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 12 │  2  │ 1 │ No Operation               │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  OR     │ ORA    │ 8A │ 2  │ 2  │ 9A │ 4  │ 2  │ AA │ 4+ │ 2+ │ BA │ 5  │ 3  │    │     │   │ A ∨ M → A                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ ORB    │ CA │ 2  │ 2  │ DA │ 4  │ 2  │ EA │ 4+ │ 2+ │ FA │ 5  │ 3  │    │     │   │ B ∨ M → B                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ ORCC   │ 1A │ 3  │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ CC ∨ IMM → CC              │ 7 │   │   │   │   │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  PSH    │ PSHS   │ 34 │5+4 │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ Push Registers on S Stack  │ • │ • │ • │ • │ • │
+│         │ PSHU   │ 36 │5+4 │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ Push Registers on U Stack  │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  PUL    │ PULS   │ 35 │5+4 │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ Pull Registers from S Stack│ • │ • │ • │ • │ • │
+│         │ PULU   │ 37 │5+4 │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ Pull Registers from U Stack│ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ROL    │ ROLA   │    │    │    │    │    │    │    │    │    │    │    │    │ 49 │  2  │ 1 │     ┌─┐                    │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ROLB   │    │    │    │    │    │    │    │    │    │    │    │    │ 59 │  2  │ 1 │  ┌──┤c│◄─b7◄────────b0◄─┐  │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ ROL    │    │    │    │ 09 │ 6  │ 2  │ 69 │ 6+ │ 2+ │ 79 │ 7  │ 3  │    │     │   │  │  └─┘                 │  │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │        │    │    │    │    │    │    │    │    │    │    │    │    │    │     │   │  └──────────────────────┘  │   │   │   │   │   │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ROR    │ RORA   │    │    │    │    │    │    │    │    │    │    │    │    │ 46 │  2  │ 1 │  ┌──►b7──────►b0─►┌─┐─┐    │ • │ ↕ │ ↕ │ • │ ↕ │
+│         │ RORB   │    │    │    │    │    │    │    │    │    │    │    │    │ 56 │  2  │ 1 │  │                │c│ │    │ • │ ↕ │ ↕ │ • │ ↕ │
+│         │ ROR    │    │    │    │ 06 │ 6  │ 2  │ 66 │ 6+ │ 2+ │ 76 │ 7  │ 3  │    │     │   │  │                └─┘ │    │ • │ ↕ │ ↕ │ • │ ↕ │
+│         │        │    │    │    │    │    │    │    │    │    │    │    │    │    │     │   │  └────────────────────┘    │   │   │   │   │   │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  RTI    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 3B │ 6/15│ 1 │ Return From Interrupt      │ 7 │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  RTS    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 39 │  5  │ 1 │ Return from Subroutine     │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  SBC    │ SBCA   │ 82 │ 2  │ 2  │ 92 │ 4  │ 2  │ A2 │ 4+ │ 2+ │ B2 │ 5  │ 3  │    │     │   │ A − M − C → A              │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ SBCB   │ C2 │ 2  │ 2  │ D2 │ 4  │ 2  │ E2 │ 4+ │ 2+ │ F2 │ 5  │ 3  │    │     │   │ B − M − C → B              │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  SEX    │        │    │    │    │    │    │    │    │    │    │    │    │    │ 1D │  2  │ 1 │ Sign Extend B into A       │ • │ ↕ │ ↕ │ 0 │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  ST     │ STA    │    │    │    │ 97 │ 4  │ 2  │ A7 │ 4+ │ 2+ │ B7 │ 5  │ 3  │    │     │   │ A → M                      │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ STB    │    │    │    │ D7 │ 4  │ 2  │ E7 │ 4+ │ 2+ │ F7 │ 5  │ 3  │    │     │   │ B → M                      │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ STD    │    │    │    │ DD │ 5  │ 2  │ ED │ 5+ │ 2+ │ FD │ 6  │ 3  │    │     │   │ D → M:M+1                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ STS    │    │    │    │10DF│ 6  │ 3  │10EF│ 6+ │ 3+ │10FF│ 7  │ 4  │    │     │   │ S → M:M+1                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ STU    │    │    │    │ DF │ 5  │ 2  │ EF │ 5+ │ 2+ │ FF │ 6  │ 3  │    │     │   │ U → M:M+1                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ STX    │    │    │    │ 9F │ 5  │ 2  │ AF │ 5+ │ 2+ │ BF │ 6  │ 3  │    │     │   │ X → M:M+1                  │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ STY    │    │    │    │109F│ 6  │ 3  │10AF│ 6+ │ 3+ │10BF│ 7  │ 4  │    │     │   │ Y → M:M+1                  │ • │ ↕ │ ↕ │ 0 │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  SUB    │ SUBA   │ 80 │ 2  │ 2  │ 90 │ 4  │ 2  │ A0 │ 4+ │ 2+ │ B0 │ 5  │ 3  │    │     │   │ A − M → A                  │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ SUBB   │ C0 │ 2  │ 2  │ D0 │ 4  │ 2  │ E0 │ 4+ │ 2+ │ F0 │ 5  │ 3  │    │     │   │ B − M → B                  │ 8 │ ↕ │ ↕ │ ↕ │ ↕ │
+│         │ SUBD   │ 83 │ 4  │ 3  │ 93 │ 6  │ 2  │ A3 │ 6+ │ 2+ │ B3 │ 7  │ 3  │    │     │   │ D − M:M+1 → D              │ • │ ↕ │ ↕ │ ↕ │ ↕ │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  SWI    │ SWI⁶   │    │    │    │    │    │    │    │    │    │    │    │    │ 3F │ 19  │ 1 │ Software Interrupt 1       │ • │ • │ • │ • │ • │
+│         │ SWI2⁶  │    │    │    │    │    │    │    │    │    │    │    │    │1 0 │ 20  │ 2 │ Software Interrupt 2       │ • │ • │ • │ • │ • │
+│         │        │    │    │    │    │    │    │    │    │    │    │    │    │ 3F │     │   │                            │   │   │   │   │   │
+│         │ SWI3⁶  │    │    │    │    │    │    │    │    │    │    │    │    │1 1 │ 20  │ 1 │ Software Interrupt 3       │ • │ • │ • │ • │ • │
+│         │        │    │    │    │    │    │    │    │    │    │    │    │    │ 3F │     │   │                            │   │   │   │   │   │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  SYNC   │        │    │    │    │    │    │    │    │    │    │    │    │    │ 13 │ ≥4  │ 1 │ Synchronize to Interrupt   │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  TFR    │ R1, R2 │ 1F │ 6  │ 2  │    │    │    │    │    │    │    │    │    │    │     │   │ R1 → R2²                   │ • │ • │ • │ • │ • │
+├─────────┼────────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼─────┼───┼────────────────────────────┼───┼───┼───┼───┼───┤
+│  TST    │ TSTA   │    │    │    │    │    │    │    │    │    │    │    │    │ 4D │  2  │ 1 │ Test A                     │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ TSTB   │    │    │    │    │    │    │    │    │    │    │    │    │ 5D │  2  │ 1 │ Test B                     │ • │ ↕ │ ↕ │ 0 │ • │
+│         │ TST    │    │    │    │ 0D │ 6  │ 2  │ 6D │ 6+ │ 2+ │ 7D │ 7  │ 3  │    │     │   │ Test M                     │ • │ ↕ │ ↕ │ 0 │ • │
+└─────────┴────────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴─────┴───┴────────────────────────────┴───┴───┴───┴───┴───┘
+
+   LEGEND:
+     OP  Operation Code (Hexadecimal)         M̅   Complement of M           ↕   Test and set if true, cleared otherwise
+     ~   Number of MPU Cycles                 →   Transfer Into             •   Not Affected
+     #   Number of Program Bytes              H   Half-carry (from bit 3)   CC  Condition Code Register
+     +   Arithmetic Plus                      N   Negative (sign bit)       :   Concatenation
+     −   Arithmetic Minus                     Z   Zero result               ∨   Logical or
+     •   Multiply                             V   Overflow, 2's complement  ∧   Logical and
+                                              C   Carry from ALU            ⊻   Logical Exclusive or
+
+   NOTES:
+     1. This column gives a base cycle and byte count. To obtain total count, add the values obtained
+        from the INDEXED ADDRESSING MODE table, Table 2.
+     2. R1 and R2 may be any pair of 8 bit or any pair of 16 bit registers.
+        The 8 bit registers are: A, B, CC, DP
+        The 16 bit registers are: X, Y, U, S, D, PC
+     3. EA is the effective address.
+     4. The PSH and PUL instructions require 5 cycles plus 1 cycle for each byte pushed or pulled.
+     5. 5(6) means: 5 cycles if branch not taken, 6 cycles if taken (Branch instructions).
+     6. SWI sets I and F bits. SWI2 and SWI3 do not affect I and F.
+     7. Conditions Codes set as a direct result of the instruction.
+     8. Value of half-carry flag is undefined.
+     9. Special Case — Carry set if b7 is SET.
+```
+
+```
+                                       Branch Instructions
+
+┌─────────────┬────────┬───────────────────┬──────────────────────────┬───┬───┬───┬───┬───┐
+│             │        │   Addressing Mode │                          │ 5 │ 3 │ 2 │ 1 │ 0 │
+│ Instruction │ Forms  │     Relative      │       Description        ├───┼───┼───┼───┼───┤
+│             │        │  OP  │  ~  │  #   │                          │ H │ N │ Z │ V │ C │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BCC       │ BCC    │  24  │  3  │  2   │ Branch C = 0             │ • │ • │ • │ • │ • │
+│             │ LBCC   │10 24 │5(6) │  4   │ Long Branch C = 0        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BCS       │ BCS    │  25  │  3  │  2   │ Branch C = 1             │ • │ • │ • │ • │ • │
+│             │ LBCS   │10 25 │5(6) │  4   │ Long Branch C = 1        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BEQ       │ BEQ    │  27  │  3  │  2   │ Branch Z = 1             │ • │ • │ • │ • │ • │
+│             │ LBEQ   │10 27 │5(6) │  4   │ Long Branch Z = 0        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BGE       │ BGE    │  2C  │  3  │  2   │ Branch ≥ Zero            │ • │ • │ • │ • │ • │
+│             │ LBGE   │10 2C │5(6) │  4   │ Long Branch ≥ Zero       │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BGT       │ BGT    │  2E  │  3  │  2   │ Branch > Zero            │ • │ • │ • │ • │ • │
+│             │ LBGT   │10 2E │5(6) │  4   │ Long Branch > Zero       │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BHI       │ BHI    │  22  │  3  │  2   │ Branch Higher            │ • │ • │ • │ • │ • │
+│             │ LBHI   │10 22 │5(6) │  4   │ Long Branch Higher       │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BHS       │ BHS    │  24  │  3  │  2   │ Branch Higher or Same    │ • │ • │ • │ • │ • │
+│             │ LBHS   │10 24 │5(6) │  4   │ Long Branch Higher       │ • │ • │ • │ • │ • │
+│             │        │      │     │      │   or Same                │   │   │   │   │   │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BLE       │ BLE    │  2F  │  3  │  2   │ Branch ≤ Zero            │ • │ • │ • │ • │ • │
+│             │ LBLE   │10 2F │5(6) │  4   │ Long Branch ≤ Zero       │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BLO       │ BLO    │  25  │  3  │  2   │ Branch lower             │ • │ • │ • │ • │ • │
+│             │ LBLO   │10 25 │5(6) │  4   │ Long Branch Lower        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BLS       │ BLS    │  23  │  3  │  2   │ Branch Lower or Same     │ • │ • │ • │ • │ • │
+│             │ LBLS   │10 23 │5(6) │  4   │ Long Branch Lower        │ • │ • │ • │ • │ • │
+│             │        │      │     │      │   or Same                │   │   │   │   │   │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BLT       │ BLT    │  2D  │  3  │  2   │ Branch < Zero            │ • │ • │ • │ • │ • │
+│             │ LBLT   │10 2D │5(6) │  4   │ Long Branch < Zero       │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BMI       │ BMI    │  2B  │  3  │  2   │ Branch Minus             │ • │ • │ • │ • │ • │
+│             │ LBMI   │10 2B │5(6) │  4   │ Long Branch Minus        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BNE       │ BNE    │  26  │  3  │  2   │ Branch Z = 0             │ • │ • │ • │ • │ • │
+│             │ LBNE   │10 26 │5(6) │  4   │ Long Branch Z ≠ 0        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BPL       │ BPL    │  2A  │  3  │  2   │ Branch Plus              │ • │ • │ • │ • │ • │
+│             │ LBPL   │10 2A │5(6) │  4   │ Long Branch Plus         │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BRA       │ BRA    │  20  │  3  │  2   │ Branch Always            │ • │ • │ • │ • │ • │
+│             │ LBRA   │  16  │  5  │  3   │ Long Branch Always       │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BRN       │ BRN    │  21  │  3  │  2   │ Branch Never             │ • │ • │ • │ • │ • │
+│             │ LBRN   │10 21 │  5  │  4   │ Long Branch Never        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BSR       │ BSR    │  8D  │  7  │  2   │ Branch to Subroutine     │ • │ • │ • │ • │ • │
+│             │ LBSR   │  17  │  9  │  3   │ Long Branch to           │ • │ • │ • │ • │ • │
+│             │        │      │     │      │   Subroutine             │   │   │   │   │   │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BVC       │ BVC    │  28  │  3  │  2   │ Branch V = 0             │ • │ • │ • │ • │ • │
+│             │ LBVC   │10 28 │5(6) │  4   │ Long Branch V = 0        │ • │ • │ • │ • │ • │
+├─────────────┼────────┼──────┼─────┼──────┼──────────────────────────┼───┼───┼───┼───┼───┤
+│   BVS       │ BVS    │  29  │  3  │  2   │ Branch V = 1             │ • │ • │ • │ • │ • │
+│             │ LBVS   │10 29 │5(6) │  4   │ Long Branch V = 1        │ • │ • │ • │ • │ • │
+└─────────────┴────────┴──────┴─────┴──────┴──────────────────────────┴───┴───┴───┴───┴───┘
+```
+
+```
+   SIMPLE BRANCHES                            SIMPLE CONDITIONAL BRANCHES (Notes 1-4)
+
+           OP    ~    #                       Test    True   OP    False   OP
+   BRA    20     3    2                       N=1     BMI    2B    BPL     2A
+   LBRA   16     5    3                       Z=1     BEQ    27    BNE     26
+   BRN    21     3    2                       V=1     BVS    29    BVC     28
+   LBRN  1021    5    4                       C=1     BCS    25    BCC     24
+   BSR    8D     7    2
+   LBSR   17     9    3
+
+
+
+   SIGNED CONDITIONAL BRANCHES (Notes 1-4)    UNSIGNED CONDITIONAL BRANCHES (Notes 1-4)
+
+   Test    True   OP    False    OP           Test    True   OP    False   OP
+   r > m   BGT    2E    BLE      2F           r > m   BHI    22    BLS     23
+   r ≥ m   BGE    2C    BLT      2D           r ≥ m   BHS    24    BLO     25
+   r = m   BEQ    27    BNE      26           r = m   BEQ    27    BNE     26
+   r ≤ m   BLE    2F    BGT      2E           r ≤ m   BLS    23    BHI     22
+   r < m   BLT    2D    BGE      2C           r < m   BLO    25    BHS     24
+
+
+   NOTES:
+     1. All conditional branches have both short and long variations.
+     2. All short branches are 2 bytes and require 3 cycles.
+     3. All conditional long branches are formed by prefixing the short branch opcode with $10
+        and using a 16-bit destination offset.
+     4. All conditional long branches require 4 bytes and 6 cycles if the branch is taken or 5 cycles
+        if the branch is not taken.
+     5. 5(6) means: 5 cycles if branch not taken, 6 cycles if taken.
+```
 
 ## APPENDIX C
 
@@ -14520,63 +14473,40 @@ do asjey do andy sa] Z € Oz VHa
 
 CODES GENERATED BY THE KEYBOARD (POLCAT)
 
-shifted | Not shifted | shifted
-
-Break 03
-<- 08
-->()) 09
-4 (1) OA
-(<-) 5E
-
-Clr (\) oc
-
-Enter OD
-
-Space 20
-1 (<) 2c
-
-(=) 2D
-
-» ©) 2E
-(7) 2F
-30
-
-(!) 31
-
-(#) 33
-
-($) 34
-
-(%) 35
-
-(&) 36
-
-(') 37
-
-(C) 38
-
-()) 39
-
-: (*) 3A
-
-7 (+) 3B
-
-40
-61
-
-/
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-
-N< «KE ce CHoHonwovwvredzA ZS rrnerzrtoanmmoasa
+```
+┌─────────┬─────────────┬─────────────┬─────────┬─────────────┬─────────────┐
+│   Key   │ Not Shifted │   Shifted   │   Key   │ Not Shifted │   Shifted   │
+│         ├──────┬──────┼──────┬──────┤         ├──────┬──────┼──────┬──────┤
+│         │ Dec  │ Hex  │ Dec  │ Hex  │         │ Dec  │ Hex  │ Dec  │ Hex  │
+├─────────┼──────┼──────┼──────┼──────┼─────────┼──────┼──────┼──────┼──────┤
+│ Break   │  3   │  03  │  3   │  03  │   B     │  98  │  62  │  66  │  42  │
+│  ←      │  8   │  08  │ 21   │  15  │   C     │  99  │  63  │  67  │  43  │
+│ →(])    │  9   │  09  │ 93   │  5D  │   D     │ 100  │  64  │  68  │  44  │
+│ ↓([)    │ 10   │  0A  │ 91   │  5B  │   E     │ 101  │  65  │  69  │  45  │
+│ ↑(←)    │ 94   │  5E  │ 95   │  5F  │   F     │ 102  │  66  │  70  │  46  │
+│ Clr (\) │ 12   │  0C  │ 92   │  5C  │   G     │ 103  │  67  │  71  │  47  │
+│ Enter   │ 13   │  0D  │      │      │   H     │ 104  │  68  │  72  │  48  │
+│ Space   │ 32   │  20  │      │      │   I     │ 105  │  69  │  73  │  49  │
+│ , (<)   │ 44   │  2C  │ 60   │  3C  │   J     │ 106  │  6A  │  74  │  4A  │
+│ - (=)   │ 45   │  2D  │ 61   │  3D  │   K     │ 107  │  6B  │  75  │  4B  │
+│ . (>)   │ 46   │  2E  │ 62   │  3E  │   L     │ 108  │  6C  │  76  │  4C  │
+│ / (?)   │ 47   │  2F  │ 63   │  3F  │   M     │ 109  │  6D  │  77  │  4D  │
+│  0      │ 48   │  30  │      │      │   N     │ 110  │  6E  │  78  │  4E  │
+│ 1 (!)   │ 49   │  31  │ 33   │  21  │   O     │ 111  │  6F  │  79  │  4F  │
+│ 2 (")   │ 50   │  32  │ 34   │  22  │   P     │ 112  │  70  │  80  │  50  │
+│ 3 (#)   │ 51   │  33  │ 35   │  23  │   Q     │ 113  │  71  │  81  │  51  │
+│ 4 ($)   │ 52   │  34  │ 36   │  24  │   R     │ 114  │  72  │  82  │  52  │
+│ 5 (%)   │ 53   │  35  │ 37   │  25  │   S     │ 115  │  73  │  83  │  53  │
+│ 6 (&)   │ 54   │  36  │ 38   │  26  │   T     │ 116  │  74  │  84  │  54  │
+│ 7 (')   │ 55   │  37  │ 39   │  27  │   U     │ 117  │  75  │  85  │  55  │
+│ 8 (()   │ 56   │  38  │ 40   │  28  │   V     │ 118  │  76  │  86  │  56  │
+│ 9 ())   │ 57   │  39  │ 41   │  29  │   W     │ 119  │  77  │  87  │  57  │
+│ : (*)   │ 58   │  3A  │ 42   │  2A  │   X     │ 120  │  78  │  88  │  58  │
+│ ; (+)   │ 59   │  3B  │ 43   │  2B  │   Y     │ 121  │  79  │  89  │  59  │
+│ @       │ 64   │  40  │ 19   │  13  │   Z     │ 122  │  7A  │  90  │  5A  │
+│ A       │ 97   │  61  │ 65   │  41  │         │      │      │      │      │
+└─────────┴──────┴──────┴──────┴──────┴─────────┴──────┴──────┴──────┴──────┘
+```
 
 Above items in parentheses are the characters generated when the SHIFT key
 is held down. Note that the keyboard may be in the all upper case mode
@@ -14586,211 +14516,144 @@ Repeat this procedure to change back to the all upper case mode.
 
 VIDEO DISPLAY CODES
 
-Normal Reverse {j | Normal Reverse
-Character Video Video Character ; Video Video
-Dec | Hex | Dec | Hex Dec | Hex
-
-a 0 | 00 space - | 96 | 60 32 | 20
-A 1 ! 97 | 61 33 | 21
-B 2 " 98 | 62 34 | 22
-Cc 3 # 99 | 63 35 | 23
-D 4 $ 100 | 64 36 | 24
-E 5 % 101 | 65 37 | 25
-F 6 & 102 | 66 38 | 26
-G 7 t 103 | 67 39 | 27
-H 8 6 104} 68 40 | 28
-I 9 ) 105 | 69 41 | 29
-J 10 * 106 | 6A 42 | 2A
-K 11 + 107 | 6B 43 | 2B
-L 12 ' 108 | 6c 44 | 2c
-M 13 - 109 | 6D 45 | 2D
-N 14 . 110 | 6E 46 | 2E
-fe) 15 / 111] 6F 47 | 2F
-P 16 0 112} 70 48 | 30
-Q 17 1 113 | 71 49 | 31
-R 18 2 114 | 72 50 | 32
-S 19 3 115) 73 51 | 33
-T 20 4 116 | 74 52 | 34
-U 21 5 117 | 75 53 | 35
-v 22 6 118.| 76 54] 36
-W 23 7 1191-77 55 | 37
-X 24 8 120 |. 78 56 | 38
-Y 25 9 121 | 79 57. |.39
-Zz 26 122 |. 7A 58 }-3A
-c 27 ; 123.| 7B 59 | 3B
-\ 28 < 124 |. 7c 60 | 3c
-] 29 = 125.) 7D 61 | 3D
-t 30 > 126-} 7E 62 | -3E
-<- 31 ? 127]. 7F 63 | 3F
+```
+┌───────────┬──────────────┬──────────────┬───────────┬──────────────┬──────────────┐
+│           │    Normal    │   Reverse    │           │    Normal    │   Reverse    │
+│ Character │    Video     │    Video     │ Character │    Video     │    Video     │
+│           ├──────┬───────┼──────┬───────┤           ├──────┬───────┼──────┬───────┤
+│           │ Dec  │ Hex   │ Dec  │ Hex   │           │ Dec  │ Hex   │ Dec  │ Hex   │
+├───────────┼──────┼───────┼──────┼───────┼───────────┼──────┼───────┼──────┼───────┤
+│    @      │  64  │  40   │  0   │  00   │  space    │  96  │  60   │  32  │  20   │
+│    A      │  65  │  41   │  1   │  01   │    !      │  97  │  61   │  33  │  21   │
+│    B      │  66  │  42   │  2   │  02   │    "      │  98  │  62   │  34  │  22   │
+│    C      │  67  │  43   │  3   │  03   │    #      │  99  │  63   │  35  │  23   │
+│    D      │  68  │  44   │  4   │  04   │    $      │ 100  │  64   │  36  │  24   │
+│    E      │  69  │  45   │  5   │  05   │    %      │ 101  │  65   │  37  │  25   │
+│    F      │  70  │  46   │  6   │  06   │    &      │ 102  │  66   │  38  │  26   │
+│    G      │  71  │  47   │  7   │  07   │    '      │ 103  │  67   │  39  │  27   │
+│    H      │  72  │  48   │  8   │  08   │    (      │ 104  │  68   │  40  │  28   │
+│    I      │  73  │  49   │  9   │  09   │    )      │ 105  │  69   │  41  │  29   │
+│    J      │  74  │  4A   │ 10   │  0A   │    *      │ 106  │  6A   │  42  │  2A   │
+│    K      │  75  │  4B   │ 11   │  0B   │    +      │ 107  │  6B   │  43  │  2B   │
+│    L      │  76  │  4C   │ 12   │  0C   │    ,      │ 108  │  6C   │  44  │  2C   │
+│    M      │  77  │  4D   │ 13   │  0D   │    -      │ 109  │  6D   │  45  │  2D   │
+│    N      │  78  │  4E   │ 14   │  0E   │    .      │ 110  │  6E   │  46  │  2E   │
+│    O      │  79  │  4F   │ 15   │  0F   │    /      │ 111  │  6F   │  47  │  2F   │
+│    P      │  80  │  50   │ 16   │  10   │    0      │ 112  │  70   │  48  │  30   │
+│    Q      │  81  │  51   │ 17   │  11   │    1      │ 113  │  71   │  49  │  31   │
+│    R      │  82  │  52   │ 18   │  12   │    2      │ 114  │  72   │  50  │  32   │
+│    S      │  83  │  53   │ 19   │  13   │    3      │ 115  │  73   │  51  │  33   │
+│    T      │  84  │  54   │ 20   │  14   │    4      │ 116  │  74   │  52  │  34   │
+│    U      │  85  │  55   │ 21   │  15   │    5      │ 117  │  75   │  53  │  35   │
+│    V      │  86  │  56   │ 22   │  16   │    6      │ 118  │  76   │  54  │  36   │
+│    W      │  87  │  57   │ 23   │  17   │    7      │ 119  │  77   │  55  │  37   │
+│    X      │  88  │  58   │ 24   │  18   │    8      │ 120  │  78   │  56  │  38   │
+│    Y      │  89  │  59   │ 25   │  19   │    9      │ 121  │  79   │  57  │  39   │
+│    Z      │  90  │  5A   │ 26   │  1A   │    :      │ 122  │  7A   │  58  │  3A   │
+│    [      │  91  │  5B   │ 27   │  1B   │    ;      │ 123  │  7B   │  59  │  3B   │
+│    \      │  92  │  5C   │ 28   │  1C   │    <      │ 124  │  7C   │  60  │  3C   │
+│    ]      │  93  │  5D   │ 29   │  1D   │    =      │ 125  │  7D   │  61  │  3D   │
+│    ↑      │  94  │  5E   │ 30   │  1E   │    >      │ 126  │  7E   │  62  │  3E   │
+│    ←      │  95  │  5F   │ 31   │  1F   │    ?      │ 127  │  7F   │  63  │  3F   │
+└───────────┴──────┴───────┴──────┴───────┴───────────┴──────┴───────┴──────┴───────┘
+```
 
 Normal video is a black character on a light background. Reverse video is
 a light character on a black background.
 
 ## APPENDIX D - ASCII CODES
 
-Most Significant Digit (Hex)
-
-0 1 2
-L 0 DLE sP
-e 1 DC1 !
-as 2 Dc2 u
-si 3 DCc3 #
-tg 4 DC4 $
-n 5 NAK &
-j 6 SYN &
-f 7 ETB '
-i 8 CAN ¢
-c 9 EM )
-a A SUB *
-nD B ESC +
-ti c FS :
-g D GS
-j E RS
-t F us /
+```
+                        Most Significant Digit (Hex)
+                 
+                   0    1    2    3    4    5    6    7
+                 ┌────────────────────────────────────────┐
+   L           0 │ NUL  DLE  SP   0    @    P    `    p   │
+   e           1 │ SOH  DC1  !    1    A    Q    a    q   │
+   a   S       2 │ STX  DC2  "    2    B    R    b    r   │
+   s   i       3 │ ETX  DC3  #    3    C    S    c    s   │
+   t   g       4 │ EOT  DC4  $    4    D    T    d    t   │
+       n       5 │ ENQ  NAK  %    5    E    U    e    u   │
+       i       6 │ ACK  SYN  &    6    F    V    f    v   │
+       f       7 │ BEL  ETB  '    7    G    W    g    w   │
+       i       8 │ BS   CAN  (    8    H    X    h    x   │
+       c       9 │ HT   EM   )    9    I    Y    i    y   │
+       a       A │ LF   SUB  *    :    J    Z    j    z   │
+       n   D   B │ VT   ESC  +    ;    K    [    k    {   │
+       t   i   C │ FF   FS   ,    <    L    \    l    |   │
+           g   D │ CR   GS   -    =    M    ]    m    }   │
+           i   E │ SO   RS   .    >    N    ^    n    ~   │
+           t   F │ SI   US   /    ?    O    _    o   DEL  │
+                 └────────────────────────────────────────┘
+```
 
 ASCII Control Codes
 
 ACK - Positive Acnowledge
-BS - Backspace
-
-CR - Carriage Return
-
-DEL - Delete
-
-EM - End of Medium
-
-EOT - End of Transmission
-ETB - End of Transmission Block
-FF - Form Feed
-
-GS - Group Separator
-
-LF - Line Feed
-
-NUL - Null
-
-SI - Shift In
-
-SOH - Start of Header
-
-STX - Start of Text
-
-SYN - Synchronizing Character
-VT - Vertical Tabulation
-
-3 4 5 6 7
-0 a P ' p
-1 A Q a q
-2 B R b r
-3 c i) c s
-4 D T d t
-5 E U e u
-6 F V f 7
-7 G W g W
-8 H X h x
-9 I Y j y
-: J Zz j z
-; K [ k €
-< L \ L |
-= M ] m >
-> N “ n ~
-? ie) _ ° DEL
 BEL - Bell
-
+BS - Backspace
 CAN - Cancel
-
+CR - Carriage Return
 DCx - Device Control
-
+DEL - Delete
 DLE - Data Link Escape
+EM - End of Medium
 ENQ - Enquiry
-
+EOT - End of Transmission
 ESC - Escape
-
+ETB - End of Transmission Block
 ETX - End of Text
-
+FF - Form Feed
 FS - File Separator
-
+GS - Group Separator
 HT - Horizontal Tabulation
+LF - Line Feed
 NAK - Negative Acknowledge
+NUL - Null
 RS - Record Separator
-
+SI - Shift In
 SO - Shift Out
-
+SOH - Start of Header
 SP - Space
-
+STX - Start of Text
 SUB - Substitute
-
+SYN - Synchronizing Character
 US - Unit Separator
+VT - Vertical Tabulation
 
 ## APPENDIX E
 
 ### Dedicated Memory Addresses
 
-Address
-
-FF00
-
-FFO1
-
-FFO2
-
-FFO3
-
-FF20
-
-FF21
-
-FF22
-
-FF23
-
-FF40
-
-FF48
-
-FF49
-
-FF4A
-
-FF4B
-FFCO - FFC5
-FFC6 - FFD3
-FFD4 - FFD5
-FFD6 - FFD9
-FFDA - FFDD
-FFDE - FFDF
-FFF2 - FFF3
-FFF4 - FFF5
-FFF6 - FFF7
-FFF8 - FFF9
-FFFA - FFFB
-FFFC - FFFD
-FFFE - FFFF
-
-Destination
-DRA and DDRA of PIA 1
-CRA of PIA 1
-DRB and DDRB of PIA 1
-CRB of PIA 1
-DRA and DDRA of PIA 2
-CRA of PIA 2
-DRB and DDRB of PIA 2
-CRB of PIA 2
-Disk control register
-Disk status (read)/command(write)
-Disk track # register
-Disk sector # register
-Disk data register
-SAM video display mode
-SAM video starting address
-SAM Page #
-MPU cycle rate
-Memory size
-Memory map mode
-SWI3 vector location
-SWI2 vector location
-FIRQ vector location
-IRQ vector location
-SWI vector location
-NMI vector location
-RESET vector location
+```
+┌─────────────────┬───────────────────────────────────────┐
+│     Address     │            Destination                │
+├─────────────────┼───────────────────────────────────────┤
+│      FF00       │  DRA and DDRA of PIA 1                │
+│      FF01       │  CRA of PIA 1                         │
+│      FF02       │  DRB and DDRB of PIA 1                │
+│      FF03       │  CRB of PIA 1                         │
+│      FF20       │  DRA and DDRA of PIA 2                │
+│      FF21       │  CRA of PIA 2                         │
+│      FF22       │  DRB and DDRB of PIA 2                │
+│      FF23       │  CRB of PIA 2                         │
+│      FF40       │  Disk control register                │
+│      FF48       │  Disk status (read)/command (write)   │
+│      FF49       │  Disk track # register                │
+│      FF4A       │  Disk sector # register               │
+│      FF4B       │  Disk data register                   │
+│   FFC0 - FFC5   │  SAM video display mode               │
+│   FFC6 - FFD3   │  SAM video starting address           │
+│   FFD4 - FFD5   │  SAM Page #                           │
+│   FFD6 - FFD9   │  MPU cycle rate                       │
+│   FFDA - FFDD   │  Memory size                          │
+│   FFDE - FFDF   │  Memory map mode                      │
+│   FFF2 - FFF3   │  SWI3 vector location                 │
+│   FFF4 - FFF5   │  SWI2 vector location                 │
+│   FFF6 - FFF7   │  FIRQ vector location                 │
+│   FFF8 - FFF9   │  IRQ vector location                  │
+│   FFFA - FFFB   │  SWI vector location                  │
+│   FFFC - FFFD   │  NMI vector location                  │
+│   FFFE - FFFF   │  RESET vector location                │
+└─────────────────┴───────────────────────────────────────┘
+```
