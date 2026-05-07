@@ -13190,7 +13190,7 @@ to provide voice.
 ### INTERNAL DEVICES
 
 All the internal devices are controlled through the PIAs. Any device
-that can be used or controlled is connected by wiring:to PIA signals: the
+that can be used or controlled is connected by wiring to PIA signals the
 data path bits PA(B)O - 7, CA(B)1, and/or CA(B)2 signals. A PIA that sends
 data or a control code to a device must have those bits configured for
 output. A PIA that receives data or signals from a device must have those
@@ -13199,8 +13199,7 @@ respective. data direction register. A PIA that sends a CA2 or CB2 signal to
 a device must have configured that signal to output by setting up bits 3,
 4, and 5 of the respective control register. No devices in the Color
 Computer send signals to any CA2 or CB2. Any PIA that receives a signal at
-CA1 or CBI must have configured them to detect the desired transition and
-
+CA1 or CB1 must have configured them to detect the desired transition and
 have enabled or disabled their interrupt by setting up bits 0 and 1 of the
 respective control register. No devices receive signals from CAI and CBI of
 any PIA, thus PIAs can only input from CAI and CBI. This will all become
@@ -13217,16 +13216,16 @@ Shack's TRS-80 Color Computer Technical Reference Manual, catalog number
 26-3193 (or the Color Computer 2 service manual), for more detailed
 electronic schematics.
 
-~ In the diagrams and descriptions, signals are described as a voltage. A
+In the diagrams and descriptions, signals are described as a voltage. A
 volt is a unit of measurement of electric potential, in the same way a foot
 is a unit of measurement of distance. Both measure a difference between two
 points. In the descriptions of signals, a signal's voltage is defined as
 the voltage difference between that signal and the computer's frame or
 chassis. An electrical connection to the chassis, or ground as it is also
-called, is represented by the + symbol. A high signal has a voltage of
+called, is represented by the ⏚ symbol. A high signal has a voltage of
 four to five volts. A low signal has a voltage of approximately zero volts.
 
-The Keyboard
+#### The Keyboard
 
 The keyboard is composed of 52 switches, with one switch under each
 key. The wiring to and from the switches is arranged as a grid of columns
@@ -13252,50 +13251,76 @@ binary value read will be x1111111. This is because the PAO - PA6 inputs
 sense a high if nothing is connected to them; this being the case when no
 key is depressed.
 
-Left Joystick Right Joystick
-Jack Jack
+```
+    Left Joystick                       Right Joystick
+        Jack                                 Jack
+       ╭─────╮                            ╭─────╮
+       │ 5 1 │                            │ 5 1 │
+       │4 8 2│                            │4 8 2│
+       │  3  │                            │  3  │
+       ╰──┬──╯                            ╰──┬──╯
+          ⏚                                  ⏚
+                                                          Keyboard
+   ┌───────────┐
+   │           │ PA7 ─────────────────────────────────────────────────────
+   │           │ PA6 ◄──────  shift  ─────────────────────  brk  clr  enter
+   │  PIA  1   │ PA5 ◄──────   /      .      -      ,      ;    :   9   8
+   │           │ PA4 ◄──────   7      6      5      4      3    2   1   0
+   │ CRA-FF01  │ PA3 ◄──────  sp      →      ←      ↓      ↑    Z   Y   X
+   │ DRA/DDRA- │ PA2 ◄──────   W      V      U      T      S    R   Q   P
+   │   FF00    │ PA1 ◄──────   O      N      M      L      K    J   I   H
+   │           │ PA0 ◄──────   G      F      E      D      C    B   A   @
+   │           │
+   │           │ CA1 ◄──────
+   │           │ CB1 ◄──────
+   │           │
+   │           │ PB7 ──────►  │      │      │      │      │    │   │   │
+   │           │ PB6 ──────►  │      │      │      │      │    │   │   │
+   │           │ PB5 ──────►  │      │      │      │      │    │   │   │
+   │ CRB-FF03  │ PB4 ──────►  │      │      │      │      │    │   │   │
+   │ DRB/DDRB- │ PB3 ──────►  │      │      │      │      │    │   │   │
+   │   FF02    │ PB2 ──────►  │      │      │      │      │    │   │   │
+   │           │ PB1 ──────►  │      │      │      │      │    │   │   │
+   │           │ PB0 ──────►  │      │      │      │      │    │   │   │
+   └───────────┘
 
-Keyboard
 
-PIA 1 as ift ———___
-an we E amit brk clr enter
 
-7 . ' i : 9 8
-CRA- FFO1 ay a —— sp 27 e b * Z Y X
-DRA/DDRA- Dray, - WVU T S R Q.P
-FFOO ay, O N M L -.K J I H
-G F E DB € B A a
+                                          to PIA 1     to PIA 1
+                                            CA1 ▲       CB1 ▲
+                                                │           │
+                                          ┌─────┴───────────┴─────┐
+                                          │   HS              FS  │
+   ┌───────────┐                          │                       │
+   │           │                          │                       │
+   │  PIA  2   │                          │                       │
+   │           │                          │         V D G         │
+   │           │ PB7 ────────────────────►│                       │
+   │ CRB-FF23  │ PB6 ────────────────────►│                       │   Video Signal
+   │ DRB/DDRB- │ PB5 ────────────────────►│                       │──►   to TV
+   │   FF22    │ PB4 ────────────────────►│                       │
+   │           │ PB3 ────────────────────►│                       │
+   └───────────┘                          └───────────────────────┘
+                  VDG operating
+                       mode
+                                                      ⏚ indicates a low.
+```
+Figure 10-1 Keyboard, VDG, and Joystick Fire Button Diagram.
 
-to PIA 1 to PIA 1
-
-CA1 CB1
-
-Video Signal
-to TV
-
-VDG operating
-mode + indicates a low.
-
-Figure 10-1
-Keyboard, VDG, and Joystick Fire Button Diagram.
-
-Joystick Fire Buttons
+#### Joystick Fire Buttons
 
 Each joystick has a fire button which actuates a switch. When the
 button is depressed, the switch is closed, making an electrical connection
-to a low. In Fig. 10-1, the left joystick fire button is connected to PA]
+to a low. In Fig. 10-1, the left joystick fire button is connected to PA1
 of PIA 1, and the right to PAO. When a fire button is not depressed the
-
 corresponding data line is high. While a fire button is depressed the
 corresponding data line, PAO or PAI, is low. Thus, one can simply read the
 DRA of PIA 1 to see if either button is depressed. Bit 0 clear indicates
-
 the right fire button is depressed and bit 1 clear indicates the left
-
 button is depressed. The data lines, PAI and PAO, are shown connected to
 pin 4 of their respective joystick jacks.
 
-The VDG And IRQ Interrupts
+#### The VDG And IRQ Interrupts
 
 The VDG, shown in Fig. 10-1, receives its operating mode from PIA 2,
 bits PB3 - PB7. These bits must be configured for outputting. A code
@@ -13311,7 +13336,7 @@ signals are the sources of the IRQ interrupts. CAl and/or CB1 can be
 configured via their respective control register to generate an interrupt
 upon an active transition of the HS and/or FS signal.
 
-Serial I/O
+#### Serial I/O
 
 Serial I/O, or RS-232, data is transferred through PIA 2 to the serial
 I/O jack on the Color Computer, shown in Fig. 10-2. Data is sent out on bit
@@ -13322,10 +13347,8 @@ sends out a high in response to a low input. Writing a 1 bit to PA] results
 in a O bit appearing at pin 4 of the serial I/O jack.
 
 Input data from the serial I/O jack is read through PBO of PIA 2.
-
 Before the data reaches PBO, it is inverted by a NOT component; whatever
 state is read by PBO is actually the reverse of what is at pin 2 of the
-
 jack. Before any data is to be transmitted, PA] must be configured for
 output and PBO for input.
 
@@ -13342,51 +13365,54 @@ connected to the printer' s ready signal, pin 3 is ground, and the data to
 be printed is sent on pin 4 (RS2320UT).
 
 The NOT components are one-way devices. The signal can flow only into
-
 the broad side of the triangle and out the pointed end. For example, if one
 tries to input on PAI, one will not read the signal at pin 4 of the jack.
 These components also transform the electrical signal from within the
 computer to RS-232 standard electrical levels.
 
-arin;
+```
+   ┌────────────────┐
+   │   PIA  2       │                                            Serial I/O
+   │                │                                               Jack
+   │                │ PA1 ──►──▷○──── RS232OUT ─────────────────►  ╭─────╮
+   │  CRA-FF21      │                                              │ 4 1 │
+   │  DRA/DDRA-FF20 │                                              │  3  │
+   │                │ CA1 ◄────○▷── READY ───────────────────────  │  2  │
+   │                │ CA2 ◄──────────────────────────────────┐     ╰──┬──╯
+   │                │ CB1 ◄────────────────────┐             │        ⏚
+   │  CRB-FF23      │                          │             │        │
+   │  DRB/DDRB-FF22 │                          │             │        │
+   │                │                          │             │        │
+   │                │ PB2 ◄────────────────┐   │             │        │
+   │                │ PB0 ◄────┐           │   │  ┌────┐     │        │
+   └────────────────┘          │           │   ├──┤ NOT├◄────┴── RS232IN
+                               │           │   │  └────┘
+                               │           │   │
+                               │           │   │
+                               │      ╱    │   │
+                               ◯─────╳     │   │
+                                      ╲    │   │
+   ┌────────────────┐         32/64K   ⏚  4K  │
+   │   PIA  1       │                          │
+   │                │                  16K     │
+   │                │                  +5V●    │
+   │                │                          │                Cassette
+   │  CRB-FF03      │                          │                   Jack
+   │  DRB/DDRB-FF02 │                          │                ╭─────╮
+   │                │                          │           ┌───╮│ 5 1 │
+   │                │ PB7 ──────────────┐      │           │   ││4   2│
+   │                │                   │      │           └───╯│  3  │
+   └────────────────┘                   │      │                ╰─────╯
+                                        ▼      │                  │
+                              ┌────────────────┴───┐         Cassette
+                              │  Cart. Connector  8│        Motor Relay
+                              └────────────────────┘
 
-PIA 2 Serial 1/0
+                                                          ⏚ indicates a low.
+```
+Figure 10-2 Serial I/O Port, Cassette Motor, etc.
 
-Jack
-
-PA
-
-CRA-FF21
-DRA/DDRA- FF20
-CAI
-CA2
-CB1
-
-CRB-FF23
-DRB/DDRB-FF22
-
-PB2
-
-PBO
-
-Cassette
-Jack
-
-CRB-FFO3
-DRB/DDRB-FFO2
-PB7
-
-Cassette
-Motor Relay
-
-Cart. Connector 48
-
-st indicates a-low.
-
-Figure 10-2
-Serial I/O Port, Cassette Motor, etc.
-
-Cassette Motor
+#### Cassette Motor
 
 The cassette motor is controlled with CA2 of PIA 2. CA2 must be
 configured to output a high or a low to control the cassette motor relay.
@@ -13395,9 +13421,9 @@ circuit for the cassette motor. When CA2 sends a low, the switch opens and
 the motor stops. The switch is connected betwen pins | and 5 of the
 cassette jack, shown in Fig. 10-2.
 
-Memory Size Sense
-The memory size is sensed with PB2 of PIA 2. PB2, configured as an
+#### Memory Size Sense
 
+The memory size is sensed with PB2 of PIA 2. PB2, configured as an
 input, is read after power turned on to determine the position of the
 memory size switch and indicate the type of memory integrated circuits
 within the computer. The switch is actually a connector positioned at the
@@ -13410,50 +13436,76 @@ between set and clear, the switch is in the 32/64K_ position. Based on the
 read switch position, the initializing program in BASIC ROM will set up the
 memory size control bits, MO and M1, within the SAM.
 
-Cassette Cart. Connector Right Joystick Left Joystick
+```
+                       Cassette        Cart. Connector    Right Joystick     Left Joystick
+                         Jack                                  Jack              Jack
+                       ╭─────╮         ┌──────────┐          ╭─────╮           ╭─────╮
+                       │ 5 1 │         │   35●    │          │ 5 1 │           │ 5 1 │
+                       │4   2│         └─────┬────┘          │4   2│           │4   2│
+                       │  3  │               │               │  3  │           │  3  │
+                       ╰──┬──╯               │               ╰──┬──╯           ╰──┬──╯
+                          ⏚                  │                  │                 │
+   ┌────────────┐    ┌────────┐               │                 │                 │
+   │  PIA 2     │    │  ATTN  │               │                 ⏚                 │
+   │            │    └────┬───┘               │                                   │
+   │      PA7 ─►│         │                   │                                   │
+   │      PA6 ─►│   ┌─────┴────┐              │                                   │
+   │ CRA- PA5 ─►│   │   D/A    │              │                                   │
+   │ FF21 PA4 ─►│   │   CONV   │──────┬───────┴──┬──────┬──────┬───────┬──────┬───┴───┐
+   │ DRA/ PA3 ─►│   │          │      │  0  │ 1  │ 2  │ 3  │  0  │ 1  │ 2  │ 3       │
+   │ DDRA-PA2 ─►│   └──────────┘    A │     │    │    │    │     │    │    │       B │
+   │ FF20     ◄─│         ┌────┐      └─────┴────┴────┴────┴─────┴────┴────┴─────────┘
+   │      PA0   │◄────────┤NOT │                    │                            │
+   │            │         └────┘                    │                       Selector
+   │      CB2 ──┼─────────────────┐                 │                        Switch
+   │            │                 │                 │
+   │ CRB-FF23   │                 │                 │
+   │ DRB/DDRB-  │                 │                 │
+   │ FF22       │                 │                 │
+   │      PB1 ──┼─────┬───────────┴─┐               │
+   └────────────┘     │             │               │
+                      ▼          ┌──┴──────┐        │
+                   Sound to      │  -   +  │        │
+                      TV         │COMPARATOR│◄──────┘
+                                 └────┬─────┘
+   ┌────────────┐                     │
+   │  PIA 1     │                     │
+   │      PA7  ◄┼─────────────────────┘
+   │            │
+   │ CRA-FF01   │
+   │ DRA/  CA2  │
+   │ DDRA-FF00  │
+   │            │
+   │      CB2   │
+   │ CRB-FF03   │
+   │ DRB/DDRB-  │             ⏚ indicates a low.
+   │ FF02       │
+   └────────────┘
+```
+Figure 10-3 Cassette, Joysticks, and Sound Signal Flow.
 
-Jack Jack Jack
-e. 4 | C3
-2} 3
+#### CB1 of PIA 2
 
-oO; 1
-
-wen ery
-
-naa B
-
-i Selector
-Switch
-
-Sound to - +
-TV COMPARATOR
-
-== indicates a low.
-
-Figure 10-3
-Cassette, Joysticks, and Sound Signal Flow.
-
-CB1 of PIA 2
-
--CB1 is connected to pin 8 of the cartridge connector. Since CB1 can
+CB1 is connected to pin 8 of the cartridge connector. Since CB1 can
 only be an input, it can only sense a signal sent to it from the cartridge.
 CB1 can be configured via the CRB to sense a high-to-low or low-to-high
 transition and to generate an FIRQ interrupt.
 
-Component Operation
+#### Component Operation
 
 Fig. 10-3 shows the components and their interconnections used to input
 from the cassette and the joystick positions and to output to cassette and
 generate sound. Many of the components may not be familiar to you, so they
 are described here.
 
-w Digital-To-Analog Converter - The digital-to-analog, or D/A, converter is
+##### Digital-To-Analog Converter
+
+The digital-to-analog, or D/A, converter is
 connected to bits PA2 - PA7 of PIA 2. The D/A converter, upon receiving a
 six-bit straight binary value, generates an analog voltage of a magnitude
 proportional to the magnitude of that binary number. An analog voltage is
 one which can be varied by incremental amounts over a specified range. This
 is unlike a digital voltage, which must be at one of two levels - zero
-
 volts = a 0 bit, or +5 volts = a 1 bit.
 
 Analog voltages are typically represented on a graph; the vertical axis
@@ -13461,12 +13513,21 @@ represents the magnitude of the voltage and the horizontal axis represents
 time. Fig. 10-4 is a graph of the voltage from a nine volt battery being
 used to power a portable radio.
 
-Voltage
-10
-
-ON BQ CO
-
-Ohr 2hr  4hr  6hr = 8hr 10hr..§ Time
+```
+   Voltage ▲
+       10  │
+        9  │ ─────────────────────╮
+        8  │                       ╲
+        7  │                        │
+        6  │                        │
+        5  │                        │
+        4  │                        │
+        3  │                        ╲
+        2  │                         ╲___
+        1  │
+        0  └────┬────┬────┬────┬────┬────┬───►
+            0hr  2hr  4hr  6hr  8hr  10hr   Time
+```
 Fig. 10-4 Battery Voltage vs Time.
 
 At time 0, the battery is fresh and generates the full nine volts. As
@@ -13490,19 +13551,31 @@ converter adds together all the voltages to develop the output voltage.
 Table 10-1 shows the voltages that each set bit will add to the final
 value. If a bit is clear, it contributes nothing to the output voltage.
 
-Bit
-PA7 2.
-
+```
+┌──────┬──────────┐
+│ Bit  │ Voltage  │
+├──────┼──────────┤
+│ PA7  │  2.25    │
+│ PA6  │  1.125   │
+│ PA5  │  0.563   │
+│ PA4  │  0.281   │
+│ PA3  │  0.14    │
+│ PA2  │  0.07    │
+└──────┴──────────┘
+```
 Table 10-1 D/A Converter Bit Voltages.
 
 To calculate the voltage generated by a six-bit value, add together the
 voltages each set bit generates from Table 10-1. For example, a six-bit
 value of 011010 would generate 1.828 volts. This is demonstrated below:
 
-PA6 set = 1.125
-PAS set = 0.563
-PA3 set =_0.140
-Output voltage = 1.828
+```
+        PA6 set = 1.125
+        PAS set = 0.563
+        PA3 set = 0.140
+                  -----
+ Output voltage = 1.828
+```
 
 The range of output voltages is from zero, all bits clear, to +4.5, all
 bits set.
@@ -13515,32 +13588,42 @@ depends on how often each consecutive value is written to the DRA. It could
 be determined by how many instructions were executed between each write to
 the DRA.
 
-Voltage
-2.25 -
-1.125
-0.563
-0.0
-tO tl 2 «13 «4 Time
-
+```
+   Voltage ▲
+    2.25   │              ┌──────┐
+           │              │      │
+    1.125  │       ┌──────┘      │
+           │       │             │
+    0.563  │ ──────┘             │
+           │                     │
+    0.0    └──┬───┬──────┬──────┬┴─────►
+              t0  t1     t2     t3   t4   Time
+```
 Fig. 10-5 A Waveform Generated by the D/A Converter.
 
-a Selector Switch - The selector switch is a dual unit composed of two
+##### Selector Switch 
+
+The selector switch is a dual unit composed of two
 four-position switches, shown in Fig. 10-3. One half is designated the A
 switch, and the other the B switch. The position of both switches is
 controlled by the CA2 and CB2 signals from PIA 1. CA2 and CB2 must be
 configured for output so a control code can be sent to the selector switch.
 The four possible combinations of the states of CA2 and CB2 put both
 selector switches in one of their four possible positions. The
-
 corresponding codes and switch positions are shown in Table 10-2.
 
-0
-
-1
-2
-3
-
-2 {
+```
+┌─────────────┬──────────────────┐
+│   PIA  1    │                  │
+├──────┬──────┤  Switch Position │
+│ CB2  │ CA2  │                  │
+├──────┼──────┼──────────────────┤
+│  0   │  0   │        0         │
+│  0   │  1   │        1         │
+│  1   │  0   │        2         │
+│  1   │  1   │        3         │
+└──────┴──────┴──────────────────┘
+```
 Table 10-2 Selector Switch Control and Positions.
 
 The selector switches route various analog voltages to desired
@@ -13551,10 +13634,11 @@ master switch is off, no analog voltage selected by switch A is sent out.
 CB2 of PIA 2 must be configured to output to control the master switch. A
 high from CB2 turns the master switch on and a low turns it off.
 
-mu Comparator - The comparator compares the magnitude of two analog voltages
+##### Comparator 
+
+The comparator compares the magnitude of two analog voltages
 and indicates which is greater. The comparator has two inputs labelled (+)
 and (-). If the voltage sent to the (+) input is higher (more positive)
-
 than the voltage at the (-) input, the comparator outputs a high. If the
 voltage sent to the (-) input is the higher of the two, the comparator
 outprts a low. As presented in Fig. 10-3, the (-) input is connected to the
@@ -13565,18 +13649,19 @@ comparator is used in conjuction with the D/A converter to form a
 successive approximation analog-to-digital converter. This is described in
 more detail in the joystick section later in this chapter.
 
-m Attenuator - An attenuator is connected between the output of the D/A
+##### Attenuator
+
+An attenuator is connected between the output of the D/A
 converter and pin 4 of the cassette jack, shown in Fig. 10-3. This is the
 path an analog voltage takes on its way to the cassette to be recorded.
 The attenuator reduces the magnitude of the range of the analog voltage
 going to the cassette to approximately a range of zero to plus one volt;
 most cassettes are designed to accept this voltage range. One could also
-
 connect pin 4 of the cassette jack to the auxillary input of a high
 fidelity receiver or amplifier. This way, sound generation need not be
 limited to the TV. ;
 
-Cassette I/O
+#### Cassette I/O
 
 Data is transferred to the cassette serially via pin 4 of the cassette
 jack, and in via pin 2. The cassette recorder is meant to record or
@@ -13587,9 +13672,19 @@ sent to the cassette. A sinusoidal waveform is a pure or single tone. The
 waveform has the same shape as a graph of the sine of an angle versus the
 angle shown in Fig. 10-6.
 
-Angle
-
-| Fig. 10-6 A Plot of the Sine of an Angle vs the Angle.
+```
+   Sine    1 │       ╭───╮
+             │      ╱     ╲
+            .5│    ╱        ╲
+             │   ╱            ╲
+           0 │──╱───────────────╲────────────────╱──►
+             0 │  90        180  ╲    270     360╱   Angle
+          -.5│                    ╲             ╱
+             │                     ╲          ╱
+            -1│                       ╲────╱
+             │
+```
+Fig. 10-6 A Plot of the Sine of an Angle vs the Angle.
 
 The D/A converter is fed a series of values at.a specific rate so it
 generates a waveform similar to a sine wave; the output voltage varies from
@@ -13598,14 +13693,21 @@ every value within its range, but only in steps of 0.07 volts, the waveform
 is constructed of discrete values. A typical sine wave generated by the D/A
 converter is shown in Fig. 10-7.
 
-i 0
-Voltage 4.5 LU
-3.375 Die 26"
-2.25
-1.125 wanes,
-; 0 —|,0 Pra ove
-t0 tl t2 t3 t4 Time
-
+```
+   Voltage 4.5  │         ┌──┐                                               
+                │      ┌──┘  └──┐
+          3.375 │   ┌──┘        └──┐
+                │┌──┘              └──┐
+                ││                    └──┐
+           2.25 ││                       └──┐                              ┌──
+                ││                          └──┐                        ┌──┘
+                ││                             └──┐                  ┌──┘
+          1.125 ││                                └──┐            ┌──┘
+                ││                                   └──┐      ┌──┘
+                ││                                      └──┐┌──┘             
+              0 └┴──────────────────────────────────────────┴───────────────►
+                 t0          t1            t2              t3           t4   Time
+```
 Fig. 10-7 Sine Wave Generated With the D/A Converter.
 
 This figure shows the signal the BASIC ROM cassette write subroutine
@@ -13635,7 +13737,7 @@ voltage changes from greater than to less than one volt. This way the
 frequency can be found and the state of the bit that tone represents can be
 determined.
 
-Joystick Positions
+#### Joystick Positions
 
 Each joystick sends two analog voltages that vary according to its
 position to the computer. One voltage from a joystick varies in proportion
@@ -13658,16 +13760,13 @@ the corresponding voltages from the left joystick.
 
 A voltage is digitized by outputting, through the D/A converter, a
 successively incremented voltage. After each higher voltage that is sent,
-
 the output of the comparator (PA7 of PIA 1) is read. PA7 clear indicates
 the voltage just sent by the D/A converter is marginally higher than the
 analog voltage at the (+) input of the comparator. At this point, the value
 written into the DRA of PIA 2, (sent to the D/A converter) is the digital
 equivalent of the analog voltage. The process requires that zero volts
-
 first be sent through the D/A converter to the (-) input of the comparator,
 and that voltage then be increased until the comparator indicates it is
-
 just a little higher than the analog voltage. This is the process of
 successive approximation.
 
@@ -13678,61 +13777,45 @@ joystick position in a way very similar to the way the JOYIN ROM subroutine
 works. The displayed value is actually the digital equivalent of the analog
 voltage outputted by the joystick.
 
+```
 100 *PROGRAM NAME: LFJY
-
 110 *THIS PROGRAM WILL DIGITIZE THE LEFT/RIGHT
 120 *ANALOG VOLTAGE OF THE LEFT JOYSTICK USING
 130 *SUCCESSIVE APPROXIMATION.
-
-[LD BRARRKRRIKRERERE EKER KAEEERREEER REE
-
-150 LFJY LDA #$3C GET CRB CODE
-
-160 STA. SFFO3 SET CB2
-
-170 LDA. #$34 GET CRA CODE
-
-180 STA SFFO1 CLEAR CA2
-
-190 LFA CLRB GET 0 VOLTS
-
-200 LFB STB $SFF20 SEND TO D/A
-
-210 LDA $FFOO READ COMP OUTPUT
-220 BPL LFC BRANCH IF PA7=0
-230 ADDB #304 INC VOLTAGE
-
-240 CMPB #$FC MAX VALUE ?
-
-250 BEQ LFC FORCE END IF MAX
-260 BRA LFB DO AGAIN .
-270 LFC LDA #$04 GET SHIFT AMOUNT
-280 MUL MS IN A,LS IN B
-290 ADDA #$70 CONVERT TO VIDEO
-300 STA $5FE PUT ON SCREEN
-310 LDA #$10 SHIFT AMOUNT
-
-320 MUL LS INA
-
-330 CMPA #$09 GREATER THAN 9?
-340 BHI. LFD BRANCH IF SO
-
-350 ADDA #70 CONV TO VIDEO
-360 STA $5FF PUT ON SCREEN
-370 BRA LFA DO AGAIN
-
-380 LFD ADDA #337 CONV TO VIDEO
-390 STA $5FF PUT ON SCREEN
-400 BRA LFA DO AGAIN
-
-410 BRRRRRR RARER REE RRR IOI IIE
-420 END
-
+140 **********************************************
+150 LFJY    LDA #$3C    GET CRB CODE
+160         STA $FF03   SET CB2
+170         LDA #$34    GET CRA CODE
+180         STA $FFO1   CLEAR CA2
+190         LFA CLRB    GET 0 VOLTS
+200 LFB     STB $FF20   SEND TO D/A
+210         LDA $FF00   READ COMP OUTPUT
+220         BPL LFC     BRANCH IF PA7=0
+230         ADDB #$04   INC VOLTAGE
+240         CMPB #$FC   MAX VALUE ?
+250         BEQ LFC     FORCE END IF MAX
+260         BRA LFB     DO AGAIN
+270 LFC     LDA #$04    GET SHIFT AMOUNT
+280         MUL         MS IN A,LS IN B
+290         ADDA #$70   CONVERT TO VIDEO
+300         STA $5FE    PUT ON SCREEN
+310         LDA #$10    SHIFT AMOUNT
+320         MUL         LS INA
+330         CMPA #$09   GREATER THAN 9?
+340         BHI LFD     BRANCH IF SO
+350         ADDA #70    CONV TO VIDEO
+360         STA $5FF    PUT ON SCREEN
+370         BRA LFA     DO AGAIN
+380 LFD     ADDA #$37   CONV TO VIDEO
+390         STA $5FF    PUT ON SCREEN
+400         BRA LFA     DO AGAIN
+410 **********************************************
+420         END
+```
 Listing 10-1 The LFJY Program.
 
 Lines 150 - 180 set CB2 and clear CA2, selecting position 2 of the
 selector switch. Lines 190 - 240 are the successive approximation loop. The
-
 B register is first cleared and written to the D/A converter. If PA7 of PIA
 1 is clear at lines 210 and 220 the conversion process is over. If not, the
 value in bits 7 - 2 of the B register is incremented by one by adding four
@@ -13749,7 +13832,7 @@ voltage digitized. The successive approximation technique in Listing 10-1
 resolves an analog voltage to six bits of accuracy. Thus, the digital value
 of a voltage is accurate to within approximately 0.07 volts.
 
-Sound
+#### Sound
 
 Sound through the TV can come from four sources: the D/A converter, the
 cassette, a cartridge, and PB1 of PIA 2. Selector switch A selects one of
@@ -13763,7 +13846,6 @@ D/A converter. The shape of the waveform determines the type of sound. One
 should consult an introductory physics book to learn about the
 characteristics of various sounds. The output, through selector switch A
 and the master switch, is sent to the TV and heard from its loudspeaker.
-
 One shouldn't forget to turn up the volume on the TV.
 
 With selector switch A in position 1 and the master switch on, the
@@ -13788,61 +13870,40 @@ PB1 is a sound source, it must be configured for outputting.
 Listing 10-2 generates a tone which repeatedly slides from a low to a
 high pitch. The tone is generated with the PB1 sound source.
 
+```
 100 *PROGRAM NAME: SLTON
-
 110 *THIS PROGRAM WILL REPETITIVELY GENERATE A
-
 120 *SLIDING TONE. EACH PITCH WILL BE OUTPUTTED FOR
 130 *10 CYCLES, THEN THE PITCH WILL BE INCREASED.
-
 140 *THE SOUND IS GENERATED WITH PB1 OF PIA #2.
-150 FAIR III IIIA III III IIS
-
-160 SLTON LDA $FF23 GET CRB
-
-170 ANDA #$FB CLR BIT 2
-
-180 STA $FF23 ENABLE DDRB ACCESS
-190 LDA #$02 SET PB1 TO OUTPUT
-200 STA $SFF22 PUT IN DDRB
-
-210 LDA $FF23 GET CRB
-
-220 ORA #$04 SET BIT 2
-
-230 STA $FF23 ENABLE DRB ACCESS
-240 SLA LDX #$00A0 GET MAX DELAY
-
-250 LDB #20 GET CYCLE CNT
-260 LDA $FF22 READ DRB
-
-270 SLB EORA #502 TOGGLE BIT 1
-
-280 STA $FF22 PUT IN DRB
-
-290 DECB COUNT. CYCLES
-
-300 BNE SLC JMP IF NOT ZERO
-310 LDB #20 GET CYCLE CNT
-
-320 LEAX -2,X SHORTEN DELAY
-
-330 CMPX #50000 HIGHEST PITCH?
-340 BEQ SLA GO START OVER
-
-350 SLC TFR X,Y GET DELAY
-
-360 SLD LEAY -1,Y DECR DELAY
-
-370 CMPY #$0000 END OF DELAY?
-
-380 BNE SLD LOOP IF NOT
-
-390 BRA SLB GO TOGGLE BIT
-
-OQ RRR HARIKA KRHA RIKKI REIKI RI ASIA IIIS OAIA IIA
-410 END
-
+150 **********************************************
+160 SLTON   LDA $FF23       GET CRB
+170         ANDA #$FB       CLR BIT 2
+180         STA $FF23       ENABLE DDRB ACCESS
+190         LDA #$02        SET PB1 TO OUTPUT
+200         STA $FF22       PUT IN DDRB
+210         LDA $FF23       GET CRB
+220         ORA #$04        SET BIT 2
+230         STA $FF23       ENABLE DRB ACCESS
+240 SLA     LDX #$00A0      GET MAX DELAY
+250         LDB #20         GET CYCLE CNT
+260         LDA $FF22       READ DRB
+270 SLB     EORA #$02       TOGGLE BIT 1
+280         STA $FF22       PUT IN DRB
+290         DECB            COUNT CYCLES
+300         BNE SLC         JMP IF NOT ZERO
+310         LDB #20         GET CYCLE CNT
+320         LEAX -2,X       SHORTEN DELAY
+330         CMPX #50000     HIGHEST PITCH?
+340         BEQ SLA         GO START OVER
+350 SLC     TFR X,Y         GET DELAY
+360 SLD     LEAY -1,Y       DECR DELAY
+370         CMPY #$0000     END OF DELAY?
+380         BNE SLD         LOOP IF NOT
+390         BRA SLB         GO TOGGLE BIT
+400 **********************************************
+410         END
+```
 Listing 10-2 The SLTON Program.
 
 Lines 160 - 180 clear bit 2 of the CRB to allow access to the DDRB.
@@ -13872,13 +13933,18 @@ The 40 contacts are arranged. in two rows, each identified by its
 number. The numbering scheme is shown in Fig. 10-8. The connector is shown
 in Fig. 10-8 as viewed from outside the computer.
 
-Top Row
+```
+                                 Top Row
 
-39 37 35 33 31 29 27 25 23 211917151311 9.7 5 3.41
+   39  37  35  33  31  29  27  25  23  21  19  17  15  13  11  9   7   5   3   1
+    -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  -   -   -   -   -
 
-40 38 36 34 32 30 28 26 24 22 20 18 16141210 8 6 4
-Bottom Row
 
+    -   -   -   -   -   -   -   -   -   -   -   -   -   -   -  -   -   -   -   -
+   40  38  36  34  32  30  28  26  24  22  20  18  16  14  12  10  8   6   4   2
+
+                                Bottom Row
+```
 Fig. 10-8 Cartridge Connector Contact Numbering.
 
 Many cartridge connector signals are bidirectional; that is, a signal
@@ -13900,18 +13966,38 @@ their direction. A right arrow indicates the signal originates in the
 computer and is sent to the cartridge. A left arrow indicates the signal
 originates in the cartridge and is sent to the computer.
 
-Signal Name |} Pin | Signal Name
-
-+12 volts >
-
-SLENB <
-
+```
+┌─────┬───────────────┬─────┬───────────────┐
+│ Pin │  Signal Name  │ Pin │  Signal Name  │
+├─────┼───────────────┼─────┼───────────────┤
+│  1  │  -12 volts  > │  2  │  +12 volts  > │
+│  3  │  HALT       < │  4  │  NMI        < │
+│  5  │  RESET      > │  6  │  E          > │
+│  7  │  Q          > │  8  │  CART       < │
+│  9  │  +5 volts   > │ 10  │  D0           │
+│ 11  │  D1           │ 12  │  D2           │
+│ 13  │  D3           │ 14  │  D4           │
+│ 15  │  D5           │ 16  │  D6           │
+│ 17  │  D7           │ 18  │  R/W̅          │
+│ 19  │  A0           │ 20  │  A1           │
+│ 21  │  A2           │ 22  │  A3           │
+│ 23  │  A4           │ 24  │  A5           │
+│ 25  │  A6           │ 26  │  A7           │
+│ 27  │  A8           │ 28  │  A9           │
+│ 29  │  A10          │ 30  │  A11          │
+│ 31  │  A12          │ 32  │  CTS        > │
+│ 33  │  GND          │ 34  │  GND          │
+│ 35  │  SND        < │ 36  │  SCS        > │
+│ 37  │  A13          │ 38  │  A14          │
+│ 39  │  A15          │ 40  │  SLENB      < │
+└─────┴───────────────┴─────┴───────────────┘
+```
 Table 10-3 Cartridge Signals.
 
-Power
+#### Power
 
-Electrical power is sent to the cartridge through pins 1, 2, 9, 33, and
-34. Pins 33 and 34 are ground connections. Ground is the reference point to
+Electrical power is sent to the cartridge through pins 1, 2, 9, 33, and 34. 
+Pins 33 and 34 are ground connections. Ground is the reference point to
 which all voltages are measured. Thus, a signal of +5 volts is five volts
 higher than ground. Through pin 9 is sent +5 volts to provide power to
 components in a cartridge. Up to 300 milliamps may be drawn from the +5
@@ -13920,7 +14006,7 @@ be drawn. Through pin 2 is sent +12 volts, and up to 300 milliamps may be
 drawn. A milliamp is one thousandth of an amp or ampere. Pins 1 and 2 are
 not used in the Color Computer 2.
 
-Data Bus
+#### Data Bus
 
 The data bus, bits DO - D7, is available at the cartridge connector. —
 This is a bidirectional bus; a byte can be sent to or from the cartridge.
@@ -13929,7 +14015,7 @@ contents of a memory location into the computer over the data bus. If a
 cartridge contains RAM or a PIA, a byte written to it would be sent to it
 over the data bus.
 
-Address Bus
+#### Address Bus
 
 The address bus, bits AO - A15, is available at the cartridge
 connector. This, too, is a bidirectional bus. A memory location of ROM in a
@@ -13941,7 +14027,7 @@ low on the HALT signal line. The MPU will stop upon completion of :
 the currently executing instruction and the buses will be available for use
 by the cartridge.
 
-Control Bus
+#### Control Bus
 
 The available signals of the control bus are; HALT, NMI,
 RESET, E, Q, and R/W. The RESET signal goes active low momentarily
@@ -13966,10 +14052,9 @@ signals to access ROM, RAM, and/or PIAs in the computer. Setting
 HALT back high causes the MPU to resume operation at the following
 instruction.
 
-Other Signals
+#### Other Signals
 
 Other signals available at the cartridge connector are: SND,
-
 CART, CTS, SCS, and SLENB. CTS and SCS are outputs from the
 computer to a cartridge and the others are inputs to the computer.
 
@@ -13981,15 +14066,17 @@ selects the ROM or RAM within a cartridge for transfer of a byte of data.
 SCS goes low when the MPU accesses any of the dedicated addresses
 from $FF40 - $FF5F. SCS low enables or selects a PIA or similar
 device within a cartridge for transfer of a byte of data. SCS also
-
 goes low when the SAM TY control bit is clear and the MPU accesses any of
 the redundant dedicated addresses associated with addresses $FF40 - $FF5F.
+
 SND is an analog signal that originates in a cartridge. The SND signal
 may be heard by setting the selector switch to position 2 and turning on
 the master switch. The SND signal may range from 0 to +5 volts.
+
 The CART signal originates in a cartridge and goes to CBI of
 PIA 2, If CB1 is properly configured, an FIRQ interrupt will be generated
 when CART goes low.
+
 SLENB is a signal that originates in a cartridge and goes to
 the SAM decoding circuits in the computer. Normally SLENB is
 high, allowing the SAM to decode addresses, as described in Chapter Nine.
